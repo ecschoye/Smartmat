@@ -1,26 +1,13 @@
 image: docker:latest
 
-services:
-  - name: docker:dind
-    command: ["dockerd-entrypoint.sh", "--privileged"]
-
-
 variables:
   DOCKER_DRIVER: overlay2
   SPRING_PROFILES_ACTIVE: dev
 
 stages:
-  #- build-frontend
   - build-backend
   - test
   - deploy
-
-#build-frontend:
-#  stage: build-frontend
-#  script:
-#    - cd ./vue-frontend
-#    - docker build -t my-frontend-image -f Dockerfile-test .
-#    - docker save my-frontend-image > my-frontend-image-latest.tar
 
 build-backend:
   stage: build-backend
@@ -32,10 +19,8 @@ build-backend:
 test:
   stage: test
   script:
-#    - docker load < my-frontend-image-latest.tar
-#    - docker run my-frontend-image
     - docker load < my-backend-image-latest.tar
-    - docker run my-backend-image mvn test
+    - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock my-backend-image mvn test
 
 deploy:
   stage: deploy

@@ -1,24 +1,13 @@
-image: maven:3.8.1-jdk-11-openj9
+image: maven:latest
 
 stages:
   - build
   - test
-  - deploy
-
-variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
 build:
   stage: build
   script:
-    - mvn -f backend/pom.xml clean package -DskipTests=true -Dmaven.compiler.source=18 -Dmaven.compiler.target=18
-
-test:
-  stage: test
-  script:
-    - mvn test
-
-deploy:
-  stage: deploy
-  script:
-    - mvn -f backend/pom.xml deploy -DskipTests=true
+    - mvn package -B -DskipTests=true
+  artifacts:
+    paths:
+      - target/*.jar

@@ -1,6 +1,8 @@
 maven-build:
   image: maven:3-jdk-11
   stage: build
+  services:
+    - docker:dind
   script:
     - "mvn spring-boot:build-image"
   artifacts:

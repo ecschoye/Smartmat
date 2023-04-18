@@ -1,5 +1,5 @@
 ##image: maven:3.3.9-jdk-8 # An alternative for Java 8
-image: maven:3-jdk-11
+image: maven:3-jdk-18
 
 #####################################################################################################################
 # This template will build and test your project

@@ -1,11 +1,11 @@
 ##image: maven:3.3.9-jdk-8 # An alternative for Java 8
 #image: maven:3.8.4-openjdk-18
 
-image: openjdk:18
+image: openjdk:18-jdk
 
 before_script:
-  - apk update
-  - apk add maven
+  - apt-get update
+  - apt-get install -y maven
 
 #####################################################################################################################
 # This template will build and test your project

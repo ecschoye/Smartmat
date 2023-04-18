@@ -36,7 +36,7 @@ cache:
 test:jdk11:
   stage: test
   script:
-    - mvn clean test
+    - mvn -f backend/pom.xml clean test
   artifacts:
     when: always
     paths:
@@ -52,7 +52,7 @@ test:jdk11:
 package:jdk11:
     stage: package
     script:
-      - mvn -DskipTests package # We already know the tests passed from the previous stage
+      - mvn -f backend/pom.xml -DskipTests package # We already know the tests passed from the previous stage
     artifacts: # Make the JAR from the build available in Gitlab
       paths:
         - target/*.jar # Add more as needed here

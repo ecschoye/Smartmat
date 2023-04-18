@@ -1,35 +1,38 @@
-image: docker:latest
+image: gitlab/dind
+services:
+  - docker:dind
 
 variables:
-  DOCKER_DRIVER: overlay2
-  SPRING_PROFILES_ACTIVE: dev
-
-services:
-- name: docker:dind
-  command: ["dockerd-entrypoint.sh", "--privileged"]
-
+  DOCKER_DRIVER: overlay
+  SPRING_PROFILES_ACTIVE: gitlab-ci
+  USER_GITLAB: sanjaybsm
+  APP_NAME: springbootgitlab
+  REPO: springbootlabtest
 
 stages:
-  - build-backend
+  - build
   - test
-  - deploy
+  - docker
 
-build-backend:
-  stage: build-backend
-  script:
-    - cd ./backend
-    - docker build -t my-backend-image -f Dockerfile-test .
-    - docker save my-backend-image > my-backend-image-latest.tar
+maven-build:
+  image: maven:3-jdk-8
+  stage: build
+  script: "mvn clean package -B"
+  artifacts:
+    paths:
+      - target/*.jar
 
-test:
+maven-test:
+  image: maven:3-jdk-8
   stage: test
-  script:
-    - docker load < my-backend-image-latest.tar
-    - docker run --rm -v /var/run/docker.sock:/var/run/docker.sock my-backend-image mvn test
+  script: "mvn test"
+  artifacts:
+    paths:
+      - target/*.jar
 
-deploy:
-  stage: deploy
+docker-build:
+  stage: docker
   script:
-    - docker load < my-frontend-image-latest.tar
-    - docker load < my-backend-image-latest.tar
-    - docker-compose up -d
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build -t registry.gitlab.com/yournameingitlab/springbootlabtest .
+    - docker push registry.gitlab.com/yournameingitlab/springbootlabtest

@@ -4,6 +4,11 @@ variables:
   DOCKER_DRIVER: overlay2
   SPRING_PROFILES_ACTIVE: dev
 
+services:
+- name: docker:dind
+  command: ["dockerd-entrypoint.sh", "--privileged"]
+
+
 stages:
   - build-backend
   - test

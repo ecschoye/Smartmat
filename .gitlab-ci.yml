@@ -1,43 +1,24 @@
-image: docker:latest
-
-services:
-  - docker:dind
-
-variables:
-  DOCKER_DRIVER: overlay2
-  SPRING_PROFILES_ACTIVE: dev
+image: maven:3.8.1-jdk-11-openj9
 
 stages:
-  #- build-frontend
-  - build-backend
+  - build
   - test
   - deploy
 
-#build-frontend:
-#  stage: build-frontend
-#  script:
-#    - cd ./vue-frontend
-#    - docker build -t my-frontend-image -f Dockerfile-test .
-#    - docker save my-frontend-image > my-frontend-image-latest.tar
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
 
-build-backend:
-  stage: build-backend
+build:
+  stage: build
   script:
-    - cd ./backend
-    - docker build -t my-backend-image -f Dockerfile-test .
-    - docker save my-backend-image > my-backend-image-latest.tar
+    - mvn -f backend/pom.xml clean package -DskipTests=true
 
 test:
   stage: test
   script:
-#    - docker load < my-frontend-image-latest.tar
-#    - docker run my-frontend-image
-    - docker load < my-backend-image-latest.tar
-    - docker run my-backend-image mvn test
+    - mvn test
 
 deploy:
   stage: deploy
   script:
-    - docker load < my-frontend-image-latest.tar
-    - docker load < my-backend-image-latest.tar
-    - docker-compose up -d
+    - mvn -f backend/pom.xml deploy -DskipTests=true

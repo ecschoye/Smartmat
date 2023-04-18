@@ -1,17 +1,15 @@
 package ntnu.idatt2106.backend.config;
 
 
-import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.model.enums.AuthenticationState;
 import ntnu.idatt2106.backend.service.JwtService;
+import ntnu.idatt2106.backend.service.SessionStorageService;
 import org.springframework.lang.NonNull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -34,7 +32,7 @@ public class JwTAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    private final CookieService cookieService;
+    private final SessionStorageService sessionStorageService;
 
     /**
      * Method for extracting the jwt token from the cookie.
@@ -43,13 +41,13 @@ public class JwTAuthenticationFilter extends OncePerRequestFilter {
      * @param request The HttpServletRequest object for this request.
      * @param response The HttpServletResponse object for this request.
      * @param filterChain FilterChain object for this request.
-     * @throws ServletException
-     * @throws IOException
+     * @throws ServletException if the request could not be handled
+     * @throws IOException if the response could not be written
      */
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-        final String jwt = cookieService.extractTokenFromCookie(request);
+        final String jwt = sessionStorageService.extractTokenFromSession(request);
 
         String username = null;
         AuthenticationState authState = AuthenticationState.UNAUTHENTICATED;

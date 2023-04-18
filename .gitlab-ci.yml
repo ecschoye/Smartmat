@@ -1,10 +1,27 @@
-maven-build:
-  image: maven:3-jdk-11
+image: docker:latest
+
+services:
+  - docker:dind
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: tcp://localhost:2375/
+  DOCKER_TLS_VERIFY: "0"
+
+stages:
+  - build
+  - push
+
+build:
   stage: build
-  services:
-    - docker:dind
   script:
-    - "mvn spring-boot:build-image"
-  artifacts:
-    paths:
-      - target/*.jar
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+
+push:
+  stage: push
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest

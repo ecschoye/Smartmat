@@ -1,7 +1,9 @@
 image: docker:latest
 
 services:
-  - docker:dind
+  - name: docker:dind
+    command: ["dockerd-entrypoint.sh", "--privileged"]
+
 
 variables:
   DOCKER_DRIVER: overlay2

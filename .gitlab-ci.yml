@@ -4,7 +4,15 @@ stages:
   - build
   - test
 
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+
 build:
   stage: build
   script:
     - mvn -f backend/pom.xml package -B -DskipTests=true
+
+test:
+  stage: test
+  script:
+    - mvn -f backend/pom.xml test -B

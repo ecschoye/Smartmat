@@ -1,0 +1,16 @@
+/* global.css */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer base {
+    h1 {
+        @apply text-4xl font-semibold;
+    }
+    h2 {
+        @apply text-3xl font-semibold;
+    }
+    p {
+        @apply text-base;
+    }
+}

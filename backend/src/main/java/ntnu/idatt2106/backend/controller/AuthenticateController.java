@@ -36,8 +36,6 @@ public class AuthenticateController {
         try {
             logger.info("Registering user " + request.getEmail());
             AuthenticationResponse authResponse = authenticationService.register(request);
-            //HttpSession session = httpRequest.getSession();
-            //session.setAttribute("SmartMatToken", authResponse.getToken());
             logger.info("User " + request.getEmail() + " registered successfully");
             return ResponseEntity.ok(authResponse);
         } catch (UserAlreadyExistsException e) {
@@ -51,8 +49,6 @@ public class AuthenticateController {
         try {
             logger.info("Authenticating user " + authenticationRequest.getEmail());
             AuthenticationResponse authResponse = authenticationService.authenticate(authenticationRequest);
-            HttpSession session = httpRequest.getSession();
-            session.setAttribute("SmartMatToken", authResponse.getToken());
             logger.info("Authentication successful");
             User user = userService.findByEmail(authenticationRequest.getEmail());
             authResponse.setUserId(user.getId());

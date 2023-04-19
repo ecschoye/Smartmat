@@ -37,5 +37,4 @@ public class Grocery {
     @JoinColumn(name = "subCategoryId")
     @Schema(description = "The sub category to the grocery")
     private SubCategory subCategory;
-
 }

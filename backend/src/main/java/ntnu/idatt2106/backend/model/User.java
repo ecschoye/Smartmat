@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Users")
+@Table(name = "users")
 @Schema(description = "A registered user of the application")
 @Entity
 public class User implements UserDetails {

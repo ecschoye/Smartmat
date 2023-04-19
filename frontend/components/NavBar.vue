@@ -3,7 +3,7 @@
   <nav class="mx-auto flex max-w-7xl items-center p-6 lg:px-8" aria-label="Global">
     <div class="hidden lg:flex flex-1 space-x-5 items-center justify-start">
       <NuxtLink href="/" class="-m-1.5 p-1.5">
-        <span class="sr-only">Your Company</span>
+        <span class="sr-only">SmartMat</span>
         <img class="h-12 w-auto" src="../assets/icons/smartmat/leafTransparent.png" alt="">
       </NuxtLink>
       <NuxtLink href="#" class="text-md font-semibold leading-6 text-gray-900">Hjem</NuxtLink>

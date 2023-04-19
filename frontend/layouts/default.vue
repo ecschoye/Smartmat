@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrapper">
     <NavBar/>
     <div class="page-container">
       <slot />
@@ -10,9 +10,15 @@
 
 <style scoped>
 .page-container {
-  background-color: #4ade80;
+  background-color: #31C48D;
   min-height: calc(100vh - 96px);
   display: block;
+}
+
+.wrapper{
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 </style>
 

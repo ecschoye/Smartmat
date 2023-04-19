@@ -79,18 +79,6 @@ public class AuthenticationTests {
 
     @Test
     public void authenticate_returnsOkResponse() throws InvalidCredentialsException {
-
-
-
-        // Mock the HttpSession object
-        HttpSession session = mock(HttpSession.class);
-
-        // Set up the mock to return a non-null HttpSession object
-        when(httpServletRequest.getSession()).thenReturn(session);
-
-
-
-
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
         AuthenticationResponse authenticationResponse = AuthenticationResponse.builder().token("token").build();
 

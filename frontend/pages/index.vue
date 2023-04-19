@@ -16,7 +16,7 @@
           Logg inn her
         </button>
       </NuxtLink>
-      <NuxtLink to="/login">
+      <NuxtLink to="/">
         <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
           Les mer om oss her
         </button>

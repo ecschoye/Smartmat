@@ -1,11 +1,13 @@
 <template>
   <div class="wrapper">
     <form @submit.prevent="sendForm" class="form">
-      <h1>Login</h1>
       <BaseInput id="inpEmail" class="input-container" type="email" label="Email" v-model="form.email" />
       <BaseInput id="inpPassword" class="input-container" type="password" label="Password" v-model="form.password" />
-      <span class="text">Dont have an account?</span> <nuxt-link class="link" to="/register">Register</nuxt-link>
-      <button id="button">Send</button>
+      <div class="button-wrapper">
+        <GreenButton label="Logg inn" width="100%" height="50px" />
+        <div class="divider"></div>
+        <GrayButton label="Ny bruker" width="100%" height="50px" />
+      </div>
     </form>
   </div>
 </template>
@@ -13,9 +15,13 @@
 <script lang="ts">
 import { defineComponent, ref, reactive } from 'vue';
 import BaseInput from '@/components/Form/BaseInput.vue';
+import GreenButton from "@/components/Button/GreenButton.vue";
+import GrayButton from "~/components/Button/GrayButton.vue";
 
 export default defineComponent({
   components: {
+    GrayButton,
+    GreenButton,
     BaseInput,
   },
   setup() {
@@ -42,6 +48,14 @@ export default defineComponent({
 
 <style scoped>
 
+
+.divider{
+  width: 100%;
+  height: 2px;
+  background-color: gray;
+  margin: 20px 0;
+}
+
 h1{
   color: white;
   text-align: center;
@@ -52,10 +66,11 @@ h1{
 .form {
   width: 400px;
   height: fit-content;
-  background-image: linear-gradient(to bottom right, rgb(92, 88, 88), rgb(37, 33, 33));
-  padding: 40px;
+  background: white;
+  padding: 0 40px 40px 40px;
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border: solid 2px black;
 }
 
 .input-container {
@@ -126,76 +141,6 @@ h1{
   color: white;
 }
 
-#button {
-  background: linear-gradient(45deg, #FC466B, #3F5EFB);
-  border: 0;
-  border-radius: 12px;
-  color: white;
-  cursor: pointer;
-  font-size: 18px;
-  height: 50px;
-  margin-top: 40px;
-  outline: 0;
-  width: 100%;
-  transition: transform 200ms;
-}
-
-#button:hover {
-  transform: scale(1.05);
-}
-
-#button:disabled{
-  cursor: initial;
-  transform: scale(1);
-}
-/* Popup container - can be anything you want */
-.popup {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  left: 50%;
-}
-
-/* The actual popup */
-.popup .popuptext {
-  visibility: hidden;
-  width: 160px;
-  background-color: #555;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 8px 0;
-  position: absolute;
-  z-index: 1;
-  bottom: 125%;
-  left: 50%;
-  margin-left: -80px;
-  margin-bottom: -35px;
-  cursor: default;
-}
-
-/* Popup arrow */
-.popup .popuptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
-}
-
-/* Toggle this class - hide and show the popup */
-.popup .show {
-  visibility: visible;
-  -webkit-animation: fadeIn 1s;
-  animation: fadeIn 1s;
-}
 
 /* Add animation (fade in the popup) */
 @-webkit-keyframes fadeIn {
@@ -208,21 +153,6 @@ h1{
   to {opacity:1 ;}
 }
 
-.text{
-  color: white;
-  font-size: 15px;
-}
-
-.link{
-  color: white;
-  font-size: 15px;
-}
-
-.link:hover{
-  color: white;
-  font-size: 15px;
-  text-decoration: underline;
-}
 
 @media (max-width: 768px) {
   .form {

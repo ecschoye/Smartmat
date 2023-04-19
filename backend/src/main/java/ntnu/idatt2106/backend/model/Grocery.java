@@ -21,6 +21,10 @@ public class Grocery {
     @Schema(description = "The id of the user, automatically generated")
     private int id;
 
+    @Column(name = "name")
+    @Schema(description = "Name of the grocery")
+    private String name;
+
     @Column(name = "groceryExpiryDays")
     @Schema(description = "Number of days until expected expiry")
     private int groceryExpiryDays;
@@ -33,5 +37,4 @@ public class Grocery {
     @JoinColumn(name = "subCategoryId")
     @Schema(description = "The sub category to the grocery")
     private SubCategory subCategory;
-
 }

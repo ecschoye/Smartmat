@@ -105,7 +105,6 @@ export default defineComponent({
 }
 
 .input:not(:placeholder-shown) ~ .placeholder {
-  color: #808097;
 }
 
 .input:focus ~ .placeholder {

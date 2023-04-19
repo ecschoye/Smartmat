@@ -1,9 +1,6 @@
 package ntnu.idatt2106.backend.authentication;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import jakarta.servlet.http.HttpSession;
 import ntnu.idatt2106.backend.controller.AuthenticateController;
 import ntnu.idatt2106.backend.exceptions.UserAlreadyExistsException;
 import ntnu.idatt2106.backend.model.User;
@@ -18,17 +15,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import jakarta.servlet.http.HttpServletResponse;
-
 
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
@@ -42,10 +35,6 @@ public class AuthenticationTests {
 
     @InjectMocks
     private AuthenticateController loginController;
-
-    @Mock
-    private HttpServletResponse httpServletResponse;
-
 
     @Mock
     private HttpServletRequest httpServletRequest;
@@ -79,18 +68,6 @@ public class AuthenticationTests {
 
     @Test
     public void authenticate_returnsOkResponse() throws InvalidCredentialsException {
-
-
-
-        // Mock the HttpSession object
-        HttpSession session = mock(HttpSession.class);
-
-        // Set up the mock to return a non-null HttpSession object
-        when(httpServletRequest.getSession()).thenReturn(session);
-
-
-
-
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
         AuthenticationResponse authenticationResponse = AuthenticationResponse.builder().token("token").build();
 
@@ -108,10 +85,6 @@ public class AuthenticationTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(authenticationResponse, response.getBody());
     }
-
-
-
-
 
 
     @Test

@@ -6,7 +6,7 @@
         <span class="sr-only">SmartMat</span>
         <img class="h-12 w-auto" src="../assets/icons/smartmat/leafTransparent.png" alt="">
       </NuxtLink>
-      <NuxtLink href="#" class="text-md font-semibold leading-6 text-gray-900">Hjem</NuxtLink>
+      <NuxtLink href="/" class="text-md font-semibold leading-6 text-gray-900">Hjem</NuxtLink>
       <NuxtLink href="#" class="text-md font-semibold leading-6 text-gray-900">Ukesmeny</NuxtLink>
       <NuxtLink href="#" class="text-md font-semibold leading-6 text-gray-900">Oppskrifter</NuxtLink>
       <NuxtLink href="#" class="text-md font-semibold leading-6 text-gray-900">Statistikk</NuxtLink>
@@ -14,7 +14,7 @@
       <div class="hidden lg:flex flex-1 space-x-2 items-center lg:justify-end">
         <div class="p-0.5 rounded-md ring-1 ring-inset ring-gray-300 inline-flex items-center">
           <FridgeSelector :fridges="fridges" @selected-fridge-event="handleFridgeEvent" />
-          <button type="button" 
+          <button type="button"
             class="inline-flex items-center hover:cursor-pointer
                bg-white sm:text-md outline:none
               transition duration-150 hover:border-emerald-400

@@ -25,6 +25,17 @@
   </div>
 </template>
 
+<script setup lang="ts">
+import { useUserStore } from '~/store/userStore';
+import {onMounted} from "vue";
+
+const userStore = useUserStore();
+
+onMounted(async () => {
+  await userStore.checkAuthStatus();
+});
+</script>
+
 <style scoped>
 
 .image{

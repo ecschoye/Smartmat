@@ -50,7 +50,7 @@ public class ShoppingListController {
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 
-    @PostMapping("/add-grocery/{shoppingListId}/{isRequested}")
+    @PostMapping("/add-grocery")
     public ResponseEntity<GroceryShoppingList> saveGroceryToShoppingList(@RequestBody SaveGroceryRequest groceryRequest) throws SaveException{
         logger.info("Received request to save grocery {} to shopping list with id {}", groceryRequest.getName(), groceryRequest.getShoppingListId());
         Optional<GroceryShoppingList> groceryList = shoppingListService.saveGrocery(groceryRequest);

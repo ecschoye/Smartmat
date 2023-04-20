@@ -3,10 +3,7 @@ package ntnu.idatt2106.backend.service;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
-import ntnu.idatt2106.backend.repository.GroceryListRepository;
-import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
-import ntnu.idatt2106.backend.repository.ShoppingListRepository;
-import ntnu.idatt2106.backend.repository.SubCategoryRepository;
+import ntnu.idatt2106.backend.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -22,6 +19,8 @@ public class ShoppingListService {
     private final RefrigeratorRepository refrigeratorRepository;
     private final GroceryListRepository groceryListRepository;
     private final SubCategoryRepository subCategoryRepository;
+
+    private final GroceryRepository groceryRepository;
     private Logger logger = LoggerFactory.getLogger(ShoppingListService.class);
 
     public long createShoppingList(long refrigeratorId) {
@@ -63,12 +62,17 @@ public class ShoppingListService {
 
 
             if (subCategory.isPresent()) {
+                logger.info("Found sub category");
                 Grocery grocery = Grocery.builder().name(groceryRequest.getName()).groceryExpiryDays(groceryRequest.getGroceryExpiryDays())
                         .description(groceryRequest.getDescription()).subCategory(subCategory.get()).build();
+                groceryRepository.save(grocery);
+                logger.info("Created grocery with name " + grocery.getName());
+
                 groceryShoppingList.setGrocery(grocery);
                 groceryShoppingList.setShoppingList(shoppingList.get());
                 groceryShoppingList.setRequest(groceryRequest.isRequested());
             }
+            logger.info("Saved new grocery to the grocery list");
 
             return Optional.of(groceryListRepository.save(groceryShoppingList));
         }

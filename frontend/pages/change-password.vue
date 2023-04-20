@@ -1,8 +1,9 @@
 <template>
   <div class="flex justify-center items-center">
-    <div class="w-2/3 mx-auto">
-      <p class="text-center mt-20 text-xl font-bold">Endre passord</p>
-      <div class="flex flex-col items-center mt-8">
+    <div class="w-2/3 mx-auto bg-white mt-10 rounded-md py-5">
+      <p class="text-center mt-10 text-xl font-bold">Endre passord</p>
+      <div class="w-2/3 mx-auto flex flex-col items-center mt-3">
+        <div class="divider"></div>
         <div class="mb-4">
           <div class="input-container w-full">
             <BaseInput id="newPassword" type="password" class="w-full" label="Nytt passord" v-model="newPassword"/>
@@ -15,7 +16,7 @@
           </div>
           <div class="flex flex-col" v-if="showPasswordMismatchMessage">
             <div class="mb-4">
-              <div class="mx-auto w-2/3 p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+              <div class="mx-auto w-full p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
                 <span class="font-medium">Advarsel!</span> Passordene er ikke like.
               </div>
             </div>
@@ -59,6 +60,11 @@ const isFormValid = computed(() => {
 
 </script>
 
-<style lang="scss" scoped>
-
+<style scoped>
+.divider{
+  width: 100%;
+  height: 2px;
+  background-color: gray;
+  margin: 20px 0;
+}
 </style>

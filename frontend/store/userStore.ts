@@ -1,37 +1,37 @@
 import { defineStore } from 'pinia'
+import axiosInstance from '~/service/AxiosInstance';
+
+interface UserState {
+    user_id: string;
+    authenticated: boolean;
+    role: string;
+}
 
 export const useUserStore = defineStore('user', {
     state: () => ({
         user_id: "",
-        authenticated: false as boolean,
-        role : ""
-
+        authenticated: false,
+        role: "",
     }),
     getters: {
-        isLoggedIn(state: boolean) {
-            return state.authenticated;
-        },
-        getLoggedInUserId(state) {
-            return state.user_id;
-        },
-        getLoggedInUserRole(state) {
-            return state.role;
-        },
+        isLoggedIn: (state: UserState) => state.authenticated,
+        getLoggedInUserId: (state: UserState) => state.user_id,
+        getLoggedInUserRole: (state: UserState) => state.role,
     },
     actions: {
         setLoggedInUserId(id: string) {
-            this.user_id = id
+            this.user_id = id;
         },
         setLoggedInUserRole(role: string) {
-            this.role = role
+            this.role = role;
         },
         setLoggedInUserStatus(status: boolean) {
-            this.authenticated = status
+            this.authenticated = status;
         },
         logout() {
-            this.user_id = ""
-            this.authenticated = false
-            this.role = ""
+            this.user_id = "";
+            this.authenticated = false;
+            this.role = "";
         },
         async checkAuthStatus() {
             try {
@@ -45,6 +45,5 @@ export const useUserStore = defineStore('user', {
                 this.authenticated = false; // Set authenticated to false on error
             }
         },
-
     },
-})
+});

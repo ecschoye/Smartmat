@@ -50,6 +50,26 @@ public class ShoppingListService {
         return groceries;
     }
 
+    public List<Grocery> getGroceries(long shoppingListId, long subCategoryId) {
+        logger.info("Retrieving groceries from the database");
+        List<Grocery> groceries = groceryListRepository.findByShoppingListIdAndSubCategoryId(shoppingListId, subCategoryId);
+        if (groceries.isEmpty()) {
+            logger.info("Received no groceries from the database");
+        }
+        logger.info("Received groceries from the database");
+        return groceries;
+    }
+
+    public List<Category> getCategories(long shoppingListId) {
+        logger.info("Retrieving categories from shopping list with id {}", shoppingListId);
+        List<Category> categories = groceryListRepository.findCategoryByShoppingListId(shoppingListId);
+        if (categories.isEmpty()) {
+            logger.info("Received no categories from shopping list with id {}", shoppingListId);
+        }
+        logger.info("Received categories from the database for shopping list with id", shoppingListId);
+        return categories;
+    }
+
     public Optional<GroceryShoppingList> saveGrocery(SaveGroceryRequest groceryRequest) {
         logger.info("Saving grocery: {} to shopping list with id {}", groceryRequest.getName(), groceryRequest.getShoppingListId());
         Optional<ShoppingList> shoppingList = shoppingListRepository.findById(groceryRequest.getShoppingListId());

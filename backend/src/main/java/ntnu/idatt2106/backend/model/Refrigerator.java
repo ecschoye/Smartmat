@@ -11,21 +11,21 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Fridge")
-@Schema(description = "A registered fridge of the application")
+@Table(name = "Refrigerator")
+@Schema(description = "A registered refrigerator of the application")
 @Entity
-public class Fridge {
+public class Refrigerator {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(description = "The id to the fridge, automatically generated")
+    @Schema(description = "The id to the refrigerator, automatically generated")
     private int id;
 
     @Column(name = "name")
-    @Schema(description = "The defined name to the fridge")
+    @Schema(description = "The defined name to the refrigerator")
     private String name;
 
     @Column(name = "address")
-    @Schema(description = "The address to the fridge")
+    @Schema(description = "The address to the refrigerator")
     private String address;
 }

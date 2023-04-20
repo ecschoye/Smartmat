@@ -1,5 +1,5 @@
 <template>
-  <button class="text-white rounded hover:bg-green-700" :style="{ width: width, height: height }">
+  <button class="text-white rounded" :style="{ width: width, height: height }">
     {{ label }}
   </button>
 </template>
@@ -19,5 +19,9 @@ button {
   outline: none;
   cursor: pointer;
   transition: all 0.2s;
+}
+
+button:hover {
+  background-color: #52cea0;
 }
 </style>

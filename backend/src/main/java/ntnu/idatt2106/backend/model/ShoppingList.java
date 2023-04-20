@@ -12,17 +12,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "ShoppingList")
-@Schema(description = "A registered fridge of the application")
+@Schema(description = "A registered refrigerator of the application")
 @Entity
 public class ShoppingList {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(description = "The id to the fridge, automatically generated")
+    @Schema(description = "The id to the refrigerator, automatically generated")
     private int id;
 
     @OneToOne
-    @JoinColumn(name = "fridgeId")
-    @Schema(description = "The fridge connected to the shopping list")
-    private Fridge fridge;
+    @JoinColumn(name = "refrigeratorId")
+    @Schema(description = "The refrigerator connected to the shopping list")
+    private Refrigerator refrigerator;
 }
+

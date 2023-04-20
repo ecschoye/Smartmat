@@ -1,5 +1,5 @@
 <template>
-  <button class="text-black bg-gray-400 rounded hover:bg-gray-600" :style="{ width: width, height: height }">
+  <button class="text-white rounded" :style="{ width: width, height: height }">
     {{ label }}
   </button>
 </template>
@@ -17,5 +17,10 @@ button {
   border: none;
   outline: none;
   cursor: pointer;
+  background-color: #5c5850;
+}
+
+button:hover{
+  background-color: #7e796f;
 }
 </style>

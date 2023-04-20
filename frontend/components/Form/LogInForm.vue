@@ -70,7 +70,7 @@ h1{
   padding: 0 40px 40px 40px;
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border: solid 2px black;
+  border: solid 2px #dcdbdb;
 }
 
 .input-container {

@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h1 class="flex justify-center text-white text-4xl mt-30">Logg deg inn eller lag en ny bruker her</h1>
+  <div class="mb-8 mt-14">
+    <h1 class="flex justify-center text-white text-4xl ">Logg deg inn eller lag en ny bruker her</h1>
   </div>
   <div class="wrapper">
     <div class="logo hidden md:flex">
@@ -23,7 +23,7 @@ import LogInForm from "~/components/Form/LogInForm.vue";
   align-items: center;
   justify-content: center;
   max-width: 800px;
-  margin: 60px auto 0;
+  margin: 60px auto 0 auto;
   gap: 2rem;
 }
 
@@ -32,12 +32,9 @@ import LogInForm from "~/components/Form/LogInForm.vue";
   justify-content: center;
   width: 100%;
 }
-
 .image {
-  max-width: 100%;
-  height: auto;
+  width: 100%;
 }
-
 .form-wrapper {
   width: 100%;
   max-width: 400px;
@@ -46,9 +43,14 @@ import LogInForm from "~/components/Form/LogInForm.vue";
 #log-in-form {
   display: flex;
   justify-content: center;
+  height: 100%;
 }
 
 h1{
-  margin-top: 50px;
+  margin-top: 30px;
+}
+
+template{
+  max-height: calc(100vh - 96px);
 }
 </style>

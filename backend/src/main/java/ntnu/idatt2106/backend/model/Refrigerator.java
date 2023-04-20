@@ -19,7 +19,7 @@ public class Refrigerator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "The id to the refrigerator, automatically generated")
-    private int id;
+    private long id;
 
     @Column(name = "name")
     @Schema(description = "The defined name to the refrigerator")

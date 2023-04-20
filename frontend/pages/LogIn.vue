@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-8 mt-14">
+  <div class=" mt-14">
     <h1 class="flex justify-center text-white text-4xl ">Logg deg inn eller lag en ny bruker her</h1>
   </div>
   <div class="wrapper">
@@ -23,7 +23,7 @@ import LogInForm from "~/components/Form/LogInForm.vue";
   align-items: center;
   justify-content: center;
   max-width: 800px;
-  margin: 60px auto 0 auto;
+  margin: 40px auto 0 auto;
   gap: 2rem;
 }
 

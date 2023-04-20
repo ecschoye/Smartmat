@@ -6,38 +6,48 @@
       <div class="button-wrapper">
         <GreenButton label="Logg inn" width="100%" height="50px" />
         <div class="divider"></div>
-        <GrayButton label="Ny bruker" width="100%" height="50px" />
+        <nuxt-link to="/register">
+          <GrayButton label="Ny bruker" width="100%" height="50px" />
+        </nuxt-link>
       </div>
     </form>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref, reactive } from 'vue';
+<script setup lang="ts">
+
 import GreenButton from "~/components/Button/GreenButton.vue";
 import GrayButton from "~/components/Button/GrayButton.vue";
 import BaseInput from "~/components/Form/BaseInput.vue";
+import { useUserStore } from "~/store/userStore";
+import { postLogin } from "~/service/authentication/AuthenticationService";
 
-export default defineComponent({
-  components: {BaseInput, GrayButton, GreenButton},
-  setup() {
-    const form = reactive({
-      email: '',
-      password: '',
-    });
+const userStore = useUserStore();
+const errorMessage = ref("");
+const router = useRouter();
 
-    const sendForm = async () => {
-      console.log('logging in');
-      console.log('email: ' + form.email);
-      console.log('password: ' + form.password);
-    };
-
-    return {
-      form,
-      sendForm,
-    };
-  },
+const form = reactive({
+  email: '',
+  password: '',
 });
+
+const sendForm = async () => {
+  try {
+    const response = await postLogin(form);
+    if (response.status === 200) {
+      sessionStorage.setItem('SmartMatAccessToken', response.data.token);
+      userStore.setLoggedInUserStatus(true);
+      userStore.setLoggedInUserRole(response.data.userRole);
+      userStore.setLoggedInUserId(response.data.userId);
+      form.email = '';
+      form.password = '';
+      await router.push('/');
+    }
+  } catch (error: any) {
+    errorMessage.value = error.response;
+  }
+};
+
 </script>
 
 

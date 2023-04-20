@@ -7,13 +7,13 @@
       <img src="../assets/icons/smartmat/smartMat.png" alt="logo" class="image">
     </div>
     <div class="form-wrapper">
-      <LogInForm id="log-in-form"></LogInForm>
+      <RegisterForm id="log-in-form"></RegisterForm>
     </div>
   </div>
 </template>
 
 <script setup>
-import LogInForm from "~/components/Form/LogInForm.vue";
+import RegisterForm from "~/components/Form/RegisterForm.vue";
 </script>
 
 <style scoped>

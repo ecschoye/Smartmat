@@ -11,6 +11,12 @@
 
     <div class="button-grid">
 
+      <NuxtLink to="#" v-if="loggedIn">
+      <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
+        Gå til kjøleskapet mitt
+      </button>
+    </NuxtLink>
+
       <NuxtLink to="/login">
         <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
           Logg inn her
@@ -24,6 +30,20 @@
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { useUserStore } from '~/store/userStore';
+import {onMounted} from "vue";
+
+const loggedIn = computed(() => userStore.isLoggedIn);
+
+const userStore = useUserStore();
+
+onMounted(async () => {
+  console.log(loggedIn.value);
+  await userStore.checkAuthStatus();
+});
+</script>
 
 <style scoped>
 

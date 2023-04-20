@@ -1,34 +1,37 @@
 <template>
-  <div class="w-2/3 min-h-fit bg-slate-100 mx-auto text-center rounded-md py-8 mt-5">
-    <p class="text-center mt-10 text-xl font-bold">Systeminnstillinger</p>
-    <div class="w-2/3 mx-auto pt-10">
-      <HeadlessListbox as="div" v-model="selected">
-        <HeadlessListboxLabel class="block text-xl leading-6 text-gray-900">Språk</HeadlessListboxLabel>
-        <div class="relative mt-2">
-          <HeadlessListboxButton class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 mt-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6">
+  <div class="w-2/3 min-h-fit bg-white border-5px mx-auto text-center rounded-md py-6 mt-10">
+    <p class="text-center mt-7 text-xl font-bold">Systeminnstillinger</p>
+    <div class="w-2/3 mx-auto pt-2">
+      <div class="divider"></div>
+      <div class="w-2/3 mx-auto">
+        <HeadlessListbox as="div" v-model="selected">
+          <HeadlessListboxLabel class="block text-xl leading-6 text-gray-900">Språk</HeadlessListboxLabel>
+          <div class="relative mt-2">
+            <HeadlessListboxButton class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 mt-3 focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-sm sm:leading-6">
                         <span class="flex items-center">
                         <span class="ml-3 block truncate">{{ selected.name }}</span>
                         </span>
-            <span class="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
+              <span class="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
                         </span>
-          </HeadlessListboxButton>
+            </HeadlessListboxButton>
 
-          <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
-            <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-              <HeadlessListboxOption as="template" v-for="language in languages" :key="language.id" :value="language" v-slot="{ active, selected }">
-                <li :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-3 pr-9']">
-                  <div class="flex items-center">
-                    <span :class="[selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate']">{{ language.name }}</span>
-                  </div>
+            <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
+              <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                <HeadlessListboxOption as="template" v-for="language in languages" :key="language.id" :value="language" v-slot="{ active, selected }">
+                  <li :class="[active ? 'bg-green-500 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-3 pr-9']">
+                    <div class="flex items-center">
+                      <span :class="[selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate']">{{ language.name }}</span>
+                    </div>
 
-                  <span v-if="selected" :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 right-0 flex items-center pr-4']">
+                    <span v-if="selected" :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 right-0 flex items-center pr-4']">
                             </span>
-                </li>
-              </HeadlessListboxOption>
-            </HeadlessListboxOptions>
-          </transition>
-        </div>
-      </HeadlessListbox>
+                  </li>
+                </HeadlessListboxOption>
+              </HeadlessListboxOptions>
+            </transition>
+          </div>
+        </HeadlessListbox>
+      </div>
       <p class="text-xl mt-8">Lightmode</p>
 
       <!-- Switch Container -->
@@ -81,6 +84,11 @@ export default {
 </script>
 
 
-<style lang="scss" scoped>
-
+<style scoped>
+.divider{
+  width: 100%;
+  height: 2px;
+  background-color: gray;
+  margin: 20px 0;
+}
 </style>

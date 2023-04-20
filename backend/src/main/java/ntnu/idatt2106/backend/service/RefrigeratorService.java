@@ -69,14 +69,18 @@ public class RefrigeratorService {
      * Deletes a refrigerator by ID.
      *
      * @param id The ID of the refrigerator to delete.
+     * @return true if the refrigerator was successfully deleted, false otherwise
      */
     public boolean delete(long id) {
-        try {
-            refrigeratorRepository.deleteById(id);
-            return true;
-        } catch (EmptyResultDataAccessException e) {
-            logger.error("Failed to delete refrigerator with id {}: {}", id, e.getMessage());
-            return false;
+        if (refrigeratorRepository.existsById(id)) {
+            try {
+                refrigeratorRepository.deleteById(id);
+                return true;
+            } catch (EmptyResultDataAccessException e) {
+                logger.error("Failed to delete refrigerator with id {}: {}", id, e.getMessage());
+            }
         }
+        logger.error("Refrigerator with id {} does not exist", id);
+        return false;
     }
 }

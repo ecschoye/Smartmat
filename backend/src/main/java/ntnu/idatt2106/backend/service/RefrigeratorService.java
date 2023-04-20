@@ -32,7 +32,7 @@ public class RefrigeratorService {
      * @param id The ID of the refrigerator to find.
      * @return An Optional containing the refrigerator with the specified ID, or an empty Optional if no such refrigerator exists.
      */
-    public Optional<Refrigerator> findById(int id) {
+    public Optional<Refrigerator> findById(long id) {
         if(id < 0) return Optional.empty();
         return refrigeratorRepository.findById(id);
     }
@@ -70,7 +70,7 @@ public class RefrigeratorService {
      *
      * @param id The ID of the refrigerator to delete.
      */
-    public boolean delete(int id) {
+    public boolean delete(long id) {
         try {
             refrigeratorRepository.deleteById(id);
             return true;

@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-center items-center">
-    <div class="w-2/3 mx-auto bg-white mt-10 rounded-md py-5">
-      <p class="text-center mt-10 text-xl font-bold">Endre passord</p>
+    <div class="w-2/3 mx-auto bg-white dark:bg-zinc-500 mt-10 rounded-md py-5">
+      <p class="text-center dark:text-white mt-10 text-xl font-bold">Endre passord</p>
       <div class="w-2/3 mx-auto flex flex-col items-center mt-3">
         <div class="divider"></div>
         <div class="mb-4">
@@ -37,6 +37,8 @@
 import BaseInput from "~/components/Form/BaseInput.vue";
 import GrayButton from '@/components/Button/GrayButton.vue'
 
+const colorMode = useColorMode()
+console.log(colorMode.preference)
 const oldPassword = ref('')
 const verifyNewPassword = ref('')
 const newPassword = ref('')

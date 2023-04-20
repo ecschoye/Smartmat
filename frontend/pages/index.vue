@@ -1,10 +1,10 @@
 <template>
   <div class="wrapper">
     <div class="">
-      <h1 class="text-white text-center text-6xl mb-10 mt-20">Velkommen til SmartMat</h1>
+      <h1 class="text-white text-center text-6xl mb-8 mt-14">Velkommen til SmartMat</h1>
     </div>
 
-    <div class="flex justify-center mb-20">
+    <div class="flex justify-center">
       <!-- logo -->
       <img src="../assets/icons/smartmat/smartMat.png" alt="logo" class="w-1/4 h-1/4 image">
     </div>
@@ -33,7 +33,8 @@
 
 .wrapper{
   width: 60%;
-  margin: auto;
+  margin: 0 auto;
+  max-height: calc(100vh - 96px);
 }
 
 .button-grid {

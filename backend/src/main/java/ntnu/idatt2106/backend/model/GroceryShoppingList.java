@@ -2,8 +2,19 @@ package ntnu.idatt2106.backend.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public class GroceryList {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "GroceryList")
+@Schema(description = "Connection table between groceries and the shopping list")
+@Entity
+public class GroceryShoppingList {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

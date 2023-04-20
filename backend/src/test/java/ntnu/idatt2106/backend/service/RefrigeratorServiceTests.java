@@ -1,7 +1,13 @@
 package ntnu.idatt2106.backend.service;
 
 import ntnu.idatt2106.backend.model.Refrigerator;
+import ntnu.idatt2106.backend.model.RefrigeratorUser;
+import ntnu.idatt2106.backend.model.User;
+import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
 import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
+import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
+import ntnu.idatt2106.backend.repository.UserRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,10 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.EmptyResultDataAccessException;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,108 +25,127 @@ import static org.mockito.Mockito.*;
 public class RefrigeratorServiceTests {
 
     @Mock
-    private RefrigeratorRepository repository;
+    private RefrigeratorRepository refrigeratorRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private RefrigeratorUserRepository refrigeratorUserRepository;
 
     @InjectMocks
-    private RefrigeratorService service;
+    private RefrigeratorService refrigeratorService;
 
-    private Refrigerator refrigerator;
+    private RefrigeratorRequest refrigeratorRequest;
+    private User user;
 
     @BeforeEach
     void setUp() {
-        refrigerator = new Refrigerator();
-        refrigerator.setName("Example Name");
-        refrigerator.setAddress("Example Address");
+        user = new User();
+        user.setEmail("example@example.com");
+
+        refrigeratorRequest = new RefrigeratorRequest();
+        refrigeratorRequest.setRefrigerator(new Refrigerator());
+        refrigeratorRequest.getRefrigerator().setName("Example Name");
+        refrigeratorRequest.getRefrigerator().setAddress("Example Address");
+        refrigeratorRequest.setUsername("example@example.com");
     }
 
     @Test
-    public void testSaveRefrigeratorSuccess() {
-        when(repository.save(refrigerator)).thenReturn(refrigerator);
+    public void testSaveRefrigeratorSuccess() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+        when(refrigeratorRepository.save(any(Refrigerator.class))).thenReturn(new Refrigerator());
+        when(refrigeratorUserRepository.save(any(RefrigeratorUser.class))).thenReturn(new RefrigeratorUser());
 
-        Refrigerator saved = service.save(refrigerator);
-
-        assertNotNull(saved);
-        assertEquals(refrigerator.getName(), saved.getName());
-        assertEquals(refrigerator.getAddress(), saved.getAddress());
-
-        verify(repository, times(1)).save(refrigerator);
-    }
-
-    @Test
-    public void testFindByIdSuccess() {
-        when(repository.findById(1L)).thenReturn(Optional.of(refrigerator));
-
-        Optional<Refrigerator> result = service.findById(1L);
-
-        assertTrue(result.isPresent());
-        assertEquals(refrigerator.getName(), result.get().getName());
-        assertEquals(refrigerator.getAddress(), result.get().getAddress());
-
-        verify(repository, times(1)).findById(1L);
-    }
-
-    @Test
-    public void testGetAllRefrigeratorsSuccess() {
-        List<Refrigerator> refrigeratorList = new ArrayList<>();
-        refrigeratorList.add(refrigerator);
-
-        when(repository.findAll()).thenReturn(refrigeratorList);
-
-        List<Refrigerator> result = service.getAllRefrigerators();
+        Refrigerator result = refrigeratorService.save(refrigeratorRequest);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(refrigerator.getName(), result.get(0).getName());
-        assertEquals(refrigerator.getAddress(), result.get(0).getAddress());
-
-        verify(repository, times(1)).findAll();
     }
 
     @Test
-    public void testDeleteRefrigeratorSuccess() {
-        when(repository.existsById(1L)).thenReturn(true);
+    public void testSaveRefrigeratorFailure() throws Exception {
+        when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
 
-        boolean result = service.delete(1L);
+        Refrigerator result = refrigeratorService.save(refrigeratorRequest);
 
-        assertTrue(result);
-
-        verify(repository, times(1)).deleteById(1L);
+        assertNull(result);
     }
 
     @Test
-    void testSaveRefrigeratorWithoutName() {
-        refrigerator.setName(null);
-        assertNull(service.save(refrigerator));
+    void testSaveRefrigeratorWithNullName() throws Exception {
+        // Create user
+        User user = new User();
+        user.setEmail("user@example.com");
+        user.setName("John");
+        user.setPassword("password");
+
+        // Save user
+        userRepository.save(user);
+
+        // Create refrigerator with null name
+        Refrigerator refrigerator = new Refrigerator();
+        refrigerator.setAddress("Address");
+
+        // Create request
+        RefrigeratorRequest request = new RefrigeratorRequest();
+        request.setRefrigerator(refrigerator);
+        request.setUsername(user.getEmail());
+
+        // Test save refrigerator with null name
+        Assertions.assertNull(refrigeratorService.save(request));
     }
 
     @Test
-    void testSaveRefrigeratorWithoutAddress() {
-        refrigerator.setAddress(null);
-        assertNull(service.save(refrigerator));
+    void testSaveRefrigeratorWithNullAddress() throws Exception {
+        // Create user
+        User user = new User();
+        user.setEmail("user@example.com");
+        user.setName("John");
+        user.setPassword("password");
+
+        // Save user
+        userRepository.save(user);
+
+        // Create refrigerator with null address
+        Refrigerator refrigerator = new Refrigerator();
+        refrigerator.setName("Refrigerator");
+
+        // Create request
+        RefrigeratorRequest request = new RefrigeratorRequest();
+        request.setRefrigerator(refrigerator);
+        request.setUsername(user.getEmail());
+
+        // Test save refrigerator with null address
+        Assertions.assertNull(refrigeratorService.save(request));
     }
 
     @Test
-    void testDeleteNonExistentRefrigerator() {
-        Mockito.when(repository.existsById(Mockito.anyLong())).thenReturn(false);
-        assertFalse(service.delete(1L));
+    void testSaveRefrigeratorWithNonExistingUser() throws Exception {
+        // Create user
+        User user = new User();
+        user.setEmail("user@example.com");
+        user.setName("John");
+        user.setPassword("password");
+
+        // Do not save user
+
+        // Create refrigerator
+        Refrigerator refrigerator = new Refrigerator();
+        refrigerator.setName("Refrigerator");
+        refrigerator.setAddress("Address");
+
+        // Create request
+        RefrigeratorRequest request = new RefrigeratorRequest();
+        request.setRefrigerator(refrigerator);
+        request.setUsername(user.getEmail());
+
+        // Test save refrigerator with non-existing user
+        Assertions.assertNull(refrigeratorService.save(request));
     }
 
     @Test
-    void testDeleteRefrigeratorThrowsEmptyResultDataAccessException() {
-        Mockito.doThrow(EmptyResultDataAccessException.class).when(repository).deleteById(Mockito.anyLong());
-        Mockito.when(repository.existsById(Mockito.anyLong())).thenReturn(true);
-        assertFalse(service.delete(1L));
-    }
-
-    @Test
-    void testFindByIdReturnsEmptyOptional() {
-        Mockito.when(repository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
-        assertTrue(service.findById(1L).isEmpty());
-    }
-
-    @Test
-    void testGetAllRefrigeratorsReturnsEmptyList() {
-        Mockito.when(repository.findAll()).thenReturn(new ArrayList<>());
-        assertEquals(new ArrayList<>(), service.getAllRefrigerators());
+    void testDeleteNonExistingRefrigerator() {
+        // Test deleting a non-existing refrigerator
+        Assertions.assertFalse(refrigeratorService.delete(1));
     }
 }

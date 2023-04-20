@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.model.Refrigerator;
+import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +26,13 @@ public class RefrigeratorController {
     Logger logger = LoggerFactory.getLogger(RefrigeratorController.class);
 
     @PostMapping("/create")
-    public ResponseEntity<Refrigerator> createRefrigerator(@RequestBody Refrigerator refrigerator) throws SaveException {
+    public ResponseEntity<Refrigerator> createRefrigerator(@RequestBody RefrigeratorRequest refrigerator) throws SaveException {
         logger.info("Received request to create refrigerator for refrigerator");
-        Refrigerator result = refrigeratorService.save(refrigerator);
-        if (result == null) {
-            logger.info("Failed to create refrigerator");
+        Refrigerator result = null;
+        try {
+            result = refrigeratorService.save(refrigerator);
+            if (result == null) throw new Exception();
+        } catch (Exception e) {
             throw new SaveException("Failed to create refrigerator");
         }
         logger.info("Returning refrigerator with id {}", result.getId());

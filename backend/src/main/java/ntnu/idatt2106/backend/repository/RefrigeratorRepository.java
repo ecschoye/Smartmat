@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface RefrigeratorRepository extends JpaRepository<Refrigerator, Integer> {
-    Optional<Refrigerator> findById(int id);
+public interface RefrigeratorRepository extends JpaRepository<Refrigerator, Long> {
+    Optional<Refrigerator> findById(Long id);
 }

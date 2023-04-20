@@ -31,18 +31,17 @@
 </template>
 
 
-<script setup lang="ts">
-import { useUserStore } from '~/store/userStore';
-import { onMounted, computed } from "vue";
+  <script setup lang="ts">
+  import { useUserStore } from "~/store/userStore";
+  import { onMounted, computed } from "vue";
 
-const userStore = useUserStore();
-const loggedIn = computed(() => userStore.isLoggedIn);
+  const userStore = useUserStore();
+  const loggedIn = computed(() => userStore.isLoggedIn);
 
-onMounted(async () => {
-  await userStore.checkAuthStatus();
-  console.log(loggedIn.value);
-});
-</script>
+  onMounted(async () => {
+    await userStore.checkAuthStatus();
+  });
+  </script>
 
 
 <style scoped>

@@ -1,5 +1,6 @@
 package ntnu.idatt2106.backend;
 
+import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.exceptions.UserAlreadyExistsException;
 import org.apache.http.auth.InvalidCredentialsException;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
@@ -31,6 +32,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ex.getMessage());
     }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<String> handleNullPointerException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(SaveException.class)
+    public ResponseEntity<String> handleSaveException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ex.getMessage());
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception ex) {

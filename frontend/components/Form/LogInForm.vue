@@ -14,16 +14,12 @@
 
 <script lang="ts">
 import { defineComponent, ref, reactive } from 'vue';
-import BaseInput from '@/components/Form/BaseInput.vue';
-import GreenButton from "@/components/Button/GreenButton.vue";
+import GreenButton from "~/components/Button/GreenButton.vue";
 import GrayButton from "~/components/Button/GrayButton.vue";
+import BaseInput from "~/components/Form/BaseInput.vue";
 
 export default defineComponent({
-  components: {
-    GrayButton,
-    GreenButton,
-    BaseInput,
-  },
+  components: {BaseInput, GrayButton, GreenButton},
   setup() {
     const form = reactive({
       email: '',
@@ -43,6 +39,7 @@ export default defineComponent({
   },
 });
 </script>
+
 
 
 

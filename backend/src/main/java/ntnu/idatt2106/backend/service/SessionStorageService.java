@@ -1,8 +1,9 @@
 package ntnu.idatt2106.backend.service;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
+
+import java.util.logging.Logger;
 
 /**
  * Service for Session Storage.
@@ -10,19 +11,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class SessionStorageService {
 
+    Logger logger = Logger.getLogger(SessionStorageService.class.getName());
+
     /**
-     * Extracts token from HttpSession
-     * @param request http requst
+     * Extracts JWT token from Authorization header.
+     *
+     * @param request http request
      * @return token
      */
-    public String extractTokenFromSession(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            Object token = session.getAttribute("SmartMatToken");
-            if (token != null) {
-                return token.toString();
-            }
+    public String extractTokenFromAuthorizationHeader(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7);
         }
+        logger.info("No token found in Authorization header");
         return null;
     }
 }

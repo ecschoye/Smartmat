@@ -1,13 +1,14 @@
 <template>
   <div class="wrapper">
     <form @submit.prevent="sendForm" class="form">
+      <BaseInput id="inpName" class="input-container" type="name" label="Name" v-model="form.name" />
       <BaseInput id="inpEmail" class="input-container" type="email" label="Email" v-model="form.email" />
       <BaseInput id="inpPassword" class="input-container" type="password" label="Password" v-model="form.password" />
       <div class="button-wrapper">
-        <GreenButton label="Logg inn" width="100%" height="50px" />
+        <GreenButton label="Lag bruker" width="100%" height="50px" />
         <div class="divider"></div>
-        <nuxt-link to="/register">
-          <GrayButton label="Ny bruker" width="100%" height="50px" />
+        <nuxt-link to="/login">
+          <GrayButton label="Gå til logg inn" width="100%" height="50px" />
         </nuxt-link>
       </div>
     </form>
@@ -20,25 +21,22 @@ import GreenButton from "~/components/Button/GreenButton.vue";
 import GrayButton from "~/components/Button/GrayButton.vue";
 import BaseInput from "~/components/Form/BaseInput.vue";
 import { useUserStore } from "~/store/userStore";
-import { postLogin } from "~/service/authentication/AuthenticationService";
+import { postRegister } from "~/service/authentication/AuthenticationService";
 
-const userStore = useUserStore();
 const errorMessage = ref("");
 const router = useRouter();
 
 const form = reactive({
+  name: '',
   email: '',
   password: '',
 });
 
 const sendForm = async () => {
   try {
-    const response = await postLogin(form);
+    const response = await postRegister(form);
     if (response.status === 200) {
-      sessionStorage.setItem('SmartMatAccessToken', response.data.token);
-      userStore.setLoggedInUserStatus(true);
-      userStore.setLoggedInUserRole(response.data.userRole);
-      userStore.setLoggedInUserId(response.data.userId);
+      form.name = '';
       form.email = '';
       form.password = '';
       await router.push('/');

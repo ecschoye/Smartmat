@@ -4,4 +4,8 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     'nuxt-headlessui'
   ],
+  components: [
+    { path: '~/components/refridgerator', prefix: 'refridgerator' },
+    '~/components'
+  ]
 })

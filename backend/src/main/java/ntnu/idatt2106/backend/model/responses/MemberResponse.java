@@ -1,11 +1,21 @@
 package ntnu.idatt2106.backend.model.responses;
 
+import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.requests.MemberRequest;
 
 public class MemberResponse {
     private long refrigeratorId;
     private String username;
     private Role role;
+
+    public MemberResponse() {}
+
+    public MemberResponse(RefrigeratorUser ru) {
+        this.refrigeratorId = ru.getRefrigerator().getId();
+        this.username = ru.getUser().getUsername();
+        this.role = ru.getRole();
+    }
 
     public long getRefrigeratorId() {
         return refrigeratorId;

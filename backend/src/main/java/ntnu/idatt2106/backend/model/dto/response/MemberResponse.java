@@ -1,8 +1,7 @@
-package ntnu.idatt2106.backend.model.responses;
+package ntnu.idatt2106.backend.model.dto.response;
 
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.enums.Role;
-import ntnu.idatt2106.backend.model.requests.MemberRequest;
 
 public class MemberResponse {
     private long refrigeratorId;

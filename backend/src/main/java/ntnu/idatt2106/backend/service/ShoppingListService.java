@@ -25,6 +25,7 @@ public class ShoppingListService {
     private Logger logger = LoggerFactory.getLogger(ShoppingListService.class);
 
     public long createShoppingList(long refrigeratorId) {
+    public long createShoppingList(long refrigeratorId) {
         logger.info("Creating shopping list for refrigerator with id {}", refrigeratorId);
         Optional<Refrigerator> refrigerator = refrigeratorRepository.findById(refrigeratorId);
 
@@ -41,6 +42,7 @@ public class ShoppingListService {
         return -1;
     }
 
+    public List<Grocery> getGroceries(long shoppingListId) {
     public List<Grocery> getGroceries(long shoppingListId) {
         logger.info("Retrieving groceries from the database");
         List<Grocery> groceries = groceryListRepository.findByShoppingListId(shoppingListId);
@@ -95,7 +97,10 @@ public class ShoppingListService {
         if (shoppingList.isPresent()) {
             logger.info("Found shopping list for shopping list id {}", shoppingList.get().getId());
 
+            logger.info("Found shopping list for shopping list id {}", shoppingList.get().getId());
 
+
+            Optional<SubCategory> subCategory = subCategoryRepository.findById(groceryRequest.getSubCategoryId());
             Optional<SubCategory> subCategory = subCategoryRepository.findById(groceryRequest.getSubCategoryId());
             GroceryShoppingList groceryShoppingList = new GroceryShoppingList();
 
@@ -115,7 +120,9 @@ public class ShoppingListService {
             logger.info("Saved new grocery to the grocery list");
 
             return Optional.of(groceryListRepository.save(groceryShoppingList));
+            return Optional.of(groceryListRepository.save(groceryShoppingList));
         }
+        logger.info("Could not find a shopping list with id {}", groceryRequest.getShoppingListId());
         logger.info("Could not find a shopping list with id {}", groceryRequest.getShoppingListId());
         return Optional.empty();
     }

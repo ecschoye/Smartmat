@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-center">
-    <div class="w-2/3 mx-auto bg-white dark:bg-zinc-500 mt-10 rounded-md py-5">
-      <p class="text-center dark:text-white mt-10 text-xl font-bold">Kontoinnstillinger</p>
+    <div class="w-2/3 mx-auto bg-white mt-10 rounded-md py-5">
+      <p class="text-center mt-10 text-xl font-bold">Kontoinnstillinger</p>
       <div class="w-2/3 mx-auto flex flex-col items-center mt-3">
         <div class="divider"></div>
         <div class="mb-4">
@@ -28,8 +28,6 @@ import BaseInput from "~/components/Form/BaseInput.vue";
 import GrayButton from '@/components/Button/GrayButton.vue'
 const name = ref('')
 const email = ref('')
-const colorMode = useColorMode()
-console.log(colorMode.preference)
 
 const submit = () => {
   console.log(name.value)

@@ -2,6 +2,7 @@ package ntnu.idatt2106.backend.service;
 
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.model.*;
+import ntnu.idatt2106.backend.model.requests.EditGroceryRequest;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.repository.*;
 import org.slf4j.Logger;
@@ -66,8 +67,26 @@ public class ShoppingListService {
         if (categories.isEmpty()) {
             logger.info("Received no categories from shopping list with id {}", shoppingListId);
         }
-        logger.info("Received categories from the database for shopping list with id", shoppingListId);
+        logger.info("Received categories from the database for shopping list with id {}", shoppingListId);
         return categories;
+    }
+
+    public Optional<GroceryShoppingList> editGrocery(EditGroceryRequest groceryRequest) {
+        logger.info("Editing grocery with id: {} to shopping list with id {}", groceryRequest.getId(), groceryRequest.getShoppingListId());
+
+        Optional<GroceryShoppingList> groceryShoppingList = groceryListRepository.findById(groceryRequest.getId());
+        if (groceryShoppingList.isPresent()) {
+            logger.info("Found grocery in the shopping list");
+            logger.info("Data for the grocery request: id {}, quantity {}, isRequested {}, shoppingListId {}",
+                    groceryRequest.getId(), groceryRequest.getQuantity(), groceryRequest.isRequested(), groceryRequest.getShoppingListId() );//todo: delete
+            groceryShoppingList.get().setRequest(groceryRequest.isRequested());
+            groceryShoppingList.get().setQuantity(groceryRequest.getQuantity());
+
+            logger.info("Edit grocery in the grocery list");
+            return Optional.of(groceryListRepository.save(groceryShoppingList.get()));
+        }
+        logger.info("Could not find the grocery in the shopping list");
+        return Optional.empty();
     }
 
     public Optional<GroceryShoppingList> saveGrocery(SaveGroceryRequest groceryRequest) {
@@ -86,10 +105,11 @@ public class ShoppingListService {
                 Grocery grocery = Grocery.builder().name(groceryRequest.getName()).groceryExpiryDays(groceryRequest.getGroceryExpiryDays())
                         .description(groceryRequest.getDescription()).subCategory(subCategory.get()).build();
                 groceryRepository.save(grocery);
-                logger.info("Created grocery with name " + grocery.getName());
+                logger.info("Created grocery with name {}", grocery.getName());
 
                 groceryShoppingList.setGrocery(grocery);
                 groceryShoppingList.setShoppingList(shoppingList.get());
+                groceryShoppingList.setQuantity(groceryRequest.getQuantity());
                 groceryShoppingList.setRequest(groceryRequest.isRequested());
             }
             logger.info("Saved new grocery to the grocery list");

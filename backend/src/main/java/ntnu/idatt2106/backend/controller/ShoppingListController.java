@@ -6,6 +6,7 @@ import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.model.Category;
 import ntnu.idatt2106.backend.model.Grocery;
 import ntnu.idatt2106.backend.model.GroceryShoppingList;
+import ntnu.idatt2106.backend.model.requests.EditGroceryRequest;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.service.ShoppingListService;
 import org.slf4j.Logger;
@@ -86,5 +87,19 @@ public class ShoppingListController {
         }
         logger.info("Returns groceries and status OK");
         return new ResponseEntity<>(groceryList.get(), HttpStatus.OK);
+    }
+
+    @PostMapping("/edit-grocery")
+    public ResponseEntity<GroceryShoppingList> editGrocery(@RequestBody EditGroceryRequest groceryRequest) throws SaveException{
+        logger.info("Received request to edit grocery with id to {} in shopping list with id {}", groceryRequest.getId(), groceryRequest.getShoppingListId());
+        logger.info("Data for the grocery request: id {}, quantity {}, isRequested {}, shoppingListId {}",
+                groceryRequest.getId(), groceryRequest.getQuantity(), groceryRequest.isRequested(), groceryRequest.getShoppingListId() ); //todo:delete
+        Optional<GroceryShoppingList> grocery = shoppingListService.editGrocery(groceryRequest);
+        if (grocery.isEmpty()) {
+            logger.info("No registered changes to grocery");
+            throw new SaveException("Failed to add a edit the grocery in the shopping list");
+        }
+        logger.info("Returns edited grocery and status OK");
+        return new ResponseEntity<>(grocery.get(), HttpStatus.OK);
     }
 }

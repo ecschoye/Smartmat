@@ -6,17 +6,20 @@ public class SaveGroceryRequest {
     private String description;
     private long subCategoryId;
     private long shoppingListId;
+    private int quantity;
     private boolean isRequested;
+
 
     public SaveGroceryRequest() {
     }
 
-    public SaveGroceryRequest(String name, int groceryExpiryDays, String description, long subCategoryId, long shoppingListId, boolean isRequested) {
+    public SaveGroceryRequest(String name, int groceryExpiryDays, String description, long subCategoryId, long shoppingListId, int quantity, boolean isRequested) {
         this.name = name;
         this.groceryExpiryDays = groceryExpiryDays;
         this.description = description;
         this.subCategoryId = subCategoryId;
         this.shoppingListId = shoppingListId;
+        this.quantity = quantity;
         this.isRequested = isRequested;
     }
 
@@ -66,5 +69,13 @@ public class SaveGroceryRequest {
 
     public void setRequested(boolean requested) {
         isRequested = requested;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }

@@ -18,22 +18,22 @@
             ElementDetails: {
                 type: Object,
                 required: true,
-            },
-            isElementAddedToCart: {
-                type: Boolean, 
-                required: false, 
-                default: false
+            }
+        },
+        data() {
+            return {
+                isElementAddedToCart:false
             }
         },
         methods: {
             removeElement() {
-
+                // Remove the element from the list
             },
             addElementToShoppingCart() {
-
+                // Add the element to the shoppingCart
             },
-            editElement(){
-
+            editElement() {
+                // Edit the element amount
             }
         }
     })

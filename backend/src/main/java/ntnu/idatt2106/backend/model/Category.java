@@ -18,7 +18,7 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "The id of the category, automatically generated")
-    private int id;
+    private long id;
 
     @Column(name = "name")
     @Schema(description = "The name of the category")

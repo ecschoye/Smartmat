@@ -19,7 +19,7 @@ public class ShoppingList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "The id to the refrigerator, automatically generated")
-    private int id;
+    private long id;
 
     @OneToOne
     @JoinColumn(name = "refrigeratorId")

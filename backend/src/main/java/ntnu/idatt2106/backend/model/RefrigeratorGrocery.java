@@ -21,7 +21,7 @@ public class RefrigeratorGrocery {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Schema(description = "The id for the connection between refrigerator and grocery, automatically generated")
-    private int id;
+    private long id;
 
     @Column(name = "physicalExpireDate")
     @Schema(description = "Expire date for the grocery")

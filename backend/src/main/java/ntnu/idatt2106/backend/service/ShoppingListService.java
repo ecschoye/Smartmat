@@ -3,6 +3,7 @@ package ntnu.idatt2106.backend.service;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.requests.EditGroceryRequest;
@@ -165,5 +166,16 @@ public class ShoppingListService {
         logger.info("Saved new grocery to the grocery list");
 
         return Optional.of(groceryListRepository.save(groceryShoppingList));
+    }
+
+    public void deleteGrocery(long groceryListId, HttpServletRequest httpRequest) throws UnauthorizedException {
+        String eMail = extractEmail(httpRequest);
+        Optional<GroceryShoppingList> groceryShoppingList = groceryListRepository.findById(groceryListId);
+
+        if (groceryShoppingList.isPresent() && isSuperUser(eMail, groceryShoppingList.get().getShoppingList().getId())) {
+            groceryListRepository.deleteById(groceryListId);
+        } else {
+            throw new UnauthorizedException("The user is not authorized to delete a grocery list item");
+        }
     }
 }

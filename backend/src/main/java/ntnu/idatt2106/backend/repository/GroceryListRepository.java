@@ -3,11 +3,15 @@ package ntnu.idatt2106.backend.repository;
 import ntnu.idatt2106.backend.model.Category;
 import ntnu.idatt2106.backend.model.Grocery;
 import ntnu.idatt2106.backend.model.GroceryShoppingList;
+import ntnu.idatt2106.backend.model.ShoppingList;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GroceryListRepository extends JpaRepository<GroceryShoppingList, Long> {
     @Query(value = "SELECT gsl.grocery" +

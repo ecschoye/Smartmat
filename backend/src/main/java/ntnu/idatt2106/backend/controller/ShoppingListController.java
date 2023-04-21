@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.SaveException;
+import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.model.Category;
 import ntnu.idatt2106.backend.model.Grocery;
 import ntnu.idatt2106.backend.model.GroceryShoppingList;
@@ -12,6 +13,7 @@ import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.service.ShoppingListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -100,5 +102,21 @@ public class ShoppingListController {
         }
         logger.info("Returns edited grocery and status OK");
         return new ResponseEntity<>(grocery.get(), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete-grocery/{groceryListId}")
+    public ResponseEntity<Boolean> removeGroceryFromShoppingList(@PathVariable(name="groceryListId") long groceryListId, HttpServletRequest httpRequest) throws UnauthorizedException {
+        logger.info("Received request to delete grocery list item with id {}", groceryListId);
+        boolean deleteStatus = false;
+        try {
+            shoppingListService.deleteGrocery(groceryListId, httpRequest);
+            deleteStatus = true;
+        } catch (UnauthorizedException e) {
+            logger.info("Failed to delete grocery item with id {}", groceryListId);
+            throw new UnauthorizedException(e.getMessage());
+        }
+
+        logger.info("Returns deleteStatus and status OK");
+        return new ResponseEntity<>(deleteStatus, HttpStatus.OK);
     }
 }

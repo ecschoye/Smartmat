@@ -1,5 +1,5 @@
 <template>
-    <div class = "flex h-full">
+    <div class = "flex h-4/5">
         <RefridgeratorFridge @group-closed="togglePos(false)" :groceries="refridgeratorStore.getGroceries" @popup-height="(payload) => setPos(payload)" />
         <div>
             <Transition>
@@ -27,8 +27,9 @@ function setPos(payload: number) {
         togglePos(!toggle.value);
     }
   position.value = payload;
-  
 }
+
+
 </script>
 
 <style scoped>

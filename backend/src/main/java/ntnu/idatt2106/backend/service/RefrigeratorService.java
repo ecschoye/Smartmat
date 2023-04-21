@@ -73,6 +73,7 @@ public class RefrigeratorService {
         ru.setUser(user);
 
         try {
+            logger.info("Checks validated, saving refrigeratorUser");
             return refrigeratorUserRepository.save(ru);
         } catch (Exception e) {
             logger.warn("Member could not be added: Failed to save refrigeratoruser");
@@ -103,7 +104,7 @@ public class RefrigeratorService {
      * @param username Email of user
      * @return User associated
      */
-    private User getUser(String username) throws UserNotFoundException {
+    User getUser(String username) throws UserNotFoundException {
         Optional<User> user = userRepository.findByEmail(username);
         if(user.isEmpty()){
             logger.warn("Could not find user with username: {}", username);

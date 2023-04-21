@@ -20,7 +20,7 @@ import GreenButton from "~/components/Button/GreenButton.vue";
 import GrayButton from "~/components/Button/GrayButton.vue";
 import BaseInput from "~/components/Form/BaseInput.vue";
 import { useUserStore } from "~/store/userStore";
-import { postLogin } from "~/service/authentication/AuthenticationService";
+import { postLogin } from "~/service/httputils/authentication/AuthenticationService";
 
 const userStore = useUserStore();
 const errorMessage = ref("");

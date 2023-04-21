@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { AxiosInstance } from "axios";
 import { useUserStore } from "~/store/userStore";
+import {Session} from "inspector";
 const baseURL = "http://localhost:8080";
 
 const axiosInstance: AxiosInstance = axios.create({
@@ -9,9 +10,22 @@ const axiosInstance: AxiosInstance = axios.create({
     timeout: 5000,
     headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
     }
 });
+
+axiosInstance.interceptors.request.use(
+    (config) => {
+        const token = sessionStorage.getItem('SmartMatAccessToken');
+        if (token) {
+            config.headers.Authorization = 'Bearer ' + token;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 axiosInstance.interceptors.response.use(
     (response) => {

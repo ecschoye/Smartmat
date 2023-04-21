@@ -62,6 +62,7 @@ interface Language {
   id: number;
   name: string;
 }
+
 export default defineComponent({
   data() {
     return {

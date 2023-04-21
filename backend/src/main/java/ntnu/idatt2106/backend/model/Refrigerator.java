@@ -2,6 +2,7 @@ package ntnu.idatt2106.backend.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class Refrigerator {
     @Schema(description = "The id to the refrigerator, automatically generated")
     private long id;
 
+    @NotNull
     @Column(name = "name")
     @Schema(description = "The defined name to the refrigerator")
     private String name;

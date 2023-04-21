@@ -6,14 +6,19 @@ import org.apache.http.auth.InvalidCredentialsException;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.logging.Logger;
 
 /**
  * Global exception handler for the backend API.
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    Logger logger = Logger.getLogger(GlobalExceptionHandler.class.getName());
 
     @ExceptionHandler(FileSizeLimitExceededException.class)
     public ResponseEntity<String> handleFileSizeLimitExceededException(FileSizeLimitExceededException ex) {
@@ -45,9 +50,16 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ex.getMessage());
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception ex) {
+        logger.info("An unexpected error occurred: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("An unexpected error occurred: " + ex.getMessage());
     }

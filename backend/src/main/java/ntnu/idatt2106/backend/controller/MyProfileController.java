@@ -91,14 +91,13 @@ public class MyProfileController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/user-status")
     public ResponseEntity<?> getUserStatus(HttpServletRequest request) {
+        logger.info("Received request to get user status");
         try {
             String jwt = sessionStorageService.extractTokenFromAuthorizationHeader(request); // Extract the token from the cookie
-            logger.info("JWT: " + jwt);
             if (jwt == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Unauthorized"));
             }
             User user = userService.findByEmail(jwtService.extractUsername(jwt)); // Pass the JWT token instead of the request
-            logger.info("User: " + user);
             AuthenticationState state = jwtService.getAuthenticationState(jwt, user);
             String role = user.getRole().toString();
 

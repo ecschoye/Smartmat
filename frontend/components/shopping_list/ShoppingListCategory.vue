@@ -6,7 +6,7 @@
                 <h5> {{ CategoryDetails.amount }} </h5>
             </div>
             <div>
-                <button @click.stop="isCategoryExpanded == !isCategoryExpanded">
+                <button @click.stop="isCategoryExpanded = !isCategoryExpanded">
                     {{ isCategoryExpanded ? 'Skjul' : 'Utvid' }}
                 </button>            
             </div>
@@ -24,19 +24,16 @@
 <script lang="ts">
     export default defineComponent({
         props:{
-            categoryListItems: {
-                type: Array as PropType<ShoppingListElement[]>,
-                required: true
-            },
             CategoryDetails: {
                 type: Object,
                 required: true,
-            },
-            isCategoryExpanded: {
-                type: Boolean, 
-                required: false, 
-                default: false
             }
         },
+        data() {
+            return {
+                isCategoryExpanded: false,
+                categoryListItems: this.CategoryDetails.items
+            }
+        }
     })
 </script>

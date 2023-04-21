@@ -21,7 +21,7 @@ import GreenButton from "~/components/Button/GreenButton.vue";
 import GrayButton from "~/components/Button/GrayButton.vue";
 import BaseInput from "~/components/Form/BaseInput.vue";
 import { useUserStore } from "~/store/userStore";
-import { postRegister } from "~/service/authentication/AuthenticationService";
+import { postRegister } from "~/service/httputils/authentication/AuthenticationService";
 
 const errorMessage = ref("");
 const router = useRouter();

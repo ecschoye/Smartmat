@@ -35,10 +35,14 @@ export const useUserStore = defineStore('user', {
         },
         async checkAuthStatus() {
             try {
-                if (this.isLoggedIn) {
-                    const response = await axiosInstance.get('/api/user-status');
+                const response = await axiosInstance.get('/api/user-status');
+                if (response.status === 200){
                     this.authenticated = true; // Set authenticated to true on successful response
                     this.role = response.data.role;
+                }
+                else{
+                    this.authenticated = false;
+                    console.log("Failed to fetch user status");
                 }
             } catch (error) {
                 console.error('Error checking authentication status:', error);

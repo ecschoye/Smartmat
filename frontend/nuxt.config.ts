@@ -16,9 +16,5 @@ export default defineNuxtConfig({
     config: {},
     injectPosition: 0,
     viewer: true,
-  },
-  components: [
-    { path: '~/components/refridgerator', prefix: 'refridgerator' },
-    '~/components'
-  ]
+  }
 })

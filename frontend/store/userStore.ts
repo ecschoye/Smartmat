@@ -28,7 +28,7 @@ export const useUserStore = defineStore('user', {
         setLoggedInUserStatus(status: boolean) {
             this.authenticated = status;
         },
-        logout() {
+        logOut() {
             this.user_id = "";
             this.authenticated = false;
             this.role = "";

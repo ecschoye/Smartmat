@@ -9,15 +9,24 @@
 
 <script setup lang="ts">
 import {onMounted, ref, computed} from "vue";
-import type {User} from "@/types/UserType";
-import axiosInstance from "@/service/AxiosInstance";
+import type {User} from "~/types/UserType";
 import {useUserStore} from "~/store/userStore";
+import {getUserData} from "~/service/httputils/authentication/AuthenticationService";
+import MyProfile from "~/components/Profile/MyProfile.vue";
+import EditProfile from "~/components/Profile/EditProfile.vue";
+import ChangePassword from "~/components/Profile/ChangePassword.vue";
+import AxiosInstance from "~/service/AxiosInstance";
 
+
+
+// Import your components
 
 
 const userStore = useUserStore();
-
 const user = ref({} as User);
+
+const router = useRouter();
+const currentView = shallowRef(MyProfile);
 
 onMounted(() => {
   loadData();
@@ -27,25 +36,23 @@ const props = defineProps({
   height: {
     type: Number,
   }
-})
+});
 
-const currentView = computed(() => {
-  const path = window.location.pathname;
+watchEffect(() => {
+  const path = router.currentRoute.value.path;
   if (path === "/my-profile/edit") {
-    return EditProfile;
-  }
-  else if (path === "/my-profile/edit/change-password") {
-    return ChangePassword;
-  }
-  else {
-    return MyProfile;
+    currentView.value = EditProfile;
+  } else if (path === "/my-profile/edit/change-password") {
+    currentView.value = ChangePassword;
+  } else {
+    currentView.value = MyProfile;
   }
 });
 
 
 async function logOut() {
   try{
-    await axiosInstance.post('/api/auth/logout');
+    await AxiosInstance.post('/api/auth/logout');
     userStore.logOut();
   }
   catch (error) {

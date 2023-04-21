@@ -18,12 +18,12 @@
 
 <script setup lang="ts">
 //import Wave from '@/components/Wave/Wave.vue'
-import ProfileBox from "@/components/Profile/ProfileBox.vue";
 import { ref, computed} from 'vue';
 
 import { useUserStore } from "~/store/userStore";
 import PaginationComponent from "@/components/Items/PaginationComponent.vue";
 import InfoBox from "~/components/Profile/InfoBox.vue";
+import ProfileBox from "~/components/Profile/ProfileBox.vue";
 
 
 const userStore = useUserStore();

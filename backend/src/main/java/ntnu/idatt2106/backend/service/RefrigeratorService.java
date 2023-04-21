@@ -1,10 +1,12 @@
 package ntnu.idatt2106.backend.service;
 
 import lombok.RequiredArgsConstructor;
+import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
 import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
@@ -38,6 +40,79 @@ public class RefrigeratorService {
     private Logger logger = LoggerFactory.getLogger(RefrigeratorService.class);
 
     /**
+     * Adds a member to a refrigerator. C
+     *
+     * @param request
+     * @return
+     * @throws UserNotFoundException
+     */
+    public RefrigeratorUser addMember(MemberRequest request) throws UserNotFoundException {
+        //Get Users
+        logger.debug("Getting superuser");
+        User superUser = getUser(request.getSuperName());
+        logger.debug("Getting new member user");
+        User user = getUser(request.getUserName());
+
+        //Get refrigerator
+        Optional<Refrigerator> refrigerator = refrigeratorRepository.findById(request.getRefrigeratorId());
+        if(refrigerator.isEmpty()){
+            logger.warn("Member could not be added: Could not find refrigerator");
+            return null;
+        }
+
+        //Check privileges
+        Role privileges = getRoleById(superUser.getId(), request.getRefrigeratorId());
+        if(privileges != Role.SUPERUSER){
+            logger.warn("Member could not be added: User does not have super-privileges");
+            return null;
+        }
+
+        RefrigeratorUser ru = new RefrigeratorUser();
+        ru.setRole(Role.USER);
+        ru.setRefrigerator(refrigerator.get());
+        ru.setUser(user);
+
+        try {
+            return refrigeratorUserRepository.save(ru);
+        } catch (Exception e) {
+            logger.warn("Member could not be added: Failed to save refrigeratoruser");
+            return null;
+        }
+    }
+
+    /**
+     * Gets the role a member has in a refrigerator.
+     *
+     * @param userId User to get role of
+     * @param refrigeratorId Refrigerator associated
+     * @return the Enum role
+     */
+    Role getRoleById(String userId, long refrigeratorId){
+        Optional<RefrigeratorUser> refrigeratorUser = refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(userId, refrigeratorId);
+
+        if(refrigeratorUser.isPresent()){
+            return refrigeratorUser.get().getRole();
+        }
+        logger.warn("Superuser not present in refrigerator");
+        return null;
+    }
+
+    /**
+     * Validates username data and returns user by email
+     *
+     * @param username Email of user
+     * @return User associated
+     */
+    private User getUser(String username) throws UserNotFoundException {
+        Optional<User> user = userRepository.findByEmail(username);
+        if(user.isEmpty()){
+            logger.warn("Could not find user with username: {}", username);
+            throw new UserNotFoundException("Could not find user with username:" + username);
+        }
+        return user.get();
+    }
+
+    /**
      * Finds a refrigerator by ID.
      *
      * @param id The ID of the refrigerator to find.
@@ -68,42 +143,26 @@ public class RefrigeratorService {
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
     public Refrigerator save(RefrigeratorRequest request) throws Exception {
         Refrigerator refrigerator = request.getRefrigerator();
+        if(refrigerator.getName() == null || refrigerator.getName().length() == 0) throw new Exception("Refrigerator name is empty");
         String username = request.getUsername();
-        //TODO Check if tests can be done in constructor instead
-        //Check data
-        if(username == null) {
-            logger.warn("Refrigerator could not be added: username is null");
-            return null;
-        }
-        else if(username.length() == 0) {
-            logger.warn("Refrigerator could not be added: username is empty");
-            return null;
-        }
-        else if(refrigerator.getName() == null){
-            logger.warn("Refrigerator could not be added: name is null");
-            return null;
-        }
-
         //Check user exists
-        Optional<User> user = userRepository.findByEmail(username);
-        if(user.isEmpty()){
-            logger.warn("Refrigerator could not be added: user not found");
-            return null;
-        }
-
-        //Create Refrigerator
+        User user = null;
         Refrigerator refrigeratorResult = null;
         try {
+            user = getUser(username);
             refrigeratorResult = refrigeratorRepository.save(refrigerator);
+        } catch(UserNotFoundException e){
+            logger.warn("Refrigerator could not be added: User not found");
+            throw new Exception("Refrigerator could not be added: User not found");
         } catch (Exception e) {
             logger.warn("Refrigerator could not be added: refrigerator could not be added");
-            throw new Exception("Refrigerator could not be added");
+            throw new Exception("Refrigerator could not be added: refrigerator could not be added");
         }
 
         //Connect user to
         RefrigeratorUser refrigeratorUser = new RefrigeratorUser();
         refrigeratorUser.setRefrigerator(refrigeratorResult);
-        refrigeratorUser.setUser(user.get());
+        refrigeratorUser.setUser(user);
         refrigeratorUser.setRole(Role.SUPERUSER);
         RefrigeratorUser refrigeratorUserResult = null;
         try {
@@ -114,8 +173,6 @@ public class RefrigeratorService {
         }
         return refrigerator;
     }
-
-
 
     /**
      * Deletes a refrigerator by ID.

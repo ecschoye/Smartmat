@@ -35,10 +35,7 @@ const sendForm = async () => {
   try {
     const response = await postLogin(form);
     if (response.status === 200) {
-      sessionStorage.setItem('SmartMatAccessToken', response.data.token);
-      userStore.setLoggedInUserStatus(true);
-      userStore.setLoggedInUserRole(response.data.userRole);
-      userStore.setLoggedInUserId(response.data.userId);
+      userStore.logIn(response.data);
       form.email = '';
       form.password = '';
       await router.push('/');

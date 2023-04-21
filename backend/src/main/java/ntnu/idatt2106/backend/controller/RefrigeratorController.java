@@ -1,6 +1,7 @@
 package ntnu.idatt2106.backend.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.model.Refrigerator;
@@ -10,9 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -26,7 +31,7 @@ public class RefrigeratorController {
     Logger logger = LoggerFactory.getLogger(RefrigeratorController.class);
 
     @PostMapping("/create")
-    public ResponseEntity<Refrigerator> createRefrigerator(@RequestBody RefrigeratorRequest refrigerator) throws SaveException {
+    public ResponseEntity<Refrigerator> createRefrigerator(@Valid @RequestBody RefrigeratorRequest refrigerator) throws SaveException {
         logger.info("Received request to create refrigerator for refrigerator");
         Refrigerator result = null;
         try {
@@ -40,7 +45,7 @@ public class RefrigeratorController {
     }
 
     @DeleteMapping("/delete/{refrigeratorId}")
-    public ResponseEntity<Void> deleteRefrigerator(@PathVariable int refrigeratorId) {
+    public ResponseEntity<Void> deleteRefrigerator(@Valid @PathVariable int refrigeratorId) {
         boolean deleted = refrigeratorService.deleteById(refrigeratorId);
         if (deleted) {
             logger.info("Deleted refrigerator with id {}", refrigeratorId);
@@ -58,7 +63,7 @@ public class RefrigeratorController {
     }
 
     @GetMapping("/{refrigeratorId}")
-    public ResponseEntity<Refrigerator> getById(@PathVariable int refrigeratorId) {
+    public ResponseEntity<Refrigerator> getById(@Valid @PathVariable int refrigeratorId) {
         logger.info("Received request for refrigerator with id: {}", refrigeratorId);
         Optional<Refrigerator> result = refrigeratorService.findById(refrigeratorId);
         if(result.isEmpty()){
@@ -69,5 +74,17 @@ public class RefrigeratorController {
             logger.info("Returning refrigerator");
             return new ResponseEntity<Refrigerator>(result.get(), HttpStatus.OK);
         }
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 }

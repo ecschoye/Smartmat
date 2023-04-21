@@ -1,6 +1,6 @@
 <template>
   <div class="w-2/3 min-h-fit bg-white dark:bg-zinc-500 border-5px mx-auto text-center rounded-md py-6 mt-10">
-    <p class="text-center mt-7 text-xl font-bold">Systeminnstillinger</p>
+    <p class="text-center dark:text-white mt-7 text-xl font-bold">Systeminnstillinger</p>
     <div class="w-2/3 mx-auto pt-2">
       <div class="divider"></div>
       <div class="w-2/3 mx-auto">
@@ -98,6 +98,11 @@ export default defineComponent({
       },
     ];
     const selected = ref(languages[0]);
+    const selectedLanguage = ref<Language | null>(null);
+    watch(selected, (newVal) => {
+      console.log(newVal);
+      selectedLanguage.value = newVal;
+    });
     return { languages, selected };
   },
 });

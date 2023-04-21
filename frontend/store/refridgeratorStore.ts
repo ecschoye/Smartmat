@@ -27,7 +27,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
             },
             {
                 id:2,
-                physicalExpiryDate:'20-04-2023',
+                physicalExpiryDate:'21-04-2023',
                 fridgeId: 1,
                 grocery: {
                  id: 1,
@@ -46,7 +46,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              },
              {
                 id:3,
-                physicalExpiryDate:'20-04-2023',
+                physicalExpiryDate:'22-04-2023',
                 fridgeId: 1,
                 grocery: {
                  id: 1,
@@ -65,7 +65,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              },
              {
                 id:4,
-                physicalExpiryDate:'20-04-2023',
+                physicalExpiryDate:'23-04-2023',
                 fridgeId: 1,
                 grocery: {
                  id: 1,
@@ -101,6 +101,161 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
                     },
                 }
              },
+             {
+                id:6,
+                physicalExpiryDate:'25-04-2023',
+                fridgeId: 1,
+                grocery: {
+                 id: 2,
+                 name: "Melk",
+                 description: 'Melk 2% fett',
+                 groceryExpiryDate: 4,
+                 subCategory: {
+                     id:2,
+                     name: 'Melk',
+                     category:{
+                         id:2,
+                         name: 'Melkeprodukter'
+                     }
+                    },
+                }
+             },
+             {
+                id:7,
+                physicalExpiryDate:'25-04-2023',
+                fridgeId: 1,
+                grocery: {
+                 id: 2,
+                 name: "Melk",
+                 description: 'Melk 2% fett',
+                 groceryExpiryDate: 4,
+                 subCategory: {
+                     id:2,
+                     name: 'Melk',
+                     category:{
+                         id:2,
+                         name: 'Melkeprodukter'
+                     }
+                    },
+                }
+             },
+             {
+                id:8,
+                physicalExpiryDate:'25-04-2023',
+                fridgeId: 1,
+                grocery: {
+                 id: 2,
+                 name: "Melk",
+                 description: 'Melk 2% fett',
+                 groceryExpiryDate: 4,
+                 subCategory: {
+                     id:2,
+                     name: 'Melk',
+                     category:{
+                         id:2,
+                         name: 'Melkeprodukter'
+                     }
+                    },
+                }
+             },
+             {
+                id:9,
+                physicalExpiryDate:'23-04-2023',
+                fridgeId: 1,
+                grocery: {
+                 id: 3,
+                 name: "Eple",
+                 description: 'Grønn',
+                 groceryExpiryDate: 14,
+                 subCategory: {
+                     id:2,
+                     name: 'Grønn frukt',
+                     category:{
+                         id:1,
+                         name: 'Frukt'
+                     }
+                    },
+                }
+             },
+             {
+                id:9,
+                physicalExpiryDate:'23-04-2023',
+                fridgeId: 1,
+                grocery: {
+                 id: 3,
+                 name: "Eple",
+                 description: 'Grønn',
+                 groceryExpiryDate: 14,
+                 subCategory: {
+                     id:2,
+                     name: 'Grønn frukt',
+                     category:{
+                         id:1,
+                         name: 'Frukt'
+                     }
+                    },
+                }
+             },
+             {
+                id:10,
+                physicalExpiryDate:'23-04-2023',
+                fridgeId: 1,
+                grocery: {
+                 id: 1,
+                 name: "Banan",
+                 description: 'Gul banan',
+                 groceryExpiryDate: 14,
+                 subCategory: {
+                     id:1,
+                     name: 'Gul frukt',
+                     category:{
+                         id:1,
+                         name: 'Frukt'
+                     }
+                    },
+                }
+             },
+             {
+                id:11,
+                physicalExpiryDate:'23-04-2023',
+                fridgeId: 1,
+                grocery: {
+                 id: 1,
+                 name: "Banan",
+                 description: 'Gul banan',
+                 groceryExpiryDate: 14,
+                 subCategory: {
+                     id:1,
+                     name: 'Gul frukt',
+                     category:{
+                         id:1,
+                         name: 'Frukt'
+                     }
+                    },
+                }
+             },
+             {
+                id:12,
+                physicalExpiryDate:'28-04-2023',
+                fridgeId: 1,
+                grocery: {
+                 id: 4,
+                 name: "Indrefilet",
+                 description: 'Indrefilet av okse, mager',
+                 groceryExpiryDate: 28,
+                 subCategory: {
+                     id:3,
+                     name: 'Kjøtt av okse',
+                     category:{
+                         id:3,
+                         name: 'Kjøtt'
+                     }
+                    },
+                }
+             },
+
+
+             
 
        ] as GroceryEntity[],
         categories : [

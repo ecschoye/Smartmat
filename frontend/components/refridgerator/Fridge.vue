@@ -1,5 +1,5 @@
 <template>
-    <div class="border w-1/3 h-auto border-black rounded-lg bg-white">
+    <div class="border w-1/3 h-full border-black rounded-lg bg-white">
       <div class="flex justify-center rounded-md shadow-sm w-full m-5" role="group">
         <button
           type="button"
@@ -18,12 +18,12 @@
           Kategori
         </button>
       </div>
-      <div>
+      <div id="fridgewrap" class="h-full" >
         <RefridgeratorList
-          :groceries="props.groceries"
-          :listing-type="listingType"
-          @group-closed="emit('group-closed')"
-          @popup-height="(payload : number) => emitHeight(payload)"
+            :groceries="props.groceries"
+            :listing-type="listingType"
+            @group-closed="emit('group-closed')"
+            @popup-height="(payload : number) => emitHeight(payload)"
         ></RefridgeratorList>
       </div>
     </div>
@@ -48,4 +48,20 @@ import type { GroceryEntity } from '~/types/GroceryEntityType';
     emit('popup-height', payload);
   };
   </script>
+
+  <style scoped> 
+    #fridgewrap{
+    overflow-y: auto;
+    scrollbar-width: none;
+    }
+    #fridgewrap::-webkit-scrollbar {
+    display: none;
+    }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    #fridgewrap {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+    height: 100%;
+    }
+</style>
   

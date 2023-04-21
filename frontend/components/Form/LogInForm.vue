@@ -6,9 +6,7 @@
       <div class="button-wrapper">
         <GreenButton label="Logg inn" width="100%" height="50px" />
         <div class="divider"></div>
-        <nuxt-link to="/register">
-          <GrayButton label="Ny bruker" width="100%" height="50px" />
-        </nuxt-link>
+          <span class="mr-6">Har du ikke bruker?</span><nuxt-link to="/register">Registrer deg her</nuxt-link>
       </div>
     </form>
   </div>

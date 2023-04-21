@@ -52,8 +52,8 @@ watchEffect(() => {
 
 async function logOut() {
   try{
-    await AxiosInstance.post('/api/auth/logout');
     userStore.logOut();
+    router.push("/")
   }
   catch (error) {
     console.error(error);

@@ -53,7 +53,7 @@
                 </HeadlessMenuItem>
                 <form method="POST" action="#">
                   <HeadlessMenuItem v-slot="{ active }">
-                    <button type="submit" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900' : 'text-gray-700 dark:text-gray-900', 'block w-full px-4 py-2 text-left text-sm']">Logg ut</button>
+                    <button @click="handleLogOut()" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900' : 'text-gray-700 dark:text-gray-900', 'block w-full px-4 py-2 text-left text-sm']">Logg ut</button>
                   </HeadlessMenuItem>
                 </form>
               </div>
@@ -99,8 +99,18 @@
     </HeadlessDialog>
   </header>
 </template>
-<script>
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue'
+import {useUserStore} from "~/store/userStore";
+
+export default defineComponent({
+
+  setup(){
+    const userStore = useUserStore();
+    return {
+      userStore
+    }
+  },
   data () {
     return {
       fridges : [
@@ -127,10 +137,12 @@ export default {
     }
   },
   methods : {
-    handleFridgeEvent(value) {
-      this.selected = value; 
+    handleFridgeEvent(value: any) {
+      this.selected = value;
+    },
+    handleLogOut() {
+      this.userStore.logOut();
     }
   }
-}
-
+})
 </script>

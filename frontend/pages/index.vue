@@ -37,10 +37,6 @@
 
   const userStore = useUserStore();
   const loggedIn = computed(() => userStore.isLoggedIn);
-
-onMounted(async () => {
-  await userStore.checkAuthStatus();
-});
 </script>
 
 

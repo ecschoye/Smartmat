@@ -69,7 +69,7 @@ public class RefrigeratorService {
     public Refrigerator save(RefrigeratorRequest request) throws Exception {
         Refrigerator refrigerator = request.getRefrigerator();
         String username = request.getUsername();
-
+        //TODO Check if tests can be done in constructor instead
         //Check data
         if(username == null) {
             logger.warn("Refrigerator could not be added: username is null");
@@ -116,13 +116,14 @@ public class RefrigeratorService {
     }
 
 
+
     /**
      * Deletes a refrigerator by ID.
      *
      * @param id The ID of the refrigerator to delete.
      * @return true if the refrigerator was successfully deleted, false otherwise
      */
-    public boolean delete(long id) {
+    public boolean deleteById(long id) {
         if (refrigeratorRepository.existsById(id)) {
             try {
                 refrigeratorRepository.deleteById(id);

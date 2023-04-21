@@ -41,7 +41,7 @@ public class RefrigeratorController {
 
     @DeleteMapping("/delete/{refrigeratorId}")
     public ResponseEntity<Void> deleteRefrigerator(@PathVariable int refrigeratorId) {
-        boolean deleted = refrigeratorService.delete(refrigeratorId);
+        boolean deleted = refrigeratorService.deleteById(refrigeratorId);
         if (deleted) {
             logger.info("Deleted refrigerator with id {}", refrigeratorId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

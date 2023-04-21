@@ -61,7 +61,7 @@ public class RefrigeratorControllerTest {
     void testDeleteRefrigeratorSuccess() {
         int id = 1;
 
-        Mockito.when(refrigeratorService.delete(id)).thenReturn(true);
+        Mockito.when(refrigeratorService.deleteById(id)).thenReturn(true);
 
         ResponseEntity<Void> response = refrigeratorController.deleteRefrigerator(id);
         Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
@@ -71,7 +71,7 @@ public class RefrigeratorControllerTest {
     void testDeleteRefrigeratorFail() {
         int id = 1;
 
-        Mockito.when(refrigeratorService.delete(id)).thenReturn(false);
+        Mockito.when(refrigeratorService.deleteById(id)).thenReturn(false);
 
         ResponseEntity<Void> response = refrigeratorController.deleteRefrigerator(id);
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());

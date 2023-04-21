@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
@@ -146,6 +145,6 @@ public class RefrigeratorServiceTests {
     @Test
     void testDeleteNonExistingRefrigerator() {
         // Test deleting a non-existing refrigerator
-        Assertions.assertFalse(refrigeratorService.delete(1));
+        Assertions.assertFalse(refrigeratorService.deleteById(1));
     }
 }

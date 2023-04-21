@@ -4,8 +4,12 @@
       <h1 class="user-name">{{ user.name }}</h1>
       <p class="user-email">{{ user.email }}</p>
     </div>
+    <div class="profile-picture-container">
+      <img class="profile-picture w-1/4" src="~/assets/profile.png" alt="Profile Picture" />
+    </div>
   </div>
 </template>
+
 
 
 <script setup lang="ts">
@@ -44,7 +48,7 @@ async function loadData() {
   font-size: 1.4rem;
   color: white;
   font-weight: 300;
-  margin-top: -25px;
+  margin-top: 50px;
 }
 
 .profile-picture-container{
@@ -53,12 +57,10 @@ async function loadData() {
 }
 
 .profile-container {
-  display: grid;
-  column-gap: 1rem;
-  justify-items: end;
-  justify-content: space-evenly;
-  height: 100%;
-  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 5px;
 }
 
 .user-details {
@@ -71,37 +73,6 @@ async function loadData() {
   color: white;
   font-weight: 300;
   height: fit-content;
-}
-
-.profile-box {
-  grid-row: 1;
-  grid-column: 2;
-  justify-self: end;
-}
-
-.profile-picture {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.log-out-btn {
-  font-size: 1.25rem;
-  color: black;
-  background-color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  border-radius: 20px;
-  align-self: flex-end;
-  text-align: left;
-  justify-self: start;
-}
-
-.log-out-btn:hover {
-  background-color: lightgray;
 }
 
 p {

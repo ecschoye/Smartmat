@@ -83,8 +83,7 @@ async function loadData() {
 
 .profile-wrapper{
   position: relative;
-  width: 800px;
-  /*height: 50%;*/
+  width: 50%;
   flex-direction: column;
   align-items: flex-start;
   border: solid 3px white;

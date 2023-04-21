@@ -3,8 +3,8 @@
     <div class="content-wrapper">
       <ProfileBox />
       <div class="grid">
-        <InfoBox id="myAccountBtn" @click="route('my-profile/edit')" title="Min konto" content="View and edit my account details"/>
-        <InfoBox title="Systeminnstillinger" @click="" content="Systeminnstillinger"/>
+        <InfoBox id="myAccountBtn" @click="route('/account-details')" title="Min konto" content="View and edit my account details"/>
+        <InfoBox title="Systeminnstillinger" @click="route('/system-settings')" content="Systeminnstillinger"/>
         <InfoBox title="Ekstra knapp" @click="" content="Ekstra knapp"/>
       </div>
     </div>
@@ -21,17 +21,12 @@
 import { ref, computed} from 'vue';
 
 import { useUserStore } from "~/store/userStore";
-import PaginationComponent from "@/components/Items/PaginationComponent.vue";
 import InfoBox from "~/components/Profile/InfoBox.vue";
 import ProfileBox from "~/components/Profile/ProfileBox.vue";
 
 
 const userStore = useUserStore();
-
-const currentPage = ref(1);
 const totalPages = ref(1);
-const showItems = ref(false);
-let showingBookmarks = false;
 
 const pages = computed(() => {
   const pageArray = [];
@@ -41,69 +36,17 @@ const pages = computed(() => {
   return pageArray;
 });
 
+definePageMeta({
+  "requiresAuth": true,
+  middleware: [
+    'auth',
+  ],
+})
 
 
-async function loadBookmarkedItems(){
-  showItems.value = true;
-  showingBookmarks = true;
-  await getBookmarkedItemsPage(currentPage.value - 1, itemStore.pageSize)
-      .then((response) => {
-        itemStore.setLists(response.data.items);
-        currentPage.value = response.data["current-page"] + 1;
-        totalPages.value = response.data["total-pages"];
-      })
-      .catch((error) => {
-        console.log("Error loading bookmarked items", error.message);
-      })
-}
-
-function callPage(direction : number){
-  if(direction > 0){
-    if(currentPage.value < totalPages.value){
-      currentPage.value = currentPage.value  +direction;
-    }
-  }
-  else{
-    if(currentPage.value > 1){
-      currentPage.value = currentPage.value + direction;
-    }
-  }
-  loadItems();
-}
-
+const router = useRouter();
 function route(route : string){
   router.push(route);
-}
-function setPage(page : number){
-  currentPage.value = page;
-  loadItems();
-}
-
-function callLoadItems(){
-  showingBookmarks = false;
-  loadItems();
-}
-async function loadItems() {
-  showItems.value = true;
-  if(showingBookmarks){
-    loadBookmarkedItems();
-  }
-  else{
-    await getMyItems(currentPage.value - 1, itemStore.pageSize)
-        .then((response) => {
-          itemStore.setLists(response.data.items);
-          currentPage.value = response.data["current-page"] + 1;
-          totalPages.value = response.data["total-pages"];
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-  }
-}
-
-function closeItems() {
-  showItems.value = false;
-  currentPage.value = 1;
 }
 </script>
 
@@ -113,51 +56,6 @@ function closeItems() {
   .container{
     min-height: 100vh !important;
   }
-}
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 3;
-}
-
-.item-list-wrapper {
-  padding-top: 1rem;
-  width: 70%;
-  height: 90%;
-  background-color: white;
-  position: absolute;
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  border-radius: 16px;
-  overflow-y: auto;
-  padding-bottom: 2rem;
-}
-
-.close-btn {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 24px;
-  z-index: 1000;
-  font-weight: bold;
-  color: #ffffff;
-  background-color: rgba(102, 0, 136, 0.51);
-  border: none;
-  cursor: pointer;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .grid {
@@ -199,7 +97,6 @@ Wave {
   animation: gradient 15s ease infinite;
   position: relative;
   justify-content: center;
-  border: solid thin red;
 }
 
 .item-list-wrapper::-webkit-scrollbar {

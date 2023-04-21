@@ -10,14 +10,13 @@
     </div>
 
     <div class="button-grid">
+      <NuxtLink v-if="loggedIn" to="/my-fridge">
+        <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
+          Gå til kjøleskapet mitt
+        </button>
+      </NuxtLink>
 
-      <NuxtLink to="#" v-if="loggedIn">
-      <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
-        Gå til kjøleskapet mitt
-      </button>
-    </NuxtLink>
-
-      <NuxtLink to="/login">
+      <NuxtLink v-else to="/login">
         <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
           Logg inn her
         </button>
@@ -31,19 +30,15 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { useUserStore } from '~/store/userStore';
-import {onMounted} from "vue";
 
-const loggedIn = computed(() => userStore.isLoggedIn);
+  <script setup lang="ts">
+  import { useUserStore } from "~/store/userStore";
+  import { onMounted, computed } from "vue";
 
-const userStore = useUserStore();
-
-onMounted(async () => {
-  console.log(loggedIn.value);
-  await userStore.checkAuthStatus();
-});
+  const userStore = useUserStore();
+  const loggedIn = computed(() => userStore.isLoggedIn);
 </script>
+
 
 <style scoped>
 

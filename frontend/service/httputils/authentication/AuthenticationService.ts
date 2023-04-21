@@ -1,8 +1,8 @@
 import type { AxiosResponse } from 'axios';
-import type {LoginData} from "@/types/LoginData";
-import type {RegisterData} from "@/types/RegisterData";
-import type {User} from "@/types/UserType";
-import axiosInstance from "@/service/AxiosInstance";
+import type {LoginData} from "~/types/LoginData";
+import type {RegisterData} from "~/types/RegisterData";
+import type {User} from "~/types/UserType";
+import axiosInstance from "~/service/AxiosInstance";
 
 export const postLogin = async (login: LoginData): Promise<AxiosResponse> => {
     return axiosInstance.post('/api/auth/login', login);

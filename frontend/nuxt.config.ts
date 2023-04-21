@@ -5,8 +5,15 @@ export default defineNuxtConfig({
     'nuxt-headlessui',
     '@pinia/nuxt',
   ],
-  components: [
-    { path: '~/components/refridgerator', prefix: 'refridgerator' },
-    '~/components'
-  ]
+  colorMode: {
+    classSuffix: ''
+  },
+  tailwindcss: {
+    cssPath: '~/assets/global.css',
+    configPath: 'tailwind.config.js',
+    exposeConfig: false,
+    config: {},
+    injectPosition: 0,
+    viewer: true,
+  }
 })

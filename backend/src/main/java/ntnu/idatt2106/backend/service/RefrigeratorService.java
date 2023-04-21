@@ -2,8 +2,11 @@ package ntnu.idatt2106.backend.service;
 
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.model.Refrigerator;
+import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
+import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
+import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,7 @@ public class RefrigeratorService {
 
     @Autowired
     private final RefrigeratorRepository refrigeratorRepository;
+    private final RefrigeratorUserRepository refrigeratorUserRepository;
 
     private Logger logger = LoggerFactory.getLogger(RefrigeratorService.class);
 
@@ -78,5 +82,21 @@ public class RefrigeratorService {
             logger.error("Failed to delete refrigerator with id {}: {}", id, e.getMessage());
             return false;
         }
+    }
+
+    /**
+     * Gets the role a member has in a refrigerator.
+     * @param userId User to get role of
+     * @param refrigeratorId Refrigerator associated
+     * @return the Enum role
+     */
+    Role getRoleById(String userId, long refrigeratorId){
+        Optional<RefrigeratorUser> refrigeratorUser = refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(userId, refrigeratorId);
+
+        if(refrigeratorUser.isPresent()){
+            return refrigeratorUser.get().getRole();
+        }
+        logger.warn("Superuser not present in refrigerator");
+        return null;
     }
 }

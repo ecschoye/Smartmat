@@ -23,18 +23,27 @@
 
 </template>
 
-<script setup>
+<script setup lang="ts">
 import BaseInput from "~/components/Form/BaseInput.vue";
 import GrayButton from '@/components/Button/GrayButton.vue'
 const name = ref('')
 const email = ref('')
+
+
 
 const submit = () => {
   console.log(name.value)
   console.log(email.value)
 }
 
+definePageMeta({
+  "requiresAuth": true,
+  middleware: [
+    'auth',
+  ],
+})
 </script>
+
 
 <style scoped>
 .divider{

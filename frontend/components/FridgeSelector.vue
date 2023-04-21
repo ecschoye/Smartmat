@@ -3,7 +3,7 @@
     <HeadlessListbox as="div" v-model="selected">
       <HeadlessListboxLabel></HeadlessListboxLabel>
       <div class="relative">
-        <HeadlessListboxButton class="relative w-full cursor-default rounded-md bg-white py-1.5 pr-10 text-left text-gray-900 shadow-sm sm:leading-6 hover:cursor-pointer">
+        <HeadlessListboxButton class="relative w-full cursor-default rounded-md bg-white dark:bg-zinc-600 py-1.5 pr-10 text-left text-gray-900 shadow-sm sm:leading-6 hover:cursor-pointer">
           <span class="flex items-center">
             <span class="ml-3 block truncate">{{ selected.name }}</span>
           </span>
@@ -23,7 +23,7 @@
 
         <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
           <div class="max-h-64 overflow-y-scroll">
-            <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-b-md bg-white py-0 text-base  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+            <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-b-md bg-white dark:bg-zinc-600 py-0 text-base  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
               <HeadlessListboxOption as="template" v-for="fridge in fridges" :key="fridge.id" :value="fridge" v-slot="{ active, selected }">
                 <li :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-1 pr-4','hover:cursor-pointer']">
                   <div class="flex items-center">

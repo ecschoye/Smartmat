@@ -1,7 +1,10 @@
 package ntnu.idatt2106.backend.service;
 
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.model.*;
+import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.requests.EditGroceryRequest;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.repository.*;
@@ -16,12 +19,16 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ShoppingListService {
     private final ShoppingListRepository shoppingListRepository;
-
     private final RefrigeratorRepository refrigeratorRepository;
+    private final RefrigeratorUserRepository refrigeratorUserRepository;
     private final GroceryListRepository groceryListRepository;
     private final SubCategoryRepository subCategoryRepository;
-
     private final GroceryRepository groceryRepository;
+    private final UserRepository userRepository;
+
+    private final SessionStorageService sessionStorageService;
+    private final JwtService jwtService;
+
     private Logger logger = LoggerFactory.getLogger(ShoppingListService.class);
 
     public long createShoppingList(long refrigeratorId) {
@@ -71,15 +78,16 @@ public class ShoppingListService {
         return categories;
     }
 
-    public Optional<GroceryShoppingList> editGrocery(EditGroceryRequest groceryRequest) {
+    public Optional<GroceryShoppingList> editGrocery(EditGroceryRequest groceryRequest, HttpServletRequest httpRequest) {
+        String eMail = extractEmail(httpRequest);
         logger.info("Editing grocery with id: {} to shopping list with id {}", groceryRequest.getId(), groceryRequest.getShoppingListId());
 
         Optional<GroceryShoppingList> groceryShoppingList = groceryListRepository.findById(groceryRequest.getId());
         if (groceryShoppingList.isPresent()) {
             logger.info("Found grocery in the shopping list");
-            logger.info("Data for the grocery request: id {}, quantity {}, isRequested {}, shoppingListId {}",
-                    groceryRequest.getId(), groceryRequest.getQuantity(), groceryRequest.isRequested(), groceryRequest.getShoppingListId() );//todo: delete
-            groceryShoppingList.get().setRequest(groceryRequest.isRequested());
+            boolean isRequested = !isSuperUser(eMail, groceryRequest.getShoppingListId());
+
+            groceryShoppingList.get().setRequest(isRequested);
             groceryShoppingList.get().setQuantity(groceryRequest.getQuantity());
 
             logger.info("Edit grocery in the grocery list");
@@ -89,37 +97,73 @@ public class ShoppingListService {
         return Optional.empty();
     }
 
-    public Optional<GroceryShoppingList> saveGrocery(SaveGroceryRequest groceryRequest) {
-        logger.info("Saving grocery: {} to shopping list with id {}", groceryRequest.getName(), groceryRequest.getShoppingListId());
-        Optional<ShoppingList> shoppingList = shoppingListRepository.findById(groceryRequest.getShoppingListId());
-        if (shoppingList.isPresent()) {
-            logger.info("Found shopping list for shopping list id {}", shoppingList.get().getId());
+    private String extractEmail(HttpServletRequest httpRequest) {
+        String token = sessionStorageService.extractTokenFromAuthorizationHeader(httpRequest);
+        return jwtService.extractClaim(token, Claims::getSubject);
 
-            logger.info("Found shopping list for shopping list id {}", shoppingList.get().getId());
+    }
 
+    private boolean isSuperUser(String eMail, long shoppingListId) {
+        //find the refrigerator connected to the shoppingList
+        Optional<Refrigerator> refrigerator = Optional.of(shoppingListRepository.findRefrigeratorById(shoppingListId));
+        //find the role to the eMail in the refrigerator
+        Optional<User> user = userRepository.findByEmail(eMail);
 
-            Optional<SubCategory> subCategory = subCategoryRepository.findById(groceryRequest.getSubCategoryId());
-            GroceryShoppingList groceryShoppingList = new GroceryShoppingList();
-
-
-            if (subCategory.isPresent()) {
-                logger.info("Found sub category");
-                Grocery grocery = Grocery.builder().name(groceryRequest.getName()).groceryExpiryDays(groceryRequest.getGroceryExpiryDays())
-                        .description(groceryRequest.getDescription()).subCategory(subCategory.get()).build();
-                groceryRepository.save(grocery);
-                logger.info("Created grocery with name {}", grocery.getName());
-
-                groceryShoppingList.setGrocery(grocery);
-                groceryShoppingList.setShoppingList(shoppingList.get());
-                groceryShoppingList.setQuantity(groceryRequest.getQuantity());
-                groceryShoppingList.setRequest(groceryRequest.isRequested());
-            }
-            logger.info("Saved new grocery to the grocery list");
-
-            return Optional.of(groceryListRepository.save(groceryShoppingList));
+        if (user.isEmpty()) {
+            logger.info("User is empty");
+            return false;
         }
-        logger.info("Could not find a shopping list with id {}", groceryRequest.getShoppingListId());
-        logger.info("Could not find a shopping list with id {}", groceryRequest.getShoppingListId());
-        return Optional.empty();
+
+        Optional<RefrigeratorUser> refrigeratorUser = refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(user.get().getId(), refrigerator.get().getId());
+
+        if (refrigeratorUser.isEmpty()) {
+            logger.info("Refrigerator user is empty");
+            return false;
+        }
+
+        logger.info("isUserSuper user {}", refrigeratorUser.get().getRole() == Role.SUPERUSER);
+        return refrigeratorUser.get().getRole() == Role.SUPERUSER;
+    }
+
+
+    public Optional<GroceryShoppingList> saveGrocery(SaveGroceryRequest groceryRequest, HttpServletRequest httpRequest) {
+        String eMail = extractEmail(httpRequest);
+        logger.info("Saving grocery: {} to shopping list with id {}", groceryRequest.getName(), groceryRequest.getShoppingListId());
+
+        Optional<ShoppingList> shoppingList = shoppingListRepository.findById(groceryRequest.getShoppingListId());
+        if (shoppingList.isEmpty()) {
+            logger.info("Could not find a shopping list with id {}", groceryRequest.getShoppingListId());
+            return Optional.empty();
+        }
+
+        logger.info("Found shopping list for shopping list id {}", shoppingList.get().getId());
+
+        Optional<SubCategory> subCategory = subCategoryRepository.findById(groceryRequest.getSubCategoryId());
+        if (subCategory.isEmpty()) {
+            logger.info("Could not find a shopping list with id {}", groceryRequest.getShoppingListId());
+            return Optional.empty();
+        }
+
+        logger.info("Found subcategory with id {}", subCategory.get().getId());
+        Grocery grocery = Grocery.builder()
+                .name(groceryRequest.getName())
+                .groceryExpiryDays(groceryRequest.getGroceryExpiryDays())
+                .description(groceryRequest.getDescription())
+                .subCategory(subCategory.get())
+                .build();
+        groceryRepository.save(grocery);
+        logger.info("Created grocery with name {}", grocery.getName());
+
+        boolean isRequested = !isSuperUser(eMail, shoppingList.get().getId());
+
+        GroceryShoppingList groceryShoppingList = new GroceryShoppingList();
+        groceryShoppingList.setGrocery(grocery);
+        groceryShoppingList.setShoppingList(shoppingList.get());
+        groceryShoppingList.setQuantity(groceryRequest.getQuantity());
+        groceryShoppingList.setRequest(isRequested);
+
+        logger.info("Saved new grocery to the grocery list");
+
+        return Optional.of(groceryListRepository.save(groceryShoppingList));
     }
 }

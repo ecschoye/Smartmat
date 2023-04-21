@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <form @submit.prevent="sendForm" class="form light-background-color dark:bg-zinc-700">
+    <form @submit.prevent="sendForm" class="form bg-white dark:bg-zinc-700">
       <BaseInput id="inpEmail" class="input-container" type="email" label="Email" v-model="form.email" />
       <BaseInput id="inpPassword" class="input-container" type="password" label="Password" v-model="form.password" />
       <div class="button-wrapper">

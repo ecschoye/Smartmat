@@ -1,6 +1,7 @@
 package ntnu.idatt2106.backend.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.model.Category;
@@ -78,9 +79,9 @@ public class ShoppingListController {
     }
 
     @PostMapping("/add-grocery")
-    public ResponseEntity<GroceryShoppingList> saveGroceryToShoppingList(@RequestBody SaveGroceryRequest groceryRequest) throws SaveException{
+    public ResponseEntity<GroceryShoppingList> saveGroceryToShoppingList(@RequestBody SaveGroceryRequest groceryRequest, HttpServletRequest request) throws SaveException{
         logger.info("Received request to save grocery {} to shopping list with id {}", groceryRequest.getName(), groceryRequest.getShoppingListId());
-        Optional<GroceryShoppingList> groceryList = shoppingListService.saveGrocery(groceryRequest);
+        Optional<GroceryShoppingList> groceryList = shoppingListService.saveGrocery(groceryRequest, request);
         if (groceryList.isEmpty()) {
             logger.info("No registered changes to grocery is saved");
             throw new SaveException("Failed to add a new grocery to shopping list");
@@ -90,11 +91,9 @@ public class ShoppingListController {
     }
 
     @PostMapping("/edit-grocery")
-    public ResponseEntity<GroceryShoppingList> editGrocery(@RequestBody EditGroceryRequest groceryRequest) throws SaveException{
+    public ResponseEntity<GroceryShoppingList> editGroceryQuantity(@RequestBody EditGroceryRequest groceryRequest, HttpServletRequest httpRequest) throws SaveException{
         logger.info("Received request to edit grocery with id to {} in shopping list with id {}", groceryRequest.getId(), groceryRequest.getShoppingListId());
-        logger.info("Data for the grocery request: id {}, quantity {}, isRequested {}, shoppingListId {}",
-                groceryRequest.getId(), groceryRequest.getQuantity(), groceryRequest.isRequested(), groceryRequest.getShoppingListId() ); //todo:delete
-        Optional<GroceryShoppingList> grocery = shoppingListService.editGrocery(groceryRequest);
+        Optional<GroceryShoppingList> grocery = shoppingListService.editGrocery(groceryRequest, httpRequest);
         if (grocery.isEmpty()) {
             logger.info("No registered changes to grocery");
             throw new SaveException("Failed to add a edit the grocery in the shopping list");

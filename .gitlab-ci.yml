@@ -58,7 +58,8 @@ package:
         - target/*.jar # Add more as needed here
 #      expire_in: 69 days
     only:
-      - main # We don't want to do this on feature branches
+      - main
+      - dev # We don't want to do this on feature branches
 
 
 # This is a particularly nasty way of generating a PDF of the wiki, due to how much it downloads/installs.

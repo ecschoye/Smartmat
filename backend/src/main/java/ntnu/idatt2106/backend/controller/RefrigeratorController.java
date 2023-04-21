@@ -5,6 +5,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.model.Refrigerator;
+import ntnu.idatt2106.backend.model.RefrigeratorUser;
+import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
 import org.slf4j.Logger;
@@ -30,10 +32,10 @@ public class RefrigeratorController {
 
     Logger logger = LoggerFactory.getLogger(RefrigeratorController.class);
 
-    @PostMapping("/create")
-    public ResponseEntity<Refrigerator> createRefrigerator(@Valid @RequestBody RefrigeratorRequest refrigerator) throws SaveException {
+    @PostMapping("/new")
+    public ResponseEntity<Refrigerator> newRefrigerator(@Valid @RequestBody RefrigeratorRequest refrigerator) throws SaveException {
         logger.info("Received request to create refrigerator for refrigerator");
-        Refrigerator result = null;
+        Refrigerator result;
         try {
             result = refrigeratorService.save(refrigerator);
             if (result == null) throw new Exception();
@@ -41,6 +43,20 @@ public class RefrigeratorController {
             throw new SaveException("Failed to create refrigerator");
         }
         logger.info("Returning refrigerator with id {}", result.getId());
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/new-member")
+    public ResponseEntity<RefrigeratorUser> newMember(@Valid @RequestBody MemberRequest memberRequest) throws SaveException {
+        logger.info("Received request to add new member to refrigerator");
+        RefrigeratorUser result;
+        try {
+            result = refrigeratorService.addMember(memberRequest);
+            if (result == null) throw new Exception();
+        } catch (Exception e) {
+            throw new SaveException("Failed to add member");
+        }
+        logger.info("Returning refrigeratorUser");
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -72,7 +88,7 @@ public class RefrigeratorController {
         }
         else{
             logger.info("Returning refrigerator");
-            return new ResponseEntity<Refrigerator>(result.get(), HttpStatus.OK);
+            return new ResponseEntity<>(result.get(), HttpStatus.OK);
         }
     }
 

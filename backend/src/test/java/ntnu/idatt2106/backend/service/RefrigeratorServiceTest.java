@@ -92,14 +92,14 @@ public class RefrigeratorServiceTest {
         User result = refrigeratorService.getUser(existingUserEmail);
 
         // Assert
-        Assert.assertNotNull(result);
-        Assert.assertEquals(existingUserEmail, result.getEmail());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(existingUserEmail, result.getEmail());
         Mockito.verify(userRepository, Mockito.times(1)).findByEmail(existingUserEmail);
     }
 
     @Test
     @DisplayName("Test getUser returns existing user ")
-    public void testGetUserThrowsNonExistingUser() throws UserNotFoundException {
+    public void testGetUserThrowsNonExistingUser() {
         // Arrange
         String nonExistingUserEmail = "john.doe@example.com";
 
@@ -109,7 +109,7 @@ public class RefrigeratorServiceTest {
 
     @Test
     @DisplayName("Test saving a refrigerator with an invalid user")
-    public void testSaveRefrigeratorWithInvalidUser() throws Exception {
+    public void testSaveRefrigeratorWithInvalidUser() {
         // Arrange
         RefrigeratorRequest request = new RefrigeratorRequest();
         request.setRefrigerator(new Refrigerator());
@@ -123,7 +123,7 @@ public class RefrigeratorServiceTest {
 
     @Test
     @DisplayName("Test saving a refrigerator with an empty name")
-    public void testSaveRefrigeratorWithEmptyName() throws Exception {
+    public void testSaveRefrigeratorWithEmptyName() {
         // Arrange
         // Arrange
         RefrigeratorRequest request = new RefrigeratorRequest();
@@ -139,7 +139,7 @@ public class RefrigeratorServiceTest {
 
     @Test
     @DisplayName("Test saving a refrigerator with a null name")
-    public void testSaveRefrigeratorWithNullName() throws Exception {
+    public void testSaveRefrigeratorWithNullName() {
         // Arrange
         RefrigeratorRequest request = new RefrigeratorRequest();
         request.setRefrigerator(new Refrigerator());
@@ -159,7 +159,7 @@ public class RefrigeratorServiceTest {
 
         boolean result = refrigeratorService.deleteById(1L);
 
-        Assert.assertTrue(result);
+        Assertions.assertTrue(result);
     }
 
     @Test
@@ -168,7 +168,7 @@ public class RefrigeratorServiceTest {
 
         boolean result = refrigeratorService.deleteById(1L);
 
-        Assert.assertFalse(result);
+        Assertions.assertFalse(result);
     }
 
     @Test
@@ -180,7 +180,7 @@ public class RefrigeratorServiceTest {
 
         List<Refrigerator> result = refrigeratorService.getAllRefrigerators();
 
-        Assert.assertEquals(refrigeratorList, result);
+        Assertions.assertEquals(refrigeratorList, result);
     }
 
     @Test
@@ -191,7 +191,7 @@ public class RefrigeratorServiceTest {
 
         Optional<Refrigerator> result = refrigeratorService.findById(1L);
 
-        Assert.assertEquals(optionalRefrigerator, result);
+        Assertions.assertEquals(optionalRefrigerator, result);
     }
 
     @Test
@@ -202,12 +202,12 @@ public class RefrigeratorServiceTest {
 
         Optional<Refrigerator> result = refrigeratorService.findById(1L);
 
-        Assert.assertEquals(optionalRefrigerator, result);
+        Assertions.assertEquals(optionalRefrigerator, result);
     }
 
     @Test
     @DisplayName("Test adding a member to a refrigerator")
-    public void testAddMemberToRefrigerator() throws Exception {
+    public void testAddMemberToRefrigerator() {
         // Arrange
         User newUser = new User();
         newUser.setEmail("user1@example.com");

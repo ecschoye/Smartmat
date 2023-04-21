@@ -25,6 +25,10 @@ public class GroceryShoppingList {
     @Schema(description = "Boolean value as represents if a limited user or a super user has added the grocery to the list.")
     private boolean isRequest;
 
+    @Column(name = "quantity")
+    @Schema(description = "The number of groceries to buy")
+    private int quantity;
+
     @ManyToOne
     @JoinColumn(name = "groceryId")
     @Schema(description = "Grocery object in the list")

@@ -38,6 +38,7 @@ const submit = () => {
 
 </script>
 
+
 <style scoped>
 .divider{
   width: 100%;

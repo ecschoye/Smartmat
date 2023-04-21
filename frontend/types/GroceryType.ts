@@ -1,8 +1,9 @@
+import { SubCategory } from "./SubCategoryType";
+
 export interface Grocery{
     id: number,
     name: string,
     description: string,
-    physicalExpiryDate: string,
-    subCategoryId: number,
-    fridgeId: number
+    groceryExpiryDate: number,
+    subCategory: SubCategory,
 }

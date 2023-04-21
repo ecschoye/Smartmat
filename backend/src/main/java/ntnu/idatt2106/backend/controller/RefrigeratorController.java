@@ -8,6 +8,7 @@ import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
+import ntnu.idatt2106.backend.model.responses.MemberResponse;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,9 +48,9 @@ public class RefrigeratorController {
     }
 
     @PostMapping("/new-member")
-    public ResponseEntity<RefrigeratorUser> newMember(@Valid @RequestBody MemberRequest memberRequest) throws SaveException {
+    public ResponseEntity<MemberResponse> newMember(@Valid @RequestBody MemberRequest memberRequest) throws SaveException {
         logger.info("Received request to add new member to refrigerator");
-        RefrigeratorUser result;
+        MemberResponse result;
         try {
             result = refrigeratorService.addMember(memberRequest);
             if (result == null) throw new Exception();

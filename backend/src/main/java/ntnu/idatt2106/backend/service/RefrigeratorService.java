@@ -8,6 +8,7 @@ import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
+import ntnu.idatt2106.backend.model.responses.MemberResponse;
 import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
 import ntnu.idatt2106.backend.repository.UserRepository;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Member;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +48,7 @@ public class RefrigeratorService {
      * @return
      * @throws UserNotFoundException
      */
-    public RefrigeratorUser addMember(MemberRequest request) throws UserNotFoundException {
+    public MemberResponse addMember(MemberRequest request) throws UserNotFoundException {
         //Get Users
         logger.debug("Getting superuser");
         User superUser = getUser(request.getSuperName());
@@ -74,11 +76,27 @@ public class RefrigeratorService {
 
         try {
             logger.info("Checks validated, saving refrigeratorUser");
-            return refrigeratorUserRepository.save(ru);
+            RefrigeratorUser result = refrigeratorUserRepository.save(ru);
+            MemberResponse response = new MemberResponse();
+            response.setRefrigeratorId(result.getRefrigerator().getId());
+            response.setUsername(result.getUser().getUsername());
+            response.getRole();
+            return response;
         } catch (Exception e) {
             logger.warn("Member could not be added: Failed to save refrigeratoruser");
             return null;
         }
+    }
+
+    /**
+     * Finds a refrigerator by ID.
+     *
+     * @param id The ID of the refrigerator to find.
+     * @return An Optional containing the refrigerator with the specified ID, or an empty Optional if no such refrigerator exists.
+     */
+    public Optional<Refrigerator> findById(long id) {
+        if(id < 0) return Optional.empty();
+        return refrigeratorRepository.findById(id);
     }
 
     /**
@@ -88,7 +106,7 @@ public class RefrigeratorService {
      * @param refrigeratorId Refrigerator associated
      * @return the Enum role
      */
-    Role getRoleById(String userId, long refrigeratorId){
+    protected Role getRoleById(String userId, long refrigeratorId){
         Optional<RefrigeratorUser> refrigeratorUser = refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(userId, refrigeratorId);
 
         if(refrigeratorUser.isPresent()){
@@ -104,24 +122,13 @@ public class RefrigeratorService {
      * @param username Email of user
      * @return User associated
      */
-    User getUser(String username) throws UserNotFoundException {
+    protected User getUser(String username) throws UserNotFoundException {
         Optional<User> user = userRepository.findByEmail(username);
         if(user.isEmpty()){
             logger.warn("Could not find user with username: {}", username);
             throw new UserNotFoundException("Could not find user with username:" + username);
         }
         return user.get();
-    }
-
-    /**
-     * Finds a refrigerator by ID.
-     *
-     * @param id The ID of the refrigerator to find.
-     * @return An Optional containing the refrigerator with the specified ID, or an empty Optional if no such refrigerator exists.
-     */
-    public Optional<Refrigerator> findById(long id) {
-        if(id < 0) return Optional.empty();
-        return refrigeratorRepository.findById(id);
     }
 
     /**

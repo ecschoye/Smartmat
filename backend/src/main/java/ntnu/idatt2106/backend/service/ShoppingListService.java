@@ -59,6 +59,16 @@ public class ShoppingListService {
         return groceries;
     }
 
+    public List<Grocery> getRequestedGroceries(long shoppingListId) {
+        logger.info("Retrieving suggested groceries from the database");
+        List<Grocery> groceries = groceryListRepository.findRequestedGroceriesByShoppingListId(shoppingListId);
+        if (groceries.isEmpty()) {
+            logger.info("Received no groceries from the database");
+        }
+        logger.info("Received groceries from the database");
+        return groceries;
+    }
+
     public List<Grocery> getGroceries(long shoppingListId, long subCategoryId) {
         logger.info("Retrieving groceries from the database");
         List<Grocery> groceries = groceryListRepository.findByShoppingListIdAndSubCategoryId(shoppingListId, subCategoryId);

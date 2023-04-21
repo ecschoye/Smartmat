@@ -80,6 +80,7 @@ public class ShoppingListController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
+    //todo: edit format of response?
     @PostMapping("/add-grocery")
     public ResponseEntity<GroceryShoppingList> saveGroceryToShoppingList(@RequestBody SaveGroceryRequest groceryRequest, HttpServletRequest request) throws SaveException{
         logger.info("Received request to save grocery {} to shopping list with id {}", groceryRequest.getName(), groceryRequest.getShoppingListId());
@@ -92,6 +93,7 @@ public class ShoppingListController {
         return new ResponseEntity<>(groceryList.get(), HttpStatus.OK);
     }
 
+    //todo: edit format of response?
     @PostMapping("/edit-grocery")
     public ResponseEntity<GroceryShoppingList> editGroceryQuantity(@RequestBody EditGroceryRequest groceryRequest, HttpServletRequest httpRequest) throws SaveException{
         logger.info("Received request to edit grocery with id to {} in shopping list with id {}", groceryRequest.getId(), groceryRequest.getShoppingListId());
@@ -118,5 +120,18 @@ public class ShoppingListController {
 
         logger.info("Returns deleteStatus and status OK");
         return new ResponseEntity<>(deleteStatus, HttpStatus.OK);
+    }
+
+    @GetMapping("requested/groceries/{shoppingListId}")
+    public ResponseEntity<List<Grocery>> getRequestedGroceries(@PathVariable("shoppingListId") long shoppingListId) {
+        logger.info("Received request to get groceries requested to the shopping list with id {}", shoppingListId);
+        List<Grocery> groceries = shoppingListService.getRequestedGroceries(shoppingListId);
+        if (groceries.isEmpty()) {
+            logger.info("Received no groceries. Return status NO_CONTENT");
+            throw new NullPointerException("Received no groceries");
+        }
+        logger.info("Returns groceries and status OK");
+        return new ResponseEntity<>(groceries, HttpStatus.OK);
+
     }
 }

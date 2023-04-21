@@ -62,7 +62,7 @@ interface Language {
   id: number;
   name: string;
 }
-export default {
+export default defineComponent({
   data() {
     return {
       toggleDarkmode: false,
@@ -75,7 +75,14 @@ export default {
     },
   },
   mounted() {
-    this.toggleDarkmode = useColorMode().preference === 'dark';
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const colorMode = useColorMode().preference;
+    if (colorMode === "system" && prefersDark) {
+      this.setColorTheme('dark');
+      this.toggleDarkmode = true;
+    } else if (colorMode === 'dark') {
+      this.toggleDarkmode = true;
+    }
   },
   setup() {
     const colorMode = useColorMode()
@@ -93,7 +100,7 @@ export default {
     const selected = ref(languages[0]);
     return { languages, selected };
   },
-}
+});
 </script>
 
 

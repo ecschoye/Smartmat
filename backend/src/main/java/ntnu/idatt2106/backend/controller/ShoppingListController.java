@@ -30,8 +30,6 @@ public class ShoppingListController {
 
     @PostMapping("/create/{refrigeratorId}")
     public ResponseEntity<Long> createShoppingList(@PathVariable(name = "refrigeratorId") long refrigeratorId) throws SaveException {
-    @PostMapping("/create/{refrigeratorId}")
-    public ResponseEntity<Long> createShoppingList(@PathVariable(name = "refrigeratorId") long refrigeratorId) throws SaveException {
         logger.info("Received request to create shopping list for refrigerator with id {}", refrigeratorId);
         long shoppingListId = shoppingListService.createShoppingList(refrigeratorId);
         if (shoppingListId == -1) {

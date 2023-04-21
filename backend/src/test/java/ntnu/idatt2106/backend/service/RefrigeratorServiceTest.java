@@ -7,6 +7,7 @@ import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
+import ntnu.idatt2106.backend.model.responses.MemberResponse;
 import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
 import ntnu.idatt2106.backend.repository.UserRepository;
@@ -163,7 +164,8 @@ public class RefrigeratorServiceTest {
     }
 
     @Test
-    public void deleteById_shouldReturnFalse() {
+    @DisplayName("deleteById should return false")
+    public void deleteByIdShouldReturnFalse() {
         Mockito.when(refrigeratorRepository.existsById(1L)).thenReturn(false);
 
         boolean result = refrigeratorService.deleteById(1L);
@@ -172,6 +174,7 @@ public class RefrigeratorServiceTest {
     }
 
     @Test
+    @DisplayName("getAllRefrigerators should return list of refrigerators")
     public void getAllRefrigerators_shouldReturnListOfRefrigerators() {
         List<Refrigerator> refrigeratorList = new ArrayList<>();
         refrigeratorList.add(refrigerator);
@@ -184,7 +187,8 @@ public class RefrigeratorServiceTest {
     }
 
     @Test
-    public void findById_shouldReturnRefrigerator() {
+    @DisplayName("findById should return refrigerator")
+    public void findByIdShouldReturnRefrigerator() {
         Optional<Refrigerator> optionalRefrigerator = Optional.of(refrigerator);
 
         Mockito.when(refrigeratorRepository.findById(1L)).thenReturn(optionalRefrigerator);
@@ -195,7 +199,8 @@ public class RefrigeratorServiceTest {
     }
 
     @Test
-    public void findById_shouldReturnEmptyOptional() {
+    @DisplayName("findById should return empty optional")
+    public void findByIdShouldReturnEmptyOptional() {
         Optional<Refrigerator> optionalRefrigerator = Optional.empty();
 
         Mockito.when(refrigeratorRepository.findById(1L)).thenReturn(optionalRefrigerator);
@@ -231,4 +236,114 @@ public class RefrigeratorServiceTest {
         Assertions.assertDoesNotThrow(() -> refrigeratorService.addMember(request1));
     }
 
+    @Test
+    @DisplayName("Test setRole with valid input")
+    public void testSetRoleWithValidInput() throws UserNotFoundException {
+        User user = new User();
+        user.setId("test_user_id");
+        user.setEmail("test_user@test.com");
+        user.setPassword("test_password");
+        User superUser = new User();
+        superUser.setId("super_user_id");
+        superUser.setEmail("super_user@test.com");
+        superUser.setPassword("super_password");
+
+        Refrigerator refrigerator = new Refrigerator();
+        refrigerator.setId(1L);
+        refrigerator.setName("test_refrigerator");
+
+        RefrigeratorUser refrigeratorUser = new RefrigeratorUser();
+        refrigeratorUser.setId(1L);
+        refrigeratorUser.setUser(user);
+        refrigeratorUser.setRefrigerator(refrigerator);
+
+        RefrigeratorUser refrigeratorSuper = new RefrigeratorUser();
+        refrigeratorSuper.setId(1L);
+        refrigeratorSuper.setUser(superUser);
+        refrigeratorSuper.setRefrigerator(refrigerator);
+        refrigeratorSuper.setRole(Role.SUPERUSER);
+
+        when(userRepository.findByEmail(user.getUsername())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(superUser.getUsername())).thenReturn(Optional.of(superUser));
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id("test_user_id", 1L)).thenReturn(Optional.of(refrigeratorUser));
+        when(refrigeratorUserRepository.save(Mockito.any(RefrigeratorUser.class))).thenReturn(refrigeratorUser);
+        when(userRepository.findByEmail(user.getUsername())).thenReturn(Optional.of(user));
+        when(refrigeratorRepository.findById(refrigerator.getId())).thenReturn(Optional.of(refrigerator));
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(superUser.getId(), refrigerator.getId())).thenReturn(Optional.of(refrigeratorSuper));
+        when(refrigeratorUserRepository.findByUserAndRefrigerator(user,refrigerator)).thenReturn(Optional.of(refrigeratorUser));
+
+        Role newRole = Role.SUPERUSER;
+
+        MemberRequest memberRequest = new MemberRequest();
+        memberRequest.setRole(newRole);
+        memberRequest.setRefrigeratorId(1L);
+        memberRequest.setSuperName(superUser.getUsername());
+        memberRequest.setUserName(user.getUsername());
+        MemberResponse result = refrigeratorService.setRole(memberRequest);
+
+        Assertions.assertEquals(result.getRole(), newRole);
+    }
+
+    @Test
+    @DisplayName("Test setRole with invalid user ")
+    public void testSetRoleWithInvalidUser() throws UserNotFoundException {
+        Mockito.when(userRepository.findByEmail("nonexistent_user@test.com")).thenReturn(Optional.empty());
+
+        Role newRole = Role.SUPERUSER;
+        MemberRequest memberRequest = new MemberRequest();
+        memberRequest.setRole(newRole);
+        memberRequest.setRefrigeratorId(1L);
+        memberRequest.setUserName("nonexistent_user@test.com");
+
+        Assertions.assertThrows(UserNotFoundException.class, () -> {
+            refrigeratorService.setRole(memberRequest);
+        });
+    }
+
+    @Test
+    @DisplayName("Test setRole with invalid refrigerator user")
+    public void testSetRoleWithInvalidRefrigeratorUser() throws UserNotFoundException {
+        User user = new User();
+        user.setId("test_user_id");
+        user.setEmail("test_user@test.com");
+        user.setPassword("test_password");
+        User superUser = new User();
+        superUser.setId("super_user_id");
+        superUser.setEmail("super_user@test.com");
+        superUser.setPassword("super_password");
+
+        Refrigerator refrigerator = new Refrigerator();
+        refrigerator.setId(1L);
+        refrigerator.setName("test_refrigerator");
+
+        RefrigeratorUser refrigeratorUser = new RefrigeratorUser();
+        refrigeratorUser.setId(1L);
+        refrigeratorUser.setUser(user);
+        refrigeratorUser.setRefrigerator(refrigerator);
+
+        RefrigeratorUser refrigeratorSuper = new RefrigeratorUser();
+        refrigeratorSuper.setId(1L);
+        refrigeratorSuper.setUser(superUser);
+        refrigeratorSuper.setRefrigerator(refrigerator);
+        refrigeratorSuper.setRole(Role.SUPERUSER);
+
+        when(userRepository.findByEmail(user.getUsername())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(superUser.getUsername())).thenReturn(Optional.of(superUser));
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id("test_user_id", 1L)).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(user.getUsername())).thenReturn(Optional.of(user));
+        when(refrigeratorRepository.findById(refrigerator.getId())).thenReturn(Optional.of(refrigerator));
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(superUser.getId(), refrigerator.getId())).thenReturn(Optional.of(refrigeratorSuper));
+        when(refrigeratorUserRepository.findByUserAndRefrigerator(user,refrigerator)).thenReturn(Optional.of(refrigeratorUser));
+
+        Role newRole = Role.SUPERUSER;
+
+        MemberRequest memberRequest = new MemberRequest();
+        memberRequest.setRole(newRole);
+        memberRequest.setRefrigeratorId(1L);
+        memberRequest.setSuperName(superUser.getUsername());
+        memberRequest.setUserName(user.getUsername());
+        MemberResponse result = refrigeratorService.setRole(memberRequest);
+
+        Assertions.assertNull(result);
+    }
 }

@@ -20,13 +20,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Member;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * The RefrigeratorService class provides access to user data stored in the RefrigeratorRepository.
  * It provides methods for finding and manipulating user data.
+ *
+ * TODO Generalize member data valiation
+ * TODO Superuser should not be able to change to user if only superuser
  */
 @Service
 @RequiredArgsConstructor
@@ -36,17 +38,20 @@ public class RefrigeratorService {
 
     @Autowired
     private final RefrigeratorRepository refrigeratorRepository;
+
     private final UserRepository userRepository;
     private final RefrigeratorUserRepository refrigeratorUserRepository;
 
-    private Logger logger = LoggerFactory.getLogger(RefrigeratorService.class);
+    private final Logger logger = LoggerFactory.getLogger(RefrigeratorService.class);
 
     /**
-     * Adds a member to a refrigerator. C
+     * Adds a member to a refrigerator. Takes a member request and performs
+     * necessary checks to validate that user exists, super has privileges in
+     * refrigerator.
      *
-     * @param request
-     * @return
-     * @throws UserNotFoundException
+     * @param request MemberRequest input
+     * @return MemberReponse containing information about the affected user
+     * @throws UserNotFoundException if super or user does not exist
      */
     public MemberResponse addMember(MemberRequest request) throws UserNotFoundException {
         //Get Users
@@ -70,18 +75,14 @@ public class RefrigeratorService {
         }
 
         RefrigeratorUser ru = new RefrigeratorUser();
-        ru.setRole(Role.USER);
+        ru.setRole(DEFAULT_USER_ROLE);
         ru.setRefrigerator(refrigerator.get());
         ru.setUser(user);
 
         try {
             logger.info("Checks validated, saving refrigeratorUser");
             RefrigeratorUser result = refrigeratorUserRepository.save(ru);
-            MemberResponse response = new MemberResponse();
-            response.setRefrigeratorId(result.getRefrigerator().getId());
-            response.setUsername(result.getUser().getUsername());
-            response.getRole();
-            return response;
+            return new MemberResponse(result);
         } catch (Exception e) {
             logger.warn("Member could not be added: Failed to save refrigeratoruser");
             return null;
@@ -154,8 +155,8 @@ public class RefrigeratorService {
         if(refrigerator.getName() == null || refrigerator.getName().length() == 0) throw new Exception("Refrigerator name is empty");
         String username = request.getUsername();
         //Check user exists
-        User user = null;
-        Refrigerator refrigeratorResult = null;
+        User user;
+        Refrigerator refrigeratorResult;
         try {
             user = getUser(username);
             refrigeratorResult = refrigeratorRepository.save(refrigerator);
@@ -172,14 +173,66 @@ public class RefrigeratorService {
         refrigeratorUser.setRefrigerator(refrigeratorResult);
         refrigeratorUser.setUser(user);
         refrigeratorUser.setRole(Role.SUPERUSER);
-        RefrigeratorUser refrigeratorUserResult = null;
         try {
-            refrigeratorUserResult =  refrigeratorUserRepository.save(refrigeratorUser);
+            refrigeratorUserRepository.save(refrigeratorUser);
         } catch (Exception e) {
             logger.warn("Refrigerator could not be added: User could not be connected to refrigerator");
             throw new Exception("User could not be connected to refrigerator");
         }
         return refrigerator;
+    }
+
+    /**
+     * Sets role of a refrigerator member
+     *
+     * @param request Request containing data about the super, user, role
+     * @return Response containing user affected, and given role.
+     */
+    public MemberResponse setRole(MemberRequest request) throws UserNotFoundException {
+        //Get Users
+        logger.debug("Getting superuser");
+        User superUser = getUser(request.getSuperName());
+        logger.debug("Getting new member user");
+        User user = getUser(request.getUserName());
+
+        //Get refrigerator
+        Optional<Refrigerator> refrigerator = refrigeratorRepository.findById(request.getRefrigeratorId());
+        if(refrigerator.isEmpty()){
+            logger.warn("Member could not be added: Could not find refrigerator");
+            return null;
+        }
+
+        //Check privileges
+        Role privileges = getRoleById(superUser.getId(), request.getRefrigeratorId());
+        if(privileges != Role.SUPERUSER){
+            logger.warn("Member could not be added: User does not have super-privileges");
+            return null;
+        }
+
+        RefrigeratorUser ru = new RefrigeratorUser();
+        ru.setRole(Role.USER);
+        ru.setRefrigerator(refrigerator.get());
+        ru.setUser(user);
+
+        //Check if we have an instance from before
+        Optional<RefrigeratorUser> existingRu = refrigeratorUserRepository.findByUserAndRefrigerator(user,refrigerator.get());
+        if(existingRu.isPresent()){
+            if(request.getRole() != null){
+                existingRu.get().setRole(request.getRole());
+                try {
+                    logger.info("Checks validated, updating refrigeratorUser");
+                    RefrigeratorUser result = refrigeratorUserRepository.save(existingRu.get());
+                    return new MemberResponse(result);
+                } catch (Exception e) {
+                    logger.warn("Member could not be updated: Failed to update refrigeratoruser");
+                    return null;
+                }
+            }
+            else logger.warn("Updating role failed: request role is null");
+
+        }
+        else logger.warn("Updating role failed: user is not a member");
+        return null;
     }
 
     /**

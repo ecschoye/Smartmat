@@ -47,7 +47,7 @@ public class RefrigeratorController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping("/new-member")
+    @PostMapping("/members/new")
     public ResponseEntity<MemberResponse> newMember(@Valid @RequestBody MemberRequest memberRequest) throws SaveException {
         logger.info("Received request to add new member to refrigerator");
         MemberResponse result;
@@ -57,7 +57,21 @@ public class RefrigeratorController {
         } catch (Exception e) {
             throw new SaveException("Failed to add member");
         }
-        logger.info("Returning refrigeratorUser");
+        logger.info("Returning response");
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/members/edit-role")
+    public ResponseEntity<MemberResponse> editRole(@Valid @RequestBody MemberRequest memberRequest) throws SaveException {
+        logger.info("Received request to edit member role in refrigerator");
+        MemberResponse result;
+        try {
+            result = refrigeratorService.setRole(memberRequest);
+            if (result == null) throw new Exception();
+        } catch (Exception e) {
+            throw new SaveException("Failed to edit role");
+        }
+        logger.info("Returning response");
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

@@ -9,13 +9,22 @@
             </button>
         </div>
         <div>
-            <RefridgeratorList @popup-height="(payload) => emitHeight(payload)"></RefridgeratorList>
+            <RefridgeratorList :groceries="props.groceries" @group-closed="emit('group-closed')" @popup-height="(payload) => emitHeight(payload)"></RefridgeratorList>
         </div>
     </div>
 </template>
 <script setup lang="ts">
 
-const emit = defineEmits(['popup-height']);
+import type { GroceryEntity } from '~/types/GroceryEntityType';
+
+const emit = defineEmits(['popup-height', 'group-closed']);
+
+const props = defineProps({
+    groceries:{
+        type: Array as () => GroceryEntity[],
+        required:true
+    }
+})
 
     const emitHeight = ((payload : number) => {
         emit("popup-height",payload)

@@ -60,14 +60,15 @@ public class MyProfileController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getMyProfile(HttpServletRequest request) {
         try{
-            logger.info("Received request to get user profile");
+
             User user = userService.findByEmail(jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)));
+            logger.info("Recieved request to get user profile on user: "+ user.getEmail() + ".");
+
             UserProfileDTO userProfileDTO = new UserProfileDTO(user.getName(), user.getEmail());
             logger.info("Returning user profile");
             return ResponseEntity.ok(userProfileDTO);
         }
         catch (TokenExpiredException e) {
-            logger.info("Token expired");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Token expired"));
         }
     }
@@ -91,7 +92,6 @@ public class MyProfileController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/user-status")
     public ResponseEntity<?> getUserStatus(HttpServletRequest request) {
-        logger.info("Received request to get user status");
         try {
             String jwt = sessionStorageService.extractTokenFromAuthorizationHeader(request); // Extract the token from the cookie
             if (jwt == null) {
@@ -101,7 +101,7 @@ public class MyProfileController {
             AuthenticationState state = jwtService.getAuthenticationState(jwt, user);
             String role = user.getRole().toString();
 
-            logger.info("User status: " + state + " Role: " + role);
+            logger.info("Received request to get user status on user: "+ user.getEmail() + " " + user.getName() + ". User status: " + state + " Role: " + role);
 
             UserStatusResponse userStatusResponse = new UserStatusResponse(state, role);
 

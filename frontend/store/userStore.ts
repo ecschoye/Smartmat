@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import axiosInstance from '~/service/AxiosInstance';
-import {Session} from "inspector";
 
 interface UserState {
     user_id: string;
@@ -34,6 +33,7 @@ export const useUserStore = defineStore('user', {
             this.user_id = "";
             this.authenticated = false;
             this.role = "";
+            window.location.replace('/login');
         },
         logIn(data: any) {
             sessionStorage.setItem("SmartMatAccessToken", data.token);

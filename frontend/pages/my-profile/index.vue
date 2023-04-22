@@ -1,16 +1,16 @@
 <template>
   <div class="container">
     <div class="content-wrapper">
-      <ProfileBox />
+        <ProfileInfo  />
       <div class="grid">
-        <InfoBox id="myAccountBtn" @click="route('/account-details')" title="Min konto" content="View and edit my account details"/>
+        <InfoBox id="myAccountBtn" @click="route('/my-profile/edit')" title="Min konto" content="View and edit my account details"/>
         <InfoBox title="Systeminnstillinger" @click="route('/system-settings')" content="Systeminnstillinger"/>
         <InfoBox title="Ekstra knapp" @click="" content="Ekstra knapp"/>
       </div>
     </div>
-<!--    <div class="wave-container">
-      <Wave></Wave>
-    </div>-->
+    <!--    <div class="wave-container">
+          <Wave></Wave>
+        </div>-->
   </div>
 </template>
 
@@ -19,10 +19,9 @@
 <script setup lang="ts">
 //import Wave from '@/components/Wave/Wave.vue'
 import { ref, computed} from 'vue';
-
 import { useUserStore } from "~/store/userStore";
 import InfoBox from "~/components/Profile/InfoBox.vue";
-import ProfileBox from "~/components/Profile/ProfileBox.vue";
+import ProfileInfo from "~/components/Profile/MyProfile.vue";
 
 
 const userStore = useUserStore();
@@ -51,6 +50,8 @@ function route(route : string){
 </script>
 
 <style scoped>
+
+
 
 @media screen and (max-width: 1000px) {
   .container{

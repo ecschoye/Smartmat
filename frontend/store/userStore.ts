@@ -42,6 +42,13 @@ export const useUserStore = defineStore('user', {
             this.user_id = data.userId;
         },
         async checkAuthStatus() {
+            const token = sessionStorage.getItem('SmartMatAccessToken');
+            if (!token) {
+                this.authenticated = false;
+                console.log("User is not logged in");
+                return;
+            }
+
             try {
                 const response = await axiosInstance.get('/api/user-status');
                 if (response.status === 200){
@@ -62,5 +69,6 @@ export const useUserStore = defineStore('user', {
                 this.authenticated = false; // Set authenticated to false on error
             }
         },
+
     },
 });

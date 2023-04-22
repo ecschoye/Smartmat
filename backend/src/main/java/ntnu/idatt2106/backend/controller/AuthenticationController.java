@@ -47,9 +47,7 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest, HttpServletRequest httpRequest) throws InvalidCredentialsException {
         try {
-            logger.info("Authenticating user " + authenticationRequest.getEmail());
             AuthenticationResponse authResponse = authenticationService.authenticate(authenticationRequest);
-            logger.info("Authentication successful");
             User user = userService.findByEmail(authenticationRequest.getEmail());
             authResponse.setUserId(user.getId());
             authResponse.setUserRole(user.getRole().toString());

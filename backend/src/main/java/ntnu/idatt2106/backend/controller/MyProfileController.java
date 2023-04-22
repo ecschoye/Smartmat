@@ -21,6 +21,7 @@ import ntnu.idatt2106.backend.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -58,18 +59,16 @@ public class MyProfileController {
             })
     @GetMapping("/my-profile")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getMyProfile(HttpServletRequest request) {
+    public ResponseEntity<?> getMyProfile(HttpServletRequest request) throws Exception {
         try{
 
             User user = userService.findByEmail(jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)));
             logger.info("Recieved request to get user profile on user: "+ user.getEmail() + ".");
 
             UserProfileDTO userProfileDTO = new UserProfileDTO(user.getName(), user.getEmail());
-            logger.info("Returning user profile");
             return ResponseEntity.ok(userProfileDTO);
-        }
-        catch (TokenExpiredException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Token expired"));
+        } catch (Exception e) {
+            throw new Exception(e);
         }
     }
 

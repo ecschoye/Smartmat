@@ -23,13 +23,13 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Tag(name = "Login Controller", description = "Controller to handle user registration and authentication")
-public class AuthenticateController {
+@Tag(name = "Authentication Controller", description = "Controller to handle user registration and authentication")
+public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
     private final UserService userService;
 
-    Logger logger = Logger.getLogger(AuthenticateController.class.getName());
+    Logger logger = Logger.getLogger(AuthenticationController.class.getName());
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) throws UserAlreadyExistsException {

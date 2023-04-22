@@ -1,7 +1,7 @@
 package ntnu.idatt2106.backend.authentication;
 
 import jakarta.servlet.http.HttpServletRequest;
-import ntnu.idatt2106.backend.controller.AuthenticateController;
+import ntnu.idatt2106.backend.controller.AuthenticationController;
 import ntnu.idatt2106.backend.exceptions.UserAlreadyExistsException;
 import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.authentication.AuthenticationRequest;
@@ -34,7 +34,7 @@ public class AuthenticationTests {
     private UserService userService;
 
     @InjectMocks
-    private AuthenticateController loginController;
+    private AuthenticationController loginController;
 
     @Mock
     private HttpServletRequest httpServletRequest;

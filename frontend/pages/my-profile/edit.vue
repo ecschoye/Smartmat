@@ -9,11 +9,10 @@
         <BaseInput id="inpEmail" class="input-container" type="text" label="Email" v-model="user.email"/>
       </div>
       <div class="button-wrapper">
-        <button @click="updateAccount" id="update" class="update-btn">Oppdater bruker</button>
+        <button @click="route('/my-profile')" class="update-btn">Gå tilbake</button>
         <button @click="route('/my-profile/change-password')" class="update-btn">Endre passord</button>
       </div>
-      <button @click="route('/my-profile')" class="update-btn">Gå tilbake</button>
-
+      <button @click="updateAccount" id="update" class="update-btn">Oppdater bruker</button>
     </div>
   </div>
 </template>

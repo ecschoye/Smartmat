@@ -92,11 +92,8 @@ Wave {
   max-height: 150px;
 }
 .container {
-
-  background-size: 400% 400%;
   animation: gradient 15s ease infinite;
-  position: relative;
-  justify-content: center;
+  margin: 0 auto;
 }
 
 .item-list-wrapper::-webkit-scrollbar {

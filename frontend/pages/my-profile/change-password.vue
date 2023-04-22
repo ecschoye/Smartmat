@@ -1,20 +1,29 @@
 <template>
   <div class="edit-container">
     <div class="user-details">
-      <div class="header">Endre passord</div>
+      <div class="header text-center">Endre passord</div>
       <div class="form-group">
+        <p class="-mb-8 text-xl font-semibold">Skriv inn ditt gamle passord under:</p>
+        <BaseInput id="newPassword" type="password" class="w-full" label="Gammelt passord" v-model="newPassword"/>
+      </div>
+      <div class="form-group">
+        <p class="-mb-8 text-xl font-semibold">Skriv inn ditt nye passord under:</p>
         <BaseInput id="newPassword" type="password" class="w-full" label="Nytt passord" v-model="newPassword"/>
       </div>
       <div class="form-group">
+        <p class="-mb-8 text-xl font-semibold">Skriv inn ditt nye passord én gang til under:</p>
         <BaseInput id="verifyNewPassword" type="password" class="w-full" label="Verifiser nytt passord" v-model="verifyNewPassword"/>
       </div>
       <div class="button-wrapper">
-        <button @click="updateAccount" id="update" class="update-btn">Oppdater bruker</button>
+        <button @click="route('/my-profile')" class="update-btn">Gå tilbake</button>
+
         <button @click="route('/my-profile/change-password')" class="update-btn">Endre passord</button>
       </div>
-      <button @click="route('/my-profile')" class="update-btn">Gå tilbake</button>
-
     </div>
+    <div class="flex justify-center mt-3">
+      <button @click="updateAccount" id="update" class="update-btn">Oppdater bruker</button>
+    </div>
+
   </div>
 </template>
 
@@ -41,17 +50,41 @@ function route(route : string){
   router.push(route);
 }
 
+const oldPassword = ref('');
+const newPassword = ref('');
 
-async function updateAccount() {
-  const updatedUser = {
-    name: user.value.name,
-    email: user.value.email
+const oldPasswordValid = computed(() => true);
+const newPasswordValid = computed(() => true);
+
+const formValid = computed(() => oldPasswordValid.value && newPasswordValid.value);
+
+async function updatePassword() {
+  if (!formValid.value) {
+    return;
+  }
+
+  const passwordData = {
+    oldPassword: oldPassword.value,
+    newPassword: newPassword.value,
   };
 
   try {
-    const response = await axiosInstance.post('/api/my-profile/edit', updatedUser);
-    await router.push('/my-profile');
-  } catch (error) {
+    const response = await axiosInstance.post('/api/my-profile/change-password', passwordData);
+    if (response.status === 200) {
+      alert('Password changed successfully!')
+      await router.push('/my-profile');
+    }
+    else if(response.status === 400){
+      alert('Old password is incorrect!')
+    }
+    else if(response.status === 401){
+      alert('You are not authorized to change password!')
+    }
+    else{
+      alert('Something went wrong!')
+    }
+  }
+  catch (error) {
     console.error(error);
   }
 }

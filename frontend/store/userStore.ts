@@ -38,8 +38,8 @@ export const useUserStore = defineStore('user', {
         logIn(data: any) {
             sessionStorage.setItem("SmartMatAccessToken", data.token);
             this.authenticated = true;
-            this.role = "";
-            this.user_id = data.user_id;
+            this.role = data.userRole;
+            this.user_id = data.userId;
         },
         async checkAuthStatus() {
             try {

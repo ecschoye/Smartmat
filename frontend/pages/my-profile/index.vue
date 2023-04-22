@@ -3,7 +3,7 @@
     <div class="content-wrapper">
         <ProfileInfo  />
       <div class="grid">
-        <InfoBox id="myAccountBtn" @click="route('/my-profile/edit')" title="Min konto" content="View and edit my account details"/>
+        <InfoBox id="myAccountBtn" @click="route('/my-profile/edit')" title="Endre brukerdetaljer" content="View and edit my account details"/>
         <InfoBox title="Systeminnstillinger" @click="route('/system-settings')" content="Systeminnstillinger"/>
         <InfoBox title="Ekstra knapp" @click="" content="Ekstra knapp"/>
       </div>

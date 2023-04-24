@@ -16,5 +16,6 @@ public class RegisterResponse {
 
     private String userId;
     private String userRole;
+    private String message;
 
 }

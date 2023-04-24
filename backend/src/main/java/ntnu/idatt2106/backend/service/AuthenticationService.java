@@ -56,7 +56,7 @@ public class AuthenticationService {
         if (repository.findByEmail(user.getEmail()).isPresent())
             throw new UserAlreadyExistsException("Email is already in use");
         repository.save(user);
-        return RegisterResponse.builder().userId(user.getId()).userRole(String.valueOf(user.getRole())).build();
+        return RegisterResponse.builder().userId(user.getId()).userRole(String.valueOf(user.getRole())).message("User registered successfully!").build();
     }
 
 

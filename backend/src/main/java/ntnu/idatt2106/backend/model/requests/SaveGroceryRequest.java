@@ -5,19 +5,19 @@ public class SaveGroceryRequest {
     private int groceryExpiryDays;
     private String description;
     private long subCategoryId;
-    private long shoppingListId;
-    private boolean isRequested;
+    private long foreignKey; //can be used for both shoppingListId and shoppingCartId
+    private int quantity;
 
     public SaveGroceryRequest() {
     }
 
-    public SaveGroceryRequest(String name, int groceryExpiryDays, String description, long subCategoryId, long shoppingListId, boolean isRequested) {
+    public SaveGroceryRequest(String name, int groceryExpiryDays, String description, long subCategoryId, long foreignKey, int quantity) {
         this.name = name;
         this.groceryExpiryDays = groceryExpiryDays;
         this.description = description;
         this.subCategoryId = subCategoryId;
-        this.shoppingListId = shoppingListId;
-        this.isRequested = isRequested;
+        this.foreignKey = foreignKey;
+        this.quantity = quantity;
     }
 
     public String getName() {
@@ -52,19 +52,19 @@ public class SaveGroceryRequest {
         this.subCategoryId = subCategoryId;
     }
 
-    public long getShoppingListId() {
-        return shoppingListId;
+    public long getForeignKey() {
+        return foreignKey;
     }
 
-    public void setShoppingListId(long shoppingListId) {
-        this.shoppingListId = shoppingListId;
+    public void setForeignKey(long foreignKey) {
+        this.foreignKey = foreignKey;
     }
 
-    public boolean isRequested() {
-        return isRequested;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setRequested(boolean requested) {
-        isRequested = requested;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }

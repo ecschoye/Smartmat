@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="">
-      <h1 class="text-white text-center text-6xl mb-8 mt-14">Velkommen til SmartMat</h1>
+      <h1 class="text-white text-center text-6xl mb-8 mt-14">{{t('welcome_to_smart_mat')}}</h1>
     </div>
 
     <div class="flex justify-center">
@@ -10,40 +10,41 @@
     </div>
 
     <div class="button-grid">
-
-      <NuxtLink to="#" v-if="loggedIn">
-      <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
-        Gå til kjøleskapet mitt
-      </button>
-    </NuxtLink>
-
-      <NuxtLink to="/login">
+      <NuxtLink v-if="loggedIn" :to="localePath('/my-fridge')">
         <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
-          Logg inn her
+          Gå til kjøleskapet mitt
         </button>
       </NuxtLink>
-      <NuxtLink to="/">
+
+      <NuxtLink v-else :to="localePath('/login')">
         <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
-          Les mer om oss her
+          {{ t('log_in_here') }}
+        </button>
+      </NuxtLink>
+      <NuxtLink :to="localePath('/')">
+        <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
+          {{ t('read_more_about_us')}}
         </button>
       </NuxtLink>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { useUserStore } from '~/store/userStore';
-import {onMounted} from "vue";
 
-const loggedIn = computed(() => userStore.isLoggedIn);
+  <script setup lang="ts">
+  import { useUserStore } from "~/store/userStore";
+  import { onMounted, computed } from "vue";
+  const { t, locale } = useI18n({
+    useScope: 'local'
+  })
 
-const userStore = useUserStore();
+  console.log(locale.value)
 
-onMounted(async () => {
-  console.log(loggedIn.value);
-  await userStore.checkAuthStatus();
-});
+  const userStore = useUserStore();
+  const loggedIn = computed(() => userStore.isLoggedIn);
 </script>
+
+
 
 <style scoped>
 

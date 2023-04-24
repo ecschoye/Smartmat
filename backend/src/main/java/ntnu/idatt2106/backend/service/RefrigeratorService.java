@@ -45,6 +45,7 @@ public class RefrigeratorService {
 
     @Autowired
     private final RefrigeratorRepository refrigeratorRepository;
+    private final RefrigeratorUserRepository refrigeratorUserRepository;
 
     private final UserRepository userRepository;
     private final RefrigeratorUserRepository refrigeratorUserRepository;
@@ -348,5 +349,21 @@ public class RefrigeratorService {
             throw new EntityNotFoundException("Failed to delete refrigerator: Refrigerator does not exist");
         }
         throw new Exception("Failed to delete refrigerator");
+    }
+
+    /**
+     * Gets the role a member has in a refrigerator.
+     * @param userId User to get role of
+     * @param refrigeratorId Refrigerator associated
+     * @return the Enum role
+     */
+    Role getRoleById(String userId, long refrigeratorId){
+        Optional<RefrigeratorUser> refrigeratorUser = refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(userId, refrigeratorId);
+
+        if(refrigeratorUser.isPresent()){
+            return refrigeratorUser.get().getRole();
+        }
+        logger.warn("Superuser not present in refrigerator");
+        return null;
     }
 }

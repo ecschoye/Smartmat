@@ -23,13 +23,13 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Tag(name = "Login Controller", description = "Controller to handle user registration and authentication")
-public class AuthenticateController {
+@Tag(name = "Authentication Controller", description = "Controller to handle user registration and authentication")
+public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
     private final UserService userService;
 
-    Logger logger = Logger.getLogger(AuthenticateController.class.getName());
+    Logger logger = Logger.getLogger(AuthenticationController.class.getName());
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) throws UserAlreadyExistsException {
@@ -47,9 +47,7 @@ public class AuthenticateController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest, HttpServletRequest httpRequest) throws InvalidCredentialsException {
         try {
-            logger.info("Authenticating user " + authenticationRequest.getEmail());
             AuthenticationResponse authResponse = authenticationService.authenticate(authenticationRequest);
-            logger.info("Authentication successful");
             User user = userService.findByEmail(authenticationRequest.getEmail());
             authResponse.setUserId(user.getId());
             authResponse.setUserRole(user.getRole().toString());

@@ -1,19 +1,21 @@
 <template>
   <div class=" mt-14">
-    <h1 class="flex justify-center text-white text-4xl ">Logg deg inn eller lag en ny bruker her</h1>
+    <h1 class="flex justify-center text-white text-4xl ">{{t('log_in_or_create_account')}}</h1>
   </div>
   <div class="wrapper">
     <div class="logo hidden md:flex">
       <img src="../assets/icons/smartmat/smartMat.png" alt="logo" class="image">
     </div>
     <div class="form-wrapper">
-      <LogInForm id="log-in-form"></LogInForm>
+      <RegisterForm id="log-in-form"></RegisterForm>
     </div>
   </div>
 </template>
 
 <script setup>
-import LogInForm from "~/components/Form/LogInForm.vue";
+import RegisterForm from "~/components/Form/RegisterForm.vue";
+
+const { t } = useI18n();
 </script>
 
 <style scoped>

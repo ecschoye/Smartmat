@@ -24,6 +24,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -47,6 +48,20 @@ public class JwTAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
+        String requestURI = request.getRequestURI();
+
+        // Bypass filter for login and register endpoints
+        if (requestURI != null &&
+                (requestURI.startsWith("/h2-ui") // change this line
+                        || requestURI.startsWith("/swagger-ui")
+                        || requestURI.startsWith("/v3/api-docs")
+                        || requestURI.matches("/api/auth/(login|register)")
+                        || requestURI.matches(".*(css|jpg|png|gif|js|html|ico)$"))) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
         final String jwt = sessionStorageService.extractTokenFromAuthorizationHeader(request);
 
         String username = null;

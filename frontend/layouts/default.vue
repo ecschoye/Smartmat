@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <NavBar/>
-    <div class="page-container">
+    <div class="page-container light-background-color dark:dark-background-color">
       <slot />
     </div>
 
@@ -10,7 +10,6 @@
 
 <style scoped>
 .page-container {
-  background-color: #31C48D;
   min-height: calc(100vh - 96px);
   display: block;
   max-height: 100vh;
@@ -24,3 +23,14 @@
 }
 </style>
 
+<script setup lang="ts">
+import { onMounted } from 'vue';
+import { useUserStore } from "~/store/userStore";
+
+const userStore = useUserStore();
+
+onMounted(() => {
+  userStore.checkAuthStatus();
+});
+
+</script>

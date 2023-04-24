@@ -50,7 +50,7 @@
                 <NuxtLink to="/" :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'block cursor-default select-none py-2 pl-3 pr-2','hover:cursor-pointer']" :aria-selected="selected">
                   <div class="flex items-center ">
                     <img class="hidden sm:block h-5 w-auto" src="../assets/icons/add.png" alt="">
-                    <span :class="[selected ? 'font-semibold' : 'font-normal', 'ml-1 sm:ml-3 block truncate']">{{ 'Nytt Kjøleskap' }}</span>
+                    <span :class="[selected ? 'font-semibold' : 'font-normal', 'ml-1 sm:ml-3 block truncate']">{{ $t('new_fridge') }}</span>
                   </div>
                 </NuxtLink>
               </HeadlessListboxOption>
@@ -88,6 +88,11 @@ export default {
     if(this.fridges !== undefined && this.fridges !== null ){
       this.selected = this.fridges[0]
     }
+  },
+  setup() {
+    const { t } = useI18n()
+
+    return { t }
   },
   watch: {
     selected : function(newVal, oldVal) {

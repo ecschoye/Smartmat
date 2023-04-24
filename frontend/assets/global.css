@@ -13,4 +13,13 @@
     p {
         @apply text-base;
     }
+
+
+    .light-background-color {
+        background-color: #31C48D;
+    }
+
+    .dark-background-color {
+        background-color: #282828;
+    }
 }

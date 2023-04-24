@@ -34,7 +34,7 @@ public class SecurityConfig {
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
     private final Environment env;
     Logger logger = Logger.getLogger(SecurityConfig.class.getName());
-    //private final JwTAuthenticationFilter jwTAuthenticationFilter;
+    private final JwTAuthenticationFilter jwTAuthenticationFilter;
 
     /**
      * Configures the security filter chain.
@@ -63,8 +63,8 @@ public class SecurityConfig {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                     .authenticationProvider(authenticationProvider)
-                    .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and();
-                    //.addFilterBefore(jwTAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                    .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
+                    .addFilterBefore(jwTAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         }
         else{
             logger.info("Production profile is active");
@@ -82,8 +82,8 @@ public class SecurityConfig {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                     .authenticationProvider(authenticationProvider)
-                    .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and();
-                    //.addFilterBefore(jwTAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                    .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and()
+                    .addFilterBefore(jwTAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         }
         return http.build();
 

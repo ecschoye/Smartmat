@@ -57,8 +57,15 @@
   </div>
 </template>
 
-<script setup>
-const languages = [
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
+
+interface Language {
+  id: number;
+  name: string;
+}
+
+const languages: Language[] = [
   {
     id: 1,
     name: 'Norsk',
@@ -67,25 +74,26 @@ const languages = [
     id: 2,
     name: 'Engelsk',
   },
-]
-
-const selected = ref(languages[0])
-</script>
-
-interface Language {
-  id: number;
-  name: string;
-}
+];
 
 export default defineComponent({
   data() {
     return {
       toggleLightmode: false,
       toggleNotifications: false,
+      languages,
+      selected: languages[0],
     };
   },
-}
+  setup() {
+    const selected = ref(languages[0]);
+    return {
+      selected,
+    };
+  },
+});
 </script>
+
 
 
 <style scoped>

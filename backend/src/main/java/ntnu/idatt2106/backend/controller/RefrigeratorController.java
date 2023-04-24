@@ -1,6 +1,7 @@
 package ntnu.idatt2106.backend.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
@@ -75,6 +76,10 @@ public class RefrigeratorController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         } catch (LastSuperuserException e) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
+        } catch(EntityNotFoundException e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch(Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -92,15 +97,18 @@ public class RefrigeratorController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{refrigeratorId}")
-    public ResponseEntity<Void> deleteRefrigerator(@Valid @PathVariable int refrigeratorId) {
-        boolean deleted = refrigeratorService.deleteById(refrigeratorId);
-        if (deleted) {
-            logger.info("Deleted refrigerator with id {}", refrigeratorId);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            logger.info("Failed to delete refrigerator with id {}", refrigeratorId);
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    @DeleteMapping("/delete/{refrigeratorId}/{username}")
+    public ResponseEntity<SuccessResponse> deleteRefrigerator(@Valid @PathVariable int refrigeratorId, @PathVariable String username) {
+        try {
+            refrigeratorService.forceDeleteRefrigerator(username,refrigeratorId);
+            logger.info("Member removed successfully");
+            return new ResponseEntity<>(new SuccessResponse("Member removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
+        } catch (AccessDeniedException e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } catch(EntityNotFoundException e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch(Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

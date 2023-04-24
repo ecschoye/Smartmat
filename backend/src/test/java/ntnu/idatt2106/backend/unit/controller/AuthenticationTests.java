@@ -1,4 +1,4 @@
-package ntnu.idatt2106.backend.authentication;
+package ntnu.idatt2106.backend.unit.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import ntnu.idatt2106.backend.controller.AuthenticationController;
@@ -7,6 +7,7 @@ import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.authentication.AuthenticationRequest;
 import ntnu.idatt2106.backend.model.authentication.RegisterRequest;
 import ntnu.idatt2106.backend.model.dto.response.AuthenticationResponse;
+import ntnu.idatt2106.backend.model.dto.response.RegisterResponse;
 import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.service.AuthenticationService;
 import ntnu.idatt2106.backend.service.UserService;
@@ -45,14 +46,18 @@ public class AuthenticationTests {
     @Test
     public void register_returnsOkResponse() throws UserAlreadyExistsException {
         RegisterRequest registerRequest = RegisterRequest.builder().email("email").name("name").password("password").build();
-        AuthenticationResponse authenticationResponse = AuthenticationResponse.builder().token("token").build();
+        RegisterResponse registerResponse = RegisterResponse.builder().build();
 
-        when(authenticationService.register(registerRequest)).thenReturn(authenticationResponse);
+        System.out.println(registerResponse);
 
-        ResponseEntity<AuthenticationResponse> response = loginController.register(registerRequest);
+        when(authenticationService.register(registerRequest)).thenReturn(registerResponse);
+
+        ResponseEntity<RegisterResponse> response = loginController.register(registerRequest);
+
+        System.out.println(response);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(authenticationResponse, response.getBody());
+        assertEquals(registerResponse, response.getBody());
     }
 
     @Test

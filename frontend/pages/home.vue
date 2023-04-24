@@ -5,6 +5,7 @@
             :category-list = "categoryList"
             :suggestions-list = "suggestionsList"
             :shopping-cart = "shoppingCart"
+            :refrigeratorId = "refrigeratorId"
         /> 
     </div>
 </template>
@@ -13,6 +14,7 @@
 export default defineComponent({
         data() {
             return {
+                refrigeratorId: 1,
                 shoppingList: [
                     {
                         id: 1,

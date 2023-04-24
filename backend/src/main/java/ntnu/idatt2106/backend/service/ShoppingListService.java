@@ -36,17 +36,25 @@ public class ShoppingListService {
         logger.info("Creating shopping list for refrigerator with id {}", refrigeratorId);
         Optional<Refrigerator> refrigerator = refrigeratorRepository.findById(refrigeratorId);
 
-        if (refrigerator.isPresent()) {
-            logger.info("Found refrigerator for refrigerator id {}", refrigeratorId);
-            ShoppingList shoppingList = new ShoppingList();
-            shoppingList.setRefrigerator(refrigerator.get());
-
-            shoppingListRepository.save(shoppingList);
-            logger.info("Created shopping list with id {}", shoppingList.getId());
-            return shoppingList.getId();
+        if (refrigerator.isEmpty()) {
+            logger.info("Could not find a matching refrigerator for refrigerator id {}", refrigeratorId);
+            return -1;
         }
-        logger.info("Could not find a matching refrigerator for refrigerator id {}", refrigeratorId);
-        return -1;
+
+        logger.info("Found refrigerator for refrigerator id {}", refrigeratorId);
+
+        Optional<ShoppingList> shoppingList = shoppingListRepository.findByRefrigeratorId(refrigeratorId);
+        if (shoppingList.isPresent()) {
+            logger.info("Shopping list already exists for refrigerator id {}", refrigeratorId);
+            return shoppingList.get().getId();
+        }
+
+        ShoppingList newShoppingList = new ShoppingList();
+        newShoppingList.setRefrigerator(refrigerator.get());
+
+        shoppingListRepository.save(newShoppingList);
+        logger.info("Created shopping list with id {}", newShoppingList.getId());
+        return newShoppingList.getId();
     }
 
     public List<Grocery> getGroceries(long shoppingListId) {

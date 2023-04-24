@@ -72,6 +72,7 @@
 </template>
 
 <script lang="ts">
+import { createShoppingList } from "~/service/httputils/ShoppingListService";
     export default defineComponent({
         props: {
             shoppingList: {
@@ -89,6 +90,10 @@
             shoppingCart: {
                 type: Array as () => ShoppingListElement[],
                 required: true
+            },
+            refrigeratorId: {
+                type: Number,
+                required: true
             }
         },
         data() {
@@ -96,10 +101,18 @@
                 isAllElementsSelected: false,
                 isCategoriesSelected: false,
                 isSuggestionsSelected: false,
-                isInShoppingCartSelected: false
+                isInShoppingCartSelected: false,
+                shoppingListId: -1
             }
         },
+        created() {
+            this.createShoppingList();
+        },
         methods: {
+            async createShoppingList() {
+                let response = await createShoppingList(this.refrigeratorId);
+                this.shoppingListId = response.data;
+            },
             selectTab(tab: string) {
                 Object.keys(this.$data).forEach((key) => {
                     if (key !== tab) {

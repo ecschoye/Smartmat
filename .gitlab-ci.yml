@@ -21,7 +21,7 @@ variables:
 stages:
   - test_backend
   - package_backend
-  #- test_frontend
+  - test_frontend
   - build_frontend
 
 # ...
@@ -61,7 +61,7 @@ test_frontend:
   script:
     - cd frontend
     - npm ci
-    - npm run test
+    - npm run vitest
   artifacts:
     when: always
     paths:

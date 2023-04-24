@@ -19,7 +19,8 @@ test_backend:
         - target/surefire-reports/TEST-*.xml
         - target/failsafe-reports/TEST-*.xml
   rules:
-    - changes:
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
+      changes:
         - backend/**/*
 
 package_backend:
@@ -29,11 +30,9 @@ package_backend:
   artifacts:
     paths:
       - target/*.jar
-  only:
-    - main
-    - dev
   rules:
-    - changes:
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
+      changes:
         - backend/**/*
 
 test_frontend:
@@ -50,7 +49,8 @@ test_frontend:
     reports:
       junit: coverage/junit.xml
   rules:
-    - changes:
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
+      changes:
         - frontend/**/*
 
 build_frontend:
@@ -63,9 +63,7 @@ build_frontend:
   artifacts:
     paths:
       - dist/
-  only:
-    - main
-    - dev
   rules:
-    - changes:
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
+      changes:
         - frontend/**/*

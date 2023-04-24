@@ -25,7 +25,7 @@
                                        :value="typeof item === 'object' ? item.code : item"
                                        v-slot="{ active, nameOfLocale }"
                                        @click="selected = item.code">
-                  <li :class="[active ? 'bg-green-500 text-white' : 'text-gray-900', 'relative cursor-default select-none py-1 pl-3 pr-9']">
+                  <li :class="[active ? 'bg-emerald-400 dark:bg-green-500 text-white' : 'text-gray-900', 'relative cursor-default select-none py-1 pl-3 pr-9']">
                     <div class="w-full h-full">
                       <NuxtLink
                           :to="switchLocalePath(item.code)"

@@ -4,6 +4,10 @@ import ntnu.idatt2106.backend.model.Refrigerator;
 
 import java.util.List;
 
+/**
+ * Model for creating refrigerator response to frontend.
+ * Provides all information about a refrigerator and its users.
+ */
 public class RefrigeratorResponse {
     private long id;
     private String name;

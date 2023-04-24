@@ -3,6 +3,9 @@ package ntnu.idatt2106.backend.model.dto.response;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.enums.Role;
 
+/**
+ * Model class used to return public information about a member in a refrigerator
+ */
 public class MemberResponse {
     private long refrigeratorId;
     private String name;

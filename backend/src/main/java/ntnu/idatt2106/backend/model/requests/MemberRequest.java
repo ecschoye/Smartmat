@@ -3,6 +3,10 @@ package ntnu.idatt2106.backend.model.requests;
 import jakarta.validation.constraints.NotNull;
 import ntnu.idatt2106.backend.model.enums.Role;
 
+/**
+ * Model used to receive a request for adding or editing a member
+ * of a refrigerator.
+ */
 public class MemberRequest {
     @NotNull
     private String superName;

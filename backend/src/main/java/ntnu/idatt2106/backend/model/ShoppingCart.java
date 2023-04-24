@@ -13,20 +13,17 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "ShoppingList")
-@Schema(description = "A registered refrigerator of the application")
+@Table(name = "ShoppingCart")
+@Schema(description = "Shopping cart for one shopping list of the application")
 @Entity
-public class ShoppingList {
-
+public class ShoppingCart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(description = "The id to the refrigerator, automatically generated")
+    @Schema(description = "The id of the shopping cart, automatically generated")
     private long id;
 
     @OneToOne
-    @JoinColumn(name = "refrigeratorId")
-    @Schema(description = "The refrigerator connected to the shopping list")
-    private Refrigerator refrigerator;
-
+    @JoinColumn(name = "shoppingListId")
+    @Schema(description = "The shopping list connected to the shopping cart")
+    private ShoppingList shoppingList;
 }
-

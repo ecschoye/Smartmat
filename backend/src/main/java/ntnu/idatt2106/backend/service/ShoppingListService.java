@@ -3,6 +3,7 @@ package ntnu.idatt2106.backend.service;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.requests.EditGroceryRequest;
@@ -21,7 +22,7 @@ public class ShoppingListService {
     private final ShoppingListRepository shoppingListRepository;
     private final RefrigeratorRepository refrigeratorRepository;
     private final RefrigeratorUserRepository refrigeratorUserRepository;
-    private final GroceryListRepository groceryListRepository;
+    private final GroceryShoppingListRepository groceryShoppingListRepository;
     private final SubCategoryRepository subCategoryRepository;
     private final GroceryRepository groceryRepository;
     private final UserRepository userRepository;
@@ -50,7 +51,17 @@ public class ShoppingListService {
 
     public List<Grocery> getGroceries(long shoppingListId) {
         logger.info("Retrieving groceries from the database");
-        List<Grocery> groceries = groceryListRepository.findByShoppingListId(shoppingListId);
+        List<Grocery> groceries = groceryShoppingListRepository.findByShoppingListId(shoppingListId);
+        if (groceries.isEmpty()) {
+            logger.info("Received no groceries from the database");
+        }
+        logger.info("Received groceries from the database");
+        return groceries;
+    }
+
+    public List<Grocery> getRequestedGroceries(long shoppingListId) {
+        logger.info("Retrieving suggested groceries from the database");
+        List<Grocery> groceries = groceryShoppingListRepository.findRequestedGroceriesByShoppingListId(shoppingListId);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries from the database");
         }
@@ -60,7 +71,7 @@ public class ShoppingListService {
 
     public List<Grocery> getGroceries(long shoppingListId, long subCategoryId) {
         logger.info("Retrieving groceries from the database");
-        List<Grocery> groceries = groceryListRepository.findByShoppingListIdAndSubCategoryId(shoppingListId, subCategoryId);
+        List<Grocery> groceries = groceryShoppingListRepository.findByShoppingListIdAndSubCategoryId(shoppingListId, subCategoryId);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries from the database");
         }
@@ -70,7 +81,7 @@ public class ShoppingListService {
 
     public List<Category> getCategories(long shoppingListId) {
         logger.info("Retrieving categories from shopping list with id {}", shoppingListId);
-        List<Category> categories = groceryListRepository.findCategoryByShoppingListId(shoppingListId);
+        List<Category> categories = groceryShoppingListRepository.findCategoryByShoppingListId(shoppingListId);
         if (categories.isEmpty()) {
             logger.info("Received no categories from shopping list with id {}", shoppingListId);
         }
@@ -82,7 +93,7 @@ public class ShoppingListService {
         String eMail = extractEmail(httpRequest);
         logger.info("Editing grocery with id: {} to shopping list with id {}", groceryRequest.getId(), groceryRequest.getShoppingListId());
 
-        Optional<GroceryShoppingList> groceryShoppingList = groceryListRepository.findById(groceryRequest.getId());
+        Optional<GroceryShoppingList> groceryShoppingList = groceryShoppingListRepository.findById(groceryRequest.getId());
         if (groceryShoppingList.isPresent()) {
             logger.info("Found grocery in the shopping list");
             boolean isRequested = !isSuperUser(eMail, groceryRequest.getShoppingListId());
@@ -91,7 +102,7 @@ public class ShoppingListService {
             groceryShoppingList.get().setQuantity(groceryRequest.getQuantity());
 
             logger.info("Edit grocery in the grocery list");
-            return Optional.of(groceryListRepository.save(groceryShoppingList.get()));
+            return Optional.of(groceryShoppingListRepository.save(groceryShoppingList.get()));
         }
         logger.info("Could not find the grocery in the shopping list");
         return Optional.empty();
@@ -100,7 +111,6 @@ public class ShoppingListService {
     private String extractEmail(HttpServletRequest httpRequest) {
         String token = sessionStorageService.extractTokenFromAuthorizationHeader(httpRequest);
         return jwtService.extractClaim(token, Claims::getSubject);
-
     }
 
     private boolean isSuperUser(String eMail, long shoppingListId) {
@@ -128,11 +138,11 @@ public class ShoppingListService {
 
     public Optional<GroceryShoppingList> saveGrocery(SaveGroceryRequest groceryRequest, HttpServletRequest httpRequest) {
         String eMail = extractEmail(httpRequest);
-        logger.info("Saving grocery: {} to shopping list with id {}", groceryRequest.getName(), groceryRequest.getShoppingListId());
+        logger.info("Saving grocery: {} to shopping list with id {}", groceryRequest.getName(), groceryRequest.getForeignKey());
 
-        Optional<ShoppingList> shoppingList = shoppingListRepository.findById(groceryRequest.getShoppingListId());
+        Optional<ShoppingList> shoppingList = shoppingListRepository.findById(groceryRequest.getForeignKey());
         if (shoppingList.isEmpty()) {
-            logger.info("Could not find a shopping list with id {}", groceryRequest.getShoppingListId());
+            logger.info("Could not find a shopping list with id {}", groceryRequest.getForeignKey());
             return Optional.empty();
         }
 
@@ -140,7 +150,7 @@ public class ShoppingListService {
 
         Optional<SubCategory> subCategory = subCategoryRepository.findById(groceryRequest.getSubCategoryId());
         if (subCategory.isEmpty()) {
-            logger.info("Could not find a shopping list with id {}", groceryRequest.getShoppingListId());
+            logger.info("Could not find a shopping list with id {}", groceryRequest.getForeignKey());
             return Optional.empty();
         }
 
@@ -164,6 +174,17 @@ public class ShoppingListService {
 
         logger.info("Saved new grocery to the grocery list");
 
-        return Optional.of(groceryListRepository.save(groceryShoppingList));
+        return Optional.of(groceryShoppingListRepository.save(groceryShoppingList));
+    }
+
+    public void deleteGrocery(long groceryListId, HttpServletRequest httpRequest) throws UnauthorizedException {
+        String eMail = extractEmail(httpRequest);
+        Optional<GroceryShoppingList> groceryShoppingList = groceryShoppingListRepository.findById(groceryListId);
+
+        if (groceryShoppingList.isPresent() && isSuperUser(eMail, groceryShoppingList.get().getShoppingList().getId())) {
+            groceryShoppingListRepository.deleteById(groceryListId);
+        } else {
+            throw new UnauthorizedException("The user is not authorized to delete a grocery list item");
+        }
     }
 }

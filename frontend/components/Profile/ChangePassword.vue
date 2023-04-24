@@ -6,9 +6,6 @@
         <div class="divider"></div>
         <div class="mb-4">
           <div class="input-container w-full">
-            <BaseInput id="oldPassword" type="password" class="w-full" label="Gammelt passord" v-model="oldPassword"/>
-          </div>
-          <div class="input-container w-full">
             <BaseInput id="newPassword" type="password" class="w-full" label="Nytt passord" v-model="newPassword"/>
           </div>
           <div class="input-container w-full">

@@ -19,6 +19,7 @@
         </button>
       </div>
         <RefridgeratorList
+            class="my-5"
             :groceries="props.groceries"
             :listing-type="listingType"
             @group-closed="emit('group-closed')"

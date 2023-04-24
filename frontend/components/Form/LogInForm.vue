@@ -1,14 +1,12 @@
 <template>
   <div class="wrapper">
-    <form @submit.prevent="sendForm" class="form">
+    <form @submit.prevent="sendForm" class="form bg-white dark:bg-zinc-700">
       <BaseInput id="inpEmail" class="input-container" type="email" label="Email" v-model="form.email" />
       <BaseInput id="inpPassword" class="input-container" type="password" label="Password" v-model="form.password" />
       <div class="button-wrapper">
         <GreenButton label="Logg inn" width="100%" height="50px" />
         <div class="divider"></div>
-        <nuxt-link to="/register">
-          <GrayButton label="Ny bruker" width="100%" height="50px" />
-        </nuxt-link>
+          <span class="mr-6">Har du ikke bruker?</span><nuxt-link to="/register">Registrer deg her</nuxt-link>
       </div>
     </form>
   </div>
@@ -35,10 +33,7 @@ const sendForm = async () => {
   try {
     const response = await postLogin(form);
     if (response.status === 200) {
-      sessionStorage.setItem('SmartMatAccessToken', response.data.token);
-      userStore.setLoggedInUserStatus(true);
-      userStore.setLoggedInUserRole(response.data.userRole);
-      userStore.setLoggedInUserId(response.data.userId);
+      userStore.logIn(response.data);
       form.email = '';
       form.password = '';
       await router.push('/');

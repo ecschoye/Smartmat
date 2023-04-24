@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -37,4 +39,5 @@ public class Grocery {
     @JoinColumn(name = "subCategoryId")
     @Schema(description = "The sub category to the grocery")
     private SubCategory subCategory;
+
 }

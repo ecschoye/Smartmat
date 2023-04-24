@@ -4,17 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class EditGroceryRequest {
     private long id;
-    @JsonProperty("isRequested")
-    private boolean requested;
     private int quantity;
     private long shoppingListId;
 
     public EditGroceryRequest() {
     }
 
-    public EditGroceryRequest(long id, boolean requested, int quantity, long shoppingListId) {
+    public EditGroceryRequest(long id, int quantity, long shoppingListId) {
         this.id = id;
-        this.requested = requested;
         this.quantity = quantity;
         this.shoppingListId = shoppingListId;
     }
@@ -25,14 +22,6 @@ public class EditGroceryRequest {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public boolean isRequested() {
-        return requested;
-    }
-
-    public void setRequested(boolean requested) {
-        this.requested = requested;
     }
 
     public int getQuantity() {

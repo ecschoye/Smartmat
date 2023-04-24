@@ -32,7 +32,11 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     (error) => {
-        console.log(error.response.headers)
+        if (!error.response) {
+            console.error("An error occurred, but no response was provided:", error);
+            return Promise.reject(error);
+        }
+
         if (error.response.headers['error-message']) {
             alert("Old password is incorrect. Please try again.");
             return;
@@ -40,7 +44,7 @@ axiosInstance.interceptors.response.use(
         else if (error.response.status === 401 && useUserStore().isLoggedIn) {
             console.log("Session has expired. You've been logged out.");
             alert("Session has expired. You've been logged out.");
-            useUserStore().logout();
+            useUserStore().logOut();
         }
         else if(error.response.status !== 401) {
             console.log("An error has occurred. Errorcode: " + error.response.status);
@@ -48,4 +52,5 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
 export default axiosInstance;

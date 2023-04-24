@@ -6,14 +6,21 @@ import ntnu.idatt2106.backend.model.GroceryShoppingList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface GroceryListRepository extends JpaRepository<GroceryShoppingList, Long> {
+@Repository
+public interface GroceryShoppingListRepository extends JpaRepository<GroceryShoppingList, Long> {
     @Query(value = "SELECT gsl.grocery" +
             " FROM GroceryShoppingList gsl, Grocery g" +
-            " WHERE gsl.grocery.id = g.id AND gsl.id = :shoppingListId")
+            " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId")
     List<Grocery> findByShoppingListId(@Param("shoppingListId")Long shoppingListId);
+
+    @Query(value = "SELECT gsl.grocery" +
+            " FROM GroceryShoppingList gsl, Grocery g" +
+            " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId AND gsl.isRequest=true")
+    List<Grocery> findRequestedGroceriesByShoppingListId(@Param("shoppingListId")Long shoppingListId);
 
     @Query(value = "SELECT gsl.grocery" +
             " FROM GroceryShoppingList gsl, Grocery g" +

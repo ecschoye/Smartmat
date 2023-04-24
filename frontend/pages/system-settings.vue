@@ -72,8 +72,12 @@ const languages = [
 const selected = ref(languages[0])
 </script>
 
-<script>
-export default {
+interface Language {
+  id: number;
+  name: string;
+}
+
+export default defineComponent({
   data() {
     return {
       toggleLightmode: false,

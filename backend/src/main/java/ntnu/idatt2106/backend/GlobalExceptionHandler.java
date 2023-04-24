@@ -1,6 +1,8 @@
 package ntnu.idatt2106.backend;
 
+import ntnu.idatt2106.backend.exceptions.OldPasswordDoesNotMatchException;
 import ntnu.idatt2106.backend.exceptions.SaveException;
+import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.exceptions.UserAlreadyExistsException;
 import org.apache.http.auth.InvalidCredentialsException;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
@@ -37,6 +39,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ex.getMessage());
     }
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<String> handleUnauthorizedException(UnauthorizedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ex.getMessage());
+    }
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<String> handleNullPointerException(Exception ex) {
@@ -53,6 +60,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(OldPasswordDoesNotMatchException.class)
+    public ResponseEntity<String> handleOldPasswordDoesNotMatchException(OldPasswordDoesNotMatchException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ex.getMessage());
     }
 

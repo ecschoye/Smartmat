@@ -1,5 +1,7 @@
 package ntnu.idatt2106.backend.service;
 
+import jakarta.persistence.EntityNotFoundException;
+import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
@@ -8,6 +10,7 @@ import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
 import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
+import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
 import ntnu.idatt2106.backend.repository.UserRepository;
@@ -22,6 +25,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,6 +51,7 @@ public class RefrigeratorServiceTest {
 
     private Refrigerator refrigerator;
     private User user;
+    private User superuser;
 
     @BeforeEach
     public void setup() {
@@ -58,6 +63,10 @@ public class RefrigeratorServiceTest {
         user = new User();
         user.setId("testUserId");
         user.setEmail("testuser@test.com");
+
+        superuser = new User();
+        superuser.setId("testSuperuserId");
+        superuser.setEmail("testSuperuser@test.com");
     }
 
     @Test
@@ -286,7 +295,7 @@ public class RefrigeratorServiceTest {
 
     @Test
     @DisplayName("Test setRole with invalid user ")
-    public void testSetRoleWithInvalidUser() throws UserNotFoundException {
+    public void testSetRoleWithInvalidUser() {
         Mockito.when(userRepository.findByEmail("nonexistent_user@test.com")).thenReturn(Optional.empty());
 
         Role newRole = Role.SUPERUSER;
@@ -295,9 +304,7 @@ public class RefrigeratorServiceTest {
         memberRequest.setRefrigeratorId(1L);
         memberRequest.setUserName("nonexistent_user@test.com");
 
-        Assertions.assertThrows(UserNotFoundException.class, () -> {
-            refrigeratorService.setRole(memberRequest);
-        });
+        Assertions.assertThrows(UserNotFoundException.class, () -> refrigeratorService.setRole(memberRequest));
     }
 
     @Test
@@ -345,5 +352,169 @@ public class RefrigeratorServiceTest {
         MemberResponse result = refrigeratorService.setRole(memberRequest);
 
         Assertions.assertNull(result);
+    }
+
+    @Test
+    @DisplayName("Test removing a user from a refrigerator")
+    public void testRemoveUserFromRefrigerator() throws AccessDeniedException, LastSuperuserException, EntityNotFoundException {
+        RemoveMemberRequest request = new RemoveMemberRequest();
+        request.setRefrigeratorId(refrigerator.getId());
+        request.setUserName(user.getEmail());
+        request.setSuperName(superuser.getEmail());
+        request.setForceDelete(false);
+
+        RefrigeratorUser userRole = new RefrigeratorUser();
+        userRole.setId(1L);
+        userRole.setRefrigerator(refrigerator);
+        userRole.setUser(user);
+        userRole.setRole(Role.USER);
+
+        RefrigeratorUser superuserRole = new RefrigeratorUser();
+        superuserRole.setId(2L);
+        superuserRole.setRefrigerator(refrigerator);
+        superuserRole.setUser(superuser);
+        superuserRole.setRole(Role.SUPERUSER);
+
+        List<RefrigeratorUser> superUsers = new ArrayList<>();
+        superUsers.add(superuserRole);
+
+        when(refrigeratorRepository.findById(refrigerator.getId())).thenReturn(Optional.of(refrigerator));
+        when(userRepository.findByEmail(user.getUsername())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(superuser.getUsername())).thenReturn(Optional.of(superuser));
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(user.getId(), refrigerator.getId())).thenReturn(Optional.of(userRole));
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(superuser.getId(), refrigerator.getId())).thenReturn(Optional.of(superuserRole));
+        when(refrigeratorUserRepository.findByRefrigeratorIdAndRole(refrigerator.getId(), Role.SUPERUSER)).thenReturn(superUsers);
+
+        refrigeratorService.removeUserFromRefrigerator(request);
+
+        Mockito.verify(refrigeratorUserRepository, Mockito.times(1)).delete(userRole);
+        Mockito.verify(refrigeratorRepository, Mockito.times(1)).save(refrigerator);
+    }
+
+    @Test
+    @DisplayName("Test user tries to remove other user")
+    public void testUserRemovesUserShouldFail() {
+        RemoveMemberRequest request = new RemoveMemberRequest();
+        request.setRefrigeratorId(refrigerator.getId());
+        request.setUserName(user.getEmail());
+        request.setSuperName(superuser.getEmail());
+        request.setForceDelete(false);
+
+        RefrigeratorUser userRole = new RefrigeratorUser();
+        userRole.setId(1L);
+        userRole.setRefrigerator(refrigerator);
+        userRole.setUser(user);
+        userRole.setRole(Role.USER);
+
+        RefrigeratorUser userRole1 = new RefrigeratorUser();
+        userRole1.setId(2L);
+        userRole1.setRefrigerator(refrigerator);
+        userRole1.setUser(superuser);
+        userRole1.setRole(Role.USER); //Pretend is a normal user
+
+        when(refrigeratorRepository.findById(refrigerator.getId())).thenReturn(Optional.of(refrigerator));
+        when(userRepository.findByEmail(user.getUsername())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(superuser.getUsername())).thenReturn(Optional.of(superuser));
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(user.getId(), refrigerator.getId())).thenReturn(Optional.of(userRole));
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(superuser.getId(), refrigerator.getId())).thenReturn(Optional.of(userRole1));
+
+        Assertions.assertThrows(AccessDeniedException.class, () -> refrigeratorService.removeUserFromRefrigerator(request));
+    }
+
+    @Test
+    @DisplayName("Test removing the last superuser without forceDelete")
+    public void testRemoveLastSuperuserWithoutForceDeleteShouldFail() throws EntityNotFoundException {
+        RemoveMemberRequest request = new RemoveMemberRequest();
+        request.setRefrigeratorId(refrigerator.getId());
+        request.setUserName(superuser.getEmail());
+        request.setSuperName(superuser.getEmail());
+        request.setForceDelete(false);
+
+        RefrigeratorUser superuserRole = new RefrigeratorUser();
+        superuserRole.setId(2L);
+        superuserRole.setRefrigerator(refrigerator);
+        superuserRole.setUser(superuser);
+        superuserRole.setRole(Role.SUPERUSER);
+
+        List<RefrigeratorUser> superUsers = new ArrayList<>();
+        superUsers.add(superuserRole);
+
+        when(refrigeratorRepository.findById(refrigerator.getId())).thenReturn(Optional.of(refrigerator));
+        when(userRepository.findByEmail(superuser.getUsername())).thenReturn(Optional.of(superuser));
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(superuser.getId(), refrigerator.getId())).thenReturn(Optional.of(superuserRole));
+        when(refrigeratorUserRepository.findByRefrigeratorIdAndRole(refrigerator.getId(), Role.SUPERUSER)).thenReturn(superUsers);
+
+        Assertions.assertThrows(LastSuperuserException.class, () -> refrigeratorService.removeUserFromRefrigerator(request));
+
+        Mockito.verify(refrigeratorUserRepository, Mockito.times(0)).delete(superuserRole);
+        Mockito.verify(refrigeratorRepository, Mockito.times(0)).save(refrigerator);
+    }
+
+    @Test
+    @DisplayName("Test removing a user from a refrigerator when user is not a member")
+    public void testRemoveUserFromRefrigeratorUserNotMember() throws EntityNotFoundException {
+        RemoveMemberRequest request = new RemoveMemberRequest();
+        request.setRefrigeratorId(refrigerator.getId());
+        request.setUserName("not_a_member@test.com");
+        request.setSuperName(superuser.getEmail());
+        request.setForceDelete(false);
+
+        when(refrigeratorRepository.findById(refrigerator.getId())).thenReturn(Optional.of(refrigerator));
+        when(userRepository.findByEmail(request.getUserName())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(EntityNotFoundException.class, () -> refrigeratorService.removeUserFromRefrigerator(request));
+    }
+
+    @Test
+    @DisplayName("Test removing a user from a refrigerator when superuser is not a member")
+    public void testRemoveUserFromRefrigeratorSuperuserNotMember() throws EntityNotFoundException {
+        RemoveMemberRequest request = new RemoveMemberRequest();
+        request.setRefrigeratorId(refrigerator.getId());
+        request.setUserName(user.getEmail());
+        request.setSuperName("not_a_member@test.com");
+        request.setForceDelete(false);
+
+        RefrigeratorUser userRole = new RefrigeratorUser();
+        userRole.setId(1L);
+        userRole.setRefrigerator(refrigerator);
+        userRole.setUser(user);
+        userRole.setRole(Role.USER);
+
+        when(refrigeratorRepository.findById(refrigerator.getId())).thenReturn(Optional.of(refrigerator));
+        when(userRepository.findByEmail(user.getUsername())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(request.getSuperName())).thenReturn(Optional.empty());
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(user.getId(), refrigerator.getId())).thenReturn(Optional.of(userRole));
+
+        Assertions.assertThrows(EntityNotFoundException.class, () -> refrigeratorService.removeUserFromRefrigerator(request));
+    }
+
+    @Test
+    @DisplayName("Test removing a user from a refrigerator when user tries to remove other user")
+    public void testRemoveUserFromRefrigeratorUserTriesToRemoveOtherUser() throws EntityNotFoundException {
+        RemoveMemberRequest request = new RemoveMemberRequest();
+        request.setRefrigeratorId(refrigerator.getId());
+        request.setUserName(user.getEmail());
+        request.setSuperName(superuser.getEmail());
+        request.setForceDelete(false);
+
+        RefrigeratorUser userRole = new RefrigeratorUser();
+        userRole.setId(1L);
+        userRole.setRefrigerator(refrigerator);
+        userRole.setUser(user);
+        userRole.setRole(Role.USER);
+
+        RefrigeratorUser userRole1 = new RefrigeratorUser();
+        userRole1.setId(2L);
+        userRole1.setRefrigerator(refrigerator);
+        userRole1.setUser(superuser);
+        userRole1.setRole(Role.USER);
+
+        when(refrigeratorRepository.findById(refrigerator.getId())).thenReturn(Optional.of(refrigerator));
+        when(userRepository.findByEmail(user.getUsername())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(superuser.getUsername())).thenReturn(Optional.of(superuser));
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(user.getId(), refrigerator.getId())).thenReturn(Optional.of(userRole));
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(superuser.getId(), refrigerator.getId())).thenReturn(Optional.of(userRole1));
+
+        Assertions.assertThrows(AccessDeniedException.class, () -> refrigeratorService.removeUserFromRefrigerator(request));
     }
 }

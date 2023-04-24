@@ -1,6 +1,8 @@
 package ntnu.idatt2106.backend.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
@@ -9,6 +11,7 @@ import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
 import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
+import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
 import ntnu.idatt2106.backend.repository.UserRepository;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 
@@ -140,6 +144,66 @@ public class RefrigeratorService {
     public List<Refrigerator> getAllRefrigerators() {
         return refrigeratorRepository.findAll();
     }
+
+    /**
+     * Removes user from refrigerator. Does check to always
+     * keep at least one superuser in the refrigerator.
+     *
+     * @param request request object containing necessary data.
+     * @throws AccessDeniedException If user tries to remove other users
+     * @throws LastSuperuserException If superuser tries to remove himself as last superuser
+     * @throws EntityNotFoundException If request data is invalid.
+     */
+    @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void removeUserFromRefrigerator(RemoveMemberRequest request) throws AccessDeniedException, LastSuperuserException, EntityNotFoundException {
+        Refrigerator refrigerator = refrigeratorRepository.findById(request.getRefrigeratorId())
+                .orElseThrow(() -> new EntityNotFoundException("Refrigerator not found"));
+        User user = userRepository.findByEmail(request.getUserName())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User superUser = userRepository.findByEmail(request.getSuperName())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        RefrigeratorUser userRole;
+        try{
+            userRole = refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(user.getId(), refrigerator.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("User not a member"));
+        }catch(Exception e){
+            e.printStackTrace();
+            throw e;
+        }
+
+        RefrigeratorUser superuserRole = refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(superUser.getId(), refrigerator.getId())
+                .orElseThrow(() -> new EntityNotFoundException("User not a member"));
+
+
+        logger.info("Performing member removal");
+        if(userRole.getRole() == Role.USER && user.getId().equals(superUser.getId())){
+            logger.debug("User deleting himself");
+            refrigeratorUserRepository.delete(userRole);
+        }
+        else if(userRole.getRole() == Role.SUPERUSER){
+            List<RefrigeratorUser> superUsers = refrigeratorUserRepository.findByRefrigeratorIdAndRole(refrigerator.getId(),Role.SUPERUSER);
+            if(superUsers.size() <= 1) {
+                if(request.isForceDelete()){
+                    refrigeratorUserRepository.delete(userRole);
+                    refrigeratorRepository.delete(refrigerator);
+                }
+                else throw new LastSuperuserException("Last superuser in refrigerator");
+            }
+            else {
+                refrigeratorUserRepository.delete(userRole);
+            }
+        }
+        else {
+            if(superuserRole.getRole() != Role.SUPERUSER) {
+                logger.warn("User attempted to remove another user(!)");
+                throw new AccessDeniedException("User cannot remove other users");
+            }
+            refrigeratorUserRepository.delete(userRole);
+        }
+        refrigeratorRepository.save(refrigerator);
+    }
+
+
 
     /**
      * Saves a new refrigerator and connects the creator as a

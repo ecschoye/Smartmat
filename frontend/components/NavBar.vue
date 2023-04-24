@@ -51,7 +51,7 @@
                 <HeadlessMenuItem v-slot="{ active }">
                   <NuxtLink href="#" :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">Systeminnstillinger</NuxtLink>
                 </HeadlessMenuItem>
-                <form method="POST" action="#">
+                <form method="POST" action="/">
                   <HeadlessMenuItem v-slot="{ active }">
                     <button @click="handleLogOut()" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900' : 'text-gray-700 dark:text-gray-900', 'block w-full px-4 py-2 text-left text-sm']">Logg ut</button>
                   </HeadlessMenuItem>
@@ -89,9 +89,10 @@
               <NuxtLink href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Statistikk</NuxtLink>
             </div>
             <div class="py-6">
-              <NuxtLink href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Rediger Profil</NuxtLink>
+              <NuxtLink href="my-profile" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Rediger Profil</NuxtLink>
               <NuxtLink href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Systeminnstillinger</NuxtLink>
-              <a href="#" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Log in</a>
+              <a v-if="!isLoggedIn" href="/login" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Log in</a>
+              <a v-if="isLoggedIn" href="/" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Log out</a>
             </div>
           </div>
         </div>
@@ -108,6 +109,7 @@ export default defineComponent({
   setup(){
     const userStore = useUserStore();
     return {
+      isLoggedIn: userStore.isLoggedIn,
       userStore
     }
   },

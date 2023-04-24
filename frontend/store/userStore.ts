@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import axiosInstance from '~/service/AxiosInstance';
-import {Session} from "inspector";
 
 interface UserState {
     user_id: string;
@@ -34,14 +33,26 @@ export const useUserStore = defineStore('user', {
             this.user_id = "";
             this.authenticated = false;
             this.role = "";
+            window.location.replace('/login');
         },
         logIn(data: any) {
             sessionStorage.setItem("SmartMatAccessToken", data.token);
             this.authenticated = true;
-            this.role = "";
-            this.user_id = data.user_id;
+            this.role = data.userRole;
+            this.user_id = data.userId;
         },
         async checkAuthStatus() {
+            if (!process.client) {
+                return;
+            }
+
+            const token = sessionStorage.getItem('SmartMatAccessToken');
+            if (!token) {
+                this.authenticated = false;
+                console.log("User is not logged in");
+                return;
+            }
+
             try {
                 const response = await axiosInstance.get('/api/user-status');
                 if (response.status === 200){
@@ -62,5 +73,6 @@ export const useUserStore = defineStore('user', {
                 this.authenticated = false; // Set authenticated to false on error
             }
         },
+
     },
 });

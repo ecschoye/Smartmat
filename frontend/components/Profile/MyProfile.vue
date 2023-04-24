@@ -5,7 +5,7 @@
       <p class="user-email">{{ user.email }}</p>
     </div>
     <div class="profile-picture-container">
-      <img class="profile-picture w-1/4" src="~/assets/profile.png" alt="Profile Picture" />
+      <img class="profile-picture" src="~/assets/profile.png" alt="Profile Picture" />
     </div>
   </div>
 </template>
@@ -52,6 +52,7 @@ async function loadData() {
 }
 
 .profile-picture-container{
+  flex: 0.5;
   display: flex;
   justify-content: right;
 }
@@ -60,12 +61,19 @@ async function loadData() {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  padding: 5px;
+  margin: 0 auto;
+  align-items: flex-start;
+  border: solid 3px white;
+  border-radius: 20px;
+  padding: 3rem;
+  width: 60%;
+  height: fit-content;
 }
 
 .user-details {
   grid-row: 1;
   grid-column: 1;
+  margin-right: 20px;
 }
 
 .user-name {
@@ -78,6 +86,15 @@ async function loadData() {
 p {
   color: white;
 }
+
+.profile-picture {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+
 
 @media (max-width: 768px) {
   .profile-picture{

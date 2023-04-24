@@ -178,30 +178,6 @@ public class RefrigeratorServiceTest {
     }
 
     @Test
-    @DisplayName("findById should return refrigerator")
-    public void findByIdShouldReturnRefrigerator() {
-        Optional<Refrigerator> optionalRefrigerator = Optional.of(refrigerator);
-
-        Mockito.when(refrigeratorRepository.findById(1L)).thenReturn(optionalRefrigerator);
-
-        Optional<Refrigerator> result = refrigeratorService.findById(1L);
-
-        Assertions.assertEquals(optionalRefrigerator, result);
-    }
-
-    @Test
-    @DisplayName("findById should return empty optional")
-    public void findByIdShouldReturnEmptyOptional() {
-        Optional<Refrigerator> optionalRefrigerator = Optional.empty();
-
-        Mockito.when(refrigeratorRepository.findById(1L)).thenReturn(optionalRefrigerator);
-
-        Optional<Refrigerator> result = refrigeratorService.findById(1L);
-
-        Assertions.assertEquals(optionalRefrigerator, result);
-    }
-
-    @Test
     @DisplayName("Test adding a member to a refrigerator")
     public void testAddMemberToRefrigerator() {
         // Arrange

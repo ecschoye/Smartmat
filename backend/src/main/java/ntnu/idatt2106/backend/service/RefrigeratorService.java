@@ -97,18 +97,6 @@ public class RefrigeratorService {
     }
 
     /**
-     * Finds a refrigerator by ID.
-     *
-     * @param id The ID of the refrigerator to find.
-     * @return An Optional containing the refrigerator with the specified ID, or an empty Optional if no such refrigerator exists.
-     */
-    public Optional<Refrigerator> findById(long id) {
-        if(id < 0) return Optional.empty();
-        return refrigeratorRepository.findById(id);
-    }
-
-
-    /**
      * Retrieves all refrigerators.
      *
      * @return A list containing all refrigerators.

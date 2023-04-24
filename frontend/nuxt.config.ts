@@ -56,7 +56,7 @@ export default defineNuxtConfig({
       {
         code: 'zh',
         iso: 'zh',
-        name: '中文 ',
+        name: '中文 (Chinese) ',
         file: 'zh.json',
       },
       {

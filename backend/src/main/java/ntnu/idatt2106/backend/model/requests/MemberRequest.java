@@ -1,10 +1,14 @@
 package ntnu.idatt2106.backend.model.requests;
 
+import jakarta.validation.constraints.NotNull;
 import ntnu.idatt2106.backend.model.enums.Role;
 
 public class MemberRequest {
+    @NotNull
     private String superName;
+    @NotNull
     private long refrigeratorId;
+    @NotNull
     private String userName;
     private Role role;
 

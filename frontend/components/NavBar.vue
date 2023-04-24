@@ -84,14 +84,14 @@
           <div class="-my-6 divide-y divide-gray-500/10">
             <div class="space-y-2 py-6">
               <NuxtLink :to="localePath('/')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{t('home')}}</NuxtLink>
-              <NuxtLink href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Ukesmeny</NuxtLink>
-              <NuxtLink href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Oppskrifter</NuxtLink>
-              <NuxtLink href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Statistikk</NuxtLink>
+              <NuxtLink :to="localePath('#')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{t('weekly_menu')}}</NuxtLink>
+              <NuxtLink :to="localePath('#')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{t('recipes')}}</NuxtLink>
+              <NuxtLink :to="localePath('#')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{t('statistics')}}</NuxtLink>
             </div>
             <div class="py-6">
-              <NuxtLink href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Rediger Profil</NuxtLink>
+              <NuxtLink :to="localePath('/account_details')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{t('edit_profile')}}</NuxtLink>
               <NuxtLink :to="localePath('/system-settings')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{t('system_settings')}}</NuxtLink>
-              <a href="#" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Log in</a>
+              <a href="#" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">{{t('log_in')}}</a>
             </div>
           </div>
         </div>

@@ -23,6 +23,7 @@ stages:
   - package_backend
   - test_frontend
   - build_frontend
+  - e2e_test
 
 # ...
 

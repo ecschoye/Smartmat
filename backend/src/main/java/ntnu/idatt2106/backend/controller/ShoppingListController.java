@@ -13,7 +13,6 @@ import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.service.ShoppingListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -83,14 +82,14 @@ public class ShoppingListController {
     //todo: edit format of response?
     @PostMapping("/add-grocery")
     public ResponseEntity<GroceryShoppingList> saveGroceryToShoppingList(@RequestBody SaveGroceryRequest groceryRequest, HttpServletRequest request) throws SaveException{
-        logger.info("Received request to save grocery {} to shopping list with id {}", groceryRequest.getName(), groceryRequest.getShoppingListId());
-        Optional<GroceryShoppingList> groceryList = shoppingListService.saveGrocery(groceryRequest, request);
-        if (groceryList.isEmpty()) {
+        logger.info("Received request to save grocery {} to shopping list with id {}", groceryRequest.getName(), groceryRequest.getForeignKey());
+        Optional<GroceryShoppingList> groceryListItem = shoppingListService.saveGrocery(groceryRequest, request);
+        if (groceryListItem.isEmpty()) {
             logger.info("No registered changes to grocery is saved");
             throw new SaveException("Failed to add a new grocery to shopping list");
         }
         logger.info("Returns groceries and status OK");
-        return new ResponseEntity<>(groceryList.get(), HttpStatus.OK);
+        return new ResponseEntity<>(groceryListItem.get(), HttpStatus.OK);
     }
 
     //todo: edit format of response?

@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -25,5 +27,6 @@ public class ShoppingList {
     @JoinColumn(name = "refrigeratorId")
     @Schema(description = "The refrigerator connected to the shopping list")
     private Refrigerator refrigerator;
+
 }
 

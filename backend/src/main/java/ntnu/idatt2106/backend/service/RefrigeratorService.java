@@ -1,6 +1,5 @@
 package ntnu.idatt2106.backend.service;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
@@ -8,11 +7,11 @@ import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
-import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
+import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
-import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
+import ntnu.idatt2106.backend.model.dto.MemberDTO;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
@@ -60,7 +59,7 @@ public class RefrigeratorService {
      * @return MemberReponse containing information about the affected user
      * @throws UserNotFoundException if super or user does not exist
      */
-    public MemberResponse addMember(MemberRequest request) throws UserNotFoundException {
+    public MemberDTO addMember(MemberRequest request) throws UserNotFoundException {
         //Get Users
         logger.debug("Getting superuser");
         User superUser = getUser(request.getSuperName());
@@ -89,7 +88,7 @@ public class RefrigeratorService {
         try {
             logger.info("Checks validated, saving refrigeratorUser");
             RefrigeratorUser result = refrigeratorUserRepository.save(ru);
-            return new MemberResponse(result);
+            return new MemberDTO(result);
         } catch (Exception e) {
             logger.warn("Member could not be added: Failed to save refrigeratoruser");
             return null;
@@ -115,16 +114,16 @@ public class RefrigeratorService {
      * @param id Id of refrigerator to get
      * @return RefrigeratorResponse
      */
-    public RefrigeratorResponse getRefrigeratorById(long id) throws EntityNotFoundException {
+    public RefrigeratorDTO getRefrigeratorById(long id) throws EntityNotFoundException {
         if(refrigeratorRepository.existsById(id)){
             Refrigerator refrigerator = refrigeratorRepository.findById(id)
                     .orElse(null);
             if(refrigerator == null) throw new EntityNotFoundException("Could not find refrigerator");
-            List<MemberResponse> users = new ArrayList<>();
+            List<MemberDTO> users = new ArrayList<>();
             refrigeratorUserRepository.findByRefrigeratorId(id)
-                    .forEach((ru -> users.add(new MemberResponse(ru))));
+                    .forEach((ru -> users.add(new MemberDTO(ru))));
 
-            return new RefrigeratorResponse(refrigerator, users);
+            return new RefrigeratorDTO(refrigerator, users);
         }
         else throw new EntityNotFoundException("Refrigerator does not exist");
     }
@@ -260,7 +259,7 @@ public class RefrigeratorService {
      * @param request Request containing data about the super, user, role
      * @return Response containing user affected, and given role.
      */
-    public MemberResponse setRole(MemberRequest request) throws UserNotFoundException {
+    public MemberDTO setRole(MemberRequest request) throws UserNotFoundException {
         //Get Users
         logger.debug("Getting superuser");
         User superUser = getUser(request.getSuperName());
@@ -294,7 +293,7 @@ public class RefrigeratorService {
                 try {
                     logger.info("Checks validated, updating refrigeratorUser");
                     RefrigeratorUser result = refrigeratorUserRepository.save(existingRu.get());
-                    return new MemberResponse(result);
+                    return new MemberDTO(result);
                 } catch (Exception e) {
                     logger.warn("Member could not be updated: Failed to update refrigeratoruser");
                     return null;

@@ -1,6 +1,7 @@
-package ntnu.idatt2106.backend.model.dto.response;
+package ntnu.idatt2106.backend.model.dto;
 
 import ntnu.idatt2106.backend.model.Refrigerator;
+import ntnu.idatt2106.backend.model.dto.MemberDTO;
 
 import java.util.List;
 
@@ -8,15 +9,15 @@ import java.util.List;
  * Model for creating refrigerator response to frontend.
  * Provides all information about a refrigerator and its users.
  */
-public class RefrigeratorResponse {
+public class RefrigeratorDTO {
     private long id;
     private String name;
     private String address;
-    private List<MemberResponse> members;
+    private List<MemberDTO> members;
 
-    public RefrigeratorResponse() {}
+    public RefrigeratorDTO() {}
 
-    public RefrigeratorResponse(Refrigerator refrigerator, List<MemberResponse> members) {
+    public RefrigeratorDTO(Refrigerator refrigerator, List<MemberDTO> members) {
         this.id = refrigerator.getId();
         this.name = refrigerator.getName();
         this.address = refrigerator.getAddress();
@@ -47,11 +48,11 @@ public class RefrigeratorResponse {
         this.address = address;
     }
 
-    public List<MemberResponse> getMembers() {
+    public List<MemberDTO> getMembers() {
         return members;
     }
 
-    public void setMembers(List<MemberResponse> members) {
+    public void setMembers(List<MemberDTO> members) {
         this.members = members;
     }
 }

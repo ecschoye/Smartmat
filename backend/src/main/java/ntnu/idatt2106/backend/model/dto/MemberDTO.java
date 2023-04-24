@@ -1,4 +1,4 @@
-package ntnu.idatt2106.backend.model.dto.response;
+package ntnu.idatt2106.backend.model.dto;
 
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.enums.Role;
@@ -6,15 +6,15 @@ import ntnu.idatt2106.backend.model.enums.Role;
 /**
  * Model class used to return public information about a member in a refrigerator
  */
-public class MemberResponse {
+public class MemberDTO {
     private long refrigeratorId;
     private String name;
     private String username;
     private Role role;
 
-    public MemberResponse() {}
+    public MemberDTO() {}
 
-    public MemberResponse(RefrigeratorUser ru) {
+    public MemberDTO(RefrigeratorUser ru) {
         this.refrigeratorId = ru.getRefrigerator().getId();
         this.name = ru.getUser().getName();
         this.username = ru.getUser().getUsername();

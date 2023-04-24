@@ -2,7 +2,7 @@
 import type {Grocery} from "./GroceryType";
 export interface GroceryEntity {
     id: number,
-    physicalExpiryDate: string,
+    physicalExpiryDate: Date,
     fridgeId: number,
     grocery: Grocery,
 }

@@ -8,7 +8,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
         groceries : [
             {
                id:1,
-               physicalExpiryDate:'20-04-2023',
+               physicalExpiryDate:new Date('2023-04-25'),
                fridgeId: 1,
                grocery: {
                 id: 1,
@@ -27,7 +27,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
             },
             {
                 id:2,
-                physicalExpiryDate:'21-04-2023',
+                physicalExpiryDate:new Date('2023-04-25'),
                 fridgeId: 1,
                 grocery: {
                  id: 1,
@@ -46,7 +46,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              },
              {
                 id:3,
-                physicalExpiryDate:'22-04-2023',
+                physicalExpiryDate:new Date('2023-04-25'),
                 fridgeId: 1,
                 grocery: {
                  id: 1,
@@ -65,7 +65,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              },
              {
                 id:4,
-                physicalExpiryDate:'23-04-2023',
+                physicalExpiryDate:new Date('2023-04-25'),
                 fridgeId: 1,
                 grocery: {
                  id: 1,
@@ -84,7 +84,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              },
              {
                 id:5,
-                physicalExpiryDate:'25-04-2023',
+                physicalExpiryDate:new Date('2023-04-25'),
                 fridgeId: 1,
                 grocery: {
                  id: 2,
@@ -103,7 +103,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              },
              {
                 id:6,
-                physicalExpiryDate:'25-04-2023',
+                physicalExpiryDate:new Date('2023-04-25'),
                 fridgeId: 1,
                 grocery: {
                  id: 2,
@@ -122,7 +122,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              },
              {
                 id:7,
-                physicalExpiryDate:'25-04-2023',
+                physicalExpiryDate:new Date('2023-12-12'),
                 fridgeId: 1,
                 grocery: {
                  id: 2,
@@ -141,7 +141,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              },
              {
                 id:8,
-                physicalExpiryDate:'25-04-2023',
+                physicalExpiryDate:new Date('2023-12-12'),
                 fridgeId: 1,
                 grocery: {
                  id: 2,
@@ -160,7 +160,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              },
              {
                 id:9,
-                physicalExpiryDate:'23-04-2023',
+                physicalExpiryDate:new Date('2023-12-12'),
                 fridgeId: 1,
                 grocery: {
                  id: 3,
@@ -179,7 +179,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              },
              {
                 id:9,
-                physicalExpiryDate:'23-04-2023',
+                physicalExpiryDate:new Date('2023-12-12'),
                 fridgeId: 1,
                 grocery: {
                  id: 3,
@@ -198,7 +198,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              },
              {
                 id:10,
-                physicalExpiryDate:'23-04-2023',
+                physicalExpiryDate:new Date('2023-12-12'),
                 fridgeId: 1,
                 grocery: {
                  id: 1,
@@ -217,7 +217,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              },
              {
                 id:11,
-                physicalExpiryDate:'23-04-2023',
+                physicalExpiryDate:new Date('2023-12-12'),
                 fridgeId: 1,
                 grocery: {
                  id: 1,
@@ -236,7 +236,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              },
              {
                 id:12,
-                physicalExpiryDate:'28-04-2023',
+                physicalExpiryDate: new Date('2023-12-12'),
                 fridgeId: 1,
                 grocery: {
                  id: 4,

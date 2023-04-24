@@ -3,13 +3,13 @@
         <RefridgeratorFridge @group-closed="togglePos(false)" :groceries="refridgeratorStore.getGroceries" @popup-height="(payload) => setPos(payload)" />
         <div>
             <Transition>
-                <RefridgeratorGroceryOptions :pos="position" v-if="toggle" />
+                <RefridgeratorGroceryOptions :pos="position" v-if="toggle" @toggle-options="togglePos(false)"/>
             </Transition>
         </div>
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts"> 
 import { useRefridgeratorStore } from '~/store/refridgeratorStore';
 
 const refridgeratorStore = useRefridgeratorStore();

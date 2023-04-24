@@ -1,28 +1,28 @@
 <template>
   <div class="wrapper">
     <div class="">
-      <h1 class="text-white text-center text-6xl mb-8 mt-14">{{t('welcome_to_smart_mat')}}</h1>
+      <h1 class="text-white text-center text-4xl sm:text-6xl mb-8 mt-14">{{t('welcome_to_smart_mat')}}</h1>
     </div>
 
-    <div class="flex justify-center">
+    <div class="flex justify-center pb-5 sm:pb-0">
       <!-- logo -->
-      <img src="../assets/icons/smartmat/smartMat.png" alt="logo" class="w-1/4 h-1/4 image">
+      <img src="../assets/icons/smartmat/smartMat.png" alt="logo" class="w-64 h-auto sm:w-80 sm:h-auto image">
     </div>
 
-    <div class="button-grid">
+    <div class="sm:flex sm:justify-center text-center">
       <NuxtLink v-if="loggedIn" :to="localePath('/my-fridge')">
-        <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
+        <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
           Gå til kjøleskapet mitt
         </button>
       </NuxtLink>
 
-      <NuxtLink v-else :to="localePath('/login')">
-        <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
+      <NuxtLink v-else :to="localePath('/login')" class="sm:mt-5 sm:pr-4">
+        <button class="w-52 h-14 sm:w-48 bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
           {{ t('log_in_here') }}
         </button>
       </NuxtLink>
-      <NuxtLink :to="localePath('/')">
-        <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
+      <NuxtLink :to="localePath('/')" class="sm:mt-5 sm:pl-4">
+        <button class="w-52 h-14 sm:w-48 bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
           {{ t('read_more_about_us')}}
         </button>
       </NuxtLink>
@@ -48,27 +48,10 @@
 
 <style scoped>
 
-.image{
-  width: 600px;
-}
-
 .wrapper{
   width: 60%;
   margin: 0 auto;
   max-height: calc(100vh - 96px);
-}
-
-.button-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 20px;
-  justify-items: center;
-}
-
-button{
-  width: 300px;
-  margin: auto;
-  height: 50px;
 }
 
 </style>

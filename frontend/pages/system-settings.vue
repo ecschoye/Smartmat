@@ -1,13 +1,13 @@
 <template>
-  <div class="w-2/3 min-h-fit bg-white dark:bg-zinc-500 border-5px mx-auto text-center rounded-md py-6 mt-10">
+  <div class="w-3/4 sm:w-2/3 min-h-fit bg-white dark:bg-zinc-500 border-5px mx-auto text-center rounded-md py-6 mt-10">
 
     <p class="text-center dark:text-white mt-7 text-xl font-bold">{{t('system_settings')}}</p>
 
-    <div class="w-2/3 mx-auto pt-2">
+    <div class="w-3/4 sm:w-2/3 mx-auto pt-2">
 
       <div class="divider"></div>
 
-      <div class="w-2/3 mx-auto">
+      <div class="w-3/4 sm:w-2/3 mx-auto">
         <HeadlessListbox as="div" v-model="selected">
           <HeadlessListboxLabel class="block text-xl leading-6 text-gray-900 dark:text-gray-100">{{t('language')}}</HeadlessListboxLabel>
           <div class="mx-auto relative mt-2">
@@ -29,7 +29,7 @@
                     <div class="w-full h-full">
                       <NuxtLink
                           :to="switchLocalePath(item.code)"
-                          class="text-black dark:text-white-600 hover:underline block w-full h-full py-5"
+                          class="text-black dark:text-white-600 hover:underline block w-full h-full py-3"
                       >
                         {{ item.name }}
                       </NuxtLink>
@@ -41,8 +41,6 @@
           </div>
         </HeadlessListbox>
       </div>
-
-      <LanguageSwitcher class="mt-10 w-1/2"/>
 
       <p class="text-xl mt-8 text-gray-900 dark:text-gray-100">{{t('dark_mode')}}</p>
 
@@ -70,12 +68,9 @@
 
 <script lang="ts">
 
-import LanguageSwitcher from "~/components/LanguageSwitcher.vue";
-
 type Theme = 'light' | 'dark';
 
 export default defineComponent({
-  components: {LanguageSwitcher},
   data() {
     return {
       toggleDarkmode: false,

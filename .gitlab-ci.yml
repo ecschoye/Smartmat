@@ -23,6 +23,7 @@ stages:
   - package_backend
   - test_frontend
   - build_frontend
+  - e2e_test
 
 # ...
 
@@ -87,3 +88,30 @@ build_frontend:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
       changes:
         - frontend/**/*
+
+e2e_test:
+  stage: e2e_test
+  image: docker:20.10
+  services:
+    - docker:20.10-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: "/certs"
+  script:
+    - apk add --no-cache docker-compose
+    - docker-compose build backend
+    - docker-compose build frontend
+    - docker-compose up -d
+    - docker-compose exec -T frontend sh -c "cd /app && npm ci && npx cypress run"
+    - docker-compose down
+  artifacts:
+    when: always
+    paths:
+      - frontend/cypress/videos/
+      - frontend/cypress/screenshots/
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
+      changes:
+        - frontend/**/*
+        - backend/**/*
+        - docker-compose.yml

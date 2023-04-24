@@ -1,12 +1,14 @@
 <template>
   <div class="wrapper">
     <form @submit.prevent="sendForm" class="form bg-white dark:bg-zinc-700">
-      <BaseInput id="inpEmail" class="input-container" type="email" label="Email" v-model="form.email" />
-      <BaseInput id="inpPassword" class="input-container" type="password" label="Password" v-model="form.password" />
+      <BaseInput id="inpEmail" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
+      <BaseInput id="inpPassword" class="input-container" type="password" :label="$t('log_in')" v-model="form.password" />
       <div class="button-wrapper">
-        <GreenButton label="Logg inn" width="100%" height="50px" />
+        <GreenButton :label="$t('log_in')" width="100%" height="50px" />
         <div class="divider"></div>
-          <span class="mr-6">Har du ikke bruker?</span><nuxt-link to="/register">Registrer deg her</nuxt-link>
+        <nuxt-link :to="localePath('/register')">
+          <GrayButton :label="$t('new_user')" width="100%" height="50px" />
+        </nuxt-link>
       </div>
     </form>
   </div>

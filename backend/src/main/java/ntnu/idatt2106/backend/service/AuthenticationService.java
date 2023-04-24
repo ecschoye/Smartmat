@@ -6,6 +6,7 @@ import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.authentication.AuthenticationRequest;
 import ntnu.idatt2106.backend.model.authentication.RegisterRequest;
 import ntnu.idatt2106.backend.model.dto.response.AuthenticationResponse;
+import ntnu.idatt2106.backend.model.dto.response.RegisterResponse;
 import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.repository.UserRepository;
 import org.apache.http.auth.InvalidCredentialsException;
@@ -43,7 +44,7 @@ public class AuthenticationService {
 
      @throws UserAlreadyExistsException if the email is already in use
      */
-    public AuthenticationResponse register(RegisterRequest request) throws UserAlreadyExistsException {
+    public RegisterResponse register(RegisterRequest request) throws UserAlreadyExistsException {
         var user = User.builder()
                 .id(String.valueOf(java.util.UUID.randomUUID()))
                 .email(request.getEmail())
@@ -55,8 +56,7 @@ public class AuthenticationService {
         if (repository.findByEmail(user.getEmail()).isPresent())
             throw new UserAlreadyExistsException("Email is already in use");
         repository.save(user);
-        var jwToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwToken).build();
+        return RegisterResponse.builder().userId(user.getId()).userRole(String.valueOf(user.getRole())).build();
     }
 
 

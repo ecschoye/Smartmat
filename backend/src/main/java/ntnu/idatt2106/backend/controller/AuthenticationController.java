@@ -10,6 +10,7 @@ import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.authentication.AuthenticationRequest;
 import ntnu.idatt2106.backend.model.authentication.RegisterRequest;
 import ntnu.idatt2106.backend.model.dto.response.AuthenticationResponse;
+import ntnu.idatt2106.backend.model.dto.response.RegisterResponse;
 import ntnu.idatt2106.backend.service.AuthenticationService;
 import ntnu.idatt2106.backend.service.UserService;
 import org.apache.http.auth.InvalidCredentialsException;
@@ -32,12 +33,12 @@ public class AuthenticationController {
     Logger logger = Logger.getLogger(AuthenticationController.class.getName());
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) throws UserAlreadyExistsException {
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) throws UserAlreadyExistsException {
         try {
             logger.info("Registering user " + request.getEmail());
-            AuthenticationResponse authResponse = authenticationService.register(request);
+            RegisterResponse registerResponse = authenticationService.register(request);
             logger.info("User " + request.getEmail() + " registered successfully");
-            return ResponseEntity.ok(authResponse);
+            return ResponseEntity.ok(registerResponse);
         } catch (UserAlreadyExistsException e) {
             logger.info("User " + request.getEmail() + " already exists");
             throw new UserAlreadyExistsException("Email" + request.getEmail() + " is already in use!");

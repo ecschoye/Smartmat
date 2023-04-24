@@ -6,6 +6,7 @@ import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
+import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
 import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
@@ -571,5 +572,38 @@ public class RefrigeratorServiceTest {
 
         // Act and Assert
         Assertions.assertThrows(EntityNotFoundException.class, () -> refrigeratorService.forceDeleteRefrigerator(email, refrigerator.getId()));
+    }
+
+    @Test
+    @DisplayName("Test getting an existing refrigerator by id")
+    public void testGetExistingRefrigeratorById() throws EntityNotFoundException {
+        // Arrange
+        long id = 1L;
+        Refrigerator refrigerator = new Refrigerator();
+        refrigerator.setId(id);
+        refrigerator.setName("Test Refrigerator");
+        when(refrigeratorRepository.existsById(id)).thenReturn(true);
+        when(refrigeratorRepository.findById(id)).thenReturn(Optional.of(refrigerator));
+        when(refrigeratorUserRepository.findByRefrigeratorId(id)).thenReturn(new ArrayList<>());
+
+        // Act
+        RefrigeratorResponse result = refrigeratorService.getRefrigeratorById(id);
+
+        // Assert
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(id, result.getId());
+        Assertions.assertEquals(refrigerator.getName(), result.getName());
+        Assertions.assertEquals(new ArrayList<MemberResponse>(), result.getMembers());
+    }
+
+    @Test
+    @DisplayName("Test getting a non-existing refrigerator by id")
+    public void testGetNonExistingRefrigeratorById() {
+        // Arrange
+        long id = 1L;
+        when(refrigeratorRepository.existsById(id)).thenReturn(false);
+
+        // Act & Assert
+        Assertions.assertThrows(EntityNotFoundException.class, () -> refrigeratorService.getRefrigeratorById(id));
     }
 }

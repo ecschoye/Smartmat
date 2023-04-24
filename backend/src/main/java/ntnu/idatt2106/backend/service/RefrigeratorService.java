@@ -1,5 +1,6 @@
 package ntnu.idatt2106.backend.service;
 
+import jakarta.persistence.Entity;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
@@ -7,6 +8,7 @@ import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
+import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
 import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,6 +107,37 @@ public class RefrigeratorService {
         return refrigeratorRepository.findById(id);
     }
 
+
+    /**
+     * Retrieves all refrigerators.
+     *
+     * @return A list containing all refrigerators.
+     */
+    public List<Refrigerator> getAllRefrigerators() {
+        return refrigeratorRepository.findAll();
+    }
+
+    /**
+     * Gets a refrigerator by id and all data we
+     * want the user to know about the refrigerator.
+     *
+     * @param id Id of refrigerator to get
+     * @return RefrigeratorResponse
+     */
+    public RefrigeratorResponse getRefrigeratorById(long id) throws EntityNotFoundException {
+        if(refrigeratorRepository.existsById(id)){
+            Refrigerator refrigerator = refrigeratorRepository.findById(id)
+                    .orElse(null);
+            if(refrigerator == null) throw new EntityNotFoundException("Could not find refrigerator");
+            List<MemberResponse> users = new ArrayList<>();
+            refrigeratorUserRepository.findByRefrigeratorId(id)
+                    .forEach((ru -> users.add(new MemberResponse(ru))));
+
+            return new RefrigeratorResponse(refrigerator, users);
+        }
+        else throw new EntityNotFoundException("Refrigerator does not exist");
+    }
+
     /**
      * Gets the role a member has in a refrigerator.
      *
@@ -134,15 +168,6 @@ public class RefrigeratorService {
             throw new UserNotFoundException("Could not find user with username:" + username);
         }
         return user.get();
-    }
-
-    /**
-     * Retrieves all refrigerators.
-     *
-     * @return A list containing all refrigerators.
-     */
-    public List<Refrigerator> getAllRefrigerators() {
-        return refrigeratorRepository.findAll();
     }
 
     /**

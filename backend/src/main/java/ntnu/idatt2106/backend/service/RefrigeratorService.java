@@ -155,25 +155,21 @@ public class RefrigeratorService {
      * @throws EntityNotFoundException If request data is invalid.
      */
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void removeUserFromRefrigerator(RemoveMemberRequest request) throws AccessDeniedException, LastSuperuserException, EntityNotFoundException {
+    public void removeUserFromRefrigerator(RemoveMemberRequest request) throws Exception {
+        if(request.isForceDelete()) {
+            forceDeleteRefrigerator(request.getSuperName(),request.getRefrigeratorId());
+        }
+
         Refrigerator refrigerator = refrigeratorRepository.findById(request.getRefrigeratorId())
                 .orElseThrow(() -> new EntityNotFoundException("Refrigerator not found"));
         User user = userRepository.findByEmail(request.getUserName())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         User superUser = userRepository.findByEmail(request.getSuperName())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        RefrigeratorUser userRole;
-        try{
-            userRole = refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(user.getId(), refrigerator.getId())
+        RefrigeratorUser userRole = refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(user.getId(), refrigerator.getId())
                     .orElseThrow(() -> new EntityNotFoundException("User not a member"));
-        }catch(Exception e){
-            e.printStackTrace();
-            throw e;
-        }
-
         RefrigeratorUser superuserRole = refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(superUser.getId(), refrigerator.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User not a member"));
-
 
         logger.info("Performing member removal");
         if(userRole.getRole() == Role.USER && user.getId().equals(superUser.getId())){
@@ -183,11 +179,7 @@ public class RefrigeratorService {
         else if(userRole.getRole() == Role.SUPERUSER){
             List<RefrigeratorUser> superUsers = refrigeratorUserRepository.findByRefrigeratorIdAndRole(refrigerator.getId(),Role.SUPERUSER);
             if(superUsers.size() <= 1) {
-                if(request.isForceDelete()){
-                    refrigeratorUserRepository.delete(userRole);
-                    refrigeratorRepository.delete(refrigerator);
-                }
-                else throw new LastSuperuserException("Last superuser in refrigerator");
+                throw new LastSuperuserException("Last superuser in refrigerator");
             }
             else {
                 refrigeratorUserRepository.delete(userRole);
@@ -300,21 +292,45 @@ public class RefrigeratorService {
     }
 
     /**
-     * Deletes a refrigerator by ID.
+     * Forcefully deletes a refrigerator and all its members. Gets
+     * the user that requested the delete and checks permission. Then
+     * deletes any members and the refrigerator itself.
      *
-     * @param id The ID of the refrigerator to delete.
-     * @return true if the refrigerator was successfully deleted, false otherwise
+     * TODO: DELETE INVENTORY ++
+     * @param refrigeratorId The ID of the refrigerator to delete.
      */
-    public boolean deleteById(long id) {
-        if (refrigeratorRepository.existsById(id)) {
+    @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void forceDeleteRefrigerator(String supername, long refrigeratorId) throws Exception {
+        logger.info("Force delete was requested");
+        User superUser = userRepository.findByEmail(supername)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        RefrigeratorUser superuserRole = refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(superUser.getId(), refrigeratorId)
+                .orElseThrow(() -> new EntityNotFoundException("User not a member"));
+        if(superuserRole.getRole() != Role.SUPERUSER){
+            logger.error("Failed to delete refrigerator: User not superuser");
+            throw new AccessDeniedException("Failed to delete refrigerator: User not superuser");
+        }
+        if (refrigeratorRepository.existsById(refrigeratorId)) {
+            long members = refrigeratorUserRepository.count();
+            if(members > 0){
+                try {
+                    refrigeratorUserRepository.removeByRefrigeratorId(refrigeratorId);
+                } catch (Exception e) {
+                    logger.error("Failed to delete refrigerator: failed to remove refrigerator members, {}",e.getMessage());
+                    throw e;
+                }
+            }
             try {
-                refrigeratorRepository.deleteById(id);
-                return true;
+                refrigeratorRepository.deleteById(refrigeratorId);
+                return;
             } catch (EmptyResultDataAccessException e) {
-                logger.error("Failed to delete refrigerator with id {}: {}", id, e.getMessage());
+                logger.error("Failed to delete refrigerator: Id {}: {},", refrigeratorId, e.getMessage());
             }
         }
-        logger.error("Refrigerator with id {} does not exist", id);
-        return false;
+        else{
+            logger.error("Failed to delete refrigerator: Refrigerator with id {} does not exist", refrigeratorId);
+            throw new EntityNotFoundException("Failed to delete refrigerator: Refrigerator does not exist");
+        }
+        throw new Exception("Failed to delete refrigerator");
     }
 }

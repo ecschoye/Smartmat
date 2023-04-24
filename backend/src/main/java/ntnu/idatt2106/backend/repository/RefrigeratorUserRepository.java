@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RefrigeratorUserRepository extends JpaRepository<RefrigeratorUser, Long> {
-    Optional<RefrigeratorUser> findByIdAndRefrigerator_Id(String userId, long refrigeratorId);
+    Optional<RefrigeratorUser> findByUser_IdAndRefrigerator_Id(String userId, long refrigeratorId);
 
     Optional<RefrigeratorUser> findByUserAndRefrigerator(User user, Refrigerator refrigerator);
 

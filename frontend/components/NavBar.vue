@@ -106,9 +106,9 @@ import {useUserStore} from "~/store/userStore";
 
 export default defineComponent({
 
-  setup(){
+  setup() {
     const userStore = useUserStore();
-    const { locale, locales, t } = useI18n()
+    const {locale, locales, t} = useI18n()
     return {
       isLoggedIn: userStore.isLoggedIn,
       userStore,
@@ -117,9 +117,9 @@ export default defineComponent({
       t
     }
   },
-  data () {
+  data() {
     return {
-      fridges : [
+      fridges: [
         {
           id: 1,
           name: 'Hjemme'
@@ -142,7 +142,7 @@ export default defineComponent({
       mobileMenuOpen: false
     }
   },
-  methods : {
+  methods: {
     handleFridgeEvent(value: any) {
       this.selected = value;
     },
@@ -150,6 +150,8 @@ export default defineComponent({
       this.userStore.logOut();
     }
   }
-}}
+
+})
+
 
 </script>

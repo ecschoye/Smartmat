@@ -1,14 +1,14 @@
 <template>
   <div class="wrapper">
     <form @submit.prevent="sendForm" class="form">
-      <BaseInput id="inpName" class="input-container" type="name" label="Name" v-model="form.name" />
-      <BaseInput id="inpEmail" class="input-container" type="email" label="Email" v-model="form.email" />
-      <BaseInput id="inpPassword" class="input-container" type="password" label="Password" v-model="form.password" />
+      <BaseInput id="inpName" class="input-container" type="name" :label="$t('name')" v-model="form.name" />
+      <BaseInput id="inpEmail" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
+      <BaseInput id="inpPassword" class="input-container" type="password" :label="$t('password')" v-model="form.password" />
       <div class="button-wrapper">
-        <GreenButton label="Lag bruker" width="100%" height="50px" />
+        <GreenButton :label="$t('create_account')" width="100%" height="50px" />
         <div class="divider"></div>
-        <nuxt-link to="/login">
-          <GrayButton label="Gå til logg inn" width="100%" height="50px" />
+        <nuxt-link :to="localePath('/login')">
+          <GrayButton :label="$t('go_to_log_in')" width="100%" height="50px" />
         </nuxt-link>
       </div>
     </form>
@@ -25,6 +25,8 @@ import { postRegister } from "~/service/httputils/authentication/AuthenticationS
 
 const errorMessage = ref("");
 const router = useRouter();
+
+const { t } = useI18n();
 
 const form = reactive({
   name: '',

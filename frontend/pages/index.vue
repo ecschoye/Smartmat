@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <div class="">
-      <h1 class="text-white text-center text-6xl mb-8 mt-14">Velkommen til SmartMat</h1>
+      <h1 class="text-white text-center text-6xl mb-8 mt-14">{{t('welcome_to_smart_mat')}}</h1>
     </div>
 
     <div class="flex justify-center">
@@ -10,20 +10,20 @@
     </div>
 
     <div class="button-grid">
-      <NuxtLink v-if="loggedIn" to="/my-fridge">
+      <NuxtLink v-if="loggedIn" :to="localePath('/my-fridge')">
         <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
           Gå til kjøleskapet mitt
         </button>
       </NuxtLink>
 
-      <NuxtLink v-else to="/login">
+      <NuxtLink v-else :to="localePath('/login')">
         <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
-          Logg inn her
+          {{ t('log_in_here') }}
         </button>
       </NuxtLink>
-      <NuxtLink to="/">
+      <NuxtLink :to="localePath('/')">
         <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100">
-          Les mer om oss her
+          {{ t('read_more_about_us')}}
         </button>
       </NuxtLink>
     </div>
@@ -34,6 +34,11 @@
   <script setup lang="ts">
   import { useUserStore } from "~/store/userStore";
   import { onMounted, computed } from "vue";
+  const { t, locale } = useI18n({
+    useScope: 'local'
+  })
+
+  console.log(locale.value)
 
   const userStore = useUserStore();
   const loggedIn = computed(() => userStore.isLoggedIn);
@@ -42,6 +47,7 @@ onMounted(async () => {
   await userStore.checkAuthStatus();
 });
 </script>
+
 
 
 <style scoped>

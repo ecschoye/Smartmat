@@ -1,29 +1,39 @@
 <template>
   <div class="w-2/3 min-h-fit bg-white dark:bg-zinc-500 border-5px mx-auto text-center rounded-md py-6 mt-10">
-    <p class="text-center dark:text-white mt-7 text-xl font-bold">Systeminnstillinger</p>
+
+    <p class="text-center dark:text-white mt-7 text-xl font-bold">{{t('system_settings')}}</p>
+
     <div class="w-2/3 mx-auto pt-2">
+
       <div class="divider"></div>
+
       <div class="w-2/3 mx-auto">
         <HeadlessListbox as="div" v-model="selected">
-          <HeadlessListboxLabel class="block text-xl leading-6 text-gray-900 dark:text-gray-100">Språk</HeadlessListboxLabel>
-          <div class="relative mt-2">
+          <HeadlessListboxLabel class="block text-xl leading-6 text-gray-900 dark:text-gray-100">{{t('language')}}</HeadlessListboxLabel>
+          <div class="mx-auto relative mt-2">
             <HeadlessListboxButton class="relative w-full cursor-default rounded-md bg-white dark:bg-zinc-400 py-1.5 pl-3 pr-10 text-left text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-zinc-400 mt-3 focus:outline-none focus:ring-2 focus:ring-green-500 dark:ring-green-600 sm:text-sm sm:leading-6">
               <span class="flex items-center">
-                <span class="ml-3 block truncate">{{ selected.name }}</span>
+                <span class="ml-3 block truncate">{{ nameOfLocale }}</span>
               </span>
               <span class="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2"></span>
             </HeadlessListboxButton>
 
             <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
               <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white dark:bg-zinc-400 py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 dark:ring-zinc-400 focus:outline-none sm:text-sm">
-                <HeadlessListboxOption as="template" v-for="language in languages" :key="language.id" :value="language" v-slot="{ active, selected }">
-                  <li :class="[active ? 'bg-green-500 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-3 pr-9']">
-                    <div class="flex items-center">
-                      <span :class="[selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate']">{{ language.name }}</span>
+                <HeadlessListboxOption as="template" v-for="item in availableLocales"
+                                       :key="typeof item === 'object' ? item.code : item"
+                                       :value="typeof item === 'object' ? item.code : item"
+                                       v-slot="{ active, nameOfLocale }"
+                                       @click="selected = item.code">
+                  <li :class="[active ? 'bg-green-500 text-white' : 'text-gray-900', 'relative cursor-default select-none py-1 pl-3 pr-9']">
+                    <div class="w-full h-full">
+                      <NuxtLink
+                          :to="switchLocalePath(item.code)"
+                          class="text-black dark:text-white-600 hover:underline block w-full h-full py-5"
+                      >
+                        {{ item.name }}
+                      </NuxtLink>
                     </div>
-
-                    <span v-if="selected" :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 right-0 flex items-center pr-4']">
-                    </span>
                   </li>
                 </HeadlessListboxOption>
               </HeadlessListboxOptions>
@@ -31,7 +41,10 @@
           </div>
         </HeadlessListbox>
       </div>
-      <p class="text-xl mt-8 text-gray-900 dark:text-gray-100">Dark mode</p>
+
+      <LanguageSwitcher class="mt-10 w-1/2"/>
+
+      <p class="text-xl mt-8 text-gray-900 dark:text-gray-100">{{t('dark_mode')}}</p>
 
       <!-- Switch Container -->
       <div class="w-16 mx-auto flex flex-col items-center mt-2" @click="toggleDarkmode = !toggleDarkmode; setColorTheme(toggleDarkmode ? 'dark' : 'light')">
@@ -41,7 +54,7 @@
       </div>
       <!-- Switch Container End -->
 
-      <p class="text-xl mt-8 text-gray-900 dark:text-gray-100">Varslinger</p>
+      <p class="text-xl mt-8 text-gray-900 dark:text-gray-100">{{t('notifications')}}</p>
 
       <!-- Switch Container -->
       <div class="w-16 mx-auto flex flex-col items-center mt-2" @click="toggleNotifications = !toggleNotifications">
@@ -54,16 +67,15 @@
   </div>
 </template>
 
+
 <script lang="ts">
+
+import LanguageSwitcher from "~/components/LanguageSwitcher.vue";
 
 type Theme = 'light' | 'dark';
 
-interface Language {
-  id: number;
-  name: string;
-}
-
 export default defineComponent({
+  components: {LanguageSwitcher},
   data() {
     return {
       toggleDarkmode: false,
@@ -73,7 +85,7 @@ export default defineComponent({
   methods: {
     setColorTheme(newTheme: Theme) {
       useColorMode().preference = newTheme
-    },
+    }
   },
   mounted() {
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -87,24 +99,37 @@ export default defineComponent({
   },
   setup() {
     const colorMode = useColorMode()
-    console.log(colorMode)
-    const languages: Language[] = [
-      {
-        id: 1,
-        name: 'Norsk',
+    const {locales, locale, t, setLocale } = useI18n();
+    const selected = ref(locale.value);
+
+    const switchLocalePath = useSwitchLocalePath()
+    const availableLocales = computed(() => {
+      return (locales.value).filter(i => i.code !== locale.value)
+    })
+
+    const usedLocale = computed(() => {
+      return (locales.value).filter(i => i.code === locale.value)
+    })
+
+    const firstMatchingLocale = usedLocale.value[0] // Get the first element of the filtered array
+    const nameOfLocale = firstMatchingLocale?.name // Access the name property with optional chaining
+
+
+    const language = computed({
+      get: () => locale.value,
+      set: (value) => {
+        selected.value = value
+        setLocale(value)
       },
-      {
-        id: 2,
-        name: 'Engelsk',
-      },
-    ];
-    const selected = ref(languages[0]);
-    const selectedLanguage = ref<Language | null>(null);
-    watch(selected, (newVal) => {
-      console.log(newVal);
-      selectedLanguage.value = newVal;
     });
-    return { languages, selected };
+
+    watch(selected, (newVal) => {
+      console.log(newVal)
+      language.value = newVal;
+
+    });
+
+    return { locale, locales, selected, switchLocalePath, availableLocales, t, usedLocale, nameOfLocale };
   },
 });
 </script>

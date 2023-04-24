@@ -1,6 +1,6 @@
 <template>
   <div class=" mt-14">
-    <h1 class="flex justify-center text-white text-4xl ">{{t('log_in_or_create_account')}}</h1>
+    <h1 class="flex justify-center text-white text-4xl ">Logg deg inn eller lag en ny bruker her</h1>
   </div>
   <div class="wrapper">
     <div class="logo hidden md:flex">
@@ -14,8 +14,6 @@
 
 <script setup>
 import LogInForm from "~/components/Form/LogInForm.vue";
-
-const { t } = useI18n();
 </script>
 
 <style scoped>

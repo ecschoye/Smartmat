@@ -29,7 +29,6 @@ public class LoginIntegrationTest {
 
     @BeforeEach
     @Transactional
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     public void setUpTestData() {
         RegisterRequest registerRequest = RegisterRequest.builder()
                 .email("login@email.com")

@@ -1,5 +1,8 @@
 image: maven:3.8.5-openjdk-18
 
+services:
+  - docker:20.10-dind
+
 #####################################################################################################################
 # This template will build and test your project
 # * It caches downloaded dependencies and plugins between invocation.
@@ -16,6 +19,9 @@ variables:
   # `installAtEnd` and `deployAtEnd` are only effective with recent version of the corresponding plugins.
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
   SPRING_PROFILES_ACTIVE: gitlab-ci # NB!! THIS ONE'S IMPORTANT!
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  DOCKER_HOST: tcp://docker:2376
 
 
 stages:

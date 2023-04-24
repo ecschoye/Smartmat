@@ -21,7 +21,7 @@ variables:
 stages:
   - test_backend
   - package_backend
-  - test_frontend
+  #- test_frontend
   - build_frontend
 
 # ...

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import ntnu.idatt2106.backend.exceptions.OldPasswordDoesNotMatchException;
 import ntnu.idatt2106.backend.model.dto.PasswordChangeDTO;
 import ntnu.idatt2106.backend.model.dto.UserProfileDTO;
 import ntnu.idatt2106.backend.model.dto.response.ErrorResponse;
@@ -175,31 +176,21 @@ public class MyProfileController {
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = ErrorResponse.class))),
             })
-    public ResponseEntity<?> changePassword(@RequestBody PasswordChangeDTO passwordChangeDTO, HttpServletRequest request) {
-        logger.info("Received request to change password for user: " + jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)));
+    public ResponseEntity<?> changePassword(@RequestBody PasswordChangeDTO passwordChangeDTO, HttpServletRequest request) throws OldPasswordDoesNotMatchException {
 
-        try {
-            User user = userService.findByEmail(jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)));
 
-            if (!passwordEncoder.matches(passwordChangeDTO.getOldPassword(), user.getPassword())) {
-                return ResponseEntity
-                        .status(HttpStatus.BAD_REQUEST)
-                        .header("error-message", "Old password is incorrect.")
-                        .header("Access-Control-Expose-Headers", "error-message")
-                        .build();
-            }
+        User user = userService.findByEmail(jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)));
 
-            user.setPassword(passwordEncoder.encode(passwordChangeDTO.getNewPassword()));
-            userService.save(user);
-
-            return ResponseEntity.ok(new SuccessResponse("Password changed successfully", 200));
+        if (!passwordEncoder.matches(passwordChangeDTO.getOldPassword(), user.getPassword())) {
+            logger.info("Received request to change password for user: " + jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)) + " but old password does not match current password.");
+            throw new OldPasswordDoesNotMatchException("Old password does not match current password.");
         }
-        catch (TokenExpiredException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Token expired"));
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new SuccessResponse("An error occurred while changing password", 500));
-        }
+
+        logger.info("Received request to change password for user: " + jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)) + ". Password changed successfully.");
+        user.setPassword(passwordEncoder.encode(passwordChangeDTO.getNewPassword()));
+        userService.save(user);
+
+        return ResponseEntity.ok(new SuccessResponse("Password changed successfully", 200));
     }
 
 

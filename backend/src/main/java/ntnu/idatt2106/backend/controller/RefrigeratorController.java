@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
 import ntnu.idatt2106.backend.exceptions.SaveException;
+import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
@@ -26,7 +27,6 @@ import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/refrigerator")
@@ -114,10 +114,15 @@ public class RefrigeratorController {
         }
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<Refrigerator>> getAll(){
-        logger.info("Received request for all refrigerators");
-        return new ResponseEntity<>(refrigeratorService.getAllRefrigerators(), HttpStatus.OK);
+    @GetMapping("/user/{userName}")
+    public ResponseEntity<List<Refrigerator>> getAllByUser(@Valid @PathVariable String userName){
+        logger.info("Received request for all refrigerators by user");
+        try {
+            List<Refrigerator> result = refrigeratorService.getAllByUser(userName);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
     @GetMapping("/{refrigeratorId}")

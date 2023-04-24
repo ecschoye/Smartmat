@@ -97,12 +97,15 @@ public class RefrigeratorService {
     }
 
     /**
-     * Retrieves all refrigerators.
+     * Retrieves all refrigerators where a given user is a member
      *
      * @return A list containing all refrigerators.
      */
-    public List<Refrigerator> getAllRefrigerators() {
-        return refrigeratorRepository.findAll();
+    public List<Refrigerator> getAllByUser(String username) throws UserNotFoundException{
+        User user = getUser(username);
+        List<Refrigerator> refrigerators = new ArrayList<>();
+        refrigeratorUserRepository.findByUser(user).forEach(ru -> {refrigerators.add(ru.getRefrigerator());});
+        return refrigerators;
     }
 
     /**

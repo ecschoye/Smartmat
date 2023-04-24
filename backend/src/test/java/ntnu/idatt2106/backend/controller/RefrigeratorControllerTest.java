@@ -13,6 +13,7 @@ import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
 import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
+import ntnu.idatt2106.backend.repository.UserRepository;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -39,6 +41,9 @@ public class RefrigeratorControllerTest {
 
     @Mock
     private RefrigeratorService refrigeratorService;
+
+    @Mock
+    private UserRepository userRepository;
 
     private RefrigeratorController refrigeratorController;
 
@@ -117,15 +122,15 @@ public class RefrigeratorControllerTest {
 
     @Test
     @DisplayName("Test get all should succeed")
-    void testGetAllSuccess() {
+    void testGetAllSuccess() throws UserNotFoundException {
         List<Refrigerator> refrigerators = new ArrayList<>();
         Refrigerator refrigerator = new Refrigerator();
         refrigerator.setId(1);
         refrigerators.add(refrigerator);
 
-        when(refrigeratorService.getAllRefrigerators()).thenReturn(refrigerators);
+        when(refrigeratorService.getAllByUser(user.getUsername())).thenReturn(refrigerators);
 
-        ResponseEntity<List<Refrigerator>> response = refrigeratorController.getAll();
+        ResponseEntity<List<Refrigerator>> response = refrigeratorController.getAllByUser(user.getUsername());
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals(refrigerators, response.getBody());
     }

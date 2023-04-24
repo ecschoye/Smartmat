@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
+/**
+ * RefrigeratorGrocery DTO
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

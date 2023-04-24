@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.Category;
 
+/**
+ * Grocery DTO
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

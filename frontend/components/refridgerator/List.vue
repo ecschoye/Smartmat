@@ -19,8 +19,7 @@
             </li>
          </div>
       </li>
-
-      </ul>
+    </ul>
    <ul v-else class="space-y-1 list-none list-inside">
       <li v-for="(group, index) in groups" :key="index">
          <div @click="toggleGroup(index)">
@@ -137,7 +136,7 @@ import type { Grocery } from '~/types/GroceryType';
    const categorizedGroups = computed<Category[]>(() => {
       const categoryMap = new Map<number, Category>();
       for(const grocery of props.groceries){
-         const category = grocery.grocery.subCategory.category
+         const category = grocery.grocery.category
          if(!categoryMap.has(category.id)){
             categoryMap.set(category.id, {name:category.name, groups : new Map<number, Group>()});
          }

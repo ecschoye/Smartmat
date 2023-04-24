@@ -166,15 +166,21 @@ public class RefrigeratorServiceTest {
 
     @Test
     @DisplayName("getAllRefrigerators should return list of refrigerators")
-    public void getAllRefrigerators_shouldReturnListOfRefrigerators() {
-        List<Refrigerator> refrigeratorList = new ArrayList<>();
-        refrigeratorList.add(refrigerator);
+    public void getAllRefrigerators_shouldReturnListOfRefrigerators() throws UserNotFoundException {
+        List<RefrigeratorUser> refrigeratorList = new ArrayList<>();
+        RefrigeratorUser ru = new RefrigeratorUser();
+        ru.setRefrigerator(refrigerator);
+        ru.setUser(user);
+        refrigeratorList.add(ru);
+        List<Refrigerator> refrigerators = new ArrayList<>();
+        refrigerators.add(refrigerator);
 
-        Mockito.when(refrigeratorRepository.findAll()).thenReturn(refrigeratorList);
+        Mockito.when(refrigeratorUserRepository.findByUser(user)).thenReturn(refrigeratorList);
+        Mockito.when(userRepository.findByEmail(user.getUsername())).thenReturn(Optional.ofNullable(user));
 
-        List<Refrigerator> result = refrigeratorService.getAllRefrigerators();
+        List<Refrigerator> result = refrigeratorService.getAllByUser(user.getUsername());
 
-        Assertions.assertEquals(refrigeratorList, result);
+        Assertions.assertEquals(refrigerators, result);
     }
 
     @Test

@@ -4,8 +4,10 @@ import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
+import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
+import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -79,11 +81,15 @@ public class RefrigeratorControllerTest {
         refrigeratorUser.setId(1);
         refrigeratorUser.setUser(user);
         refrigeratorUser.setRefrigerator(refrigerator);
+        MemberResponse memberResponse = new MemberResponse();
+        memberResponse.setUsername(user.getUsername());
+        memberResponse.setRefrigeratorId(refrigerator.getId());
+        memberResponse.setRole(Role.USER);
 
-        Mockito.when(refrigeratorService.addMember(request)).thenReturn(refrigeratorUser);
+        Mockito.when(refrigeratorService.addMember(request)).thenReturn(memberResponse);
 
         // Call the method being tested
-        ResponseEntity<RefrigeratorUser> response = refrigeratorController.newMember(request);
+        ResponseEntity<MemberResponse> response = refrigeratorController.newMember(request);
 
         // Verify that the service method was called with the correct arguments
         Mockito.verify(refrigeratorService).addMember(request);
@@ -92,29 +98,11 @@ public class RefrigeratorControllerTest {
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 
         // Verify that the response body is the expected RefrigeratorUser object
-        Assertions.assertEquals(refrigeratorUser, response.getBody());
+        Assertions.assertEquals(memberResponse, response.getBody());
     }
 
 
-    @Test
-    void testDeleteRefrigeratorSuccess() {
-        int id = 1;
 
-        Mockito.when(refrigeratorService.deleteById(id)).thenReturn(true);
-
-        ResponseEntity<Void> response = refrigeratorController.deleteRefrigerator(id);
-        Assertions.assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-    }
-
-    @Test
-    void testDeleteRefrigeratorFail() {
-        int id = 1;
-
-        Mockito.when(refrigeratorService.deleteById(id)).thenReturn(false);
-
-        ResponseEntity<Void> response = refrigeratorController.deleteRefrigerator(id);
-        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
 
     @Test
     void testGetAllSuccess() {

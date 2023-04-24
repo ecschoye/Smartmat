@@ -1,16 +1,23 @@
 package ntnu.idatt2106.backend.model.requests;
 
 import jakarta.validation.constraints.NotNull;
-import ntnu.idatt2106.backend.model.enums.Role;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public class MemberRequest {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class RemoveMemberRequest {
     @NotNull
     private String superName;
     @NotNull
     private long refrigeratorId;
     @NotNull
     private String userName;
-    private Role role;
+    private boolean forceDelete;
 
     public String getSuperName() {
         return superName;
@@ -36,11 +43,11 @@ public class MemberRequest {
         this.userName = userName;
     }
 
-    public Role getRole() {
-        return role;
+    public boolean isForceDelete() {
+        return forceDelete;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setForceDelete(boolean forceDelete) {
+        this.forceDelete = forceDelete;
     }
 }

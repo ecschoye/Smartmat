@@ -16,5 +16,7 @@ public interface RefrigeratorUserRepository extends JpaRepository<RefrigeratorUs
 
     List<RefrigeratorUser> findByRefrigeratorIdAndRole(long refrigeratorId, Role role);
 
+    List<RefrigeratorUser> findByRefrigeratorId(long refrigeratorId);
+
     void removeByRefrigeratorId(long refrigeratorId);
 }

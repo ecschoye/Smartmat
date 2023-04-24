@@ -42,6 +42,10 @@ export const useUserStore = defineStore('user', {
             this.user_id = data.userId;
         },
         async checkAuthStatus() {
+            if (!process.client) {
+                return;
+            }
+
             const token = sessionStorage.getItem('SmartMatAccessToken');
             if (!token) {
                 this.authenticated = false;

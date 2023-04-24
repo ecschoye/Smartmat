@@ -63,6 +63,11 @@ async function updatePassword() {
     return;
   }
 
+  if (oldPassword.value === newPassword.value && newPassword.value === verifyNewPassword.value) {
+    alert("New password cannot be the same as the old password!");
+    return;
+  }
+
   const passwordData = {
     oldPassword: oldPassword.value,
     newPassword: newPassword.value,
@@ -72,7 +77,6 @@ async function updatePassword() {
     const response = await axiosInstance.post('/api/my-profile/change-password', passwordData);
     console.log(response.data);
     if (response.status === 200) {
-      alert('Password changed successfully!')
       await router.push('/my-profile');
     }
   }

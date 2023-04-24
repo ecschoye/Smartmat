@@ -263,6 +263,7 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
 
             }
         ] as Category[],
+        selectedGrocery : {} as GroceryEntity,
     }),
     getters: {
         getGroceries: (state) : GroceryEntity[] => {
@@ -270,6 +271,25 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
         },
         getCategories: (state) : Category[] => {
             return state.categories;
+        },
+        getSelectedGrocery : (state) : GroceryEntity => {
+            return state.selectedGrocery;
+        },
+    },
+    actions : {
+        removeGrocery(search : GroceryEntity){
+            const index = this.groceries.findIndex(grocery => grocery.id === search.id);
+            if(index !== -1){
+                this.groceries.splice(index, 1);
+            }
+        },
+        setSelectedGrocery(search : GroceryEntity) : boolean{
+            const index = this.groceries.findIndex(grocery => grocery.id === search.id);
+            if(index !== -1){
+                this.selectedGrocery = search;
+                return true;
+            }
+            return false;
         }
     }
 

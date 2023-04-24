@@ -1,6 +1,5 @@
 <template>
-
-   <ul v-if="listingType === 'category'" class="space-y-1 list-none list-inside w-full">
+   <ul v-if="listingType === 'category'" class="space-y-1 list-none list-inside">
       <li v-for="(category, index) in categorizedGroups" :key="index">
          <div @click="toggleCategory(index)">
             {{ category.name }} ({{ categorySum (category) }})
@@ -21,20 +20,21 @@
          </div>
       </li>
 
+      </ul>
+   <ul v-else class="space-y-1 list-none list-inside">
+      <li v-for="(group, index) in groups" :key="index">
+         <div @click="toggleGroup(index)">
+            {{ group.name }} ({{ group.groceries.length }})
+            <i :class="['fa', isOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+         </div>
+         <div v-if="isOpen(index)">
+            <li>
+               <RefridgeratorFridgeElement @element-height="(payload) => emitHeight(payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.id />
+            </li>
+         </div>
+      </li>
    </ul>
-<ul v-if="listingType === 'all'" class="space-y-1 list-none list-inside w-full">
-   <li v-for="(group, index) in groups" :key="index">
-      <div @click="toggleGroup(index)">
-         {{ group.name }} ({{ group.groceries.length }})
-          <i :class="['fa', isOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
-      </div>
-      <div v-if="isOpen(index)">
-         <li>
-            <RefridgeratorFridgeElement @element-height="(payload) => emitHeight(payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.id />
-         </li>
-      </div>
-   </li>
-</ul>
+
 </template>
 
 

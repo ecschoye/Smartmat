@@ -4,7 +4,7 @@
       <div class="header text-center">Endre passord</div>
       <div class="form-group">
         <p class="-mb-8 text-xl font-semibold">Skriv inn ditt gamle passord under:</p>
-        <BaseInput id="newPassword" type="password" class="w-full" label="Gammelt passord" v-model="newPassword"/>
+        <BaseInput id="oldPassword" type="password" class="w-full" label="Gammelt passord" v-model="oldPassword"/>
       </div>
       <div class="form-group">
         <p class="-mb-8 text-xl font-semibold">Skriv inn ditt nye passord under:</p>
@@ -16,14 +16,9 @@
       </div>
       <div class="button-wrapper">
         <button @click="route('/my-profile')" class="update-btn">Gå tilbake</button>
-
-        <button @click="route('/my-profile/change-password')" class="update-btn">Endre passord</button>
+        <button @click="updatePassword()" class="update-btn">Endre passord</button>
       </div>
     </div>
-    <div class="flex justify-center mt-3">
-      <button @click="updateAccount" id="update" class="update-btn">Oppdater bruker</button>
-    </div>
-
   </div>
 </template>
 
@@ -35,6 +30,7 @@ import { onMounted, ref } from 'vue';
 import { useUserStore } from "~/store/userStore";
 import axiosInstance from "@/service/AxiosInstance";
 import BaseInput from "@/components/Form/BaseInput.vue";
+import { AxiosError } from "axios";
 
 const userStore = useUserStore();
 
@@ -52,14 +48,18 @@ function route(route : string){
 
 const oldPassword = ref('');
 const newPassword = ref('');
+const oldPasswordValid = computed(() => oldPassword.value.trim().length > 0);
+const newPasswordValid = computed(() => newPassword.value.trim().length > 0);
 
-const oldPasswordValid = computed(() => true);
-const newPasswordValid = computed(() => true);
+const verifyNewPassword = ref('');
 
-const formValid = computed(() => oldPasswordValid.value && newPasswordValid.value);
+const passwordsMatch = computed(() => newPassword.value === verifyNewPassword.value);
+
+const formValid = computed(() => oldPasswordValid.value && newPasswordValid.value && passwordsMatch.value);
 
 async function updatePassword() {
   if (!formValid.value) {
+    alert("Password fields do not match!")
     return;
   }
 
@@ -70,24 +70,28 @@ async function updatePassword() {
 
   try {
     const response = await axiosInstance.post('/api/my-profile/change-password', passwordData);
+    console.log(response.data);
     if (response.status === 200) {
       alert('Password changed successfully!')
       await router.push('/my-profile');
     }
-    else if(response.status === 400){
-      alert('Old password is incorrect!')
-    }
-    else if(response.status === 401){
-      alert('You are not authorized to change password!')
-    }
-    else{
-      alert('Something went wrong!')
-    }
   }
   catch (error) {
     console.error(error);
+    const axiosError = error as AxiosError;
+    if (axiosError.response && axiosError.response.status === 400 && axiosError.response.data === 'Old password does not match current password.') {
+      alert('Old password is incorrect!')
+    }
+    else if (axiosError.response && axiosError.response.status === 401) {
+      alert('You are not authorized to change password!')
+    }
+    else {
+      alert('Something went wrong!')
+    }
   }
 }
+
+
 
 
 
@@ -138,7 +142,7 @@ async function loadData() {
   cursor: pointer;
   transition: background-color 0.3s;
   border-radius: 5px;
-  margin-top: 30px;
+  margin-top: 20px;
   width: 40%;
   z-index: 1000;
 }

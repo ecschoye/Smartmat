@@ -70,14 +70,15 @@ public class ShoppingListService {
         return dtos;
     }
 
-    public List<Grocery> getRequestedGroceries(long shoppingListId) {
+    public List<ShoppingListElementDTO> getRequestedGroceries(long shoppingListId) {
         logger.info("Retrieving suggested groceries from the database");
-        List<Grocery> groceries = groceryShoppingListRepository.findRequestedGroceriesByShoppingListId(shoppingListId);
+        List<GroceryShoppingList> groceries = groceryShoppingListRepository.findRequestedGroceriesByShoppingListId(shoppingListId);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries from the database");
         }
+        List<ShoppingListElementDTO> dtos = groceries.stream().map(ShoppingListElementDTO::new).collect(Collectors.toList());
         logger.info("Received groceries from the database");
-        return groceries;
+        return dtos;
     }
 
     public List<ShoppingListElementDTO> getGroceries(long shoppingListId, long categoryId) {

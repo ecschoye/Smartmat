@@ -123,15 +123,14 @@ public class ShoppingListController {
     }
 
     @GetMapping("requested/groceries/{shoppingListId}")
-    public ResponseEntity<List<Grocery>> getRequestedGroceries(@PathVariable("shoppingListId") long shoppingListId) {
+    public ResponseEntity<List<ShoppingListElementDTO>> getRequestedGroceries(@PathVariable("shoppingListId") long shoppingListId) {
         logger.info("Received request to get groceries requested to the shopping list with id {}", shoppingListId);
-        List<Grocery> groceries = shoppingListService.getRequestedGroceries(shoppingListId);
+        List<ShoppingListElementDTO> groceries = shoppingListService.getRequestedGroceries(shoppingListId);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries. Return status NO_CONTENT");
             throw new NullPointerException("Received no groceries");
         }
         logger.info("Returns groceries and status OK");
         return new ResponseEntity<>(groceries, HttpStatus.OK);
-
     }
 }

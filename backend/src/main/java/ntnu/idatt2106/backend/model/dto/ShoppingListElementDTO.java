@@ -7,7 +7,7 @@ public class ShoppingListElementDTO {
     private long groceryId;
     private String name;
     private int quantity;
-    private String categoryName;//todo: endre til categoryName
+    private String categoryName;
     private boolean requested;
     public ShoppingListElementDTO(GroceryShoppingList element) {
         this.id = element.getId();

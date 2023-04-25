@@ -17,10 +17,10 @@ public interface GroceryShoppingListRepository extends JpaRepository<GroceryShop
             " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId")
     List<GroceryShoppingList> findByShoppingListId(@Param("shoppingListId")Long shoppingListId);
 
-    @Query(value = "SELECT gsl.grocery" +
+    @Query(value = "SELECT gsl" +
             " FROM GroceryShoppingList gsl, Grocery g" +
             " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId AND gsl.isRequest=true")
-    List<Grocery> findRequestedGroceriesByShoppingListId(@Param("shoppingListId")Long shoppingListId);
+    List<GroceryShoppingList> findRequestedGroceriesByShoppingListId(@Param("shoppingListId")Long shoppingListId);
 
     @Query(value = "SELECT gsl" +
             " FROM GroceryShoppingList gsl, Grocery g" +

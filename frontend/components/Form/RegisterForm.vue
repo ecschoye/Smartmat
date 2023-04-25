@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <form @submit.prevent="sendForm" class="form">
+    <form @submit.prevent="sendForm" class="form form-light-color dark:form-dark-color">
       <BaseInput id="inpName" class="input-container" type="name" :label="$t('name')" v-model="form.name" />
       <BaseInput id="inpEmail" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
       <BaseInput id="inpPassword" class="input-container" type="password" :label="$t('password')" v-model="form.password" />
@@ -73,7 +73,6 @@ h1{
 .form {
   width: 400px;
   height: fit-content;
-  background: white;
   padding: 0 40px 40px 40px;
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

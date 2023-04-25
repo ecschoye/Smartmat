@@ -1,11 +1,11 @@
 <template>
-  <div class="profile-container">
-    <div class="user-details">
-      <h1 class="user-name">{{ user.name }}</h1>
-      <p class="user-email">{{ user.email }}</p>
+  <div class="profile-container h-36 w-3/4 sm:w-1/2 md:1/2 lg:w-4/12">
+    <div class="user-details pt-5">
+      <h1 class="user-name text-white text-center text-6xl font-light">{{ user.name }}</h1>
+      <p class="user-email mt-2 ml-1 text-white text-sm font-light">{{ user.email }}</p>
     </div>
-    <div class="profile-picture-container">
-      <img class="profile-picture" src="~/assets/profile.png" alt="Profile Picture" />
+    <div class="pt-5">
+      <img class=" hidden md:block h-24 w-24 ml-10" src="~/assets/profile.png" alt="Profile Picture" />
     </div>
     <button class="logout-btn" @click="logOut">Log out</button>
   </div>
@@ -72,18 +72,23 @@ async function loadData() {
   border-radius: 15px;
 }
 
+/*
 .user-email{
   font-size: 1.4rem;
   color: white;
   font-weight: 300;
-  margin-top: 50px;
 }
 
+ */
+
+/*
 .profile-picture-container{
   flex: 0.5;
   display: flex;
   justify-content: right;
 }
+
+ */
 
 .profile-container {
   display: flex;
@@ -92,19 +97,20 @@ async function loadData() {
   margin: 0 auto;
   align-items: flex-start;
   border: solid 3px white;
-  border-radius: 20px;
-  padding: 3rem;
-  width: 60%;
-  height: fit-content;
+  border-radius: 10px;
   position: relative;
 }
 
+/*
 .user-details {
   grid-row: 1;
   grid-column: 1;
   margin-right: 20px;
 }
 
+ */
+
+/*
 .user-name {
   font-size: 6rem;
   color: white;
@@ -112,10 +118,9 @@ async function loadData() {
   height: fit-content;
 }
 
-p {
-  color: white;
-}
+ */
 
+/*
 .profile-picture {
   width: 100px;
   height: 100px;
@@ -123,8 +128,10 @@ p {
   object-fit: cover;
 }
 
+ */
 
 
+/*
 @media (max-width: 768px) {
   .profile-picture{
     width: 100px;
@@ -141,4 +148,6 @@ p {
 
 
 }
+
+ */
 </style>

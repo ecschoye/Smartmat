@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <NavBar/>
-    <div class="page-container light-background-color dark:dark-background-color">
+    <div class="page-container bg-light-color dark:bg-dark-color">
       <slot />
     </div>
 

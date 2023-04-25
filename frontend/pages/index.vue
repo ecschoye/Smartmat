@@ -25,7 +25,7 @@
           {{ t('log_in_here') }}
         </button>
       </NuxtLink>
-      <NuxtLink :to="localePath('/')" class="sm:mt-5 sm:pl-4">
+      <NuxtLink :to="localePath('/about-us')" class="sm:mt-5 sm:pl-4">
         <button class="w-52 h-14 sm:w-50 bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
           {{ t('read_more_about_us')}}
         </button>

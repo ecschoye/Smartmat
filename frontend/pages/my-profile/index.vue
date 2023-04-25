@@ -1,11 +1,11 @@
 <template>
-  <div class="container">
-    <div class="content-wrapper">
+  <div class="container md:h-fit">
+    <div class="content-wrapper mt-5">
         <ProfileInfo  />
-      <div class="grid">
-        <InfoBox id="myAccountBtn" @click="route('/my-profile/edit')" title="Endre brukerdetaljer" content="View and edit my account details"/>
-        <InfoBox title="Systeminnstillinger" @click="route('/system-settings')" content="Systeminnstillinger"/>
-        <InfoBox title="Ekstra knapp" @click="" content="Ekstra knapp"/>
+      <div class="grid grid-cols-1 xl:grid-cols-3 gap-2 mt-50 text-center items-center justify-center text-center pt-5 space-y-1 flex flex-wrap">
+        <InfoBox id="myAccountBtn" @click="route('/my-profile/edit')" title="Endre brukerdetaljer" content="View and edit my account details" class=""/>
+        <InfoBox title="Systeminnstillinger" @click="route('/system-settings')" content="Systeminnstillinger" class=""/>
+        <InfoBox title="Ekstra knapp" @click="" content="Ekstra knapp" class=""/>
       </div>
     </div>
     <!--    <div class="wave-container">
@@ -52,30 +52,35 @@ function route(route : string){
 <style scoped>
 
 
-
+/*
 @media screen and (max-width: 1000px) {
   .container{
     min-height: 100vh !important;
   }
 }
 
+ */
+
+/*
 .grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding: 20px;
   width: fit-content;
-  margin: 50px auto 0;
   gap: 50px;
 }
 
+ */
+
+/*
 .content-wrapper{
   justify-content: center;
   display: flex;
-  margin-top: 120px;
   flex-direction: column;
   margin-bottom: 120px;
 }
+
+ */
 
 
 .wave-container{
@@ -85,6 +90,7 @@ function route(route : string){
   width: 100%;
 }
 
+/*
 Wave {
   position: relative;
   width: 100%;
@@ -92,6 +98,8 @@ Wave {
   min-height: 100px;
   max-height: 150px;
 }
+
+ */
 .container {
   animation: gradient 15s ease infinite;
   margin: 0 auto;
@@ -157,6 +165,7 @@ Wave {
   }
 }
 
+/*
 @media (max-width: 768px) {
   item-list {
     width: 100%;
@@ -199,4 +208,6 @@ Wave {
     height: fit-content;
   }
 }
+
+ */
 </style>

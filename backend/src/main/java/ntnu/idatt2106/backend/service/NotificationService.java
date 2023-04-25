@@ -113,8 +113,7 @@ public class NotificationService {
 
         // Calculate the number of days between the two dates
         long diffInMillis = givenDate.getTimeInMillis() - today.getTimeInMillis();
-        long daysDiff = (long) (diffInMillis / (24 * 60 * 60 * 1000));
-
+        long daysDiff = (diffInMillis / (24 * 60 * 60 * 1000));
         return daysDiff;
     }
 }

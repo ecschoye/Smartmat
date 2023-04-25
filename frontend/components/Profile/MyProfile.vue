@@ -7,6 +7,7 @@
     <div class="profile-picture-container">
       <img class="profile-picture" src="~/assets/profile.png" alt="Profile Picture" />
     </div>
+    <button class="logout-btn" @click="logOut">Log out</button>
   </div>
 </template>
 
@@ -17,15 +18,28 @@ import { getUserData } from "~/service/httputils/authentication/AuthenticationSe
 import type { User } from "@/types/UserType";
 import { onMounted, ref } from 'vue';
 import { useUserStore } from "~/store/userStore";
+import { postLogOut} from "~/service/httputils/authentication/AuthenticationService";
 
 const userStore = useUserStore();
 
 const user = ref({} as User);
+const router = useRouter();
 
 onMounted(() => {
   loadData();
 });
 
+async function logOut() {
+  try{
+    const response = await postLogOut();
+    if (response.status === 200){
+      userStore.logOut();
+      router.push('/')
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 async function loadData() {
   try {
@@ -43,6 +57,20 @@ async function loadData() {
 </script>
 
 <style scoped>
+
+.logout-btn {
+  position: absolute;
+  bottom: -24px;
+  left: 90px;
+  background-color: white;
+  border: none;
+  width: fit-content;
+  font-size: 1.2rem;
+  color: #1c1c1c;
+  cursor: pointer;
+  padding: 7px 15px;
+  border-radius: 15px;
+}
 
 .user-email{
   font-size: 1.4rem;
@@ -68,6 +96,7 @@ async function loadData() {
   padding: 3rem;
   width: 60%;
   height: fit-content;
+  position: relative;
 }
 
 .user-details {

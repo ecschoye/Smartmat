@@ -4,9 +4,13 @@
       <h1 class="text-white text-center text-4xl sm:text-6xl mb-8 mt-14">{{t('welcome_to_smart_mat')}}</h1>
     </div>
 
-    <div class="flex justify-center pb-5 sm:pb-0">
+    <div class="flex justify-center pb-5 sm:pb-0 dark:hidden">
       <!-- logo -->
-      <img src="../assets/icons/smartmat/smartMat.png" alt="logo" class="w-64 h-auto sm:w-80 sm:h-auto image">
+      <img src="../assets/icons/smartmat/smartMat.png" alt="logo" class="w-72 h-auto sm:w-3/5 sm:h-auto image">
+    </div>
+    <div class="dark:flex dark:justify-center dark:pb-5 hidden">
+      <!-- logo -->
+      <img src="../assets/icons/smartmat/smartMat_transparent.png" alt="logo" class="w-72 h-auto sm:w-3/5 sm:h-auto image">
     </div>
 
     <div class="sm:flex sm:justify-center text-center" >

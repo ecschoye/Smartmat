@@ -4,15 +4,15 @@
       <div class="header text-center">{{t('change_password')}}</div>
       <div class="form-group">
         <p class="-mb-8 text-xl font-semibold">{{t('enter_your_old_password')}}</p>
-        <BaseInput id="oldPassword" type="password" class="w-full" label="$t('old_password')" v-model="oldPassword"/>
+        <BaseInput id="oldPassword" type="password" class="w-full" :label="$t('old_password')" v-model="oldPassword"/>
       </div>
       <div class="form-group">
         <p class="-mb-8 text-xl font-semibold">{{t('enter_your_new_password')}}</p>
-        <BaseInput id="newPassword" type="password" class="w-full" label="$t('new_password')" v-model="newPassword"/>
+        <BaseInput id="newPassword" type="password" class="w-full" :label="$t('new_password')" v-model="newPassword"/>
       </div>
       <div class="form-group">
         <p class="-mb-8 text-xl font-semibold">{{t('confirm_your_new_password')}}</p>
-        <BaseInput id="verifyNewPassword" type="password" class="w-full" label="$t('verify_new_password')" v-model="verifyNewPassword"/>
+        <BaseInput id="verifyNewPassword" type="password" class="w-full" :label="$t('verify_new_password')" v-model="verifyNewPassword"/>
       </div>
       <div class="button-wrapper">
         <button @click="route('/my-profile')" class="update-btn">{{t('go_back')}}</button>

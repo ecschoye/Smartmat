@@ -1,18 +1,18 @@
 <template>
   <div class="edit-container">
     <div class="user-details">
-      <div class="header">Endre brukerdetaljer</div>
+      <div class="header">{{ t('edit_user_details') }}</div>
       <div class="form-group">
-        <BaseInput id="inpName" class="input-container" type="text" label="Navn" v-model="user.name"/>
+        <BaseInput id="inpName" class="input-container" type="text" :label="$t('name')" v-model="user.name"/>
       </div>
       <div class="form-group">
-        <BaseInput id="inpEmail" class="input-container" type="text" label="Email" v-model="user.email"/>
+        <BaseInput id="inpEmail" class="input-container" type="text" :label="$t('email')" v-model="user.email"/>
       </div>
       <div class="button-wrapper">
-        <button @click="route('/my-profile')" class="update-btn">Gå tilbake</button>
-        <button @click="route('/my-profile/change-password')" class="update-btn">Endre passord</button>
+        <button @click="route('/my-profile')" class="update-btn">{{t('go_back')}}</button>
+        <button @click="route('/my-profile/change-password')" class="update-btn">{{ t('change_password') }}</button>
       </div>
-      <button @click="updateAccount" id="update" class="update-btn">Oppdater bruker</button>
+      <button @click="updateAccount" id="update" class="update-btn">{{ t('update_user_details') }}</button>
     </div>
   </div>
 </template>
@@ -27,6 +27,8 @@ import axiosInstance from "@/service/AxiosInstance";
 import BaseInput from "@/components/Form/BaseInput.vue";
 import GreenButton from "~/components/Button/GreenButton.vue";
 import GrayButton from "~/components/Button/GrayButton.vue";
+
+const { t } = useI18n();
 
 const userStore = useUserStore();
 

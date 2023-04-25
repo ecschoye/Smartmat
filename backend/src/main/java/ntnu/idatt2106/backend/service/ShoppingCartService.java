@@ -26,7 +26,7 @@ public class ShoppingCartService {
     private final GroceryRepository groceryRepository;
     private final GroceryShoppingCartRepository groceryShoppingCartRepository;
 
-    private final SessionStorageService sessionStorageService;
+    private final CookieService cookieService;
     private final JwtService jwtService;
     private Logger logger = LoggerFactory.getLogger(ShoppingCartService.class);
 
@@ -58,7 +58,7 @@ public class ShoppingCartService {
 
     // todo: is duplicate with method in ShoppingListService - remove
     private String extractEmail(HttpServletRequest httpRequest) {
-        String token = sessionStorageService.extractTokenFromAuthorizationHeader(httpRequest);
+        String token = cookieService.extractTokenFromCookie(httpRequest);
         return jwtService.extractClaim(token, Claims::getSubject);
     }
 

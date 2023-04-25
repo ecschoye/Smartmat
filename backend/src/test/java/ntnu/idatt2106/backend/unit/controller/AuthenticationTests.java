@@ -1,6 +1,7 @@
 package ntnu.idatt2106.backend.unit.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import ntnu.idatt2106.backend.controller.AuthenticationController;
 import ntnu.idatt2106.backend.exceptions.UserAlreadyExistsException;
 import ntnu.idatt2106.backend.model.User;
@@ -16,9 +17,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -72,10 +75,11 @@ public class AuthenticationTests {
     }
 
     @Test
-    public void authenticate_returnsOkResponse() throws InvalidCredentialsException {
+    public void authenticate_returnsOkResponse() throws InvalidCredentialsException, IOException {
         AuthenticationRequest authenticationRequest = new AuthenticationRequest();
         AuthenticationResponse authenticationResponse = AuthenticationResponse.builder().token("token").build();
 
+        HttpServletResponse httpServletResponse = Mockito.mock(HttpServletResponse.class);
         when(authenticationService.authenticate(authenticationRequest)).thenReturn(authenticationResponse);
 
         // Set up the mock to return a non-null User object
@@ -85,11 +89,12 @@ public class AuthenticationTests {
         // Set up the mock to return a non-null Role object
         when(user.getRole()).thenReturn(Role.SUPERUSER); // Replace Role.USER with the appropriate enum constant
 
-        ResponseEntity<AuthenticationResponse> response = loginController.authenticate(authenticationRequest, httpServletRequest);
+        ResponseEntity<AuthenticationResponse> response = loginController.authenticate(authenticationRequest, httpServletResponse);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(authenticationResponse, response.getBody());
     }
+
 
 
     @Test
@@ -101,14 +106,6 @@ public class AuthenticationTests {
         assertThrows(InvalidCredentialsException.class, () -> {
             loginController.authenticate(authenticationRequest, null);
         });
-    }
-
-    @Test
-    public void logout_returnsOkResponse() {
-        ResponseEntity<String> response = loginController.logout(httpServletRequest);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Logged out", response.getBody());
     }
 
 }

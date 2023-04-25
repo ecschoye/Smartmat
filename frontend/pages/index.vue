@@ -9,10 +9,10 @@
       <img src="../assets/icons/smartmat/smartMat.png" alt="logo" class="w-64 h-auto sm:w-80 sm:h-auto image">
     </div>
 
-    <div class="sm:flex sm:justify-center text-center">
-      <NuxtLink v-if="loggedIn" :to="localePath('/my-fridge')">
-        <button class="bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold py-2 px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
-          Gå til kjøleskapet mitt
+    <div class="sm:flex sm:justify-center text-center" >
+      <NuxtLink v-if="loggedIn" :to="localePath('/my-fridge')" class="sm:mt-5 sm:pr-4">
+        <button class="w-52 h-14 sm:w-48 bg-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
+          {{  t('go_to_my_fridge') }}
         </button>
       </NuxtLink>
 

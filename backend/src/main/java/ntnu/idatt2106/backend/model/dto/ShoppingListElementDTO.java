@@ -1,22 +1,20 @@
 package ntnu.idatt2106.backend.model.dto;
 
 import ntnu.idatt2106.backend.model.GroceryShoppingList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ShoppingListElementDTO {
     private long id;
     private long groceryId;
     private String name;
     private int quantity;
-    private String subCategoryName;
+    private String categoryName;//todo: endre til categoryName
     private boolean requested;
     public ShoppingListElementDTO(GroceryShoppingList element) {
         this.id = element.getId();
         this.groceryId = element.getGrocery().getId();
         this.name = element.getGrocery().getName();
         this.quantity = element.getQuantity();
-        this.subCategoryName = element.getGrocery().getSubCategory().getName();
+        this.categoryName = element.getGrocery().getSubCategory().getCategory().getName();
         this.requested = element.isRequest();
     }
 
@@ -36,8 +34,8 @@ public class ShoppingListElementDTO {
         return quantity;
     }
 
-    public String getSubCategoryName() {
-        return subCategoryName;
+    public String getCategoryName() {
+        return categoryName;
     }
 
     public boolean isRequested() {

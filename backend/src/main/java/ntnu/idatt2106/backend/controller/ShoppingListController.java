@@ -55,16 +55,16 @@ public class ShoppingListController {
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 
-    @GetMapping("/sub-category/groceries/{shoppingListId}/{subCategoryId}")
-    public ResponseEntity<List<Grocery>> getGroceriesFromSubCategorizedShoppingList(@PathVariable(name="shoppingListId") long shoppingListId,
-                                                                                 @PathVariable(name="subCategoryId") long subCategoryId) throws NullPointerException {
-        logger.info("Received request to get groceries with sub category id {} from shopping list with id {}", subCategoryId, shoppingListId);
-        List<Grocery> groceries = shoppingListService.getGroceries(shoppingListId, subCategoryId);
+    @GetMapping("/category/groceries/{shoppingListId}/{categoryId}")
+    public ResponseEntity<List<ShoppingListElementDTO>> getGroceriesFromCategorizedShoppingList(@PathVariable(name="shoppingListId") long shoppingListId,
+                                                                                 @PathVariable(name="categoryId") long categoryId) throws NullPointerException {
+        logger.info("Received request to get groceries with category id {} from shopping list with id {}", categoryId, shoppingListId);
+        List<ShoppingListElementDTO> groceries = shoppingListService.getGroceries(shoppingListId, categoryId);
         if (groceries.isEmpty()) {
-            logger.info("Received no groceries with sub category id {}. Return status NO_CONTENT", subCategoryId);
-            throw new NullPointerException("Received no groceries with given sub category");
+            logger.info("Received no groceries with category id {}. Return status NO_CONTENT", categoryId);
+            throw new NullPointerException("Received no groceries with given category");
         }
-        logger.info("Returns groceries with sub category id {} and status OK", subCategoryId);
+        logger.info("Returns groceries with category id {} and status OK", categoryId);
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 

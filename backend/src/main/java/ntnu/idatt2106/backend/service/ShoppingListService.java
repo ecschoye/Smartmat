@@ -80,14 +80,16 @@ public class ShoppingListService {
         return groceries;
     }
 
-    public List<Grocery> getGroceries(long shoppingListId, long subCategoryId) {
+    public List<ShoppingListElementDTO> getGroceries(long shoppingListId, long categoryId) {
         logger.info("Retrieving groceries from the database");
-        List<Grocery> groceries = groceryShoppingListRepository.findByShoppingListIdAndSubCategoryId(shoppingListId, subCategoryId);
+        List<GroceryShoppingList> groceries = groceryShoppingListRepository.findByShoppingListIdAndCategoryId(shoppingListId, categoryId);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries from the database");
         }
+
+        List<ShoppingListElementDTO> dtos = groceries.stream().map(ShoppingListElementDTO::new).collect(Collectors.toList());
         logger.info("Received groceries from the database");
-        return groceries;
+        return dtos;
     }
 
     public List<Category> getCategories(long shoppingListId) {

@@ -20,7 +20,7 @@ public class Grocery {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(description = "The id of the user, automatically generated")
+    @Schema(description = "The id of the grocery, automatically generated")
     private long id;
 
     @Column(name = "name")

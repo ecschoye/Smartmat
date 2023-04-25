@@ -119,7 +119,7 @@ e2e_test:
     - docker-compose build backend
     - docker-compose build frontend
     - docker-compose up -d
-    - docker-compose exec -T frontend sh -c "cd /app && npm ci && npx cypress run"
+    - docker-compose exec -T frontend sh -c "npx cypress run"
     - docker-compose down
   artifacts:
     when: always

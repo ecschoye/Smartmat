@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import ntnu.idatt2106.backend.exceptions.NotificationException;
 import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.GroceryNotificationDTO;
 import ntnu.idatt2106.backend.model.dto.response.ErrorResponse;
@@ -50,14 +51,14 @@ public class NotificationController {
     )
     @GetMapping("/all")
     @PreAuthorize("IsAuthenticated()")
-    public ResponseEntity<?> getAll(HttpServletRequest request) {
+    public ResponseEntity<?> getAll(HttpServletRequest request) throws NotificationException {
         User user = userService.findByEmail(jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)));
         logger.info("Received request for retrieving a users notifications");
         try{
             List<GroceryNotificationDTO> notifications = notificationService.getNotifications(user);
             return ResponseEntity.ok(notifications);
         }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Error occured while retrieving notifications" + e.getMessage()));
+            throw new NotificationException("Caught exception when retrieving all notifications");
         }
     }
 }

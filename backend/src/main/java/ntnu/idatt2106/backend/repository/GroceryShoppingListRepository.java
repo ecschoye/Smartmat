@@ -12,10 +12,10 @@ import java.util.List;
 
 @Repository
 public interface GroceryShoppingListRepository extends JpaRepository<GroceryShoppingList, Long> {
-    @Query(value = "SELECT gsl.grocery" +
+    @Query(value = "SELECT gsl" +
             " FROM GroceryShoppingList gsl, Grocery g" +
             " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId")
-    List<Grocery> findByShoppingListId(@Param("shoppingListId")Long shoppingListId);
+    List<GroceryShoppingList> findByShoppingListId(@Param("shoppingListId")Long shoppingListId);
 
     @Query(value = "SELECT gsl.grocery" +
             " FROM GroceryShoppingList gsl, Grocery g" +

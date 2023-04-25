@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.model.*;
+import ntnu.idatt2106.backend.model.dto.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.requests.EditGroceryRequest;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,14 +59,15 @@ public class ShoppingListService {
         return newShoppingList.getId();
     }
 
-    public List<Grocery> getGroceries(long shoppingListId) {
+    public List<ShoppingListElementDTO> getGroceries(long shoppingListId) {
         logger.info("Retrieving groceries from the database");
-        List<Grocery> groceries = groceryShoppingListRepository.findByShoppingListId(shoppingListId);
+        List<GroceryShoppingList> groceries = groceryShoppingListRepository.findByShoppingListId(shoppingListId);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries from the database");
         }
+        List<ShoppingListElementDTO> dtos = groceries.stream().map(ShoppingListElementDTO::new).collect(Collectors.toList());
         logger.info("Received groceries from the database");
-        return groceries;
+        return dtos;
     }
 
     public List<Grocery> getRequestedGroceries(long shoppingListId) {

@@ -8,6 +8,7 @@ import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.model.Category;
 import ntnu.idatt2106.backend.model.Grocery;
 import ntnu.idatt2106.backend.model.GroceryShoppingList;
+import ntnu.idatt2106.backend.model.dto.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.requests.EditGroceryRequest;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.service.ShoppingListService;
@@ -43,9 +44,9 @@ public class ShoppingListController {
     }
 
     @GetMapping("/groceries/{shoppingListId}")
-    public ResponseEntity<List<Grocery>> getGroceriesFromShoppingList(@PathVariable(name="shoppingListId") long shoppingListId) throws NullPointerException {
+    public ResponseEntity<List<ShoppingListElementDTO>> getGroceriesFromShoppingList(@PathVariable(name="shoppingListId") long shoppingListId) throws NullPointerException {
         logger.info("Received request to get groceries from shopping list with id {}", shoppingListId);
-        List<Grocery> groceries = shoppingListService.getGroceries(shoppingListId);
+        List<ShoppingListElementDTO> groceries = shoppingListService.getGroceries(shoppingListId);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries. Return status NO_CONTENT");
             throw new NullPointerException("Received no groceries");

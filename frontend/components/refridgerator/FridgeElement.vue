@@ -2,7 +2,9 @@
     <div ref="el" class="grid grid-cols-3 w-full justify-center p-3">
       <p class="text-start align-middle">{{ props.grocery.grocery.name }}</p>
       <p :class="{'text-red-500': isNearExpiry()}" class="text-end align-middle">{{ props.grocery.physicalExpiryDate.toLocaleDateString() }}</p>
-      <button class="border border-black w-2/12 rounded-md justify-self-end align-middle hover:bg-black" @click="clicked()"></button>
+      <button class="justify-self-end align-middle hover:bg-black" @click="clicked()">
+        <img src="../../assets\icons\menu.png" class="h-5 w-5">
+      </button>
     </div>
   </template>
   <script setup lang="ts">

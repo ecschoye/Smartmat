@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.model.*;
+import ntnu.idatt2106.backend.model.dto.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.repository.*;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,26 +36,35 @@ public class ShoppingCartService {
         logger.info("Creating shopping cart for shopping list with id {}", shoppingListId);
         Optional<ShoppingList> shoppingList = shoppingListRepository.findById(shoppingListId);
 
-        if (shoppingList.isPresent()) {
-            logger.info("Found shopping list with id {}", shoppingList.get().getId());
-            ShoppingCart shoppingCart = new ShoppingCart();
-            shoppingCart.setShoppingList(shoppingList.get());
-
-            shoppingCartRepository.save(shoppingCart);
-            logger.info("Created shopping cart with id {}", shoppingCart.getId());
-            return shoppingCart.getId();
+        if (shoppingList.isEmpty()) {
+            logger.info("Could not find a matching shopping list to shopping list id {}", shoppingListId);
+            return -1;
         }
-        logger.info("Could not find a matching shopping list to shopping list id {}", shoppingListId);
-        return -1;
+
+        logger.info("Found shopping list with id {}", shoppingList.get().getId());
+
+        Optional<ShoppingCart> shoppingCartOptional = Optional.of(shoppingCartRepository.findShoppingListById(shoppingListId));
+        if (shoppingCartOptional.isPresent()) {
+            logger.info("Shopping cart already exists for shopping list with id {}", shoppingListId);
+            return shoppingCartOptional.get().getId();
+        }
+
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setShoppingList(shoppingList.get());
+
+        shoppingCartRepository.save(shoppingCart);
+        logger.info("Created shopping cart with id {}", shoppingCart.getId());
+        return shoppingCart.getId();
     }
-    public List<Grocery> getGroceries(long shoppingCartId) {
+    public List<ShoppingListElementDTO> getGroceries(long shoppingCartId) {
         logger.info("Retrieving groceries from the database");
-        List<Grocery> groceries = shoppingCartRepository.findByShoppingCartId(shoppingCartId);
+        List<GroceryShoppingCart> groceries = shoppingCartRepository.findByShoppingCartId(shoppingCartId);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries from the database");
         }
+        List<ShoppingListElementDTO> dtos = groceries.stream().map(ShoppingListElementDTO::new).collect(Collectors.toList());
         logger.info("Received groceries from the database");
-        return groceries;
+        return dtos;
     }
 
     // todo: is duplicate with method in ShoppingListService - remove

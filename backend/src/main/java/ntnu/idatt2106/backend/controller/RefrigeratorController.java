@@ -28,6 +28,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controller for API calls regarding refrigerator and its members
+ *
+ * TODO change to fetch email from cookie
+ */
 @RestController
 @RequestMapping("/api/refrigerator")
 @RequiredArgsConstructor

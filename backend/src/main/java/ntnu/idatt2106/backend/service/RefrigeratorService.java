@@ -33,6 +33,7 @@ import java.util.Optional;
  * The RefrigeratorService class provides access to user data stored in the RefrigeratorRepository.
  * It provides methods for finding and manipulating user data.
  *
+ * TODO change request to fetch email from cookie
  * TODO Generalize member data valiation
  * TODO Superuser should not be able to change to user if only superuser
  */

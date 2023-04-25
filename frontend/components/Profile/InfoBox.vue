@@ -1,6 +1,6 @@
 <template>
-  <div class="box">
-    <h1 class="text-center"> {{ title }}</h1>
+  <div class="box w-3/4 md:1/2 lg:w-3/4 bg-white rounded-2xl mx-auto">
+    <h1 class="text-center h-24 pt-6 items"> {{ title }}</h1>
   </div>
 </template>
 
@@ -22,9 +22,14 @@ h1 {
   margin: 0;
 }
 
-.box {
+/*
+
   width: 350px !important;
   height: 150px !important;
+ */
+
+/*
+.box {
   background-color: white;
   border-radius: 20px;
   margin-right: 0;
@@ -32,6 +37,8 @@ h1 {
   align-items: center;
   justify-content: center;
 }
+
+ */
 
 .inner {
   margin: 20px;

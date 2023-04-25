@@ -14,7 +14,7 @@ import java.util.List;
 public interface GroceryShoppingListRepository extends JpaRepository<GroceryShoppingList, Long> {
     @Query(value = "SELECT gsl" +
             " FROM GroceryShoppingList gsl, Grocery g" +
-            " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId")
+            " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId AND gsl.isRequest = false")
     List<GroceryShoppingList> findByShoppingListId(@Param("shoppingListId")Long shoppingListId);
 
     @Query(value = "SELECT gsl" +
@@ -24,12 +24,12 @@ public interface GroceryShoppingListRepository extends JpaRepository<GroceryShop
 
     @Query(value = "SELECT gsl" +
             " FROM GroceryShoppingList gsl, Grocery g" +
-            " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId AND g.subCategory.category.id = :categoryId")
+            " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId AND g.subCategory.category.id = :categoryId AND gsl.isRequest = false")
     List<GroceryShoppingList> findByShoppingListIdAndCategoryId(@Param("shoppingListId")Long shoppingListId, @Param("categoryId")Long categoryId);
 
     @Query(value = "SELECT DISTINCT sc.category" +
             " FROM GroceryShoppingList gsl, Grocery g, SubCategory sc" +
-            " WHERE gsl.grocery.id = g.id AND gsl.id = :shoppingListId AND sc.id = g.subCategory.id")
+            " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId AND sc.id = g.subCategory.id AND gsl.isRequest = false")
     List<Category> findCategoryByShoppingListId(@Param("shoppingListId")Long shoppingListId);
 }
 

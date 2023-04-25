@@ -17,9 +17,11 @@ import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
 public class GroceryNotificationDTO {
     private Long id;
     private RefrigeratorGrocery refrigeratorGrocery;
+    private Long daysLeft;
 
     public GroceryNotificationDTO(GroceryNotification groceryNotification){
         this.id = groceryNotification.getId();
         this.refrigeratorGrocery = groceryNotification.getGroceryEntity();
+        this.daysLeft = groceryNotification.getDaysLeft();
     }
 }

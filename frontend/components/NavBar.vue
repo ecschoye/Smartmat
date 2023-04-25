@@ -31,7 +31,7 @@
         </button>
       </div>
       <div class="hidden lg:inline-flex items-center">
-        <NuxtLink href="/" title="Varslinger" class="-m-1.5 p-1.5 text-sm font-semibold leading-6 text-gray-900">
+        <NuxtLink href="/notifications" title="Varslinger" class="-m-1.5 p-1.5 text-sm font-semibold leading-6 text-gray-900">
           <span class="sr-only">Varslinger</span>
           <img class="h-8 w-auto" src="../assets/icons/bell.png" alt="">
         </NuxtLink>

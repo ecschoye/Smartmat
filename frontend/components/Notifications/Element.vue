@@ -1,0 +1,30 @@
+<template>
+    <div class = "flex-row border rounded-xl my-3 py-3">
+        <div class = "flex flex-cols-2 py-3 px-3 justify-center">
+            <img src="../../assets\icons\restaurant.png" class="h-5 w-5 ml-5 mr-2">
+            <div>
+                <div v-if="notification.daysLeft == 0" class="mr-5 ml-2"> {{notification.grocery.grocery.name}} går ut i dag : {{ notification.grocery.physicalExpiryDate.toLocaleDateString() }} </div>
+                <div v-else-if="notification.daysLeft == 1" class="mr-5 ml-2"> {{notification.grocery.grocery.name}} går ut i morgen : {{ notification.grocery.physicalExpiryDate.toLocaleDateString() }} </div>
+                <div v-else class="mr-5 ml-2"> {{notification.grocery.grocery.name}} går ut om {{ notification.daysLeft }} dager : {{ notification.grocery.physicalExpiryDate.toLocaleDateString() }} </div>
+            </div>
+        </div>
+        <div>
+            <button class = "border border-black mx-2 p-1 rounded">Finn oppskrift</button>
+            <button class = "border border-black mx-2 p-1 rounded">Gå til ukesmeny</button>
+            <button class = "border border-black mx-2 p-1 rounded">Til kjøleskap</button>
+        </div>
+    </div>
+</template>
+
+
+<script setup lang="ts">
+import { GroceryNotification } from '~/types/GroceryNotificationType';
+
+
+const props = defineProps({
+    notification :{
+        type: Object as () => GroceryNotification,
+        required:true
+    }
+});
+</script>

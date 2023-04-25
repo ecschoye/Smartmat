@@ -3,8 +3,8 @@ package ntnu.idatt2106.backend.config;
 
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.model.enums.AuthenticationState;
+import ntnu.idatt2106.backend.service.CookieService;
 import ntnu.idatt2106.backend.service.JwtService;
-import ntnu.idatt2106.backend.service.SessionStorageService;
 import org.springframework.lang.NonNull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,7 +24,6 @@ import io.jsonwebtoken.ExpiredJwtException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -33,7 +32,7 @@ public class JwTAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    private final SessionStorageService sessionStorageService;
+    private final CookieService cookieService;
 
     /**
      * Method for extracting the jwt token from the cookie.
@@ -62,7 +61,7 @@ public class JwTAuthenticationFilter extends OncePerRequestFilter {
         }
 
 
-        final String jwt = sessionStorageService.extractTokenFromAuthorizationHeader(request);
+        final String jwt = cookieService.extractTokenFromCookie(request);
 
         String username = null;
         AuthenticationState authState = AuthenticationState.UNAUTHENTICATED;

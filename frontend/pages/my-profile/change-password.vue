@@ -1,22 +1,22 @@
 <template>
   <div class="edit-container">
     <div class="user-details">
-      <div class="header text-center">Endre passord</div>
+      <div class="header text-center">{{t('change_password')}}</div>
       <div class="form-group">
-        <p class="-mb-8 text-xl font-semibold">Skriv inn ditt gamle passord under:</p>
-        <BaseInput id="oldPassword" type="password" class="w-full" label="Gammelt passord" v-model="oldPassword"/>
+        <p class="-mb-8 text-xl font-semibold">{{t('enter_your_old_password')}}</p>
+        <BaseInput id="oldPassword" type="password" class="w-full" label="$t('old_password')" v-model="oldPassword"/>
       </div>
       <div class="form-group">
-        <p class="-mb-8 text-xl font-semibold">Skriv inn ditt nye passord under:</p>
-        <BaseInput id="newPassword" type="password" class="w-full" label="Nytt passord" v-model="newPassword"/>
+        <p class="-mb-8 text-xl font-semibold">{{t('enter_your_new_password')}}</p>
+        <BaseInput id="newPassword" type="password" class="w-full" label="$t('new_password')" v-model="newPassword"/>
       </div>
       <div class="form-group">
-        <p class="-mb-8 text-xl font-semibold">Skriv inn ditt nye passord én gang til under:</p>
-        <BaseInput id="verifyNewPassword" type="password" class="w-full" label="Verifiser nytt passord" v-model="verifyNewPassword"/>
+        <p class="-mb-8 text-xl font-semibold">{{t('confirm_your_new_password')}}</p>
+        <BaseInput id="verifyNewPassword" type="password" class="w-full" label="$t('verify_new_password')" v-model="verifyNewPassword"/>
       </div>
       <div class="button-wrapper">
-        <button @click="route('/my-profile')" class="update-btn">Gå tilbake</button>
-        <button @click="updatePassword()" class="update-btn">Endre passord</button>
+        <button @click="route('/my-profile')" class="update-btn">{{t('go_back')}}</button>
+        <button @click="updatePassword()" class="update-btn">{{t('change_password')}}</button>
       </div>
     </div>
   </div>
@@ -31,6 +31,7 @@ import { useUserStore } from "~/store/userStore";
 import axiosInstance from "@/service/AxiosInstance";
 import BaseInput from "@/components/Form/BaseInput.vue";
 import { AxiosError } from "axios";
+const { t } = useI18n();
 
 const userStore = useUserStore();
 

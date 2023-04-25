@@ -27,7 +27,7 @@ public class ShoppingListService {
     private final GroceryRepository groceryRepository;
     private final UserRepository userRepository;
 
-    private final SessionStorageService sessionStorageService;
+    private final CookieService cookieService;
     private final JwtService jwtService;
 
     private Logger logger = LoggerFactory.getLogger(ShoppingListService.class);
@@ -109,7 +109,7 @@ public class ShoppingListService {
     }
 
     private String extractEmail(HttpServletRequest httpRequest) {
-        String token = sessionStorageService.extractTokenFromAuthorizationHeader(httpRequest);
+        String token = cookieService.extractTokenFromCookie(httpRequest);
         return jwtService.extractClaim(token, Claims::getSubject);
     }
 

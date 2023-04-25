@@ -12,11 +12,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
+public class RegisterResponse {
 
-    @JsonIgnore
-    private String token;
     private String userId;
     private String userRole;
+    private String message;
 
 }

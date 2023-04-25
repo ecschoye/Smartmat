@@ -5,7 +5,7 @@
       <BaseInput id="inpEmail" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
       <BaseInput id="inpPassword" class="input-container" type="password" :label="$t('password')" v-model="form.password" />
       <div class="button-wrapper">
-        <GreenButton :label="$t('create_account')" width="100%" height="50px" />
+        <GreenButton id="register" :label="$t('create_account')" width="100%" height="50px" />
         <div class="divider"></div>
         <nuxt-link :to="localePath('/login')">
           <GrayButton :label="$t('go_to_log_in')" width="100%" height="50px" />

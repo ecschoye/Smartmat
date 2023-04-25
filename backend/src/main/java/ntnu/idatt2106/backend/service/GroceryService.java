@@ -35,6 +35,16 @@ public class GroceryService {
     private final RefrigeratorService refrigeratorService;
 
     /**
+     * Extracts username from cookie
+     * @param httpRequest Request we are extracting from
+     * @return username
+     */
+    public String extractEmail(HttpServletRequest httpRequest) {
+        String token = cookieService.extractTokenFromCookie(httpRequest);
+        return jwtService.extractClaim(token, Claims::getSubject);
+    }
+
+    /**
      * Gets a list of DTO's representing groceries
      * in refrigerator.
      *
@@ -74,13 +84,4 @@ public class GroceryService {
         return refrigeratorService.getUserRole(refrigerator, email);
     }
 
-    /**
-     * Extracts username from cookie
-     * @param httpRequest Request we are extracting from
-     * @return username
-     */
-    public String extractEmail(HttpServletRequest httpRequest) {
-        String token = cookieService.extractTokenFromCookie(httpRequest);
-        return jwtService.extractClaim(token, Claims::getSubject);
-    }
 }

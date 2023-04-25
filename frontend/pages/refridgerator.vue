@@ -1,6 +1,6 @@
 <template>
     <div class = "flex h-4/5">
-        <RefridgeratorFridge @group-closed="togglePos(false)" :groceries="refridgeratorStore.getGroceries" @popup-height="(payload) => setPos(payload)" />
+        <RefridgeratorFridge class="font-mono" @group-closed="togglePos(false)" :groceries="refridgeratorStore.getGroceries" @popup-height="(payload) => setPos(payload)" />
         <div>
             <Transition>
                 <RefridgeratorGroceryOptions :pos="position" v-if="toggle" @toggle-options="togglePos(false)"/>

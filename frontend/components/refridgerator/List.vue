@@ -39,7 +39,6 @@
 
 <script setup lang="ts">
 import type { GroceryEntity } from '~/types/GroceryEntityType';
-import type { Grocery } from '~/types/GroceryType';
 
     const emit = defineEmits(['popup-height', 'group-closed']);
 

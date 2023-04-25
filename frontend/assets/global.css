@@ -14,12 +14,20 @@
         @apply text-base;
     }
 
-
-    .light-background-color {
+    /*
+    * Light mode background color
+     */
+    .bg-light-color {
         background-color: #31C48D;
     }
 
-    .dark-background-color {
+    /*
+    * Dark mode background color
+     */
+    .bg-dark-color {
         background-color: #282828;
     }
+
+
+
 }

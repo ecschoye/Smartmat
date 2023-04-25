@@ -1,5 +1,5 @@
 <template>
-  <div class="profile-container h-36 w-3/4 sm:w-1/2 md:1/2 lg:w-4/12">
+  <div class="profile-container h-36 w-3/4  sm:w-1/2 md:1/2 lg:w-6/12 lg:h-48">
     <div class="user-details pt-5">
       <h1 class="user-name text-white text-center text-6xl font-light">{{ user.name }}</h1>
       <p class="user-email mt-2 ml-1 text-white text-sm font-light">{{ user.email }}</p>

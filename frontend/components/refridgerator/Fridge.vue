@@ -1,19 +1,19 @@
 <template>
     <div class="border w-1/3 h-full border-black rounded-lg bg-white" id="wrapper">
-      <div class="flex justify-center rounded-md shadow-sm w-full" role="group">
+      <div class="m-1 pl-2 pr-2 flex justify-center rounded-md font-medium font-sans text-lg" role="group">
         <button
           type="button"
-          class="w-full px-4 py-2 text-sm font-medium text-black border-b border-black rounded-l-lg hover:bg-gray-900 hover:text-white"
+          class="pl-4 pr-4 text-black border-2 border-black rounded-l-lg hover:bg-slate-200 cursor-pointer"
           @click="selectListing('all')"
-          :class="{ 'bg-black text-white': listingType === 'all' }"
+          :class="{ 'hover:bg-sky-200 bg-sky-300': listingType === 'all' }"
         >
           Alle varer
         </button>
         <button
           type="button"
-          class="w-full py-2 text-sm font-medium text-black border-b border-black rounded-r-md hover:bg-gray-900 hover:text-white"
+          class="pl-4 pr-4 text-black border-2 border-black rounded-r-lg hover:bg-slate-200 cursor-pointer"
           @click="selectListing('category')"
-          :class="{ 'bg-black text-white': listingType === 'category' }"
+          :class="{ 'hover:bg-sky-200 bg-sky-300': listingType === 'category' }"
         >
           Kategori
         </button>

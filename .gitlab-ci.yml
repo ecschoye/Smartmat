@@ -21,16 +21,26 @@ variables:
   SPRING_PROFILES_ACTIVE: gitlab-ci # NB!! THIS ONE'S IMPORTANT!
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: "/certs"
-  DOCKER_HOST: tcp://docker:2375
 
 
 
 stages:
+  - check_docker
   - test_backend
   - package_backend
   - test_frontend
   - build_frontend
   - e2e_test
+  
+check_docker:
+  stage: check_docker
+  image: docker:20.10
+  services:
+    - docker:20.10-dind
+  script:
+    - docker version
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
 
 # ...
 
@@ -109,7 +119,7 @@ e2e_test:
     - docker-compose build backend
     - docker-compose build frontend
     - docker-compose up -d
-    - docker-compose exec -T frontend sh -c "cd /app && npm ci && npx cypress run"
+    - docker-compose exec -T frontend sh -c "npx cypress run"
     - docker-compose down
   artifacts:
     when: always

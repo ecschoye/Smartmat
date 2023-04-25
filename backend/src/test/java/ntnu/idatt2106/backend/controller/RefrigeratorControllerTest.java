@@ -1,7 +1,9 @@
 package ntnu.idatt2106.backend.controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.SaveException;
+import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
@@ -135,7 +137,7 @@ public class RefrigeratorControllerTest {
 
     @Test
     @DisplayName("Test get by ID endpoint with valid ID")
-    public void testGetByIdWithValidId() throws EntityNotFoundException {
+    public void testGetByIdWithValidId() throws EntityNotFoundException, RefrigeratorNotFoundException {
         // Arrange
         long refrigeratorId = 1L;
         RefrigeratorDTO expectedResponse = new RefrigeratorDTO();
@@ -152,7 +154,7 @@ public class RefrigeratorControllerTest {
 
     @Test
     @DisplayName("Test get by ID endpoint with invalid ID")
-    public void testGetByIdWithInvalidId() throws EntityNotFoundException {
+    public void testGetByIdWithInvalidId() throws EntityNotFoundException, RefrigeratorNotFoundException {
         // Arrange
         long refrigeratorId = 1L;
 
@@ -264,7 +266,7 @@ public class RefrigeratorControllerTest {
 
     @Test
     @DisplayName("Test editRole with null response from service")
-    public void testEditRoleWithNullResponse() throws SaveException, UserNotFoundException {
+    public void testEditRoleWithNullResponse() throws SaveException, UserNotFoundException, UnauthorizedException {
         MemberRequest memberRequest = new MemberRequest();
         memberRequest.setRole(Role.SUPERUSER);
         memberRequest.setRefrigeratorId(1L);
@@ -279,7 +281,7 @@ public class RefrigeratorControllerTest {
 
     @Test
     @DisplayName("Test editRole with valid input")
-    public void testEditRoleWithValidInput() throws SaveException, UserNotFoundException {
+    public void testEditRoleWithValidInput() throws SaveException, UserNotFoundException, UnauthorizedException {
         MemberRequest memberRequest = new MemberRequest();
         memberRequest.setRole(Role.SUPERUSER);
         memberRequest.setRefrigeratorId(1L);

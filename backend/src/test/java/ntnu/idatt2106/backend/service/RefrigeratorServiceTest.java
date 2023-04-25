@@ -2,6 +2,8 @@ package ntnu.idatt2106.backend.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
+import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
+import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
@@ -203,7 +205,7 @@ public class RefrigeratorServiceTest {
         when(refrigeratorRepository.findById(request1.getRefrigeratorId())).thenReturn(Optional.of(refrigerator));
         when(userRepository.findByEmail(user.getUsername())).thenReturn(Optional.of(user));
         when(userRepository.findByEmail(newUser.getUsername())).thenReturn(Optional.of(newUser));
-        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(user.getId(), refrigerator.getId())).thenReturn(Optional.of(ru));
+        when(refrigeratorUserRepository.findByUserAndRefrigerator(user, refrigerator)).thenReturn(Optional.of(ru));
 
         //Act
         Assertions.assertDoesNotThrow(() -> refrigeratorService.addMember(request1));
@@ -211,7 +213,7 @@ public class RefrigeratorServiceTest {
 
     @Test
     @DisplayName("Test setRole with valid input")
-    public void testSetRoleWithValidInput() throws UserNotFoundException {
+    public void testSetRoleWithValidInput() throws UserNotFoundException, UnauthorizedException {
         User user = new User();
         user.setId("test_user_id");
         user.setEmail("test_user@test.com");
@@ -273,7 +275,7 @@ public class RefrigeratorServiceTest {
 
     @Test
     @DisplayName("Test setRole with invalid refrigerator user")
-    public void testSetRoleWithInvalidRefrigeratorUser() throws UserNotFoundException {
+    public void testSetRoleWithInvalidRefrigeratorUser() throws UserNotFoundException, UnauthorizedException, UnauthorizedException {
         User user = new User();
         user.setId("test_user_id");
         user.setEmail("test_user@test.com");
@@ -426,7 +428,7 @@ public class RefrigeratorServiceTest {
         when(refrigeratorRepository.findById(refrigerator.getId())).thenReturn(Optional.of(refrigerator));
         when(userRepository.findByEmail(request.getUserName())).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(EntityNotFoundException.class, () -> refrigeratorService.removeUserFromRefrigerator(request));
+        Assertions.assertThrows(UserNotFoundException.class, () -> refrigeratorService.removeUserFromRefrigerator(request));
     }
 
     @Test
@@ -449,7 +451,7 @@ public class RefrigeratorServiceTest {
         when(userRepository.findByEmail(request.getSuperName())).thenReturn(Optional.empty());
         when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(user.getId(), refrigerator.getId())).thenReturn(Optional.of(userRole));
 
-        Assertions.assertThrows(EntityNotFoundException.class, () -> refrigeratorService.removeUserFromRefrigerator(request));
+        Assertions.assertThrows(UserNotFoundException.class, () -> refrigeratorService.removeUserFromRefrigerator(request));
     }
 
     @Test
@@ -558,7 +560,7 @@ public class RefrigeratorServiceTest {
 
     @Test
     @DisplayName("Test getting an existing refrigerator by id")
-    public void testGetExistingRefrigeratorById() throws EntityNotFoundException {
+    public void testGetExistingRefrigeratorById() throws EntityNotFoundException, RefrigeratorNotFoundException, RefrigeratorNotFoundException {
         // Arrange
         long id = 1L;
         Refrigerator refrigerator = new Refrigerator();
@@ -586,6 +588,6 @@ public class RefrigeratorServiceTest {
         when(refrigeratorRepository.existsById(id)).thenReturn(false);
 
         // Act & Assert
-        Assertions.assertThrows(EntityNotFoundException.class, () -> refrigeratorService.getRefrigeratorById(id));
+        Assertions.assertThrows(RefrigeratorNotFoundException.class, () -> refrigeratorService.getRefrigeratorById(id));
     }
 }

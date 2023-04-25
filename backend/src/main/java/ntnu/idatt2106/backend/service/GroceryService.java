@@ -48,19 +48,30 @@ public class GroceryService {
     public List<RefrigeratorGroceryDTO> getGroceriesByRefrigerator(long refrigeratorId, HttpServletRequest request) throws RefrigeratorNotFoundException, UserNotFoundException, UnauthorizedException {
         //Throws if refrigerator does not exist
         Refrigerator refrigerator = refrigeratorService.getRefrigerator(refrigeratorId);
-        logger.debug("getting username");
-        String email = extractEmail(request);
-        //Throws if user is not member
-        logger.debug("getting user role");
-        Role userRole = refrigeratorService.getUserRole(refrigerator, email);
+        getRole(refrigerator,request);
 
-        logger.debug("getting groceries");
         List<RefrigeratorGrocery> groceries = refGroceryRepository.findByRefrigerator(refrigerator);
         List<RefrigeratorGroceryDTO> refGroceryDTOS = new ArrayList<>();
         for (RefrigeratorGrocery grocery: groceries) {
             refGroceryDTOS.add(new RefrigeratorGroceryDTO(grocery));
         }
         return refGroceryDTOS;
+    }
+
+    /**
+     * Gets the role of user that requested action
+     *
+     * @param refrigerator refrigerator role is in
+     * @param request request to api
+     * @return Role of user
+     * @throws UserNotFoundException if user not found
+     * @throws UnauthorizedException if user not member
+     */
+    public Role getRole(Refrigerator refrigerator, HttpServletRequest request) throws UserNotFoundException, UnauthorizedException {
+        logger.info("Checking if user is member");
+        String email = extractEmail(request);
+        //Throws if user is not member
+        return refrigeratorService.getUserRole(refrigerator, email);
     }
 
     /**

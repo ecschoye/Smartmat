@@ -5,6 +5,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
+import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
@@ -32,6 +33,7 @@ import java.util.Map;
  * Controller for API calls regarding refrigerator and its members
  *
  * TODO change to fetch email from cookie
+ * TODO usae global exception handlers
  */
 @RestController
 @RequestMapping("/api/refrigerator")
@@ -136,7 +138,7 @@ public class RefrigeratorController {
         try {
             RefrigeratorDTO result = refrigeratorService.getRefrigeratorById(refrigeratorId);
             return new ResponseEntity<>(result, HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException | RefrigeratorNotFoundException e) {
             logger.warn("Refrigerator could not be found");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

@@ -32,4 +32,8 @@ public class GroceryNotification {
     @Schema(description = "The grocery entity which the notification regards")
     private RefrigeratorGrocery groceryEntity;
 
+    @Column(name = "daysLeft")
+    @Schema(description = "The number of days left before the grocery expires")
+    private Long daysLeft;
+
 }

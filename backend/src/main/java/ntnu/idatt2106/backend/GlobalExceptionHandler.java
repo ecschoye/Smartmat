@@ -1,9 +1,6 @@
 package ntnu.idatt2106.backend;
 
-import ntnu.idatt2106.backend.exceptions.OldPasswordDoesNotMatchException;
-import ntnu.idatt2106.backend.exceptions.SaveException;
-import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
-import ntnu.idatt2106.backend.exceptions.UserAlreadyExistsException;
+import ntnu.idatt2106.backend.exceptions.*;
 import org.apache.http.auth.InvalidCredentialsException;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpStatus;
@@ -61,6 +58,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(RefrigeratorNotFoundException.class)
+    public ResponseEntity<String> handleRefrigeratorNotFoundException(RefrigeratorNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(OldPasswordDoesNotMatchException.class)

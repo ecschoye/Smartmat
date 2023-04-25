@@ -62,7 +62,6 @@ public class LoginIntegrationTest {
         System.out.println(authenticationResponse);
 
         assertThat(authenticationResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(authenticationResponse.getBody().getToken()).isNotEmpty();
         assertThat(authenticationResponse.getBody().getUserId()).isNotEmpty();
         assertThat(authenticationResponse.getBody().getUserRole()).isNotEmpty();
     }

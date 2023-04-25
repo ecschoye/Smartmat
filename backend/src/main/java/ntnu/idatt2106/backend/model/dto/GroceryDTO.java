@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.Category;
+import ntnu.idatt2106.backend.model.Grocery;
 
 /**
  * Grocery DTO
@@ -15,6 +16,14 @@ public class GroceryDTO {
     private long id;
     private String name;
     private String description;
-    private int groceryExpiryDate;
+    private int groceryExpiryDays;
     private Category category;
+
+    public GroceryDTO(Grocery grocery) {
+        this.id = grocery.getId();
+        this.name = grocery.getName();
+        this.description = grocery.getDescription();
+        this.groceryExpiryDays = grocery.getGroceryExpiryDays();
+        this.category = grocery.getSubCategory().getCategory();
+    }
 }

@@ -14,20 +14,8 @@
 export default defineComponent({
         data() {
             return {
-                refrigeratorId: 1,
-                shoppingCart: [
-                    {
-                        id: 8,
-                        name: 'Melk',
-                        amount: 2,
-                        category: 'Merieriprodukter',
-                        isAddedToCart: true
-                    },
-                ]
+                refrigeratorId: 1
             }
-        },
-        mounted() {
-            // Load data into lists
-        },
+        }
     })
 </script>

@@ -53,10 +53,7 @@
                     </div>
                 </div>
                 <div v-if="menuOptions.isInShoppingCartSelected">
-                    <div v-if="shoppingCart.length === 0 || null">
-                        <h3> Du har ingen varer i handlevognen </h3>
-                    </div>
-                    <div v-else class="grid grid-cols-1 gap-8">
+                    <div v-if="shoppingCart" class="grid grid-cols-1 gap-8">
                         <ShoppingListElement
                             v-for="element in shoppingCart"
                             :key="element.id"
@@ -66,6 +63,9 @@
                             <button @click.stop="addAllElementsToRefrigerator" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-200 bg-sky-300"> Legg alt i Kjøleskapet </button>
                         </div>
                     </div>
+                    <div v-else>
+                        <h3> Du har ingen varer i handlevognen </h3>
+                    </div>
                 </div>  
             </div>  
         </div>
@@ -74,13 +74,11 @@
 
 <script lang="ts">
 import ShoppingListService from "~/service/httputils/ShoppingListService";
+import ShoppingCartService from "~/service/httputils/ShoppingCartService";
 import ShoppingListElement from "./ShoppingListElement.vue";
+import console from "console";
     export default defineComponent({
         props: {
-            shoppingCart: {
-                type: Array as () => ShoppingListElement[],
-                required: true
-            },
             refrigeratorId: {
                 type: Number,
                 required: true
@@ -95,36 +93,57 @@ import ShoppingListElement from "./ShoppingListElement.vue";
                     isInShoppingCartSelected: false,
                 },
                 shoppingListId: -1,
+                shoppingCartId: -1,
                 shoppingList: [] as ShoppingListElement[],
                 categoryList: [] as ShoppingListCategory[],
-                suggestionsList: [] as ShoppingListElement[]
+                suggestionsList: [] as ShoppingListElement[],
+                shoppingCart: [] as ShoppingListElement[]
             }
         },
         created() {
-            this.createList();
+            this.loadLists();
         },
         methods: {
-            async createList() {
+            async loadLists() {
+                
+                //TODO: SHOULD BE DONE AUTOMATIC IN BACKEND WHEN CREATING REFRIGERATOR 
+
+                //create shopping list
                 let responseListId = await ShoppingListService.createShoppingList(this.refrigeratorId);
                 this.shoppingListId = responseListId.data;
-
-                let response = await ShoppingListService.getGroceriesFromShoppingList(this.shoppingListId);
+                //create shopping cart
+                let responseCartId = await ShoppingCartService.createShoppingCart(this.shoppingListId);
+                this.shoppingCartId = responseCartId.data;
                 
+                //TODO: END
+
+                //loads shopping list
+                let response = await ShoppingListService.getGroceriesFromShoppingList(this.shoppingListId);
                 response.data.forEach((element: ResponseGrocery) => {
                     let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
                     this.shoppingList.push(object);
                 });
-
+                
+                //loads categories
                 let responseCategories = await ShoppingListService.getCategoriesFromShoppingList(this.shoppingListId);
                 responseCategories.data.forEach((element: ShoppingListCategory) => {
                     this.categoryList.push(element);
                 });
 
+                //loads suggestions
                 let resonseSuggestions = await ShoppingListService.getRequestedGroceries(this.shoppingListId);
                 resonseSuggestions.data.forEach((element: ResponseGrocery) => {
                     let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
                     this.suggestionsList.push(object);
                 });
+
+                //loads shopping cart
+                let resonseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);            
+                resonseCart.data.forEach((element: ResponseGrocery) => {
+                    let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true };
+                    this.shoppingCart.push(object);
+                });
+
             },
             selectTab(tab: string) {
                 Object.keys(this.$data.menuOptions).forEach((key) => {

@@ -39,6 +39,7 @@
 </template>
 
 <script lang="ts">
+import ShoppingListService from "~/service/httputils/ShoppingListService";
     export default defineComponent({
         props:{
             ElementDetails: {
@@ -57,9 +58,17 @@
         methods: {
             removeElementFromCart() {
                 // Remove the element from the cart and add it back to the list
+
             },
-            removeElementFromList() {
+            async removeElementFromList() {
                 // Remove the element from the list
+                let deleteResponse = await ShoppingListService.removeGroceryFromShoppingList(this.ElementDetails.id);
+                console.log(deleteResponse);
+                if (deleteResponse.data) {
+                    alert("Varen ble vellykket slettet")
+                } else {
+                    alert("Det oppstod en feil ved sletting av varen")
+                }
             },
             addElementToRefrigerator() {
                 // Add the element to the refrigerator

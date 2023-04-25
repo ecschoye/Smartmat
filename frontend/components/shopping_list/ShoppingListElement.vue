@@ -2,7 +2,7 @@
     <div class="items stretch text-sm">
         <div class="ml-4 p-2 flex justify-end absolute left-0">
             <h3 class="mr-2"> {{ ElementDetails.name }} </h3>
-            <h5> ({{ ElementDetails.amount }})</h5>
+            <h5> ({{ ElementDetails.quantity }})</h5>
         </div>
         <div class="p-2 flex justify-end absolute right-0">
             <div>
@@ -42,7 +42,7 @@
     export default defineComponent({
         props:{
             ElementDetails: {
-                type: Object,
+                type: Object as () => ShoppingListElement,
                 required: true,
             }
         },
@@ -51,7 +51,7 @@
                 isElementAddedToCart:false,
             }
         },
-        mounted() {
+        mounted() {        
             this.isElementAddedToCart = this.ElementDetails.isAddedToCart
         },
         methods: {

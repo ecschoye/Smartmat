@@ -10,22 +10,22 @@
                 </div>
             </div>
             <div class="flex justify-center">
-                <div v-if="isAllElementsSelected">
-                    <div v-if="shoppingList.length === 0 || null">
-                        <h3> Du har ingen varer i handlelisten </h3>
-                    </div>
-                    <div v-else class="grid grid-cols-1 gap-8">
+                <div v-if="menuOptions.isAllElementsSelected">
+                    <div v-if="shoppingList" class="grid grid-cols-1 gap-8">
                         <ShoppingListElement
                             v-for="element in shoppingList"
                             :key="element.id"
-                            :ElementDetails="element">
+                            :ElementDetails=element>
                         </ShoppingListElement>
+                    </div>
+                    <div v-else>
+                        <h3> Du har ingen varer i handlelisten </h3>
                     </div>
                     <div class="p-2 flex justify-end absolute bottom-0 right-0">
                         <button @click.stop="addNewElement" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-200 bg-sky-300"> Legg til Ny Vare </button>
                     </div>
                 </div>
-                <div v-if="isCategoriesSelected">
+                <div v-if="menuOptions.isCategoriesSelected">
                     <div v-if="shoppingList.length === 0 || null">
                         <h3> Du har ingen varer i handlelisten </h3>
                     </div>
@@ -39,7 +39,7 @@
                     <div class="p-2 flex justify-end absolute bottom-0 right-0">
                         <button @click.stop="addNewElement" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-200 bg-sky-300"> Legg til Ny Vare </button>
                     </div>                </div>
-                <div v-if="isSuggestionsSelected">
+                <div v-if="menuOptions.isSuggestionsSelected">
                     <div v-if="suggestionsList.length === 0 || null">
                         <h3> Du har ingen forslag til handlelisten </h3>
                     </div>
@@ -47,11 +47,11 @@
                         <ShoppingListElement
                             v-for="element in suggestionsList"
                             :key="element.id"
-                            :ElementDetails="element">
+                            :ElementDetails=element>
                         </ShoppingListElement>
                     </div>
                 </div>
-                <div v-if="isInShoppingCartSelected">
+                <div v-if="menuOptions.isInShoppingCartSelected">
                     <div v-if="shoppingCart.length === 0 || null">
                         <h3> Du har ingen varer i handlevognen </h3>
                     </div>
@@ -59,7 +59,7 @@
                         <ShoppingListElement
                             v-for="element in shoppingCart"
                             :key="element.id"
-                            :ElementDetails="element">
+                            :ElementDetails=element>
                         </ShoppingListElement>
                         <div class="p-2 flex justify-end absolute bottom-0 right-0">
                             <button @click.stop="addAllElementsToRefrigerator" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-200 bg-sky-300"> Legg alt i Kjøleskapet </button>
@@ -72,13 +72,10 @@
 </template>
 
 <script lang="ts">
-import { createShoppingList } from "~/service/httputils/ShoppingListService";
+import { createShoppingList, getGroceriesFromShoppingList } from "~/service/httputils/ShoppingListService";
+import ShoppingListElement from "./ShoppingListElement.vue";
     export default defineComponent({
         props: {
-            shoppingList: {
-                type: Array as () => ShoppingListElement[],
-                required: true
-            },
             categoryList: {
                 type: Array as () => ShoppingListCategory[],
                 required: true
@@ -98,27 +95,40 @@ import { createShoppingList } from "~/service/httputils/ShoppingListService";
         },
         data() {
             return {
-                isAllElementsSelected: false,
-                isCategoriesSelected: false,
-                isSuggestionsSelected: false,
-                isInShoppingCartSelected: false,
-                shoppingListId: -1
+                menuOptions: {
+                    isAllElementsSelected: false,
+                    isCategoriesSelected: false,
+                    isSuggestionsSelected: false,
+                    isInShoppingCartSelected: false,
+                },
+                shoppingListId: -1,
+                shoppingList: [] as ShoppingListElement[]
             }
         },
         created() {
-            this.createShoppingList();
+            this.createList();
         },
         methods: {
-            async createShoppingList() {
-                let response = await createShoppingList(this.refrigeratorId);
-                this.shoppingListId = response.data;
+            async createList() {
+                let responseListId = await createShoppingList(this.refrigeratorId);
+                this.shoppingListId = responseListId.data;
+                console.log(this.shoppingListId);
+
+                let response = await getGroceriesFromShoppingList(this.shoppingListId);
+                
+                response.data.forEach((element: ResponseGrocery) => {
+                    let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
+                    this.shoppingList.push(object);
+                });
             },
             selectTab(tab: string) {
-                Object.keys(this.$data).forEach((key) => {
+                Object.keys(this.$data.menuOptions).forEach((key) => {
                     if (key !== tab) {
-                        (this as any).$data[key] = false;
+                        console.log("Sets to false");
+                        (this as any).$data.menuOptions[key] = false;
                     } else if (key === tab) {
-                        (this as any).$data[key] = true;
+                        console.log("Sets to true");
+                        (this as any).$data.menuOptions[key] = true;
                     }
                 });
             },

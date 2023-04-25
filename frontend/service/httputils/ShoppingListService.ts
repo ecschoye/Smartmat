@@ -2,6 +2,7 @@ import type { AxiosResponse } from 'axios';
 import axiosInstance from "~/service/AxiosInstance";
 import type {SaveGrocery} from "~/types/SaveGrocery";
 import type {EditGrocery} from "~/types/EditGrocery";
+import { ShoppingListElement } from '~/.nuxt/components';
 
 
 export const createShoppingList = async (refrigeratorId: Number): Promise<AxiosResponse> => {
@@ -13,6 +14,7 @@ export const getGroceriesFromShoppingList = async (shoppingListId: Number): Prom
 };
 
 export const getGroceriesFromSubCategorizedShoppingList = async (shoppingListId: Number, subCategoryId: Number): Promise<AxiosResponse> => {
+
     return axiosInstance.get(`/api/shopping-list/sub-category/groceries/${shoppingListId}/${subCategoryId}`);
 };
 

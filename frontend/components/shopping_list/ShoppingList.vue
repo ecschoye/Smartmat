@@ -26,7 +26,7 @@
                     </div>
                 </div>
                 <div v-if="menuOptions.isCategoriesSelected">
-                    <div v-if="shoppingList" class="grid grid-cols-1 gap-8"> <!--TODO: EDIT SHOPPINGLIST TO CATEGORYLIST!!!!-->
+                    <div v-if="categoryList" class="grid grid-cols-1 gap-8">
                         <ShoppingListCategory
                             v-for="category in categoryList"
                             :key="category.id"
@@ -41,15 +41,15 @@
                         <button @click.stop="addNewElement" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-200 bg-sky-300"> Legg til Ny Vare </button>
                     </div>                </div>
                 <div v-if="menuOptions.isSuggestionsSelected">
-                    <div v-if="suggestionsList.length === 0 || null">
-                        <h3> Du har ingen forslag til handlelisten </h3>
-                    </div>
-                    <div v-else class="grid grid-cols-1 gap-8">
+                    <div v-if="suggestionsList" class="grid grid-cols-1 gap-8">
                         <ShoppingListElement
-                            v-for="element in suggestionsList"
-                            :key="element.id"
-                            :ElementDetails=element>
-                        </ShoppingListElement>
+                        v-for="element in suggestionsList"
+                        :key="element.id"
+                        :ElementDetails=element>
+                    </ShoppingListElement>
+                    </div>
+                    <div v-else>
+                        <h3> Du har ingen forslag til handlelisten </h3>
                     </div>
                 </div>
                 <div v-if="menuOptions.isInShoppingCartSelected">
@@ -77,10 +77,6 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
 import ShoppingListElement from "./ShoppingListElement.vue";
     export default defineComponent({
         props: {
-            suggestionsList: {
-                type: Array as () => ShoppingListElement[],
-                required: true
-            },
             shoppingCart: {
                 type: Array as () => ShoppingListElement[],
                 required: true
@@ -100,7 +96,8 @@ import ShoppingListElement from "./ShoppingListElement.vue";
                 },
                 shoppingListId: -1,
                 shoppingList: [] as ShoppingListElement[],
-                categoryList: [] as ShoppingListCategory[]
+                categoryList: [] as ShoppingListCategory[],
+                suggestionsList: [] as ShoppingListElement[]
             }
         },
         created() {
@@ -122,7 +119,12 @@ import ShoppingListElement from "./ShoppingListElement.vue";
                 responseCategories.data.forEach((element: ShoppingListCategory) => {
                     this.categoryList.push(element);
                 });
-            
+
+                let resonseSuggestions = await ShoppingListService.getRequestedGroceries(this.shoppingListId);
+                resonseSuggestions.data.forEach((element: ResponseGrocery) => {
+                    let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
+                    this.suggestionsList.push(object);
+                });
             },
             selectTab(tab: string) {
                 Object.keys(this.$data.menuOptions).forEach((key) => {

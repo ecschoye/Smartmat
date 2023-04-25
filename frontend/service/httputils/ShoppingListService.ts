@@ -34,7 +34,7 @@ const removeGroceryFromShoppingList = async (groceryListId: Number): Promise<Axi
 };
 
 const getRequestedGroceries = async (shoppingListId: Number): Promise<AxiosResponse> => {
-    return axiosInstance.delete(`/api/shopping-list/"requested/groceries/${shoppingListId}`);
+    return axiosInstance.get(`/api/shopping-list/requested/groceries/${shoppingListId}`);
 };
 
 export default {

@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxtjs/color-mode',
     '@nuxtjs/i18n',
+    '@pinia-plugin-persistedstate/nuxt',
   ],
   colorMode: {
     classSuffix: ''
@@ -14,7 +15,6 @@ export default defineNuxtConfig({
     cssPath: '~/assets/global.css',
     configPath: 'tailwind.config.js',
     exposeConfig: false,
-    config: {},
     injectPosition: 0,
     viewer: true,
   },

@@ -3,10 +3,10 @@
         <div class="w-2/5 h-96 p-1 overflow-auto bg-white border-2 rounded-lg border-black relative">
             <div>
                 <div class="m-1 pl-2 pr-2 flex justify-center text-lg font-sans font-medium">
-                    <button @click.stop="selectTab('isAllElementsSelected')" :class="{'hover:bg-sky-200 bg-sky-300': isAllElementsSelected}" class="pl-4 pr-4 bg-white border-2 rounded-l-lg border-black cursor-pointer hover:bg-slate-200"> Alle Varer </button>
-                    <button @click.stop="selectTab('isCategoriesSelected')" :class="{'hover:bg-sky-200 bg-sky-300': isCategoriesSelected}" class="pl-4 pr-4 bg-white border-2 rounded-none border-black cursor-pointer hover:bg-slate-200"> Kategorier </button>
-                    <button @click.stop="selectTab('isSuggestionsSelected')" :class="{'hover:bg-sky-200 bg-sky-300': isSuggestionsSelected}" class="pl-4 pr-4 bg-white border-2 rounded-none border-black cursor-pointer hover:bg-slate-200"> Ønsker </button>
-                    <button @click.stop="selectTab('isInShoppingCartSelected')" :class="{'hover:bg-sky-200 bg-sky-300': isInShoppingCartSelected}" class="pl-4 pr-4 bg-white border-2 rounded-r-lg border-black cursor-pointer hover:bg-slate-200"> Handlevogn </button>
+                    <button @click.stop="selectTab('isAllElementsSelected')" :class="{'hover:bg-sky-200 bg-sky-300': menuOptions.isAllElementsSelected}" class="pl-4 pr-4 bg-white border-2 rounded-l-lg border-black cursor-pointer hover:bg-slate-200"> Alle Varer </button>
+                    <button @click.stop="selectTab('isCategoriesSelected')" :class="{'hover:bg-sky-200 bg-sky-300': menuOptions.isCategoriesSelected}" class="pl-4 pr-4 bg-white border-2 rounded-none border-black cursor-pointer hover:bg-slate-200"> Kategorier </button>
+                    <button @click.stop="selectTab('isSuggestionsSelected')" :class="{'hover:bg-sky-200 bg-sky-300': menuOptions.isSuggestionsSelected}" class="pl-4 pr-4 bg-white border-2 rounded-none border-black cursor-pointer hover:bg-slate-200"> Ønsker </button>
+                    <button @click.stop="selectTab('isInShoppingCartSelected')" :class="{'hover:bg-sky-200 bg-sky-300': menuOptions.isInShoppingCartSelected}" class="pl-4 pr-4 bg-white border-2 rounded-r-lg border-black cursor-pointer hover:bg-slate-200"> Handlevogn </button>
                 </div>
             </div>
             <div class="flex justify-center">
@@ -26,15 +26,16 @@
                     </div>
                 </div>
                 <div v-if="menuOptions.isCategoriesSelected">
-                    <div v-if="shoppingList.length === 0 || null">
-                        <h3> Du har ingen varer i handlelisten </h3>
-                    </div>
-                    <div v-else class="grid grid-cols-1 gap-8">
+                    <div v-if="shoppingList" class="grid grid-cols-1 gap-8"> <!--TODO: EDIT SHOPPINGLIST TO CATEGORYLIST!!!!-->
                         <ShoppingListCategory
                             v-for="category in categoryList"
                             :key="category.id"
-                            :CategoryDetails="category">
+                            :CategoryDetails="category" 
+                            :ShoppingListId="shoppingListId">
                         </ShoppingListCategory>
+                    </div>
+                    <div v-else>
+                        <h3> Du har ingen varer i handlelisten </h3>
                     </div>
                     <div class="p-2 flex justify-end absolute bottom-0 right-0">
                         <button @click.stop="addNewElement" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-200 bg-sky-300"> Legg til Ny Vare </button>
@@ -72,14 +73,10 @@
 </template>
 
 <script lang="ts">
-import { createShoppingList, getGroceriesFromShoppingList } from "~/service/httputils/ShoppingListService";
+import ShoppingListService from "~/service/httputils/ShoppingListService";
 import ShoppingListElement from "./ShoppingListElement.vue";
     export default defineComponent({
         props: {
-            categoryList: {
-                type: Array as () => ShoppingListCategory[],
-                required: true
-            },
             suggestionsList: {
                 type: Array as () => ShoppingListElement[],
                 required: true
@@ -102,7 +99,8 @@ import ShoppingListElement from "./ShoppingListElement.vue";
                     isInShoppingCartSelected: false,
                 },
                 shoppingListId: -1,
-                shoppingList: [] as ShoppingListElement[]
+                shoppingList: [] as ShoppingListElement[],
+                categoryList: [] as ShoppingListCategory[]
             }
         },
         created() {
@@ -110,24 +108,27 @@ import ShoppingListElement from "./ShoppingListElement.vue";
         },
         methods: {
             async createList() {
-                let responseListId = await createShoppingList(this.refrigeratorId);
+                let responseListId = await ShoppingListService.createShoppingList(this.refrigeratorId);
                 this.shoppingListId = responseListId.data;
-                console.log(this.shoppingListId);
 
-                let response = await getGroceriesFromShoppingList(this.shoppingListId);
+                let response = await ShoppingListService.getGroceriesFromShoppingList(this.shoppingListId);
                 
                 response.data.forEach((element: ResponseGrocery) => {
                     let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
                     this.shoppingList.push(object);
                 });
+
+                let responseCategories = await ShoppingListService.getCategoriesFromShoppingList(this.shoppingListId);
+                responseCategories.data.forEach((element: ShoppingListCategory) => {
+                    this.categoryList.push(element);
+                });
+            
             },
             selectTab(tab: string) {
                 Object.keys(this.$data.menuOptions).forEach((key) => {
-                    if (key !== tab) {
-                        console.log("Sets to false");
+                    if (key !== tab) {                    
                         (this as any).$data.menuOptions[key] = false;
-                    } else if (key === tab) {
-                        console.log("Sets to true");
+                    } else if (key === tab) {                        
                         (this as any).$data.menuOptions[key] = true;
                     }
                 });

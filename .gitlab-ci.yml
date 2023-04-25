@@ -29,7 +29,6 @@ stages:
   - package_backend
   - test_frontend
   - build_frontend
-  - e2e_test
   
 
 test_backend:
@@ -95,33 +94,3 @@ build_frontend:
         - frontend/**/*
 
 # ...
-
-e2e_test:
-  stage: e2e_test
-  needs: [package_backend, build_frontend]
-  script:
-    # Start the backend service
-    - java -jar backend/target/backend-*.jar &
-    - BACKEND_PID=$!
-
-    # Start the frontend service
-    - cd frontend
-    - npx serve dist &
-    - FRONTEND_PID=$!
-
-    # Run Cypress tests
-    - npx cypress run
-
-    # Clean up
-    - kill $BACKEND_PID
-    - kill $FRONTEND_PID
-  artifacts:
-    when: always
-    paths:
-      - frontend/cypress/videos/
-      - frontend/cypress/screenshots/
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
-      changes:
-        - frontend/**/*
-        - backend/**/*

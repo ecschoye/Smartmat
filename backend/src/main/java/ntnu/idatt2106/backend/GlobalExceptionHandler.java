@@ -71,7 +71,6 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
 
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception ex) {
         logger.info("An unexpected error occurred: " + ex.getMessage());

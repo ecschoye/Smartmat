@@ -38,6 +38,8 @@
   <script setup lang="ts">
   import { useUserStore } from "~/store/userStore";
   import { onMounted, computed } from "vue";
+  import { getNotifications } from "~/service/httputils/NotificationService";
+  import { useNotificationStore } from '~/store/notificationStore';
   const { t, locale } = useI18n({
     useScope: 'local'
   })
@@ -46,6 +48,25 @@
 
   const userStore = useUserStore();
   const loggedIn = computed(() => userStore.isLoggedIn);
+
+  const notificationStore = useNotificationStore();
+
+
+
+  async function loadNotifications(){
+    try{
+      const response = await getNotifications();
+      if(response.status == 200){
+        notificationStore.setNotification(response.data);
+      }
+    }catch(error : any){
+      console.log(error);
+    }
+  }
+
+  onMounted(() => {
+    loadNotifications();
+  })
 </script>
 
 

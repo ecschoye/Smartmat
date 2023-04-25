@@ -23,12 +23,12 @@ public class GroceryNotification {
     private long id;
 
     @ManyToOne
-    @Column(name = "user")
+    @JoinColumn(name = "users")
     @Schema(description = "User which owns the notification")
     private User user;
 
     @ManyToOne
-    @Column(name = "groceryEntity")
+    @JoinColumn(name = "RefrigeratorGrocery")
     @Schema(description = "The grocery entity which the notification regards")
     private RefrigeratorGrocery groceryEntity;
 

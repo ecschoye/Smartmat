@@ -33,4 +33,4 @@ RUN npm ci --production
 EXPOSE 3000
 
 # Run the service
-CMD ["npm", "start"]
+CMD ["npm", "run",  "start"]

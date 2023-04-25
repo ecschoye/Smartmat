@@ -8,11 +8,11 @@ import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
 import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
-import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
+import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
-import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
+import ntnu.idatt2106.backend.model.dto.MemberDTO;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
 import org.slf4j.Logger;
@@ -39,9 +39,9 @@ public class RefrigeratorController {
     Logger logger = LoggerFactory.getLogger(RefrigeratorController.class);
 
     @PostMapping("/members/edit-role")
-    public ResponseEntity<MemberResponse> editRole(@Valid @RequestBody MemberRequest memberRequest) {
+    public ResponseEntity<MemberDTO> editRole(@Valid @RequestBody MemberRequest memberRequest) {
         logger.info("Received request to edit member role in refrigerator");
-        MemberResponse result;
+        MemberDTO result;
         try {
             result = refrigeratorService.setRole(memberRequest);
             if (result == null) throw new Exception();
@@ -54,9 +54,9 @@ public class RefrigeratorController {
     }
 
     @PostMapping("/members/new")
-    public ResponseEntity<MemberResponse> newMember(@Valid @RequestBody MemberRequest memberRequest) throws SaveException {
+    public ResponseEntity<MemberDTO> newMember(@Valid @RequestBody MemberRequest memberRequest) throws SaveException {
         logger.info("Received request to add new member to refrigerator");
-        MemberResponse result;
+        MemberDTO result;
         try {
             result = refrigeratorService.addMember(memberRequest);
             if (result == null) throw new Exception();
@@ -126,10 +126,10 @@ public class RefrigeratorController {
     }
 
     @GetMapping("/{refrigeratorId}")
-    public ResponseEntity<RefrigeratorResponse> getById(@Valid @PathVariable long refrigeratorId) {
+    public ResponseEntity<RefrigeratorDTO> getById(@Valid @PathVariable long refrigeratorId) {
         logger.info("Received request for refrigerator with id: {}", refrigeratorId);
         try {
-            RefrigeratorResponse result = refrigeratorService.getRefrigeratorById(refrigeratorId);
+            RefrigeratorDTO result = refrigeratorService.getRefrigeratorById(refrigeratorId);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             logger.warn("Refrigerator could not be found");

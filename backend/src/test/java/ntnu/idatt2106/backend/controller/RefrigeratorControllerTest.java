@@ -6,12 +6,12 @@ import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
-import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
+import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
-import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
+import ntnu.idatt2106.backend.model.dto.MemberDTO;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.repository.UserRepository;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
@@ -23,14 +23,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -100,7 +98,7 @@ public class RefrigeratorControllerTest {
         refrigeratorUser.setId(1);
         refrigeratorUser.setUser(user);
         refrigeratorUser.setRefrigerator(refrigerator);
-        MemberResponse memberResponse = new MemberResponse();
+        MemberDTO memberResponse = new MemberDTO();
         memberResponse.setUsername(user.getUsername());
         memberResponse.setRefrigeratorId(refrigerator.getId());
         memberResponse.setRole(Role.USER);
@@ -108,7 +106,7 @@ public class RefrigeratorControllerTest {
         when(refrigeratorService.addMember(request)).thenReturn(memberResponse);
 
         // Call the method being tested
-        ResponseEntity<MemberResponse> response = refrigeratorController.newMember(request);
+        ResponseEntity<MemberDTO> response = refrigeratorController.newMember(request);
 
         // Verify that the service method was called with the correct arguments
         Mockito.verify(refrigeratorService).addMember(request);
@@ -140,12 +138,12 @@ public class RefrigeratorControllerTest {
     public void testGetByIdWithValidId() throws EntityNotFoundException {
         // Arrange
         long refrigeratorId = 1L;
-        RefrigeratorResponse expectedResponse = new RefrigeratorResponse();
+        RefrigeratorDTO expectedResponse = new RefrigeratorDTO();
 
         when(refrigeratorService.getRefrigeratorById(anyLong())).thenReturn(expectedResponse);
 
         // Act
-        ResponseEntity<RefrigeratorResponse> responseEntity = refrigeratorController.getById(refrigeratorId);
+        ResponseEntity<RefrigeratorDTO> responseEntity = refrigeratorController.getById(refrigeratorId);
 
         // Assert
         Assertions.assertEquals(expectedResponse, responseEntity.getBody());
@@ -161,7 +159,7 @@ public class RefrigeratorControllerTest {
         when(refrigeratorService.getRefrigeratorById(anyLong())).thenThrow(new EntityNotFoundException("Refrigerator does not exist"));
 
         // Act
-        ResponseEntity<RefrigeratorResponse> responseEntity = refrigeratorController.getById(refrigeratorId);
+        ResponseEntity<RefrigeratorDTO> responseEntity = refrigeratorController.getById(refrigeratorId);
 
         // Assert
         Assertions.assertNull(responseEntity.getBody());
@@ -259,7 +257,7 @@ public class RefrigeratorControllerTest {
         memberRequest.setUserName(null);
 
 
-        ResponseEntity<MemberResponse> response = refrigeratorController.editRole(memberRequest);
+        ResponseEntity<MemberDTO> response = refrigeratorController.editRole(memberRequest);
 
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
@@ -274,7 +272,7 @@ public class RefrigeratorControllerTest {
 
         when(refrigeratorService.setRole(memberRequest)).thenReturn(null);
 
-        ResponseEntity<MemberResponse> response = refrigeratorController.editRole(memberRequest);
+        ResponseEntity<MemberDTO> response = refrigeratorController.editRole(memberRequest);
 
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
@@ -287,15 +285,15 @@ public class RefrigeratorControllerTest {
         memberRequest.setRefrigeratorId(1L);
         memberRequest.setUserName("test_user");
 
-        MemberResponse expectedResult = new MemberResponse();
+        MemberDTO expectedResult = new MemberDTO();
         expectedResult.setRole(Role.SUPERUSER);
         expectedResult.setRefrigeratorId(1L);
         expectedResult.setUsername("test_user");
 
         when(refrigeratorService.setRole(memberRequest)).thenReturn(expectedResult);
 
-        ResponseEntity<MemberResponse> response = refrigeratorController.editRole(memberRequest);
-        MemberResponse actualResult = response.getBody();
+        ResponseEntity<MemberDTO> response = refrigeratorController.editRole(memberRequest);
+        MemberDTO actualResult = response.getBody();
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals(expectedResult, actualResult);

@@ -6,11 +6,11 @@ import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
-import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
+import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
-import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
+import ntnu.idatt2106.backend.model.dto.MemberDTO;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
@@ -252,7 +252,7 @@ public class RefrigeratorServiceTest {
         memberRequest.setRefrigeratorId(1L);
         memberRequest.setSuperName(superUser.getUsername());
         memberRequest.setUserName(user.getUsername());
-        MemberResponse result = refrigeratorService.setRole(memberRequest);
+        MemberDTO result = refrigeratorService.setRole(memberRequest);
 
         Assertions.assertEquals(result.getRole(), newRole);
     }
@@ -313,7 +313,7 @@ public class RefrigeratorServiceTest {
         memberRequest.setRefrigeratorId(1L);
         memberRequest.setSuperName(superUser.getUsername());
         memberRequest.setUserName(user.getUsername());
-        MemberResponse result = refrigeratorService.setRole(memberRequest);
+        MemberDTO result = refrigeratorService.setRole(memberRequest);
 
         Assertions.assertNull(result);
     }
@@ -569,13 +569,13 @@ public class RefrigeratorServiceTest {
         when(refrigeratorUserRepository.findByRefrigeratorId(id)).thenReturn(new ArrayList<>());
 
         // Act
-        RefrigeratorResponse result = refrigeratorService.getRefrigeratorById(id);
+        RefrigeratorDTO result = refrigeratorService.getRefrigeratorById(id);
 
         // Assert
         Assertions.assertNotNull(result);
         Assertions.assertEquals(id, result.getId());
         Assertions.assertEquals(refrigerator.getName(), result.getName());
-        Assertions.assertEquals(new ArrayList<MemberResponse>(), result.getMembers());
+        Assertions.assertEquals(new ArrayList<MemberDTO>(), result.getMembers());
     }
 
     @Test

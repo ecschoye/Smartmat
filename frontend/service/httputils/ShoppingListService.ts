@@ -37,6 +37,10 @@ const getRequestedGroceries = (shoppingListId: Number): Promise<AxiosResponse> =
     return axiosInstance.get(`/api/shopping-list/requested/groceries/${shoppingListId}`);
 };
 
+const transferGroceryToShoppingCart = (groceryShoppingListId: Number): Promise<AxiosResponse> => {
+    return axiosInstance.post(`/api/shopping-list/transfer-shopping-cart/${groceryShoppingListId}`);
+};
+
 export default {
     createShoppingList,
     getGroceriesFromShoppingList,
@@ -45,5 +49,6 @@ export default {
     saveGroceryToShoppingList,
     editGroceryQuantity,
     removeGroceryFromShoppingList,
-    getRequestedGroceries
+    getRequestedGroceries,
+    transferGroceryToShoppingCart
 }

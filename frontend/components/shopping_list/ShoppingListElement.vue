@@ -39,6 +39,7 @@
 </template>
 
 <script lang="ts">
+import ShoppingCartService from "~/service/httputils/ShoppingCartService";
 import ShoppingListService from "~/service/httputils/ShoppingListService";
     export default defineComponent({
         props:{
@@ -56,9 +57,17 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
             this.isElementAddedToCart = this.ElementDetails.isAddedToCart
         },
         methods: {
-            removeElementFromCart() {
+            async removeElementFromCart() {
                 // Remove the element from the cart and add it back to the list
-
+                /*
+                let transferStatus = await ShoppingCartService.transferGroceryToShoppingList(this.ElementDetails.id);
+                console.log(transferStatus);
+                if (transferStatus.data) {
+                    alert("Varen ble vellykket lagt tilbake i handlelisten")
+                } else {
+                    alert("Det oppstod en feil ved overføring av varen")
+                }
+                */
             },
             async removeElementFromList() {
                 // Remove the element from the list
@@ -73,8 +82,15 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
             addElementToRefrigerator() {
                 // Add the element to the refrigerator
             },
-            addElementToShoppingCart() {
+            async addElementToShoppingCart() {
+                console.log("Inside addElementToShoppingCart")
                 // Add the element to the shoppingCart
+                let transferStatus = await ShoppingListService.transferGroceryToShoppingCart(this.ElementDetails.id);
+                if (transferStatus.data) {
+                    alert("Varen ble vellykket overført")
+                } else {
+                    alert("Det oppstod en feil ved overføring av varen")
+                }
             },
             editElement() {
                 // Edit the element amount

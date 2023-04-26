@@ -16,8 +16,13 @@ const saveGroceryToShoppingCart = (saveGrocery: SaveGrocery): Promise<AxiosRespo
     return axiosInstance.post(`/api/shopping-cart/add-grocery`, saveGrocery);
 };
 
+const transferGroceryToShoppingList = (groceryShoppingCartId: Number): Promise<AxiosResponse> => {
+    return axiosInstance.post(`/api/shopping-cart/transfer-shopping-list/${groceryShoppingCartId}`);
+};
+
 export default {
     createShoppingCart,
     getGroceriesFromShoppingCart,
-    saveGroceryToShoppingCart
+    saveGroceryToShoppingCart,
+    transferGroceryToShoppingList
 }

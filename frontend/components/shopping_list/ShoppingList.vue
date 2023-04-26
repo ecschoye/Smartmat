@@ -119,31 +119,38 @@ import console from "console";
 
                 //loads shopping list
                 let response = await ShoppingListService.getGroceriesFromShoppingList(this.shoppingListId);
-                response.data.forEach((element: ResponseGrocery) => {
-                    let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
-                    this.shoppingList.push(object);
-                });
+                if(response.data.length > 0) {
+                    response.data.forEach((element: ResponseGrocery) => {
+                        let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
+                        this.shoppingList.push(object);
+                    });
+                }
                 
                 //loads categories
                 let responseCategories = await ShoppingListService.getCategoriesFromShoppingList(this.shoppingListId);
-                responseCategories.data.forEach((element: ShoppingListCategory) => {
-                    this.categoryList.push(element);
-                });
+                if(responseCategories.data.length > 0) {
+                    responseCategories.data.forEach((element: ShoppingListCategory) => {
+                        this.categoryList.push(element);
+                    });
+                }
 
                 //loads suggestions
-                let resonseSuggestions = await ShoppingListService.getRequestedGroceries(this.shoppingListId);
-                resonseSuggestions.data.forEach((element: ResponseGrocery) => {
-                    let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
-                    this.suggestionsList.push(object);
-                });
+                let responseSuggestions = await ShoppingListService.getRequestedGroceries(this.shoppingListId);
+                if (responseSuggestions.data.length > 0) {
+                    responseSuggestions.data.forEach((element: ResponseGrocery) => {
+                        let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
+                        this.suggestionsList.push(object);
+                    });
+                }
 
                 //loads shopping cart
-                let resonseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);            
-                resonseCart.data.forEach((element: ResponseGrocery) => {
-                    let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true };
-                    this.shoppingCart.push(object);
-                });
-
+                let responseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);            
+                if (responseCart.data.length > 0) {
+                    responseCart.data.forEach((element: ResponseGrocery) => {
+                        let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true };
+                        this.shoppingCart.push(object);
+                    });
+                }
             },
             selectTab(tab: string) {
                 Object.keys(this.$data.menuOptions).forEach((key) => {

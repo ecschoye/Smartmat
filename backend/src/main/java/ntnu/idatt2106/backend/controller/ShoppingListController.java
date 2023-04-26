@@ -3,18 +3,21 @@ package ntnu.idatt2106.backend.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import ntnu.idatt2106.backend.exceptions.SaveException;
-import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
+import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.Category;
 import ntnu.idatt2106.backend.model.Grocery;
 import ntnu.idatt2106.backend.model.GroceryShoppingList;
+import ntnu.idatt2106.backend.model.dto.ShoppingListElementDTO;
+import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.model.requests.EditGroceryRequest;
+import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.service.ShoppingListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,9 +46,9 @@ public class ShoppingListController {
     }
 
     @GetMapping("/groceries/{shoppingListId}")
-    public ResponseEntity<List<Grocery>> getGroceriesFromShoppingList(@PathVariable(name="shoppingListId") long shoppingListId) throws NullPointerException {
+    public ResponseEntity<List<ShoppingListElementDTO>> getGroceriesFromShoppingList(@PathVariable(name="shoppingListId") long shoppingListId) throws NullPointerException {
         logger.info("Received request to get groceries from shopping list with id {}", shoppingListId);
-        List<Grocery> groceries = shoppingListService.getGroceries(shoppingListId);
+        List<ShoppingListElementDTO> groceries = shoppingListService.getGroceries(shoppingListId);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries. Return status NO_CONTENT");
             throw new NullPointerException("Received no groceries");
@@ -54,16 +57,16 @@ public class ShoppingListController {
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 
-    @GetMapping("/sub-category/groceries/{shoppingListId}/{subCategoryId}")
-    public ResponseEntity<List<Grocery>> getGroceriesFromSubCategorizedShoppingList(@PathVariable(name="shoppingListId") long shoppingListId,
-                                                                                 @PathVariable(name="subCategoryId") long subCategoryId) throws NullPointerException {
-        logger.info("Received request to get groceries with sub category id {} from shopping list with id {}", subCategoryId, shoppingListId);
-        List<Grocery> groceries = shoppingListService.getGroceries(shoppingListId, subCategoryId);
+    @GetMapping("/category/groceries/{shoppingListId}/{categoryId}")
+    public ResponseEntity<List<ShoppingListElementDTO>> getGroceriesFromCategorizedShoppingList(@PathVariable(name="shoppingListId") long shoppingListId,
+                                                                                 @PathVariable(name="categoryId") long categoryId) throws NullPointerException {
+        logger.info("Received request to get groceries with category id {} from shopping list with id {}", categoryId, shoppingListId);
+        List<ShoppingListElementDTO> groceries = shoppingListService.getGroceries(shoppingListId, categoryId);
         if (groceries.isEmpty()) {
-            logger.info("Received no groceries with sub category id {}. Return status NO_CONTENT", subCategoryId);
-            throw new NullPointerException("Received no groceries with given sub category");
+            logger.info("Received no groceries with category id {}. Return status NO_CONTENT", categoryId);
+            throw new NullPointerException("Received no groceries with given category");
         }
-        logger.info("Returns groceries with sub category id {} and status OK", subCategoryId);
+        logger.info("Returns groceries with category id {} and status OK", categoryId);
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 
@@ -80,6 +83,7 @@ public class ShoppingListController {
     }
 
     //todo: edit format of response?
+    /*
     @PostMapping("/add-grocery")
     public ResponseEntity<GroceryShoppingList> saveGroceryToShoppingList(@RequestBody SaveGroceryRequest groceryRequest, HttpServletRequest request) throws SaveException{
         logger.info("Received request to save grocery {} to shopping list with id {}", groceryRequest.getName(), groceryRequest.getForeignKey());
@@ -90,6 +94,24 @@ public class ShoppingListController {
         }
         logger.info("Returns groceries and status OK");
         return new ResponseEntity<>(groceryListItem.get(), HttpStatus.OK);
+    }
+
+     */
+
+    @PostMapping("/add-grocery/{shoppingListId}/{groceryId}/{quantity}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<SuccessResponse> saveGroceryToShoppingList(@PathVariable(name = "shoppingListId") long shoppingListId,
+                                                                     @PathVariable(name = "groceryId") long groceryId,
+                                                                     @PathVariable(name = "quantity") int quantity,
+                                                                     HttpServletRequest request) throws SaveException{
+        logger.info("Received request to save grocery with id {} to shopping list with id {}", groceryId, shoppingListId);
+        try {
+            shoppingListService.saveGrocery(groceryId, shoppingListId, quantity, request);
+            return new ResponseEntity<>(new SuccessResponse("The grocery was added successfully", HttpStatus.OK.value()), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.info("No registered changes to grocery is saved");
+            throw new SaveException("Failed to add a new grocery to shopping list");
+        }
     }
 
     //todo: edit format of response?
@@ -122,15 +144,36 @@ public class ShoppingListController {
     }
 
     @GetMapping("requested/groceries/{shoppingListId}")
-    public ResponseEntity<List<Grocery>> getRequestedGroceries(@PathVariable("shoppingListId") long shoppingListId) {
+    public ResponseEntity<List<ShoppingListElementDTO>> getRequestedGroceries(@PathVariable("shoppingListId") long shoppingListId) {
         logger.info("Received request to get groceries requested to the shopping list with id {}", shoppingListId);
-        List<Grocery> groceries = shoppingListService.getRequestedGroceries(shoppingListId);
+        List<ShoppingListElementDTO> groceries = shoppingListService.getRequestedGroceries(shoppingListId);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries. Return status NO_CONTENT");
             throw new NullPointerException("Received no groceries");
         }
         logger.info("Returns groceries and status OK");
         return new ResponseEntity<>(groceries, HttpStatus.OK);
+    }
 
+    @PostMapping("transfer-shopping-cart/{groceryShoppingListId}")
+    public ResponseEntity<Boolean> transferToShoppingCart(@PathVariable("groceryShoppingListId") long groceryShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, ShoppingCartNotFound, SubCategoryNotFound {
+        logger.info("Received request to transfer grocery item with id {} in shopping list to shopping cart", groceryShoppingListId);
+        boolean transferStatus = false;
+        try {
+            shoppingListService.transferGrocery(groceryShoppingListId, httpRequest);
+            transferStatus = true;
+        } catch (UnauthorizedException e) {
+            logger.info("Failed to transfer grocery item with id {}", groceryShoppingListId);
+            throw new UnauthorizedException(e.getMessage());
+        } catch (ShoppingCartNotFound e) {
+            logger.info("Could not find shopping cart");
+            throw new ShoppingCartNotFound(e.getMessage());
+        } catch (SubCategoryNotFound e) {
+            logger.info("Could not find shopping list");
+            throw new SubCategoryNotFound(e.getMessage());
+        }
+
+        logger.info("Returns transferStatus and status OK");
+        return new ResponseEntity<>(transferStatus, HttpStatus.OK);
     }
 }

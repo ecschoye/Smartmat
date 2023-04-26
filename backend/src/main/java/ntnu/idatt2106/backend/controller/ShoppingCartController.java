@@ -3,10 +3,11 @@ package ntnu.idatt2106.backend.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import ntnu.idatt2106.backend.exceptions.SaveException;
-import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
+import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.Grocery;
 import ntnu.idatt2106.backend.model.GroceryShoppingCart;
+import ntnu.idatt2106.backend.model.dto.ShoppingListElementDTO;
+import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.service.ShoppingCartService;
 import org.slf4j.Logger;
@@ -39,11 +40,10 @@ public class ShoppingCartController {
         return new ResponseEntity<>(shoppingCartId, HttpStatus.OK);
     }
 
-    //todo: test the method underneath
     @GetMapping("/groceries/{shoppingCartId}")
-    public ResponseEntity<List<Grocery>> getGroceriesFromShoppingCart(@PathVariable(name="shoppingCartId") long shoppingCartId) throws NullPointerException {
+    public ResponseEntity<List<ShoppingListElementDTO>> getGroceriesFromShoppingCart(@PathVariable(name="shoppingCartId") long shoppingCartId) throws NullPointerException {
         logger.info("Received request to get groceries from shopping cart with id {}", shoppingCartId);
-        List<Grocery> groceries = shoppingCartService.getGroceries(shoppingCartId);
+        List<ShoppingListElementDTO> groceries = shoppingCartService.getGroceries(shoppingCartId);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries. Return status NO_CONTENT");
             throw new NullPointerException("Received no groceries");
@@ -52,7 +52,6 @@ public class ShoppingCartController {
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 
-    //todo: endpoint add product to shopping cart
     @PostMapping("/add-grocery")
     public ResponseEntity<GroceryShoppingCart> saveGroceryToShoppingCart(@RequestBody SaveGroceryRequest groceryRequest, HttpServletRequest request) throws SaveException, UnauthorizedException {
         logger.info("Received request to save grocery {} to shopping cart with id {}", groceryRequest.getName(), groceryRequest.getForeignKey());
@@ -65,5 +64,61 @@ public class ShoppingCartController {
         return new ResponseEntity<>(groceryListItem.get(), HttpStatus.OK);
     }
 
-    //todo: endpoint remove a product to shopping cart
+    @PostMapping("/transfer-refrigerator/{shoppingCartItemId}")
+    public ResponseEntity<Boolean> transferToRefrigerator(@PathVariable(name = "shoppingCartItemId") long shoppingCartItemId,
+                                                             HttpServletRequest httpRequest) throws Exception {
+        logger.info("Received request to transfer groceries to shopping cart");
+        boolean transferStatus = false;
+        try {
+            shoppingCartService.transferGroceryToRefrigerator(shoppingCartItemId, httpRequest);
+            transferStatus = true;
+        } catch (UnauthorizedException e) {
+            logger.info("Failed to transfer groceries");
+            throw new UnauthorizedException(e.getMessage());
+        } catch (UserNotFoundException e) {
+            logger.info("Could not find user");
+            throw new UserNotFoundException(e.getMessage());
+        } catch (NoGroceriesFound e) {
+            logger.info("Could not find groceries");
+            throw new NoGroceriesFound(e.getMessage());
+        } catch (SaveException e) {
+            logger.info("Could not save groceries to refrigerator");
+            throw new SaveException(e.getMessage());
+        } catch (RefrigeratorNotFoundException e) {
+            logger.info("Could not find refrigerator");
+            throw new RefrigeratorNotFoundException(e.getMessage());
+        }
+
+        logger.info("Returns transferStatus and status OK");
+        return new ResponseEntity<>(transferStatus, HttpStatus.OK);
+    }
+
+    @PostMapping("all/transfer-refrigerator/{groceryIds}")
+    public ResponseEntity<Boolean> transferAllToRefrigerator(@PathVariable(name = "groceryIds") long[] groceryIds,
+                                                          HttpServletRequest httpRequest) throws Exception {
+        logger.info("Received request to transfer groceries to shopping cart");
+        boolean transferStatus = false;
+        try {
+            shoppingCartService.transferAllGroceriesToRefrigerator(groceryIds, httpRequest);
+            transferStatus = true;
+        } catch (UnauthorizedException e) {
+            logger.info("Failed to transfer groceries");
+            throw new UnauthorizedException(e.getMessage());
+        } catch (UserNotFoundException e) {
+            logger.info("Could not find user");
+            throw new UserNotFoundException(e.getMessage());
+        } catch (NoGroceriesFound e) {
+            logger.info("Could not find groceries");
+            throw new NoGroceriesFound(e.getMessage());
+        } catch (SaveException e) {
+            logger.info("Could not save groceries to refrigerator");
+            throw new SaveException(e.getMessage());
+        } catch (RefrigeratorNotFoundException e) {
+            logger.info("Could not find refrigerator");
+            throw new RefrigeratorNotFoundException(e.getMessage());
+        }
+
+        logger.info("Returns transferStatus and status OK");
+        return new ResponseEntity<>(transferStatus, HttpStatus.OK);
+    }
 }

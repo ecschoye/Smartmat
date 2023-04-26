@@ -23,18 +23,32 @@
 </template>
 
 <script lang="ts">
+import ShoppingListService from "~/service/httputils/ShoppingListService";
     export default defineComponent({
         props:{
             CategoryDetails: {
-                type: Object,
+                type: Object as () => ShoppingListCategory,
                 required: true,
+            },
+            ShoppingListId: {
+                type: Number,
+                required: true
             }
         },
         data() {
             return {
                 isCategoryExpanded: false,
-                categoryListItems: this.CategoryDetails.items
+                categoryListItems: [] as ShoppingListElement[]
             }
+        },
+        async mounted() {            
+            let response = await ShoppingListService.getGroceriesFromCategorizedShoppingList(this.ShoppingListId, this.CategoryDetails.id)                                                             
+
+            response.data.forEach((element: ResponseGrocery) => {
+                    let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
+                    this.categoryListItems.push(object);
+                });    
         }
+
     })
 </script>

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "GroceryList")
+@Table(name = "GroceryShoppingList")
 @Schema(description = "Connection table between groceries and the shopping list")
 @Entity
 public class GroceryShoppingList {

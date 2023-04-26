@@ -75,7 +75,7 @@
             />
             <div class="p-2 flex justify-end absolute bottom-0 right-0">
                 <button @click.stop="addNewElementSelected = false" class="hover:bg-sky-200 bg-sky-300 border-2 rounded-full border-black h-8 w-8"> 
-                    <img src="../../assets/icons/close.png" alt="Add to refrigerator">
+                    <img src="../../assets/icons/close.png" alt="Close">
                 </button>
             </div>
         </div>

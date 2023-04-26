@@ -11,7 +11,7 @@
           <GrayButton :label="$t('go_to_log_in')" width="100%" height="50px" />
         </nuxt-link>
       </div>
-      <ErrorAlert v-if="catchError" :errorMessage="errorMessage" />
+      <ErrorAlert class="mt-4" v-if="catchError" :errorMessage="errorMessage" />
     </form>
   </div>
 </template>

@@ -1,7 +1,7 @@
 package ntnu.idatt2106.backend.model.requests;
 
 import jakarta.validation.constraints.NotNull;
-import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.enums.FridgeRole;
 
 /**
  * Model used to receive a request for adding or editing a member
@@ -14,7 +14,7 @@ public class MemberRequest {
     private long refrigeratorId;
     @NotNull
     private String userName;
-    private Role role;
+    private FridgeRole fridgeRole;
 
     public String getSuperName() {
         return superName;
@@ -40,11 +40,11 @@ public class MemberRequest {
         this.userName = userName;
     }
 
-    public Role getRole() {
-        return role;
+    public FridgeRole getRole() {
+        return fridgeRole;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRole(FridgeRole fridgeRole) {
+        this.fridgeRole = fridgeRole;
     }
 }

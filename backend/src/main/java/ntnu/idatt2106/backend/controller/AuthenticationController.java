@@ -58,7 +58,7 @@ public class AuthenticationController {
 
             User user = userService.findByEmail(authenticationRequest.getEmail());
             authResponse.setUserId(user.getId());
-            authResponse.setUserRole(user.getRole().toString());
+            authResponse.setUserRole(user.getUserRole().toString());
             return ResponseEntity.ok(authResponse);
         } catch (InvalidCredentialsException e) {
             logger.info("Authentication failed");

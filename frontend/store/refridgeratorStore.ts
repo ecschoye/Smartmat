@@ -3,8 +3,16 @@ import { Category } from '~/types/CategoryType';
 import type { GroceryEntity } from '~/types/GroceryEntityType'
 import { Refrigerator } from '~/types/RefrigeratorType';
 
+export interface RefrigeratorState{
+    groceries : GroceryEntity[],
+    refrigerators : Refrigerator[],
+    selectedRefrigerator : Refrigerator,
+    categories : Category[],
+    selectedGrocery : GroceryEntity
+}
+
 export const useRefridgeratorStore = defineStore('refridgerator', {
-    state: () => ({
+    state: () : RefrigeratorState => ({
         groceries : [] as GroceryEntity[],
         refrigerators : [] as Refrigerator[],   
         selectedRefrigerator : {} as Refrigerator,
@@ -15,20 +23,23 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
         ] as Category[],
         selectedGrocery : {} as GroceryEntity,
     }),
+    persist: {
+        storage: persistedState.sessionStorage,
+    },
     getters: {
-        getGroceries: (state) : GroceryEntity[] => {
+        getGroceries: (state : RefrigeratorState) : GroceryEntity[] => {
             return state.groceries;
         },
-        getCategories: (state) : Category[] => {
+        getCategories: (state : RefrigeratorState) : Category[] => {
             return state.categories;
         },
-        getSelectedGrocery : (state) : GroceryEntity => {
+        getSelectedGrocery : (state : RefrigeratorState) : GroceryEntity => {
             return state.selectedGrocery;
         },
-        getSelectedRefrigerator : (state) : Refrigerator => {
+        getSelectedRefrigerator : (state : RefrigeratorState) : Refrigerator => {
             return state.selectedRefrigerator;
         },
-        getRefrigerators: (state) : Refrigerator[] => {
+        getRefrigerators: (state : RefrigeratorState) : Refrigerator[] => {
             return state.refrigerators;
         }
     },

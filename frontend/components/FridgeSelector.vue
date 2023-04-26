@@ -64,14 +64,14 @@
 
 <script lang="ts">
 import { Refrigerator } from "~/types/RefrigeratorType";
-
 export default {
   data () {
     return {
       selected : {
         id: 0, 
         name: ''
-      }
+      },
+
     }
   }, 
   props : {

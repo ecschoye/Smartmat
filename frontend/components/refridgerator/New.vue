@@ -13,20 +13,13 @@
 import { createGrocery } from '~/service/httputils/GroceryService';
 import { useRefridgeratorStore } from '~/store/refridgeratorStore';
 import { Grocery } from '~/types/GroceryType';
+
+const router = useRouter();
+
     const { t } = useI18n();
 
     let grocery : Grocery | null = null;
     const refridgeratorStore = useRefridgeratorStore();
-
-function modelValue() : Grocery | undefined {
-    if(grocery === null){
-        return undefined;
-    }
-    else{
-        return grocery;
-    }
-    }
-
 const emit = defineEmits(['toggle'])
 
 onBeforeUnmount(() => {
@@ -36,14 +29,13 @@ onBeforeUnmount(() => {
 
 async function onSubmit(){
     if(grocery !== null){
-        try{
+            try{
         const response = await createGrocery(refridgeratorStore.getSelectedRefrigerator.id, grocery!);
         if(response.status == 200){
-           emit('toggle'); 
+           emit('toggle', false); 
         }
     }catch(error){
         console.log(error);
-        emit('toggle');
     }
         }
 }

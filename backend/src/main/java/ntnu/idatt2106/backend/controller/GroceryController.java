@@ -77,6 +77,7 @@ public class GroceryController {
             String jwt = cookieService.extractTokenFromCookie(request);
             User user = userService.findByEmail(jwtService.extractUsername(jwt)); // Pass the JWT token instead of the request
             logger.info("Received request to create grocery from user: "+ user.getEmail() + ".");
+            System.out.println(grocery);
             List<GroceryDTO> dtos = new ArrayList<>();
             dtos.add(grocery);
             groceryService.addGrocery(new SaveGroceryListRequest(refrigeratorId, dtos), request);

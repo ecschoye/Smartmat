@@ -1,7 +1,7 @@
 <template>
     <div class = "flex h-4/5">
-        <RefridgeratorFridge v-if="!toggleCreate" @toggle-create="toggleCreate = !toggleCreate" class="font-mono" @group-closed="togglePos(false)" :groceries="refridgeratorStore.getGroceries" @popup-height="(payload) => setPos(payload)" />
-        <RefridgeratorNew v-else-if="toggleCreate" @toggle="toggleCreate = !toggleCreate" />
+        <RefridgeratorNew v-if="toggleCreate" @toggle="(payload) => onToggleCreate(payload)" />
+        <RefridgeratorFridge v-else @toggle-create="(payload) => onToggleCreate(payload)" class="font-mono" @group-closed="togglePos(false)" :groceries="refridgeratorStore.getGroceries" @popup-height="(payload) => setPos(payload)" />
             <div>
             <Transition>
                 <RefridgeratorGroceryOptions :pos="position" v-if="toggle" @toggle-options="togglePos(false)"/>
@@ -13,15 +13,21 @@
 <script setup lang="ts">
 import { useRefridgeratorStore } from '~/store/refridgeratorStore';
 import { getGroceriesByFridge } from '~/service/httputils/GroceryService';
+import { Refrigerator } from '~/types/RefrigeratorType';
+import { GroceryEntity } from '~/types/GroceryEntityType';
+
 const refridgeratorStore = useRefridgeratorStore();
 
 const position = ref(0);
 
 const toggle = ref(false);
-async function onToggleCreate(){
-    toggleCreate.value = !toggleCreate.value;
+
+async function onToggleCreate(payload : boolean){
+    toggleCreate.value = payload;
     loadGroceries();
 }
+
+
 
 const toggleCreate = ref(false);
 
@@ -38,8 +44,21 @@ function setPos(payload: number) {
 
 async function loadGroceries(){
     try {
-        const response = await getGroceriesByFridge(refridgeratorStore.getSelectedRefrigerator.id);
-        refridgeratorStore.setGroceries(response.data);
+        const fridge : Refrigerator = refridgeratorStore.getSelectedRefrigerator;
+        if(fridge !== undefined){
+            const response = await getGroceriesByFridge(fridge.id);
+
+            const groceries : GroceryEntity[] = response.data;
+
+
+            groceries.forEach((grocery) => {
+                if(!(grocery.physicalExpireDate instanceof Date)){
+                    grocery.physicalExpireDate = new Date(grocery.physicalExpireDate);
+                }
+            })
+
+            refridgeratorStore.setGroceries(response.data);
+        }
     }
     catch(error){
         console.log(error);

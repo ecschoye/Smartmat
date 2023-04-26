@@ -67,11 +67,14 @@ import { useRefridgeratorStore } from "~/store/refridgeratorStore";
   }
 
   async function loadRefrigerators(){
-    if (!userStore.isLoggedIn) return;
-    try{
+    if (!userStore.isLoggedIn) {
+      return;
+    }
+      try{
       const response = await getRefrigerators();
       refridgeratorStore.setRefrigerators(response.data);
       refridgeratorStore.setSelectedRefrigerator(refridgeratorStore.getRefrigerators[0]);
+      console.log(refridgeratorStore.getRefrigerators[0])
     }
     catch(error){
       console.log(error);

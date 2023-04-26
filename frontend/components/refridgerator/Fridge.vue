@@ -31,7 +31,7 @@
         <button
           type="button"
           class="pl-4 pr-4 w-full sm:w-5/12 self-end h-14 sm:h-12 text-black border-l border-r border-black hover:bg-slate-400 cursor-pointer"
-          @click = "emit('toggle-create')"
+          @click = "emit('toggle-create', true)"
         >
         <div>
           {{ t('new_grocery') }}

@@ -26,6 +26,7 @@ public class RefrigeratorUser {
 
     @Column(name = "role")
     @Schema(description = "Role the member has in the refrigerator")
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @ManyToOne

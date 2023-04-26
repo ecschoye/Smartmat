@@ -1,10 +1,11 @@
 <template>
-    <div class="w-fit font-mono align-middle flex justify-center align-middle bg-white border-black border rounded-xl p-5">
-        <ul>
+    <div class="font-mono align-middle flex justify-center align-middle bg-white border-black border rounded-xl p-5">
+        <ul v-if="notifications.length > 0">
             <li v-for="notification in props.notifications" :key="notification.id">
                 <NotificationsElement :notification="notification"/>
             </li>
         </ul>
+        <div v-else>Du har ingen varslinger!</div>
     </div>
 </template>
 

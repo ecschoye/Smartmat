@@ -31,7 +31,6 @@ import java.util.logging.Logger;
 @RequestMapping("api/notifications")
 @RequiredArgsConstructor
 @Tag(name = "Notification controller", description = "Controller used to handle notifications sent to the user")
-
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -50,7 +49,7 @@ public class NotificationController {
             }
     )
     @GetMapping("/all")
-    @PreAuthorize("IsAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getAll(HttpServletRequest request) throws NotificationException {
         User user = userService.findByEmail(jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)));
         logger.info("Received request for retrieving a users notifications");

@@ -1,4 +1,9 @@
 {
+  "Notification" : "Varslinger",
+  "expires_today" : "går ut i dag",
+  "expires_tomorrow" : "går ut i morgen",
+  "days" : "dager",
+  "expires_in" : "går ut om",
   "welcome_to_smart_mat": "Velkommen til SmartMat",
   "home": "Hjem",
   "weekly_menu": "Ukesmeny",

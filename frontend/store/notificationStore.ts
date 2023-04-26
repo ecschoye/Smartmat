@@ -14,6 +14,9 @@ export const useNotificationStore = defineStore('notification', {
     },
     actions: {
         setNotification(notifications : GroceryNotification[]){
+            notifications.forEach(notification => {
+                notification.refrigeratorGrocery.physicalExpireDate = new Date(Date.parse(notification.refrigeratorGrocery.physicalExpireDate.toString()));
+            })
             this.notifications = notifications;
         }
     }

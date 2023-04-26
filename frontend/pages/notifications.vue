@@ -1,84 +1,30 @@
 <template>
     <div class="w-full h-full flex flex-col justify-center items-center">
         <h1 class="p-5">
-            Notification
+            {{t("Notification")}}
         </h1>
-        <NotificationsList :notifications="notifications"/> 
+        <NotificationsList :notifications="notificationStore.getNotifications"/> 
     </div>
 </template>
 
 <script setup lang="ts">
-import { GroceryNotification } from '~/types/GroceryNotificationType';
+import { useNotificationStore } from '~/store/notificationStore';
+import { getNotifications } from '~/service/httputils/NotificationService';
+const { t } = useI18n();
+const notificationStore = useNotificationStore();
 
-    const notifications : GroceryNotification[] = [
-        {
-        id:1,
-        grocery :{
-               id:1,
-               physicalExpiryDate:new Date('2023-04-25'),
-               fridgeId: 1,
-               grocery: {
-                id: 1,
-                name: "Banan",
-                description: 'Gul banan',
-                groceryExpiryDate: 14,
-                subCategory: {
-                    id:1,
-                    name: 'Gul frukt',
-                    category:{
-                        id:1,
-                        name: 'Frukt'
-                    }
-                   },
-               }
-            },
-        daysLeft : 3
-    },
-    {
-        id:2,
-        grocery: {
-                id:2,
-                physicalExpiryDate:new Date('2023-04-25'),
-                fridgeId: 1,
-                grocery: {
-                 id: 1,
-                 name: "Banan",
-                 description: 'Gul banan',
-                 groceryExpiryDate: 14,
-                 subCategory: {
-                     id:1,
-                     name: 'Gul frukt',
-                     category:{
-                         id:1,
-                         name: 'Frukt'
-                     }
-                    },
-                }
-             },
-        daysLeft: 1,
-    },
-    {
-        id:2,
-        grocery: {
-                id:2,
-                physicalExpiryDate:new Date('2023-04-25'),
-                fridgeId: 1,
-                grocery: {
-                 id: 1,
-                 name: "Banan",
-                 description: 'Gul banan',
-                 groceryExpiryDate: 14,
-                 subCategory: {
-                     id:1,
-                     name: 'Gul frukt',
-                     category:{
-                         id:1,
-                         name: 'Frukt'
-                     }
-                    },
-                }
-             },
-        daysLeft: 0,
+async function loadNotifications(){
+    try{
+      const response = await getNotifications();
+      if(response.status == 200){
+        notificationStore.setNotification(response.data);
+      }
+    }catch(error : any){
+      console.log(error);
     }
-    ]
+  }
+
+  onMounted(() => {
+    loadNotifications();
+  })
 </script>

@@ -189,12 +189,12 @@ public class NotificationServiceTest {
     @Test
     void deleteNotification_Successful() throws NotificationException {
         long notifId = 1L;
-        GroceryNotification groceryNotification = new GroceryNotification(1, user, refrigeratorGrocery, (long)3);
+        GroceryNotification groceryNotification = new GroceryNotification(1, user, refrigeratorGrocery, (long)3, false);
         Mockito.when(groceryNotificationRepository.findById(notifId))
                 .thenReturn(Optional.of(groceryNotification));
         GroceryNotificationDTO result = notificationService.deleteNotification(user, notifId);
         assertEquals(new GroceryNotificationDTO(groceryNotification), result);
-        Mockito.verify(groceryNotificationRepository, Mockito.times(1)).delete(groceryNotification);
+        Mockito.verify(groceryNotificationRepository, Mockito.times(1)).save(groceryNotification);
     }
 
     @Test
@@ -203,31 +203,31 @@ public class NotificationServiceTest {
         Mockito.when(groceryNotificationRepository.findById(notifId)).thenReturn(Optional.empty());
         assertThrows(NotificationException.class, () ->
                 notificationService.deleteNotification(user, notifId));
-        Mockito.verify(groceryNotificationRepository, Mockito.never()).delete(Mockito.any());
+        Mockito.verify(groceryNotificationRepository, Mockito.never()).save(Mockito.any());
     }
 
     @Test
     void deleteNotification_Unauthorized() {
         long notifId = 1L;
         User otherUser = new User("123", "otherUser", "123@123.no", "123", Role.USER);
-        GroceryNotification groceryNotification = new GroceryNotification(1, otherUser, refrigeratorGrocery, (long)3);
+        GroceryNotification groceryNotification = new GroceryNotification(1, otherUser, refrigeratorGrocery, (long)3, false);
         Mockito.when(groceryNotificationRepository.findById(notifId))
                 .thenReturn(Optional.of(groceryNotification));
         assertThrows(NotificationException.class, () ->
                 notificationService.deleteNotification(user, notifId));
-        Mockito.verify(groceryNotificationRepository, Mockito.never()).delete(Mockito.any());
+        Mockito.verify(groceryNotificationRepository, Mockito.never()).save(Mockito.any());
     }
 
     @Test
     void deleteNotification_FailedToDelete() {
         long notifId = 1L;
-        GroceryNotification groceryNotification = new GroceryNotification(1, user, refrigeratorGrocery, (long)3);
+        GroceryNotification groceryNotification = new GroceryNotification(1, user, refrigeratorGrocery, (long)3, false);
         Mockito.when(groceryNotificationRepository.findById(notifId))
                 .thenReturn(Optional.of(groceryNotification));
-        Mockito.doThrow(new RuntimeException()).when(groceryNotificationRepository).delete(groceryNotification);
+        Mockito.doThrow(new RuntimeException()).when(groceryNotificationRepository).save(groceryNotification);
 
         assertThrows(NotificationException.class, () ->
                 notificationService.deleteNotification(user, notifId));
-        Mockito.verify(groceryNotificationRepository, Mockito.times(1)).delete(groceryNotification);
+        Mockito.verify(groceryNotificationRepository, Mockito.times(1)).save(groceryNotification);
     }
 }

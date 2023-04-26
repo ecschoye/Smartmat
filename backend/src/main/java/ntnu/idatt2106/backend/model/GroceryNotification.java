@@ -3,10 +3,7 @@ package ntnu.idatt2106.backend.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
@@ -35,5 +32,9 @@ public class GroceryNotification {
     @Column(name = "daysLeft")
     @Schema(description = "The number of days left before the grocery expires")
     private Long daysLeft;
+
+    @Column(name = "deleted")
+    @Schema(description = "Shows if the user has deleted/dismissed the notification or not")
+    private boolean deleted;
 
 }

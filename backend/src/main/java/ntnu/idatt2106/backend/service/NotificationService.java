@@ -47,6 +47,7 @@ public class NotificationService {
         List<GroceryNotificationDTO> notifications = groceryNotificationRepository
                 .findAllByUserId(user.getId())
                 .stream()
+                .filter(groceryNotification -> !groceryNotification.isDeleted())
                 .map(groceryNotification -> new GroceryNotificationDTO(groceryNotification))
                 .collect(Collectors.toList());
 
@@ -77,13 +78,15 @@ public class NotificationService {
                                 .groceryEntity(refrigatorGrocery)
                                 .daysLeft(getDaysBetweenTodayAndDate(refrigatorGrocery.getPhysicalExpireDate()))
                                 .user(user)
+                                .deleted(false)
                                 .build());
                     }
-                    if(preExisting.size() == 1 && getDaysBetweenTodayAndDate(refrigatorGrocery.getPhysicalExpireDate()) == 0){
+                    if(preExisting.size() == 1 && getDaysBetweenTodayAndDate(refrigatorGrocery.getPhysicalExpireDate()) == 0 && !preExisting.get(0).isDeleted()){
                         notifications.add(GroceryNotification.builder()
                                 .groceryEntity(refrigatorGrocery)
                                 .daysLeft(getDaysBetweenTodayAndDate(refrigatorGrocery.getPhysicalExpireDate()))
                                 .user(user)
+                                .deleted(false)
                                 .build());
                     }
                 });
@@ -100,7 +103,8 @@ public class NotificationService {
         if(found.getUser() != user){
             throw new NotificationException("Could not delete notification, user is not owner of notif");
         }
-        try{groceryNotificationRepository.delete(found);}
+        found.setDeleted(true);
+        try{groceryNotificationRepository.save(found);}
         catch(Exception e){
             throw new NotificationException("Could not find notification in repository when deleting" + e.getMessage());
         }

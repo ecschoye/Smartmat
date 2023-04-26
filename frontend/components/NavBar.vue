@@ -159,7 +159,7 @@ export default defineComponent({
           const router = useRouter();
           if (response.status === 200){
             userStore.logOut();
-            window.location.reload();
+            router.push('/');
           }
         } catch (error) {
           console.error(error);

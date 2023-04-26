@@ -18,6 +18,7 @@ public class GroceryDTO {
     private String description;
     private int groceryExpiryDays;
     private Category category;
+    private boolean custom;
 
     public GroceryDTO(Grocery grocery) {
         this.id = grocery.getId();

@@ -29,7 +29,7 @@
 </template>
 
 <script lang="ts">
-import GroceryListService from "~/service/httputils/GroceryListService";
+import GroceryService from "~/service/httputils/GroceryService";
 export default defineComponent({
     props: {
         shoppingListId: {
@@ -39,80 +39,7 @@ export default defineComponent({
     },
     data() {
         return {
-            groceryList: [
-                {
-                    id: 1,
-                    name: "TEST",
-                    subCategoryName: "TeSt",
-                    quantity: 1
-                },
-                {
-                    id: 2,
-                    name: "TEST2",
-                    subCategoryName: "TeSt",
-                    quantity: 1
-                },
-                {
-                    id: 3,
-                    name: "TEST",
-                    subCategoryName: "TeSt",
-                    quantity: 1
-                },
-                {
-                    id: 4,
-                    name: "TEST2",
-                    subCategoryName: "TeSt",
-                    quantity: 1
-                },
-                {
-                    id: 5,
-                    name: "TEST",
-                    subCategoryName: "TeSt",
-                    quantity: 1
-                },
-                {
-                    id: 6,
-                    name: "TEST2",
-                    subCategoryName: "TeSt",
-                    quantity: 1
-                },
-                {
-                    id: 7,
-                    name: "TEST",
-                    subCategoryName: "TeSt",
-                    quantity: 1
-                },
-                {
-                    id: 8,
-                    name: "TEST2",
-                    subCategoryName: "TeSt",
-                    quantity: 1
-                },
-                {
-                    id: 9,
-                    name: "TEST",
-                    subCategoryName: "TeSt",
-                    quantity: 1
-                },
-                {
-                    id: 10,
-                    name: "TEST2",
-                    subCategoryName: "TeSt",
-                    quantity: 1
-                },
-                {
-                    id: 11,
-                    name: "TEST",
-                    subCategoryName: "TeSt",
-                    quantity: 1
-                },
-                {
-                    id: 12,
-                    name: "TEST2",
-                    subCategoryName: "TeSt",
-                    quantity: 1
-                }
-            ] as GroceryListElement[]
+            groceryList: [] as GroceryListElement[]
         }
     },
     created() {
@@ -120,18 +47,19 @@ export default defineComponent({
     },
     methods: {
         async loadGroceries() {
-            //create grocery list
-            await GroceryListService.createGroseryList();
             //loads grocery list
-            let responseGroceries = await GroceryListService.getGroceriesFromGroceryList();
+            let responseGroceries = await GroceryService.getGroceries();
+            console.log(responseGroceries);
             responseGroceries.data.forEach((grocery: ResponseGrocery) => {
                 let element:GroceryListElement = { id: grocery.id, name: grocery.name, subCategoryName: grocery.subCategoryName, quantity: 1 };
                 this.groceryList.push(element);
             });
         },
+        /*
         addGroceryToShoppingList(groceryId: number, quantity: number) {
             GroceryListService.saveGroceryToShoppingList(this.shoppingListId, groceryId, quantity)
         }
+        */
     }
 })
 </script>

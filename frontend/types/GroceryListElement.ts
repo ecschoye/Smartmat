@@ -3,5 +3,5 @@ interface GroceryListElement {
     name: string;
     subCategoryName: string;
     quantity: number;
-  }
+}
   

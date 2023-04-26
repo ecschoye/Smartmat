@@ -1,8 +1,9 @@
 
 import type {Grocery} from "./GroceryType";
+import { Refrigerator } from "./RefrigeratorType";
 export interface GroceryEntity {
     id: number,
     physicalExpireDate: Date,
-    fridgeId: number,
+    refrigerator : Refrigerator,
     grocery: Grocery,
 }

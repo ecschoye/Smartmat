@@ -10,6 +10,7 @@ import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
+import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.MemberDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
@@ -18,10 +19,12 @@ import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.service.CookieService;
 import ntnu.idatt2106.backend.service.JwtService;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
+import ntnu.idatt2106.backend.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +50,8 @@ public class RefrigeratorController {
     private final RefrigeratorService refrigeratorService;
 
     private final CookieService cookieService;
+
+    private final UserService userService;
 
     private final JwtService jwtService;
 
@@ -146,11 +151,13 @@ public class RefrigeratorController {
         return new ResponseEntity<>(new SuccessResponse("Member removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
-    @GetMapping("/user/{userName}")
-    public ResponseEntity<List<Refrigerator>> getAllByUser(@Valid @PathVariable String userName){
+    @GetMapping("/user")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Refrigerator>> getAllByUser(HttpServletRequest request){
+        User user = userService.findByEmail(jwtService.extractUsername(cookieService.extractTokenFromCookie(request)));
         logger.info("Received request for all refrigerators by user");
         try {
-            List<Refrigerator> result = refrigeratorService.getAllByUser(userName);
+            List<Refrigerator> result = refrigeratorService.getAllByUser(user.getUsername());
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

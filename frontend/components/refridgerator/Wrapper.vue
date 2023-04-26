@@ -12,7 +12,7 @@
 
 <script setup lang="ts"> 
 import { useRefridgeratorStore } from '~/store/refridgeratorStore';
-
+import { getGroceriesByFridge } from '~/service/httputils/GroceryService';
 const refridgeratorStore = useRefridgeratorStore();
 
 const position = ref(0);
@@ -31,6 +31,20 @@ function setPos(payload: number) {
     }
   position.value = payload;
 }
+
+async function loadGroceries(){
+    try {
+        const response = await getGroceriesByFridge(refridgeratorStore.getSelectedRefrigerator.id);
+        refridgeratorStore.setGroceries(response.data);
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
+onMounted(() => {
+    loadGroceries();
+}) 
 
 
 </script>

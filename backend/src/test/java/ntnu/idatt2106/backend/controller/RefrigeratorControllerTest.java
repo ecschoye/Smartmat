@@ -21,6 +21,7 @@ import ntnu.idatt2106.backend.repository.UserRepository;
 import ntnu.idatt2106.backend.service.CookieService;
 import ntnu.idatt2106.backend.service.JwtService;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
+import ntnu.idatt2106.backend.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,12 +67,13 @@ public class RefrigeratorControllerTest {
     @Mock
     private JwtService jwtService;
 
-
+    @Mock
+    private UserService userService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        refrigeratorController = new RefrigeratorController(refrigeratorService, cookieService, jwtService);
+        refrigeratorController = new RefrigeratorController(refrigeratorService, cookieService, userService, jwtService);
         user = new User();
         user.setId("testUserId");
         user.setEmail("testuser@test.com");

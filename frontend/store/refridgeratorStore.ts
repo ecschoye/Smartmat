@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { Category } from '~/types/CategoryType';
 import type { GroceryEntity } from '~/types/GroceryEntityType'
-import { Grocery } from '~/types/GroceryType';
+import { Refrigerator } from '~/types/RefrigeratorType';
 
 export const useRefridgeratorStore = defineStore('refridgerator', {
     state: () => ({
@@ -304,12 +304,29 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
                      }
                     },
                 }
-             },
-
-
-             
-
+             }, 
+             {
+                id:13,
+                physicalExpiryDate: new Date('2023-12-12'),
+                grocery: {
+                 id: 4,
+                 name: "Indrefilet",
+                 description: 'Indrefilet av okse, mager',
+                 groceryExpiryDate: 28,
+                     category:{
+                         id:3,
+                         name: 'Kjøtt'
+                    },
+                }
+             }, 
        ] as GroceryEntity[],
+       refrigerators : {
+        type : Array as () => Refrigerator[],
+        required : true
+        },   
+        selectedRefrigerator : {
+            type : Object as () => Refrigerator,
+        },
         categories : [
             {
 

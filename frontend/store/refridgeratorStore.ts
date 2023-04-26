@@ -9,7 +9,11 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
             {
                id:1,
                physicalExpireDate:new Date('2023-04-25'),
-               fridgeId: 1,
+               refrigerator: {
+                id:1,
+                name:'Hjemme',
+                address: 'test 123'
+               },
                grocery: {
                 id: 1,
                 name: "Banan",
@@ -28,7 +32,11 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
             {
                 id:2,
                 physicalExpireDate:new Date('2023-04-25'),
-                fridgeId: 1,
+                refrigerator: {
+                    id:1,
+                    name:'Hjemme',
+                    address: 'test 123'
+                   },
                 grocery: {
                  id: 1,
                  name: "Banan",
@@ -47,7 +55,11 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              {
                 id:3,
                 physicalExpireDate:new Date('2023-04-25'),
-                fridgeId: 1,
+                refrigerator: {
+                    id:1,
+                    name:'Hjemme',
+                    address: 'test 123'
+                   },
                 grocery: {
                  id: 1,
                  name: "Banan",
@@ -66,7 +78,11 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              {
                 id:4,
                 physicalExpireDate:new Date('2023-04-25'),
-                fridgeId: 1,
+                refrigerator: {
+                    id:1,
+                    name:'Hjemme',
+                    address: 'test 123'
+                   },
                 grocery: {
                  id: 1,
                  name: "Banan",
@@ -85,7 +101,11 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              {
                 id:5,
                 physicalExpireDate:new Date('2023-04-25'),
-                fridgeId: 1,
+                refrigerator: {
+                    id:1,
+                    name:'Hjemme',
+                    address: 'test 123'
+                   },
                 grocery: {
                  id: 2,
                  name: "Melk",
@@ -104,7 +124,11 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              {
                 id:6,
                 physicalExpireDate:new Date('2023-04-25'),
-                fridgeId: 1,
+                refrigerator: {
+                    id:1,
+                    name:'Hjemme',
+                    address: 'test 123'
+                   },
                 grocery: {
                  id: 2,
                  name: "Melk",
@@ -123,7 +147,11 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              {
                 id:7,
                 physicalExpireDate:new Date('2023-12-12'),
-                fridgeId: 1,
+                refrigerator: {
+                    id:1,
+                    name:'Hjemme',
+                    address: 'test 123'
+                   },
                 grocery: {
                  id: 2,
                  name: "Melk",
@@ -142,7 +170,11 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              {
                 id:8,
                 physicalExpireDate:new Date('2023-12-12'),
-                fridgeId: 1,
+                refrigerator: {
+                    id:1,
+                    name:'Hjemme',
+                    address: 'test 123'
+                   },
                 grocery: {
                  id: 2,
                  name: "Melk",
@@ -161,7 +193,11 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              {
                 id:9,
                 physicalExpireDate:new Date('2023-12-12'),
-                fridgeId: 1,
+                refrigerator: {
+                    id:1,
+                    name:'Hjemme',
+                    address: 'test 123'
+                   },
                 grocery: {
                  id: 3,
                  name: "Eple",
@@ -180,7 +216,11 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              {
                 id:9,
                 physicalExpireDate:new Date('2023-12-12'),
-                fridgeId: 1,
+                refrigerator: {
+                    id:1,
+                    name:'Hjemme',
+                    address: 'test 123'
+                   },
                 grocery: {
                  id: 3,
                  name: "Eple",
@@ -199,7 +239,11 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              {
                 id:10,
                 physicalExpireDate:new Date('2023-12-12'),
-                fridgeId: 1,
+                refrigerator: {
+                    id:1,
+                    name:'Hjemme',
+                    address: 'test 123'
+                   },
                 grocery: {
                  id: 1,
                  name: "Banan",
@@ -218,7 +262,11 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              {
                 id:11,
                 physicalExpireDate:new Date('2023-12-12'),
-                fridgeId: 1,
+                refrigerator: {
+                    id:1,
+                    name:'Hjemme',
+                    address: 'test 123'
+                   },
                 grocery: {
                  id: 1,
                  name: "Banan",
@@ -237,7 +285,11 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
              {
                 id:12,
                 physicalExpireDate: new Date('2023-12-12'),
-                fridgeId: 1,
+                refrigerator: {
+                    id:1,
+                    name:'Hjemme',
+                    address: 'test 123'
+                   },
                 grocery: {
                  id: 4,
                  name: "Indrefilet",

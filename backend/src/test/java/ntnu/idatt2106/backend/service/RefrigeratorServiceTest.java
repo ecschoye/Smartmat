@@ -187,7 +187,7 @@ public class RefrigeratorServiceTest {
         request1.setRefrigeratorId(refrigerator.getId());
         request1.setSuperName(user.getUsername());
         request1.setUserName(newUser.getUsername());
-        request1.setRole(FridgeRole.USER);
+        request1.setFridgeRole(FridgeRole.USER);
         RefrigeratorUser ru = new RefrigeratorUser();
         ru.setUser(user);
         ru.setFridgeRole(FridgeRole.SUPERUSER);
@@ -242,7 +242,7 @@ public class RefrigeratorServiceTest {
         FridgeRole newFridgeRole = FridgeRole.SUPERUSER;
 
         MemberRequest memberRequest = new MemberRequest();
-        memberRequest.setRole(newFridgeRole);
+        memberRequest.setFridgeRole(newFridgeRole);
         memberRequest.setRefrigeratorId(1L);
         memberRequest.setSuperName(superUser.getUsername());
         memberRequest.setUserName(user.getUsername());
@@ -258,7 +258,7 @@ public class RefrigeratorServiceTest {
 
         FridgeRole newFridgeRole = FridgeRole.SUPERUSER;
         MemberRequest memberRequest = new MemberRequest();
-        memberRequest.setRole(newFridgeRole);
+        memberRequest.setFridgeRole(newFridgeRole);
         memberRequest.setRefrigeratorId(1L);
         memberRequest.setUserName("nonexistent_user@test.com");
 
@@ -303,7 +303,7 @@ public class RefrigeratorServiceTest {
         FridgeRole newFridgeRole = FridgeRole.SUPERUSER;
 
         MemberRequest memberRequest = new MemberRequest();
-        memberRequest.setRole(newFridgeRole);
+        memberRequest.setFridgeRole(newFridgeRole);
         memberRequest.setRefrigeratorId(1L);
         memberRequest.setSuperName(superUser.getUsername());
         memberRequest.setUserName(user.getUsername());

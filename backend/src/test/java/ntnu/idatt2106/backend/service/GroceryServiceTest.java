@@ -15,6 +15,7 @@ import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.repository.GroceryRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
+import ntnu.idatt2106.backend.repository.SubCategoryRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,6 +43,9 @@ public class GroceryServiceTest {
 
     @Mock
     private RefrigeratorRepository refrigeratorRepository;
+
+    @Mock
+    private SubCategoryRepository subCategoryRepository;
 
     @Mock
     private RefrigeratorService refrigeratorService;
@@ -101,6 +105,7 @@ public class GroceryServiceTest {
         customGroceryDTO.setName("Name");
         customGroceryDTO.setDescription("Desc");
         customGroceryDTO.setSubCategory(subCategory);
+        customGroceryDTO.setGroceryExpiryDays(2);
 
         existingGroceryDTO = new GroceryDTO();
         existingGroceryDTO.setId(grocery.getId());
@@ -238,5 +243,50 @@ public class GroceryServiceTest {
         int result = groceryService.getGroceriesByRefrigerator(refrigerator.getId(), HttpRequest).size();
 
         Assertions.assertEquals(dtoList.size(), result);
+    }
+
+    @Test
+    public void testAddCustomGrocery() throws SaveException {
+        // Given
+        Mockito.when(subCategoryRepository.findById(customGroceryDTO.getId())).thenReturn(Optional.of(customGroceryDTO.getSubCategory()));
+        Mockito.when(groceryService.saveGrocery(Mockito.any())).thenReturn(grocery);
+
+        // When
+        Grocery result = groceryService.addCustomGrocery(customGroceryDTO);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(customGroceryDTO.getName(), result.getName());
+        assertEquals(customGroceryDTO.getDescription(), result.getDescription());
+        assertEquals(customGroceryDTO.getGroceryExpiryDays(), result.getGroceryExpiryDays());
+        assertEquals(customGroceryDTO.getSubCategory(), result.getSubCategory());
+    }
+
+    @Test
+    public void testAddCustomGrocery_SubCategoryNotFound() {
+        // Given
+        Mockito.when(subCategoryRepository.findById(customGroceryDTO.getId())).thenReturn(Optional.empty());
+
+        // When / Then
+        assertThrows(EntityNotFoundException.class, () -> groceryService.addCustomGrocery(customGroceryDTO));
+    }
+
+    @Test
+    public void testAddCustomGrocery_WithDescriptionNull() throws SaveException {
+        // Given
+        customGroceryDTO.setDescription(null);
+        grocery.setDescription(null);
+        Mockito.when(subCategoryRepository.findById(customGroceryDTO.getId())).thenReturn(Optional.of(customGroceryDTO.getSubCategory()));
+        Mockito.when(groceryService.saveGrocery(Mockito.any())).thenReturn(grocery);
+
+        // When
+        Grocery result = groceryService.addCustomGrocery(customGroceryDTO);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(customGroceryDTO.getName(), result.getName());
+        assertNull(result.getDescription());
+        assertEquals(customGroceryDTO.getGroceryExpiryDays(), result.getGroceryExpiryDays());
+        assertEquals(customGroceryDTO.getSubCategory(), result.getSubCategory());
     }
 }

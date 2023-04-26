@@ -1,23 +1,24 @@
 <template>
-    <div class="border w-1/3 h-full border-black rounded-lg bg-white" id="wrapper">
-      <div class="flex justify-center rounded-md shadow-sm w-full" role="group">
+    <div class="border w-1/3 h-4/5 border-black rounded-lg bg-white overflow-hidden flex flex-col absolute" id="wrapper">
+      <div class="m-1 pl-2 pr-2 flex justify-center rounded-md font-medium font-sans text-lg" role="group">
         <button
           type="button"
-          class="w-full px-4 py-2 text-sm font-medium text-black border-b border-black rounded-l-lg hover:bg-gray-900 hover:text-white"
+          class="pl-4 pr-4 text-black border-2 border-black rounded-l-lg hover:bg-slate-200 cursor-pointer"
           @click="selectListing('all')"
-          :class="{ 'bg-black text-white': listingType === 'all' }"
+          :class="{ 'hover:bg-sky-200 bg-sky-300': listingType === 'all' }"
         >
           Alle varer
         </button>
         <button
           type="button"
-          class="w-full py-2 text-sm font-medium text-black border-b border-black rounded-r-md hover:bg-gray-900 hover:text-white"
+          class="pl-4 pr-4 text-black border-2 border-black rounded-r-lg hover:bg-slate-200 cursor-pointer"
           @click="selectListing('category')"
-          :class="{ 'bg-black text-white': listingType === 'category' }"
+          :class="{ 'hover:bg-sky-200 bg-sky-300': listingType === 'category' }"
         >
           Kategori
         </button>
       </div>
+      <div id="listwrapper" class = "pb-5">
         <RefridgeratorList
             class="my-5"
             :groceries="props.groceries"
@@ -26,13 +27,25 @@
             @popup-height="(payload : number) => emitHeight(payload)"
         ></RefridgeratorList>
       </div>
+      <div class ="absolute bottom-0 w-full flex justify-end border-t self-end border-black">
+        <button
+          type="button"
+          class="pl-4 pr-4 w-1/5 self-end text-black border-l border-r border-black hover:bg-slate-200 cursor-pointer"
+          @click = "emit('toggle-create')"
+        >
+        <div>
+          Ny matvare
+        </div>
+        </button>
+      </div>
+      </div>
   </template>
   
   <script setup lang="ts">
   import { list } from 'postcss';
 import type { GroceryEntity } from '~/types/GroceryEntityType';
   
-  const emit = defineEmits(['popup-height', 'group-closed']);
+  const emit = defineEmits(['popup-height', 'group-closed', 'toggle-create']);
 
   function selectListing(listing : string){
     listingType.value = listing;
@@ -54,17 +67,17 @@ import type { GroceryEntity } from '~/types/GroceryEntityType';
   </script>
 <style scoped>
 
-#wrapper{
+#listwrapper{
   overflow-y: auto;
-  height: 100%;
+  height: auto;
   scrollbar-width: none;
   overflow-x:hidden;
 }
-#wrapper::-webkit-scrollbar {
+#listwrapper::-webkit-scrollbar {
   display: none;
 }
 /* Hide scrollbar for IE, Edge and Firefox */
-#wrapper {
+#listwrapper {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }

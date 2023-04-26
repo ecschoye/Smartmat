@@ -2,15 +2,16 @@ package ntnu.idatt2106.backend.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
+import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
+import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
-import ntnu.idatt2106.backend.model.dto.refrigerator.RefrigeratorDTO;
-import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
+import ntnu.idatt2106.backend.model.dto.MemberDTO;
+import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
-import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
@@ -26,6 +27,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.lang.reflect.Member;
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +77,10 @@ public class RefrigeratorServiceTest {
     @DisplayName("Test saving a refrigerator with a valid user")
     public void testSaveRefrigeratorWithValidUser() throws Exception {
         // Arrange
-        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO(1L, "Refrigerator name", "Test Address");
+        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO();
+        refrigeratorDTO.setId(1L);
+        refrigeratorDTO.setName("name");
+        refrigeratorDTO.setAddress("Test Address");
         String userEmail = "user@example.com";
         refrigerator = refrigeratorService.convertToEntity(refrigeratorDTO);
 
@@ -123,7 +128,10 @@ public class RefrigeratorServiceTest {
     @DisplayName("Test saving a refrigerator with an invalid user")
     public void testSaveRefrigeratorWithInvalidUser() {
         // Arrange
-        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO(1L, "Refrigerator name", "Test Address");
+        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO();
+        refrigeratorDTO.setId(1L);
+        refrigeratorDTO.setName(null);
+        refrigeratorDTO.setAddress("Test Address");
         String userEmail = "invalid@example.com";
 
         when(userService.findByEmail(userEmail)).thenThrow(new UsernameNotFoundException("User not found with email: invalid@example.com"));
@@ -136,7 +144,10 @@ public class RefrigeratorServiceTest {
     @DisplayName("Test saving a refrigerator with an empty name")
     public void testSaveRefrigeratorWithEmptyName() {
         // Arrange
-        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO(1L, "", "Test Address");
+        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO();
+        refrigeratorDTO.setId(1L);
+        refrigeratorDTO.setName(null);
+        refrigeratorDTO.setAddress("Test Address");
         String userEmail = "user@example.com";
 
         when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(new User()));
@@ -149,7 +160,10 @@ public class RefrigeratorServiceTest {
     @DisplayName("Test saving a refrigerator with a null name")
     public void testSaveRefrigeratorWithNullName() {
         // Arrange
-        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO(1L, null, "Test Address");
+        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO();
+        refrigeratorDTO.setId(1L);
+        refrigeratorDTO.setName(null);
+        refrigeratorDTO.setAddress("Test Address");
         String userEmail = "user@example.com";
 
         when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(new User()));
@@ -182,22 +196,24 @@ public class RefrigeratorServiceTest {
     public void testAddMemberToRefrigerator() {
         // Arrange
         User newUser = new User();
+        newUser.setId("id");
         newUser.setEmail("user1@example.com");
+
         MemberRequest request1 = new MemberRequest();
         request1.setRefrigeratorId(refrigerator.getId());
         request1.setSuperName(user.getUsername());
         request1.setUserName(newUser.getUsername());
         request1.setFridgeRole(FridgeRole.USER);
+
         RefrigeratorUser ru = new RefrigeratorUser();
         ru.setUser(user);
         ru.setFridgeRole(FridgeRole.SUPERUSER);
         ru.setRefrigerator(refrigerator);
 
-        when(userRepository.findByEmail(request1.getUserName())).thenReturn(Optional.of(new User()));
         when(refrigeratorRepository.findById(request1.getRefrigeratorId())).thenReturn(Optional.of(refrigerator));
         when(userRepository.findByEmail(user.getUsername())).thenReturn(Optional.of(user));
         when(userRepository.findByEmail(newUser.getUsername())).thenReturn(Optional.of(newUser));
-        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(user.getId(), refrigerator.getId())).thenReturn(Optional.of(ru));
+        when(refrigeratorUserRepository.findByUserAndRefrigerator(user, refrigerator)).thenReturn(Optional.of(ru));
 
         //Act
         Assertions.assertDoesNotThrow(() -> refrigeratorService.addMember(request1));
@@ -205,7 +221,7 @@ public class RefrigeratorServiceTest {
 
     @Test
     @DisplayName("Test setFridgeRole with valid input")
-    public void testSetRoleWithValidInput() throws UserNotFoundException {
+    public void testSetRoleWithValidInput() throws UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
         User user = new User();
         user.setId("test_user_id");
         user.setEmail("test_user@test.com");
@@ -246,9 +262,56 @@ public class RefrigeratorServiceTest {
         memberRequest.setRefrigeratorId(1L);
         memberRequest.setSuperName(superUser.getUsername());
         memberRequest.setUserName(user.getUsername());
-        MemberResponse result = refrigeratorService.setFridgeRole(memberRequest);
+        MemberDTO result = refrigeratorService.setFridgeRole(memberRequest);
 
-        Assertions.assertEquals(result.getRole(), newFridgeRole);
+        Assertions.assertEquals(result.getFridgeRole(), newFridgeRole);
+    }
+
+    @Test
+    @DisplayName("Test setFridgeRole with invalid privilege")
+    public void testSetRoleWithInvalidPrivilege() throws UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
+        User user = new User();
+        user.setId("test_user_id");
+        user.setEmail("test_user@test.com");
+        user.setPassword("test_password");
+        User superUser = new User();
+        superUser.setId("super_user_id");
+        superUser.setEmail("super_user@test.com");
+        superUser.setPassword("super_password");
+
+        Refrigerator refrigerator = new Refrigerator();
+        refrigerator.setId(1L);
+        refrigerator.setName("test_refrigerator");
+
+        RefrigeratorUser refrigeratorUser = new RefrigeratorUser();
+        refrigeratorUser.setId(1L);
+        refrigeratorUser.setUser(user);
+        refrigeratorUser.setRefrigerator(refrigerator);
+
+        RefrigeratorUser refrigeratorSuper = new RefrigeratorUser();
+        refrigeratorSuper.setId(1L);
+        refrigeratorSuper.setUser(superUser);
+        refrigeratorSuper.setRefrigerator(refrigerator);
+        refrigeratorSuper.setFridgeRole(FridgeRole.USER);
+
+        when(userRepository.findByEmail(user.getUsername())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(superUser.getUsername())).thenReturn(Optional.of(superUser));
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id("test_user_id", 1L)).thenReturn(Optional.of(refrigeratorUser));
+        when(refrigeratorUserRepository.save(Mockito.any(RefrigeratorUser.class))).thenReturn(refrigeratorUser);
+        when(userRepository.findByEmail(user.getUsername())).thenReturn(Optional.of(user));
+        when(refrigeratorRepository.findById(refrigerator.getId())).thenReturn(Optional.of(refrigerator));
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(superUser.getId(), refrigerator.getId())).thenReturn(Optional.of(refrigeratorSuper));
+        when(refrigeratorUserRepository.findByUserAndRefrigerator(user,refrigerator)).thenReturn(Optional.of(refrigeratorUser));
+
+        FridgeRole newFridgeRole = FridgeRole.SUPERUSER;
+
+        MemberRequest memberRequest = new MemberRequest();
+        memberRequest.setFridgeRole(newFridgeRole);
+        memberRequest.setRefrigeratorId(1L);
+        memberRequest.setSuperName(superUser.getUsername());
+        memberRequest.setUserName(user.getUsername());
+
+        Assertions.assertThrows(UnauthorizedException.class, () -> refrigeratorService.setFridgeRole(memberRequest));
     }
 
     @Test
@@ -267,7 +330,7 @@ public class RefrigeratorServiceTest {
 
     @Test
     @DisplayName("Test setFridgeRole with invalid refrigerator user")
-    public void testSetRoleWithInvalidRefrigeratorUser() throws UserNotFoundException {
+    public void testSetRoleWithInvalidRefrigeratorUser() throws UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
         User user = new User();
         user.setId("test_user_id");
         user.setEmail("test_user@test.com");
@@ -307,7 +370,7 @@ public class RefrigeratorServiceTest {
         memberRequest.setRefrigeratorId(1L);
         memberRequest.setSuperName(superUser.getUsername());
         memberRequest.setUserName(user.getUsername());
-        MemberResponse result = refrigeratorService.setFridgeRole(memberRequest);
+        MemberDTO result = refrigeratorService.setFridgeRole(memberRequest);
 
         Assertions.assertNull(result);
     }
@@ -420,7 +483,7 @@ public class RefrigeratorServiceTest {
         when(refrigeratorRepository.findById(refrigerator.getId())).thenReturn(Optional.of(refrigerator));
         when(userRepository.findByEmail(request.getUserName())).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(EntityNotFoundException.class, () -> refrigeratorService.removeUserFromRefrigerator(request));
+        Assertions.assertThrows(UserNotFoundException.class, () -> refrigeratorService.removeUserFromRefrigerator(request));
     }
 
     @Test
@@ -443,7 +506,7 @@ public class RefrigeratorServiceTest {
         when(userRepository.findByEmail(request.getSuperName())).thenReturn(Optional.empty());
         when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(user.getId(), refrigerator.getId())).thenReturn(Optional.of(userRole));
 
-        Assertions.assertThrows(EntityNotFoundException.class, () -> refrigeratorService.removeUserFromRefrigerator(request));
+        Assertions.assertThrows(UserNotFoundException.class, () -> refrigeratorService.removeUserFromRefrigerator(request));
     }
 
     @Test
@@ -552,7 +615,7 @@ public class RefrigeratorServiceTest {
 
     @Test
     @DisplayName("Test getting an existing refrigerator by id")
-    public void testGetExistingRefrigeratorById() throws EntityNotFoundException {
+    public void testGetExistingRefrigeratorById() throws EntityNotFoundException, RefrigeratorNotFoundException {
         // Arrange
         long id = 1L;
         Refrigerator refrigerator = new Refrigerator();
@@ -563,13 +626,13 @@ public class RefrigeratorServiceTest {
         when(refrigeratorUserRepository.findByRefrigeratorId(id)).thenReturn(new ArrayList<>());
 
         // Act
-        RefrigeratorResponse result = refrigeratorService.getRefrigeratorById(id);
+        RefrigeratorDTO result = refrigeratorService.getRefrigeratorDTOById(id);
 
         // Assert
         Assertions.assertNotNull(result);
         Assertions.assertEquals(id, result.getId());
         Assertions.assertEquals(refrigerator.getName(), result.getName());
-        Assertions.assertEquals(new ArrayList<MemberResponse>(), result.getMembers());
+        Assertions.assertEquals(new ArrayList<MemberDTO>(), result.getMembers());
     }
 
     @Test
@@ -580,6 +643,6 @@ public class RefrigeratorServiceTest {
         when(refrigeratorRepository.existsById(id)).thenReturn(false);
 
         // Act & Assert
-        Assertions.assertThrows(EntityNotFoundException.class, () -> refrigeratorService.getRefrigeratorById(id));
+        Assertions.assertThrows(RefrigeratorNotFoundException.class, () -> refrigeratorService.getRefrigerator(id));
     }
 }

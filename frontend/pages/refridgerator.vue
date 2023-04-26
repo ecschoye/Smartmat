@@ -1,7 +1,8 @@
 <template>
     <div class = "flex h-4/5">
-        <RefridgeratorFridge @group-closed="togglePos(false)" :groceries="refridgeratorStore.getGroceries" @popup-height="(payload) => setPos(payload)" />
-        <div>
+        <RefridgeratorFridge v-if="!toggleCreate" @toggle-create="toggleCreate = !toggleCreate" class="font-mono" @group-closed="togglePos(false)" :groceries="refridgeratorStore.getGroceries" @popup-height="(payload) => setPos(payload)" />
+        <RefridgeratorNew v-else-if="toggleCreate" @toggle="toggleCreate = !toggleCreate" />
+            <div>
             <Transition>
                 <RefridgeratorGroceryOptions :pos="position" v-if="toggle" @toggle-options="togglePos(false)"/>
             </Transition>
@@ -17,6 +18,8 @@ const refridgeratorStore = useRefridgeratorStore();
 const position = ref(0);
 
 const toggle = ref(false);
+
+const toggleCreate = ref(false);
 
 function togglePos(inp : boolean){
     toggle.value = inp;

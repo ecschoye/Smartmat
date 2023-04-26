@@ -103,21 +103,11 @@ public class RefrigeratorController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/members/remove")
-    public ResponseEntity<SuccessResponse> removeMember(@Valid @RequestBody RemoveMemberRequest memberRequest) {
+    public ResponseEntity<SuccessResponse> removeMember(@Valid @RequestBody RemoveMemberRequest memberRequest) throws Exception {
         logger.info("Received request to remove member from refrigerator");
-        try{
-            refrigeratorService.removeUserFromRefrigerator(memberRequest);
-            logger.info("Member removed successfully");
-            return new ResponseEntity<>(new SuccessResponse("Member removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
-        } catch (AccessDeniedException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        } catch (LastSuperuserException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        } catch(EntityNotFoundException e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch(Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        refrigeratorService.removeUserFromRefrigerator(memberRequest);
+        logger.info("Member removed successfully");
+        return new ResponseEntity<>(new SuccessResponse("Member removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
     @Operation(summary = "Create a new refrigerator")
@@ -150,18 +140,10 @@ public class RefrigeratorController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @DeleteMapping("/delete/{refrigeratorId}/{username}")
-    public ResponseEntity<SuccessResponse> deleteRefrigerator(@Valid @PathVariable int refrigeratorId, @PathVariable String username) {
-        try {
-            refrigeratorService.forceDeleteRefrigerator(username,refrigeratorId);
-            logger.info("Member removed successfully");
-            return new ResponseEntity<>(new SuccessResponse("Member removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
-        } catch (AccessDeniedException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        } catch(EntityNotFoundException e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch(Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<SuccessResponse> deleteRefrigerator(@Valid @PathVariable int refrigeratorId, @PathVariable String username) throws Exception {
+        refrigeratorService.forceDeleteRefrigerator(username,refrigeratorId);
+        logger.info("Member removed successfully");
+        return new ResponseEntity<>(new SuccessResponse("Member removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
     @GetMapping("/user/{userName}")

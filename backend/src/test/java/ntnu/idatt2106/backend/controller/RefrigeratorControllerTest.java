@@ -219,11 +219,8 @@ public class RefrigeratorControllerTest {
 
         Mockito.doThrow(new AccessDeniedException("")).when(refrigeratorService).forceDeleteRefrigerator(username, refrigeratorId);
 
-        // Act
-        ResponseEntity<SuccessResponse> responseEntity = refrigeratorController.deleteRefrigerator(refrigeratorId, username);
-
-        // Assert
-        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+        //Act & Assert
+        Assertions.assertThrows(AccessDeniedException.class, () -> refrigeratorController.deleteRefrigerator(refrigeratorId, username));
     }
 
     @Test
@@ -234,26 +231,8 @@ public class RefrigeratorControllerTest {
 
         Mockito.doThrow(new EntityNotFoundException()).when(refrigeratorService).forceDeleteRefrigerator(username, refrigeratorId);
 
-        // Act
-        ResponseEntity<SuccessResponse> responseEntity = refrigeratorController.deleteRefrigerator(refrigeratorId, username);
-
         // Assert
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-    }
-
-    @Test
-    public void testDeleteRefrigeratorInternalServerError() throws Exception {
-        // Arrange
-        int refrigeratorId = 1;
-        String username = "user1";
-
-        Mockito.doThrow(new RuntimeException()).when(refrigeratorService).forceDeleteRefrigerator(username, refrigeratorId);
-
-        // Act
-        ResponseEntity<SuccessResponse> responseEntity = refrigeratorController.deleteRefrigerator(refrigeratorId, username);
-
-        // Assert
-        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        Assertions.assertThrows(EntityNotFoundException.class, () -> refrigeratorController.deleteRefrigerator(refrigeratorId, username));
     }
 
     @Test

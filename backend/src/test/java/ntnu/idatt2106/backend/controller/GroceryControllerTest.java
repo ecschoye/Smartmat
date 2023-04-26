@@ -1,9 +1,11 @@
 package ntnu.idatt2106.backend.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
+import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.service.GroceryService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,5 +65,19 @@ class GroceryControllerTest {
         Assertions.assertThrows(RefrigeratorNotFoundException.class, () -> {
             groceryController.getGroceriesByRefrigerator(refrigeratorId, httpServletRequest);
         });
+    }
+
+    @Test
+    void removeRefrigeratorGrocery_validInput_removesGrocery() throws UserNotFoundException, UnauthorizedException, EntityNotFoundException {
+        // Arrange
+        long refrigeratorGroceryId = 1L;
+
+        // Act
+        ResponseEntity<SuccessResponse> responseEntity = groceryController.removeRefrigeratorGrocery(refrigeratorGroceryId, httpServletRequest);
+
+        // Assert
+        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        Assertions.assertEquals("Grocery removed successfully", responseEntity.getBody().getMessage());
+        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 }

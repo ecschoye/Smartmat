@@ -72,19 +72,17 @@ public class GroceryController {
 
     @PostMapping("/new/{refrigeratorId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> createNewGrocery(HttpServletRequest request, @RequestBody GroceryDTO grocery, @Valid @PathVariable long refrigeratorGroceryId) throws Exception {
+    public ResponseEntity<?> createNewGrocery(HttpServletRequest request, @RequestBody GroceryDTO grocery, @Valid @PathVariable long refrigeratorId) throws Exception {
         try{
             String jwt = cookieService.extractTokenFromCookie(request);
             User user = userService.findByEmail(jwtService.extractUsername(jwt)); // Pass the JWT token instead of the request
             logger.info("Received request to create grocery from user: "+ user.getEmail() + ".");
             List<GroceryDTO> dtos = new ArrayList<>();
             dtos.add(grocery);
-            groceryService.addGrocery(new SaveGroceryListRequest(refrigeratorGroceryId, dtos), request);
+            groceryService.addGrocery(new SaveGroceryListRequest(refrigeratorId, dtos), request);
             return ResponseEntity.ok(grocery);
         }catch(Exception e){
             throw new Exception(e);
         }
-
-
     }
 }

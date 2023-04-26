@@ -7,6 +7,6 @@ export const getGroceries = async (fridgeId : number): Promise <AxiosResponse> =
 }
 
 export const getRefrigerators = async () : Promise<AxiosResponse> => {
-    return axiosInstance.post('/api/refridgerator/user');
+    return axiosInstance.post('/api/refrigerator/user');
 }
 

@@ -35,8 +35,9 @@ onBeforeUnmount(() => {
 
 
 async function onSubmit(){
-    try{
-        const response = await createGrocery(refridgeratorStore.getSelectedRefrigerator.id);
+    if(grocery !== null){
+        try{
+        const response = await createGrocery(refridgeratorStore.getSelectedRefrigerator.id, grocery!);
         if(response.status == 200){
            emit('toggle'); 
         }
@@ -44,5 +45,6 @@ async function onSubmit(){
         console.log(error);
         emit('toggle');
     }
+        }
 }
 </script>

@@ -42,24 +42,26 @@
         </HeadlessListbox>
       </div>
 
-      <p class="text-xl mt-8 text-gray-900 dark:text-gray-100">{{t('dark_mode')}}</p>
-
-      <!-- Switch Container -->
-      <div class="w-16 mx-auto flex flex-col items-center mt-2" @click="toggleDarkmode = !toggleDarkmode; setColorTheme(toggleDarkmode ? 'dark' : 'light')">
-        <div class="w-16 h-10 flex items-center bg-gray-300 rounded-full p-1 duration-300 ease-in-out" :class="{ 'bg-green-400 dark:bg-green-600': toggleDarkmode }">
-          <div class="bg-white dark:bg-gray-300 w-8 h-8 rounded-full shadow-md transform duration-300 ease-in-out" :class="{ 'translate-x-6': toggleDarkmode }"></div>
+      <!-- Dark Mode -->
+      <div class="flex items-center mt-12 justify-between">
+        <p class="text-xl text-gray-900 dark:text-gray-100 mr-4">{{t('dark_mode')}}</p>
+        <div class="w-16 flex flex-col items-center" @click="toggleDarkmode = !toggleDarkmode; setColorTheme(toggleDarkmode ? 'dark' : 'light')">
+          <div class="w-16 h-10 flex items-center bg-gray-300 rounded-full p-1 duration-300 ease-in-out" :class="{ 'bg-green-400 dark:bg-green-600': toggleDarkmode }">
+            <div class="bg-white dark:bg-gray-300 w-8 h-8 rounded-full shadow-md transform duration-300 ease-in-out" :class="{ 'translate-x-6': toggleDarkmode }"></div>
+          </div>
         </div>
       </div>
-      <!-- Switch Container End -->
 
-      <p class="text-xl mt-8 text-gray-900 dark:text-gray-100">{{t('notifications')}}</p>
-
-      <!-- Switch Container -->
-      <div class="w-16 mx-auto flex flex-col items-center mt-2" @click="toggleNotifications = !toggleNotifications">
-        <div class="w-16 h-10 flex items-center bg-gray-300 rounded-full p-1 duration-300 ease-in-out" :class="{ 'bg-green-400 dark:bg-green-600': toggleNotifications }">
-          <div class="bg-white dark:bg-gray-300 w-8 h-8 rounded-full shadow-md transform duration-300 ease-in-out" :class="{ 'translate-x-6': toggleNotifications }"></div>
+      <!-- Notifications -->
+      <div class="flex items-center mt-8 justify-between mb-12">
+        <p class="text-xl text-gray-900 dark:text-gray-100 mr-4">{{t('notifications')}}</p>
+        <div class="w-16 flex flex-col items-center" @click="toggleNotifications = !toggleNotifications">
+          <div class="w-16 h-10 flex items-center bg-gray-300 rounded-full p-1 duration-300 ease-in-out" :class="{ 'bg-green-400 dark:bg-green-600': toggleNotifications }">
+            <div class="bg-white dark:bg-gray-300 w-8 h-8 rounded-full shadow-md transform duration-300 ease-in-out" :class="{ 'translate-x-6': toggleNotifications }"></div>
+          </div>
         </div>
       </div>
+
       <!-- Switch Container End -->
     </div>
   </div>

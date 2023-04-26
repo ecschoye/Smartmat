@@ -30,7 +30,9 @@ export const useUserStore = defineStore({
             this.authenticated = status;
         },
         logOut() {
-            sessionStorage.removeItem("user");
+            this.authenticated = false;
+            this.role = "";
+            this.userId = "";
         },
         logIn(data: any) {
             this.authenticated = true;

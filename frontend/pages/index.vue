@@ -55,6 +55,7 @@ import { useRefridgeratorStore } from "~/store/refridgeratorStore";
 
 
   async function loadNotifications(){
+    if (!userStore.isLoggedIn) return;
     try{
       const response = await getNotifications();
       if(response.status == 200){
@@ -66,6 +67,7 @@ import { useRefridgeratorStore } from "~/store/refridgeratorStore";
   }
 
   async function loadRefrigerators(){
+    if (!userStore.isLoggedIn) return;
     try{
       const response = await getRefrigerators();
       refridgeratorStore.setRefrigerators(response.data);
@@ -79,7 +81,7 @@ import { useRefridgeratorStore } from "~/store/refridgeratorStore";
   onMounted(() => {
     loadNotifications();
     loadRefrigerators();
-  })
+  });
 </script>
 
 

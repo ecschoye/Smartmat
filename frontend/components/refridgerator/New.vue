@@ -1,10 +1,10 @@
 <template>
-    <div class ="border w-1/3 border-black rounded-lg bg-white">
-        <form @submit.prevent="onSubmit" class ="form bg-white dark:bg-zinc-700 flex flex-col">
+    <div class ="border w-1/3 mt-4 ml-2 border-black rounded-xl bg-white dark:bg-zinc-400 ">
+        <form @submit.prevent="onSubmit" class ="form bg-white mt-3 ml-2 dark:bg-zinc-400 w-11/12 flex flex-col">
             <div>
                 <RefridgeratorDropdown @update-value="(payload) => {grocery = payload}"  />
             </div>
-        <ButtonGrayButton class ="self-center" id="submit" :label="$t('create_grocery')" width="20%" height="50px"/>
+          <ButtonGrayButton class ="self-center text-xs sm:text-base" id="submit" :label="$t('create_grocery')" width="70%" height="50px"/>
         </form>
     </div>
 </template>
@@ -28,6 +28,10 @@ function modelValue() : Grocery | undefined {
     }
 
 const emit = defineEmits(['toggle'])
+
+onBeforeUnmount(() => {
+  emit('toggle');
+})
 
 
 async function onSubmit(){

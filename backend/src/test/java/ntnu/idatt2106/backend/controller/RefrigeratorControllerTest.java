@@ -1,19 +1,22 @@
 package ntnu.idatt2106.backend.controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
+import ntnu.idatt2106.backend.model.dto.refrigerator.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
-import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
 import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.repository.UserRepository;
+import ntnu.idatt2106.backend.service.CookieService;
+import ntnu.idatt2106.backend.service.JwtService;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,13 +28,14 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
@@ -48,10 +52,18 @@ public class RefrigeratorControllerTest {
     private Refrigerator refrigerator;
     private User user;
 
+    @Mock
+    private CookieService cookieService;
+
+    @Mock
+    private JwtService jwtService;
+
+
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        refrigeratorController = new RefrigeratorController(refrigeratorService);
+        refrigeratorController = new RefrigeratorController(refrigeratorService, cookieService, jwtService);
         user = new User();
         user.setId("testUserId");
         user.setEmail("testuser@test.com");
@@ -64,13 +76,25 @@ public class RefrigeratorControllerTest {
     @Test
     @DisplayName("Test new refrigerator success")
     void testNewRefrigeratorSuccess() throws Exception {
-        RefrigeratorRequest request = new RefrigeratorRequest();
-        Refrigerator refrigerator = new Refrigerator();
-        refrigerator.setId(1);
+        // Prepare test data
+        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO(1L, "Test Fridge", "Test Address");
+        String userEmail = "test@example.com";
 
-        when(refrigeratorService.save(request)).thenReturn(refrigerator);
+        // Mock HttpServletRequest
+        HttpServletRequest request = mock(HttpServletRequest.class);
 
-        ResponseEntity<Refrigerator> response = refrigeratorController.newRefrigerator(request);
+        // Set up mocks
+        when(cookieService.extractTokenFromCookie(request)).thenReturn("dummy_jwt");
+        when(jwtService.extractUsername("dummy_jwt")).thenReturn(userEmail);
+        when(refrigeratorService.convertToEntity(refrigeratorDTO)).thenReturn(refrigerator);
+        when(refrigeratorService.save(eq(refrigerator), eq(userEmail))).thenReturn(refrigerator);
+
+        // Inject mocks into refrigeratorController
+        ReflectionTestUtils.setField(refrigeratorController, "cookieService", cookieService);
+        ReflectionTestUtils.setField(refrigeratorController, "jwtService", jwtService);
+
+        // Test newRefrigerator method
+        ResponseEntity<Refrigerator> response = refrigeratorController.newRefrigerator(refrigeratorDTO, request);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals(refrigerator, response.getBody());
     }
@@ -78,12 +102,18 @@ public class RefrigeratorControllerTest {
     @Test
     @DisplayName("Test new refrigerator fail")
     void testNewRefrigeratorFail() throws Exception {
-        RefrigeratorRequest request = new RefrigeratorRequest();
+        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO(1L, "Test Fridge", "Test Address");
+        String userEmail = "test@example.com";
 
-        when(refrigeratorService.save(request)).thenReturn(null);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(cookieService.extractTokenFromCookie(request)).thenReturn("dummy_jwt");
+        when(jwtService.extractUsername("dummy_jwt")).thenReturn(userEmail);
+        when(refrigeratorService.convertToEntity(refrigeratorDTO)).thenReturn(refrigerator);
+        when(refrigeratorService.save(eq(refrigerator), eq(userEmail))).thenReturn(null);
 
-        Assertions.assertThrows(SaveException.class, () -> refrigeratorController.newRefrigerator(request));
+        Assertions.assertThrows(SaveException.class, () -> refrigeratorController.newRefrigerator(refrigeratorDTO, request));
     }
+
 
     @Test
     @DisplayName("Test adding new member")

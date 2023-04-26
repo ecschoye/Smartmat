@@ -2,18 +2,21 @@ package ntnu.idatt2106.backend.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
 import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
+import ntnu.idatt2106.backend.model.dto.refrigerator.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
-import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
 import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
+import ntnu.idatt2106.backend.service.CookieService;
+import ntnu.idatt2106.backend.service.JwtService;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +38,10 @@ import java.util.Map;
 public class RefrigeratorController {
 
     private final RefrigeratorService refrigeratorService;
+
+    private final CookieService cookieService;
+
+    private final JwtService jwtService;
 
     Logger logger = LoggerFactory.getLogger(RefrigeratorController.class);
 
@@ -86,11 +93,14 @@ public class RefrigeratorController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity<Refrigerator> newRefrigerator(@Valid @RequestBody RefrigeratorRequest refrigerator) throws SaveException {
+    public ResponseEntity<Refrigerator> newRefrigerator(@Valid @RequestBody RefrigeratorDTO refrigerator, HttpServletRequest request) throws SaveException {
         logger.info("Received request to create refrigerator for refrigerator");
-        Refrigerator result;
+        Refrigerator result = refrigeratorService.convertToEntity(refrigerator);
+
+        String jwt = cookieService.extractTokenFromCookie(request);
+        String email = jwtService.extractUsername(jwt);
         try {
-            result = refrigeratorService.save(refrigerator);
+            result = refrigeratorService.save(result, email);
             if (result == null) throw new Exception();
         } catch (Exception e) {
             throw new SaveException("Failed to create refrigerator");

@@ -7,10 +7,10 @@ import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
+import ntnu.idatt2106.backend.model.dto.refrigerator.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
-import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
 import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
@@ -42,7 +42,6 @@ public class RefrigeratorService {
 
     private final FridgeRole DEFAULT_USER_Fridge_ROLE = FridgeRole.USER;
 
-    @Autowired
     private final RefrigeratorRepository refrigeratorRepository;
     private final RefrigeratorUserRepository refrigeratorUserRepository;
 
@@ -105,6 +104,19 @@ public class RefrigeratorService {
         List<Refrigerator> refrigerators = new ArrayList<>();
         refrigeratorUserRepository.findByUser(user).forEach(ru -> {refrigerators.add(ru.getRefrigerator());});
         return refrigerators;
+    }
+
+    public Refrigerator convertToEntity(RefrigeratorDTO refrigeratorDTO){
+        if (refrigeratorDTO == null) return null;
+
+
+        Refrigerator refrigerator = Refrigerator.builder()
+                .id(refrigeratorDTO.getId())
+                .name(refrigeratorDTO.getName())
+                .address(refrigeratorDTO.getAddress())
+                .build();
+
+        return refrigerator;
     }
 
     /**
@@ -217,19 +229,18 @@ public class RefrigeratorService {
      * superuser of the refrigerator. Performs checks on data and resets state
      * should an error occur underway.
      *
-     * @param request The refrigerator request containing refrigerator to save.
+     * @param refrigerator request containing refrigerator to save.
      * @return The saved refrigerator.
      */
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
-    public Refrigerator save(RefrigeratorRequest request) throws Exception {
-        Refrigerator refrigerator = request.getRefrigerator();
+    public Refrigerator save(Refrigerator refrigerator, String email) throws Exception {
+
         if(refrigerator.getName() == null || refrigerator.getName().length() == 0) throw new Exception("Refrigerator name is empty");
-        String username = request.getUsername();
         //Check user exists
         User user;
         Refrigerator refrigeratorResult;
         try {
-            user = getUser(username);
+            user = getUser(email);
             refrigeratorResult = refrigeratorRepository.save(refrigerator);
         } catch(UserNotFoundException e){
             logger.warn("Refrigerator could not be added: User not found");

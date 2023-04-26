@@ -6,10 +6,10 @@ import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
+import ntnu.idatt2106.backend.model.dto.refrigerator.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
-import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
 import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
@@ -75,21 +75,21 @@ public class RefrigeratorServiceTest {
     @DisplayName("Test saving a refrigerator with a valid user")
     public void testSaveRefrigeratorWithValidUser() throws Exception {
         // Arrange
-        RefrigeratorRequest request = new RefrigeratorRequest();
-        request.setRefrigerator(new Refrigerator());
-        request.setUsername("user@example.com");
-        request.getRefrigerator().setName("Refrigerator name");
-        Refrigerator refrigerator = request.getRefrigerator();
+        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO(1L, "Refrigerator name", "Test Address");
+        String userEmail = "user@example.com";
+        refrigerator = refrigeratorService.convertToEntity(refrigeratorDTO);
 
-        when(userRepository.findByEmail(request.getUsername())).thenReturn(Optional.of(new User()));
+        when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(new User()));
         when(refrigeratorRepository.save(refrigerator)).thenReturn(refrigerator);
 
         // Act
-        Refrigerator result = refrigeratorService.save(request);
+        Refrigerator result = refrigeratorService.save(refrigerator, userEmail);
 
         // Assert
         Assertions.assertNotNull(result);
     }
+
+
 
     @Test
     @DisplayName("Test getUser returns existing user ")
@@ -123,45 +123,39 @@ public class RefrigeratorServiceTest {
     @DisplayName("Test saving a refrigerator with an invalid user")
     public void testSaveRefrigeratorWithInvalidUser() {
         // Arrange
-        RefrigeratorRequest request = new RefrigeratorRequest();
-        request.setRefrigerator(new Refrigerator());
-        request.setUsername("invalid@example.com");
+        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO(1L, "Refrigerator name", "Test Address");
+        String userEmail = "invalid@example.com";
 
-        when(userService.findByEmail(request.getUsername())).thenThrow(new UsernameNotFoundException("User not found with email: invalid@example.com"));
+        when(userService.findByEmail(userEmail)).thenThrow(new UsernameNotFoundException("User not found with email: invalid@example.com"));
 
         // Act and assert
-        Assertions.assertThrows(Exception.class, () -> refrigeratorService.save(request));
+        Assertions.assertThrows(Exception.class, () -> refrigeratorService.save(refrigeratorService.convertToEntity(refrigeratorDTO), userEmail));
     }
 
     @Test
     @DisplayName("Test saving a refrigerator with an empty name")
     public void testSaveRefrigeratorWithEmptyName() {
         // Arrange
-        // Arrange
-        RefrigeratorRequest request = new RefrigeratorRequest();
-        request.setRefrigerator(new Refrigerator());
-        request.setUsername("user@example.com");
-        request.getRefrigerator().setName("");
+        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO(1L, "", "Test Address");
+        String userEmail = "user@example.com";
 
-        when(userRepository.findByEmail(request.getUsername())).thenReturn(Optional.of(new User()));
+        when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(new User()));
 
         // Act and assert
-        Assertions.assertThrows(Exception.class, () -> refrigeratorService.save(request));
+        Assertions.assertThrows(Exception.class, () -> refrigeratorService.save(refrigeratorService.convertToEntity(refrigeratorDTO), userEmail));
     }
 
     @Test
     @DisplayName("Test saving a refrigerator with a null name")
     public void testSaveRefrigeratorWithNullName() {
         // Arrange
-        RefrigeratorRequest request = new RefrigeratorRequest();
-        request.setRefrigerator(new Refrigerator());
-        request.setUsername("user@example.com");
-        request.getRefrigerator().setName(null);
+        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO(1L, null, "Test Address");
+        String userEmail = "user@example.com";
 
-        when(userRepository.findByEmail(request.getUsername())).thenReturn(Optional.of(new User()));
+        when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(new User()));
 
         // Act and assert
-        Assertions.assertThrows(Exception.class, () -> refrigeratorService.save(request));
+        Assertions.assertThrows(Exception.class, () -> refrigeratorService.save(refrigeratorService.convertToEntity(refrigeratorDTO), userEmail));
     }
 
     @Test

@@ -3,8 +3,7 @@ package ntnu.idatt2106.backend.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import ntnu.idatt2106.backend.exceptions.SaveException;
-import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
+import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.Category;
 import ntnu.idatt2106.backend.model.Grocery;
 import ntnu.idatt2106.backend.model.GroceryShoppingList;
@@ -132,5 +131,27 @@ public class ShoppingListController {
         }
         logger.info("Returns groceries and status OK");
         return new ResponseEntity<>(groceries, HttpStatus.OK);
+    }
+
+    @PostMapping("transfer-shopping-cart/{groceryShoppingListId}")
+    public ResponseEntity<Boolean> transferToShoppingCart(@PathVariable("groceryShoppingListId") long groceryShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, ShoppingCartNotFound, SubCategoryNotFound {
+        logger.info("Received request to transfer grocery item with id {} in shopping list to shopping cart", groceryShoppingListId);
+        boolean transferStatus = false;
+        try {
+            shoppingListService.transferGrocery(groceryShoppingListId, httpRequest);
+            transferStatus = true;
+        } catch (UnauthorizedException e) {
+            logger.info("Failed to transfer grocery item with id {}", groceryShoppingListId);
+            throw new UnauthorizedException(e.getMessage());
+        } catch (ShoppingCartNotFound e) {
+            logger.info("Could not find shopping cart");
+            throw new ShoppingCartNotFound(e.getMessage());
+        } catch (SubCategoryNotFound e) {
+            logger.info("Could not find shopping list");
+            throw new SubCategoryNotFound(e.getMessage());
+        }
+
+        logger.info("Returns transferStatus and status OK");
+        return new ResponseEntity<>(transferStatus, HttpStatus.OK);
     }
 }

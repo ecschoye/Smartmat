@@ -1,5 +1,9 @@
 package ntnu.idatt2106.backend.model.requests;
 
+import ntnu.idatt2106.backend.model.GroceryShoppingCart;
+import ntnu.idatt2106.backend.model.GroceryShoppingList;
+
+
 public class SaveGroceryRequest {
     private String name;
     private int groceryExpiryDays;
@@ -18,6 +22,24 @@ public class SaveGroceryRequest {
         this.subCategoryId = subCategoryId;
         this.foreignKey = foreignKey;
         this.quantity = quantity;
+    }
+
+    public SaveGroceryRequest(GroceryShoppingList listItem) {
+        this.name = listItem.getGrocery().getName();
+        this.groceryExpiryDays = listItem.getGrocery().getGroceryExpiryDays();
+        this.description = listItem.getGrocery().getDescription();
+        this.subCategoryId = listItem.getGrocery().getSubCategory().getId();
+        this.foreignKey = listItem.getShoppingList().getId();
+        this.quantity = listItem.getQuantity();
+    }
+
+    public SaveGroceryRequest(GroceryShoppingCart listItem) {
+        this.name = listItem.getGrocery().getName();
+        this.groceryExpiryDays = listItem.getGrocery().getGroceryExpiryDays();
+        this.description = listItem.getGrocery().getDescription();
+        this.subCategoryId = listItem.getGrocery().getSubCategory().getId();
+        this.foreignKey = listItem.getShoppingCart().getId();
+        this.quantity = listItem.getQuantity();
     }
 
     public String getName() {

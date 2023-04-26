@@ -3,6 +3,9 @@ package ntnu.idatt2106.backend.service;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import ntnu.idatt2106.backend.exceptions.ShoppingCartNotFound;
+import ntnu.idatt2106.backend.exceptions.ShoppingListNotFound;
+import ntnu.idatt2106.backend.exceptions.SubCategoryNotFound;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.ShoppingListElementDTO;
@@ -29,10 +32,17 @@ public class ShoppingListService {
     private final GroceryRepository groceryRepository;
     private final UserRepository userRepository;
 
+    private final ShoppingCartService shoppingCartService;
+
     private final SessionStorageService sessionStorageService;
     private final JwtService jwtService;
 
     private Logger logger = LoggerFactory.getLogger(ShoppingListService.class);
+
+    protected ShoppingList getShoppingList(long refrigeratorId) throws ShoppingListNotFound {
+        return shoppingListRepository.findByRefrigeratorId(refrigeratorId)
+                .orElseThrow(() -> new ShoppingListNotFound("Shopping list not found"));
+    }
 
     public long createShoppingList(long refrigeratorId) {
         logger.info("Creating shopping list for refrigerator with id {}", refrigeratorId);
@@ -197,6 +207,21 @@ public class ShoppingListService {
 
         if (groceryShoppingList.isPresent() && isSuperUser(eMail, groceryShoppingList.get().getShoppingList().getId())) {
             groceryShoppingListRepository.deleteById(groceryListId);
+        } else {
+            throw new UnauthorizedException("The user is not authorized to delete a grocery list item");
+        }
+    }
+
+    public void transferGrocery(long groceryShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, ShoppingCartNotFound, SubCategoryNotFound {
+        String eMail = extractEmail(httpRequest);
+        Optional<GroceryShoppingList> groceryShoppingList = groceryShoppingListRepository.findById(groceryShoppingListId);
+
+        if (groceryShoppingList.isPresent() && isSuperUser(eMail, groceryShoppingList.get().getShoppingList().getId())) {
+            SaveGroceryRequest saveGroceryRequest = new SaveGroceryRequest(groceryShoppingList.get());
+            groceryShoppingListRepository.deleteById(groceryShoppingListId);
+            logger.info("The grocery is deleted from shopping list");
+            shoppingCartService.saveGrocery(saveGroceryRequest, httpRequest);
+            logger.info("The grocery is saved in shopping cart");
         } else {
             throw new UnauthorizedException("The user is not authorized to delete a grocery list item");
         }

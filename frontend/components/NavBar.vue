@@ -6,10 +6,10 @@
       <img class=" h-12 w-auto" src="../assets/icons/smartmat/leafTransparent.png" alt="">
     </NuxtLink>
     <div class="hidden lg:flex flex-1 space-x-5 items-center lg:justify-start">
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900">{{t('home')}}</NuxtLink>
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900">{{t('weekly_menu')}}</NuxtLink>
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900">{{t('recipes')}}</NuxtLink>
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900">{{t('statistics')}}</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:text-xl hover:text-green-custom">{{t('home')}}</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:text-xl hover:text-green-custom">{{t('weekly_menu')}}</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:text-xl hover:text-green-custom">{{t('recipes')}}</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:text-xl hover:text-green-custom">{{t('statistics')}}</NuxtLink>
     </div>
     <div class="flex flex-1 space-x-2 items-center justify-end">
       <div class="p-0.5 rounded-md ring-1 min-w-fit ring-inset ring-gray-300 dark:ring-zinc-600 inline-flex items-center">
@@ -53,11 +53,9 @@
                   <NuxtLink :to="localePath('/system-settings')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-900', 'block px-4 py-2 text-sm']">{{t('system_settings')}}</NuxtLink>
                 </HeadlessMenuItem>
                 <!-- TODO: delete post -->
-                <form method="POST" action="#">
                   <HeadlessMenuItem v-if="loggedIn" v-slot="{ active }">
                     <button @click="handleLogOut()" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900' : 'text-gray-700 dark:text-gray-900', 'block w-full px-4 py-2 text-left text-sm']">{{t('log_out')}}</button>
                   </HeadlessMenuItem>
-                </form>
               </div>
             </HeadlessMenuItems>
           </transition>
@@ -105,6 +103,7 @@
 import {computed, defineComponent} from 'vue'
 import {useUserStore} from "~/store/userStore";
 import { useNotificationStore } from "~/store/notificationStore";
+import {postLogOut} from "~/service/httputils/authentication/AuthenticationService";
 
 export default defineComponent({
 
@@ -152,9 +151,20 @@ export default defineComponent({
     handleFridgeEvent(value: any) {
       this.selected = value;
     },
-    handleLogOut() {
-      this.userStore.logOut();
-    },
+    async handleLogOut() {
+      console.log('logging out')
+        try{
+          const response = await postLogOut();
+          const userStore = useUserStore();
+          const router = useRouter();
+          if (response.status === 200){
+            userStore.logOut();
+            router.push('/');
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      },
     closeMobileMenu() {
       this.mobileMenuOpen = false;
     }

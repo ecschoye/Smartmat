@@ -52,6 +52,7 @@
 
 
   async function loadNotifications(){
+    if (!userStore.isLoggedIn) return;
     try{
       const response = await getNotifications();
       if(response.status == 200){
@@ -64,7 +65,7 @@
 
   onMounted(() => {
     loadNotifications();
-  })
+  });
 </script>
 
 

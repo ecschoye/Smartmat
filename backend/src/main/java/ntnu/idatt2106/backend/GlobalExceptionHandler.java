@@ -11,7 +11,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-
 /**
  * Global exception handler for the backend API.
  */
@@ -45,6 +44,24 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<String> handleNullPointerException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ShoppingListNotFound.class)
+    public ResponseEntity<String> handleShoppingListNotFound(Exception ex) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ShoppingCartNotFound.class)
+    public ResponseEntity<String> handleShoppingCartNotFound(Exception ex) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(SubCategoryNotFound.class)
+    public ResponseEntity<String> handleSubCategoryNotFound(Exception ex) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .body(ex.getMessage());
     }

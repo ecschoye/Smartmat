@@ -43,7 +43,7 @@ public class AuthenticationController {
             return ResponseEntity.ok(registerResponse);
         } catch (UserAlreadyExistsException e) {
             logger.info("User " + request.getEmail() + " already exists");
-            throw new UserAlreadyExistsException("Email" + request.getEmail() + " is already in use!");
+            throw new UserAlreadyExistsException("Email is already in use!");
         }
     }
 

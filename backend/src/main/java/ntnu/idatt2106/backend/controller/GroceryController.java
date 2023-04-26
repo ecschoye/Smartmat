@@ -20,6 +20,12 @@ import ntnu.idatt2106.backend.service.JwtService;
 import ntnu.idatt2106.backend.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import ntnu.idatt2106.backend.exceptions.NoGroceriesFound;
+import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
+import ntnu.idatt2106.backend.model.dto.GroceryDTO;
+import ntnu.idatt2106.backend.service.GroceryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,7 +38,7 @@ import java.util.List;
  * Controller regarding the groceries inside a refrigerator
  */
 @RestController
-    @RequestMapping("/api/refrigerator/grocery")
+@RequestMapping("/api/refrigerator/grocery")
 @RequiredArgsConstructor
 public class GroceryController {
 
@@ -86,4 +92,20 @@ public class GroceryController {
             throw new Exception(e);
         }
     }
+
+        @GetMapping("/allDTOs")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<GroceryDTO>> getAllGroceriesDTOs(HttpServletRequest request) throws UnauthorizedException, NoGroceriesFound{
+        String token = cookieService.extractTokenFromCookie(request);
+        if (token == null) {
+            throw new UnauthorizedException("Unauthorized");
+        }
+        List<GroceryDTO> groceries = groceryService.getAllGroceriesDTO();
+
+        if(groceries.isEmpty()){
+            throw new NoGroceriesFound("No groceries found");
+        }
+        return new ResponseEntity<>(groceries, HttpStatus.OK);
+    }
+
 }

@@ -1,57 +1,48 @@
 <template>
   <div class="wrapper">
-    <form @submit.prevent="sendForm" class="form form-light-color dark:form-dark-color">
-      <BaseInput id="inpName" class="input-container" type="name" :label="$t('name')" v-model="form.name" />
-      <BaseInput id="inpEmail" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
-      <BaseInput id="inpPassword" class="input-container" type="password" :label="$t('password')" v-model="form.password" />
+    <form @submit.prevent="sendForm" class="form">
+      <BaseInput id="name" class="input-container" type="name" label="Navn på kjøleskap" v-model="form.name" />
+      <BaseInput id="address" class="input-container" type="address" label="Adresse" v-model="form.address" />
       <div class="button-wrapper">
-        <GreenButton id="register" :label="$t('create_account')" width="100%" height="50px" />
-        <div class="divider"></div>
-        <nuxt-link :to="localePath('/login')">
-          <GrayButton :label="$t('go_to_log_in')" width="100%" height="50px" />
-        </nuxt-link>
+        <GreenButton label="Lag kjølskap" width="100%" height="50px" />
       </div>
-      <ErrorAlert v-if="catchError" :errorMessage="errorMessage" />
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
+
 import GreenButton from "~/components/Button/GreenButton.vue";
 import GrayButton from "~/components/Button/GrayButton.vue";
 import BaseInput from "~/components/Form/BaseInput.vue";
+import { useUserStore } from "~/store/userStore";
 import { postRegister } from "~/service/httputils/authentication/AuthenticationService";
-import ErrorAlert from "~/components/AlertBox/ErrorAlert.vue";
+import {RefrigeratorRegisterData} from "~/types/RefrigeratorRegisterData";
+import {AxiosResponse} from "axios";
+import axiosInstance from "~/service/AxiosInstance";
+import { postRegisterFridge } from "~/service/httputils/RefrigeratorRequest";
 
 
+const errorMessage = ref("");
 const router = useRouter();
-
-const { t } = useI18n();
 
 const form = reactive({
   name: '',
-  email: '',
-  password: '',
+  address: '',
 });
 
-const catchError = ref(false);
-const errorMessage = ref('');
-
-
-
 const sendForm = async () => {
-  catchError.value = false;
   try {
-    const response = await postRegister(form);
+    // Send the request to the server using the postRegisterFridge function
+    const response = await postRegisterFridge(form);
     if (response.status === 200) {
-      form.name = '';
-      form.email = '';
-      form.password = '';
-      await router.push('/');
+      console.log("fridge created")
+      //todo: do something
+      router.push("/")
     }
   } catch (error: any) {
-    errorMessage.value = error.response.data || 'An error occurred.';
-    catchError.value = true;
+    errorMessage.value = error.response;
+    console.error(error.response);
   }
 };
 
@@ -63,27 +54,13 @@ const sendForm = async () => {
 <style scoped>
 
 
-.divider{
-  width: 100%;
-  height: 2px;
-  background-color: gray;
-  margin: 20px 0;
-}
-
-h1{
-  color: white;
-  text-align: center;
-  font-size: 40px;
-  font-weight: 300;
-}
 
 .form {
   width: 400px;
   height: fit-content;
-  padding: 0 40px 40px 40px;
+  background: white;
+  padding: 0 20px 20px;
   border-radius: 15px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border: solid 2px #dcdbdb;
 }
 
 .input-container {

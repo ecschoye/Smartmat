@@ -138,7 +138,6 @@ export default defineComponent({
       this.refridgeratorStore.setSelectedRefrigerator(value);
     },
     async handleLogOut() {
-      console.log('logging out')
         try{
           const response = await postLogOut();
           const userStore = useUserStore();

@@ -44,7 +44,14 @@ async function deleteNotification(notification : GroceryNotification){
   catch(error : any){
       console.log("Error occured while deleting notification" + error);
   }
-  }
+}
+
+definePageMeta({
+  "requiresAuth": true,
+  middleware: [
+    'auth',
+  ],
+})
 
 onMounted(() => {
   loadNotifications();

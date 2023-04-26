@@ -15,3 +15,6 @@ export const createGrocery = async (refrigeratorId : number, grocery : Grocery) 
     return axiosInstance.post(`/api/refrigerator/grocery/new/${refrigeratorId}`, grocery);
 }
 
+export const getGroceriesDTOs = async () : Promise<AxiosResponse> => {
+    return axiosInstance.get("/api/refrigerator/grocery/allDTOs");
+}

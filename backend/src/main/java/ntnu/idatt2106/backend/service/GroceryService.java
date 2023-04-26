@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Service for handling operations regarding groceries inside a refrigerator
@@ -237,5 +238,10 @@ public class GroceryService {
 
     public List<Grocery> getAllGroceries() {
         return groceryRepository.findAll();
+    }
+
+    public List<GroceryDTO> getAllGroceriesDTO() {
+        List<Grocery> groceries = groceryRepository.findAll();
+        return groceries.stream().map(GroceryDTO::new).collect(Collectors.toList());
     }
 }

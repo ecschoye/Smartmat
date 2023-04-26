@@ -12,9 +12,9 @@ import ntnu.idatt2106.backend.exceptions.NotificationException;
 import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.GroceryNotificationDTO;
 import ntnu.idatt2106.backend.model.dto.response.ErrorResponse;
+import ntnu.idatt2106.backend.service.CookieService;
 import ntnu.idatt2106.backend.service.JwtService;
 import ntnu.idatt2106.backend.service.NotificationService;
-import ntnu.idatt2106.backend.service.SessionStorageService;
 import ntnu.idatt2106.backend.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +33,7 @@ public class NotificationController {
     private final NotificationService notificationService;
     private final UserService userService;
     private final JwtService jwtService;
-    private final SessionStorageService sessionStorageService;
+    private final CookieService cookieService;
 
     Logger logger = Logger.getLogger(NotificationController.class.getName());
 
@@ -48,7 +48,7 @@ public class NotificationController {
     @GetMapping("/all")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getAll(HttpServletRequest request) throws NotificationException {
-        User user = userService.findByEmail(jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)));
+        User user = userService.findByEmail(jwtService.extractUsername(cookieService.extractTokenFromCookie(request)));
         logger.info("Received request for retrieving a users notifications");
         try{
             List<GroceryNotificationDTO> notifications = notificationService.getNotifications(user);
@@ -61,7 +61,7 @@ public class NotificationController {
     @PostMapping("/delete")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> delete(HttpServletRequest request, @RequestBody long id) throws NotificationException {
-        User user = userService.findByEmail(jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)));
+        User user = userService.findByEmail(jwtService.extractUsername(cookieService.extractTokenFromCookie(request)));
         GroceryNotificationDTO deleted = notificationService.deleteNotification(user, id);
         if(deleted.getId() == id){
             return ResponseEntity.ok(deleted);

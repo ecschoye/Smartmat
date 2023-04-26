@@ -4,7 +4,8 @@ package ntnu.idatt2106.backend.service;
 import ntnu.idatt2106.backend.exceptions.NotificationException;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.GroceryNotificationDTO;
-import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.enums.FridgeRole;
+import ntnu.idatt2106.backend.model.enums.UserRole;
 import ntnu.idatt2106.backend.repository.GroceryNotificationRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
@@ -209,7 +210,7 @@ public class NotificationServiceTest {
     @Test
     void deleteNotification_Unauthorized() {
         long notifId = 1L;
-        User otherUser = new User("123", "otherUser", "123@123.no", "123", Role.USER);
+        User otherUser = new User("123", "otherUser", "123@123.no", "123", UserRole.USER);
         GroceryNotification groceryNotification = new GroceryNotification(1, otherUser, refrigeratorGrocery, (long)3, false);
         Mockito.when(groceryNotificationRepository.findById(notifId))
                 .thenReturn(Optional.of(groceryNotification));

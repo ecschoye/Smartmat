@@ -1,9 +1,6 @@
 package ntnu.idatt2106.backend;
 
-import ntnu.idatt2106.backend.exceptions.OldPasswordDoesNotMatchException;
-import ntnu.idatt2106.backend.exceptions.SaveException;
-import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
-import ntnu.idatt2106.backend.exceptions.UserAlreadyExistsException;
+import ntnu.idatt2106.backend.exceptions.*;
 import org.apache.http.auth.InvalidCredentialsException;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpStatus;
@@ -75,5 +72,12 @@ public class GlobalExceptionHandler {
         logger.info("An unexpected error occurred: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("An unexpected error occurred: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(NotificationException.class)
+    public ResponseEntity<String> handleNotificationException(NotificationException ex){
+        logger.info("An error uccured when retrieving notifications" + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("An unexpected error occurred when retrieving notifications: " + ex.getMessage());
     }
 }

@@ -7,7 +7,7 @@ import ntnu.idatt2106.backend.model.authentication.AuthenticationRequest;
 import ntnu.idatt2106.backend.model.authentication.RegisterRequest;
 import ntnu.idatt2106.backend.model.dto.response.AuthenticationResponse;
 import ntnu.idatt2106.backend.model.dto.response.RegisterResponse;
-import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.enums.UserRole;
 import ntnu.idatt2106.backend.repository.UserRepository;
 import org.apache.http.auth.InvalidCredentialsException;
 import org.slf4j.Logger;
@@ -50,13 +50,13 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .name(request.getName())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .userRole(UserRole.USER)
                 .build();
 
         if (repository.findByEmail(user.getEmail()).isPresent())
             throw new UserAlreadyExistsException("Email is already in use");
         repository.save(user);
-        return RegisterResponse.builder().userId(user.getId()).userRole(String.valueOf(user.getRole())).message("User registered successfully!").build();
+        return RegisterResponse.builder().userId(user.getId()).userRole(String.valueOf(user.getUserRole())).message("User registered successfully!").build();
     }
 
 

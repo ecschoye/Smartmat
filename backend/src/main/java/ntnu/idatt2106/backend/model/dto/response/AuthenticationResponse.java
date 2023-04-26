@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthenticationResponse {
 
-
+    @JsonIgnore
     private String token;
     private String userId;
     private String userRole;

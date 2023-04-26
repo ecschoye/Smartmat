@@ -1,5 +1,5 @@
 <template>
-<header class="bg-white dark:bg-zinc-500" style="min-width:360px;">
+<header class="navbar-light-color dark:navbar-dark-color" style="min-width:360px;">
   <nav class="mx-auto flex max-w-7xl items-center p-6 lg:px-8" aria-label="Global">
     <NuxtLink sm:hidden :to="localePath('/')" class="-m-1.5 p-1.5 mr-4 hidden pointer-events-none sm:block sm:pointer-events-auto">
       <span class="sr-only">SmartMat</span>
@@ -16,7 +16,7 @@
         <FridgeSelector :fridges="fridges" @selected-fridge-event="handleFridgeEvent" />
         <button type="button"
           class="inline-flex items-center hover:cursor-pointer
-              dark:bg-zinc-600 sm:text-md outline:none
+              dark:button-dark-color sm:text-md outline:none
             transition duration-150 hover:border-emerald-400
             p-2 pressed:border-emerald-600 border-l border-gray-300">
           <img class="h-5 w-auto mr-2 pt-0.5" src="../assets/icons/settings.png" alt="">
@@ -44,9 +44,9 @@
           </div>
  
           <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-            <HeadlessMenuItems class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white dark:bg-zinc-600 shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <HeadlessMenuItems class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white dark:button-dark-color shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none">
               <div class="py-1">
-                <HeadlessMenuItem v-slot="{ active }">
+                <HeadlessMenuItem v-if="loggedIn" v-slot="{ active }">
                   <NuxtLink :to="localePath('/my-profile')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-900', 'block px-4 py-2 text-sm']">{{t('edit_profile')}}</NuxtLink>
                 </HeadlessMenuItem>
                 <HeadlessMenuItem v-slot="{ active }">
@@ -54,7 +54,7 @@
                 </HeadlessMenuItem>
                 <!-- TODO: delete post -->
                 <form method="POST" action="#">
-                  <HeadlessMenuItem v-slot="{ active }">
+                  <HeadlessMenuItem v-if="loggedIn" v-slot="{ active }">
                     <button @click="handleLogOut()" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900' : 'text-gray-700 dark:text-gray-900', 'block w-full px-4 py-2 text-left text-sm']">{{t('log_out')}}</button>
                   </HeadlessMenuItem>
                 </form>
@@ -91,9 +91,9 @@
               <NuxtLink :to="localePath('#')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('statistics')}}</NuxtLink>
             </div>
             <div class="py-6">
-              <NuxtLink :to="localePath('/my-profile')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('edit_profile')}}</NuxtLink>
+              <NuxtLink v-if="loggedIn" :to="localePath('/my-profile')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('edit_profile')}}</NuxtLink>
+              <NuxtLink v-else :to="localePath('/login')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('log_in')}}</NuxtLink>
               <NuxtLink :to="localePath('/system-settings')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('system_settings')}}</NuxtLink>
-              <a href="#" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400">{{t('log_in')}}</a>
             </div>
           </div>
         </div>
@@ -102,7 +102,7 @@
   </header>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import {computed, defineComponent} from 'vue'
 import {useUserStore} from "~/store/userStore";
 import { useNotificationStore } from "~/store/notificationStore";
 
@@ -112,13 +112,15 @@ export default defineComponent({
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
     const {locale, locales, t} = useI18n()
+    const loggedIn = computed(() => userStore.isLoggedIn);
     return {
       isLoggedIn: userStore.isLoggedIn,
       userStore,
       locale,
       locales,
       notificationStore,
-      t
+      t,
+      loggedIn
     }
   },
   data() {

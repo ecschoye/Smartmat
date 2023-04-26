@@ -15,14 +15,12 @@ import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.model.dto.response.UserStatusResponse;
 import ntnu.idatt2106.backend.model.enums.AuthenticationState;
 import ntnu.idatt2106.backend.model.User;
-import ntnu.idatt2106.backend.service.AuthenticationService;
+import ntnu.idatt2106.backend.service.CookieService;
 import ntnu.idatt2106.backend.service.JwtService;
-import ntnu.idatt2106.backend.service.SessionStorageService;
 import ntnu.idatt2106.backend.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,7 +35,7 @@ public class MyProfileController {
     private final JwtService jwtService;
     private final UserService userService;
 
-    private final SessionStorageService sessionStorageService;
+    private final CookieService cookieService;
     private final PasswordEncoder passwordEncoder;
 
     Logger logger = Logger.getLogger(MyProfileController.class.getName());
@@ -63,7 +61,7 @@ public class MyProfileController {
     public ResponseEntity<?> getMyProfile(HttpServletRequest request) throws Exception {
         try{
 
-            User user = userService.findByEmail(jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)));
+            User user = userService.findByEmail(jwtService.extractUsername(cookieService.extractTokenFromCookie(request)));
             logger.info("Recieved request to get user profile on user: "+ user.getEmail() + ".");
 
             UserProfileDTO userProfileDTO = new UserProfileDTO(user.getName(), user.getEmail());
@@ -91,23 +89,19 @@ public class MyProfileController {
             })
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/user-status")
-    public ResponseEntity<?> getUserStatus(HttpServletRequest request) {
+    public ResponseEntity<?> getUserStatus( HttpServletRequest request) throws Exception {
         try {
-            String jwt = sessionStorageService.extractTokenFromAuthorizationHeader(request); // Extract the token from the cookie
-            if (jwt == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Unauthorized"));
-            }
+            String jwt = cookieService.extractTokenFromCookie(request); // Extract the token from the cookie
+
             User user = userService.findByEmail(jwtService.extractUsername(jwt)); // Pass the JWT token instead of the request
-            AuthenticationState state = jwtService.getAuthenticationState(jwt, user);
-            String role = user.getRole().toString();
+            logger.info("Received request to get user status on user: "+ user.getEmail() + ".");
 
-            logger.info("Received request to get user status on user: "+ user.getEmail() + " " + user.getName() + ". User status: " + state + " Role: " + role);
-
-            UserStatusResponse userStatusResponse = new UserStatusResponse(state, role);
+            //use builder to build a userStatusResponse
+            UserStatusResponse userStatusResponse = UserStatusResponse.builder().userId(user.getId()).role(user.getUserRole().toString()).state(jwtService.getAuthenticationState(jwt, user)).build();
 
             return ResponseEntity.ok(userStatusResponse);
-        } catch (TokenExpiredException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Token expired"));
+        } catch (Exception e) {
+            throw new Exception(e);
         }
     }
 
@@ -139,7 +133,7 @@ public class MyProfileController {
         logger.info("Received request to edit profile; name: " + userProfileDTO.getName() + ", email: " + userProfileDTO.getEmail() + "");
 
         try {
-            User user = userService.findByEmail(jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)));
+            User user = userService.findByEmail(jwtService.extractUsername(cookieService.extractTokenFromCookie(request)));
             user.setName(userProfileDTO.getName());
             user.setEmail(userProfileDTO.getEmail());
             userService.save(user);
@@ -178,15 +172,16 @@ public class MyProfileController {
             })
     public ResponseEntity<?> changePassword(@RequestBody PasswordChangeDTO passwordChangeDTO, HttpServletRequest request) throws OldPasswordDoesNotMatchException {
 
+        String jwt = cookieService.extractTokenFromCookie(request);
 
-        User user = userService.findByEmail(jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)));
+        User user = userService.findByEmail(jwtService.extractUsername(jwt));
 
         if (!passwordEncoder.matches(passwordChangeDTO.getOldPassword(), user.getPassword())) {
-            logger.info("Received request to change password for user: " + jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)) + " but old password does not match current password.");
+            logger.info("Received request to change password for user: " + jwtService.extractUsername(jwt) + " but old password does not match current password.");
             throw new OldPasswordDoesNotMatchException("Old password does not match current password.");
         }
 
-        logger.info("Received request to change password for user: " + jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)) + ". Password changed successfully.");
+        logger.info("Received request to change password for user: " + jwtService.extractUsername(jwt) + ". Password changed successfully.");
         user.setPassword(passwordEncoder.encode(passwordChangeDTO.getNewPassword()));
         userService.save(user);
 

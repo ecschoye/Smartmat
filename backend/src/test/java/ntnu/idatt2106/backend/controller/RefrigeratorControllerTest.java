@@ -8,7 +8,7 @@ import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
-import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
 import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
@@ -23,14 +23,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -103,7 +101,7 @@ public class RefrigeratorControllerTest {
         MemberResponse memberResponse = new MemberResponse();
         memberResponse.setUsername(user.getUsername());
         memberResponse.setRefrigeratorId(refrigerator.getId());
-        memberResponse.setRole(Role.USER);
+        memberResponse.setRole(FridgeRole.USER);
 
         when(refrigeratorService.addMember(request)).thenReturn(memberResponse);
 
@@ -268,11 +266,11 @@ public class RefrigeratorControllerTest {
     @DisplayName("Test editRole with null response from service")
     public void testEditRoleWithNullResponse() throws SaveException, UserNotFoundException {
         MemberRequest memberRequest = new MemberRequest();
-        memberRequest.setRole(Role.SUPERUSER);
+        memberRequest.setRole(FridgeRole.SUPERUSER);
         memberRequest.setRefrigeratorId(1L);
         memberRequest.setUserName("test_user");
 
-        when(refrigeratorService.setRole(memberRequest)).thenReturn(null);
+        when(refrigeratorService.setFridgeRole(memberRequest)).thenReturn(null);
 
         ResponseEntity<MemberResponse> response = refrigeratorController.editRole(memberRequest);
 
@@ -283,16 +281,16 @@ public class RefrigeratorControllerTest {
     @DisplayName("Test editRole with valid input")
     public void testEditRoleWithValidInput() throws SaveException, UserNotFoundException {
         MemberRequest memberRequest = new MemberRequest();
-        memberRequest.setRole(Role.SUPERUSER);
+        memberRequest.setRole(FridgeRole.SUPERUSER);
         memberRequest.setRefrigeratorId(1L);
         memberRequest.setUserName("test_user");
 
         MemberResponse expectedResult = new MemberResponse();
-        expectedResult.setRole(Role.SUPERUSER);
+        expectedResult.setRole(FridgeRole.SUPERUSER);
         expectedResult.setRefrigeratorId(1L);
         expectedResult.setUsername("test_user");
 
-        when(refrigeratorService.setRole(memberRequest)).thenReturn(expectedResult);
+        when(refrigeratorService.setFridgeRole(memberRequest)).thenReturn(expectedResult);
 
         ResponseEntity<MemberResponse> response = refrigeratorController.editRole(memberRequest);
         MemberResponse actualResult = response.getBody();

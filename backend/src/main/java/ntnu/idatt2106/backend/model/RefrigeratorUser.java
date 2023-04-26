@@ -6,9 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ntnu.idatt2106.backend.model.enums.Role;
-
-import java.util.Date;
+import ntnu.idatt2106.backend.model.enums.FridgeRole;
 
 @Data
 @Builder
@@ -24,10 +22,9 @@ public class RefrigeratorUser {
     @Schema(description = "The id for the connection between refrigerator and user, automatically generated")
     private long id;
 
-    @Column(name = "role")
+    @Column(name = "fridge_role")
     @Schema(description = "Role the member has in the refrigerator")
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    private FridgeRole fridgeRole;
 
     @ManyToOne
     @JoinColumn(name = "refrigeratorId")

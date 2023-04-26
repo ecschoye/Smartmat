@@ -49,5 +49,13 @@
   "who_is_smart_mat_for": "Hvem er SmartMat for?",
   "who_is_smart_mat_for_response": "SmartMat er en applikasjon som er spesielt egnet for husholdninger som ønsker å redusere matsvinn, spare penger og ta vare på miljøet. Med SmartMat-appen kan brukerne enkelt planlegge og organisere måltidene sine på en mer effektiv måte.",
   "who_is_behind_smart_mat": "Hvem står bak SmartMat?",
-  "who_is_behind_smart_mat_response": "SmartMat er et produkt som er utviklet og designet av Scrum Team 5 under Systemutvikling 2 våren 2023. Teamet består av en gruppe dedikerte studenter ved NTNU som samarbeider tett for å utvikle og forbedre applikasjonen."
+  "who_is_behind_smart_mat_response": "SmartMat er et produkt som er utviklet og designet av Scrum Team 5 under Systemutvikling 2 våren 2023. Teamet består av en gruppe dedikerte studenter ved NTNU som samarbeider tett for å utvikle og forbedre applikasjonen.",
+  "search_here": "Søk her...",
+  "all_groceries": "Alle varer",
+  "category": "Kategori",
+  "new_grocery": "Ny matvare",
+  "remove": "Fjern",
+  "use": "Bruk",
+  "throw_away": "Kast"
+
 }

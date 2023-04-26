@@ -221,7 +221,7 @@ public class RefrigeratorServiceTest {
 
     @Test
     @DisplayName("Test setFridgeRole with valid input")
-    public void testSetRoleWithValidInput() throws UserNotFoundException, UnauthorizedException {
+    public void testSetRoleWithValidInput() throws UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
         User user = new User();
         user.setId("test_user_id");
         user.setEmail("test_user@test.com");
@@ -268,6 +268,53 @@ public class RefrigeratorServiceTest {
     }
 
     @Test
+    @DisplayName("Test setFridgeRole with invalid privilege")
+    public void testSetRoleWithInvalidPrivilege() throws UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
+        User user = new User();
+        user.setId("test_user_id");
+        user.setEmail("test_user@test.com");
+        user.setPassword("test_password");
+        User superUser = new User();
+        superUser.setId("super_user_id");
+        superUser.setEmail("super_user@test.com");
+        superUser.setPassword("super_password");
+
+        Refrigerator refrigerator = new Refrigerator();
+        refrigerator.setId(1L);
+        refrigerator.setName("test_refrigerator");
+
+        RefrigeratorUser refrigeratorUser = new RefrigeratorUser();
+        refrigeratorUser.setId(1L);
+        refrigeratorUser.setUser(user);
+        refrigeratorUser.setRefrigerator(refrigerator);
+
+        RefrigeratorUser refrigeratorSuper = new RefrigeratorUser();
+        refrigeratorSuper.setId(1L);
+        refrigeratorSuper.setUser(superUser);
+        refrigeratorSuper.setRefrigerator(refrigerator);
+        refrigeratorSuper.setFridgeRole(FridgeRole.USER);
+
+        when(userRepository.findByEmail(user.getUsername())).thenReturn(Optional.of(user));
+        when(userRepository.findByEmail(superUser.getUsername())).thenReturn(Optional.of(superUser));
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id("test_user_id", 1L)).thenReturn(Optional.of(refrigeratorUser));
+        when(refrigeratorUserRepository.save(Mockito.any(RefrigeratorUser.class))).thenReturn(refrigeratorUser);
+        when(userRepository.findByEmail(user.getUsername())).thenReturn(Optional.of(user));
+        when(refrigeratorRepository.findById(refrigerator.getId())).thenReturn(Optional.of(refrigerator));
+        when(refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(superUser.getId(), refrigerator.getId())).thenReturn(Optional.of(refrigeratorSuper));
+        when(refrigeratorUserRepository.findByUserAndRefrigerator(user,refrigerator)).thenReturn(Optional.of(refrigeratorUser));
+
+        FridgeRole newFridgeRole = FridgeRole.SUPERUSER;
+
+        MemberRequest memberRequest = new MemberRequest();
+        memberRequest.setFridgeRole(newFridgeRole);
+        memberRequest.setRefrigeratorId(1L);
+        memberRequest.setSuperName(superUser.getUsername());
+        memberRequest.setUserName(user.getUsername());
+
+        Assertions.assertThrows(UnauthorizedException.class, () -> refrigeratorService.setFridgeRole(memberRequest));
+    }
+
+    @Test
     @DisplayName("Test setFridgeRole with invalid user ")
     public void testSetRoleWithInvalidUser() {
         Mockito.when(userRepository.findByEmail("nonexistent_user@test.com")).thenReturn(Optional.empty());
@@ -283,7 +330,7 @@ public class RefrigeratorServiceTest {
 
     @Test
     @DisplayName("Test setFridgeRole with invalid refrigerator user")
-    public void testSetRoleWithInvalidRefrigeratorUser() throws UserNotFoundException, UnauthorizedException {
+    public void testSetRoleWithInvalidRefrigeratorUser() throws UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
         User user = new User();
         user.setId("test_user_id");
         user.setEmail("test_user@test.com");

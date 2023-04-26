@@ -225,7 +225,7 @@ public class RefrigeratorService {
      * @param request Request containing data about the super, user, role
      * @return Response containing user affected, and given role.
      */
-    public MemberDTO setFridgeRole(MemberRequest request) throws UserNotFoundException, UnauthorizedException {
+    public MemberDTO setFridgeRole(MemberRequest request) throws UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
         //Get Users
         logger.debug("Getting superuser");
         User superUser = getUser(request.getSuperName());
@@ -233,40 +233,32 @@ public class RefrigeratorService {
         User user = getUser(request.getUserName());
 
         //Get refrigerator
-        Optional<Refrigerator> refrigerator = refrigeratorRepository.findById(request.getRefrigeratorId());
-        if(refrigerator.isEmpty()){
-            logger.warn("Member could not be added: Could not find refrigerator");
-            return null;
-        }
+        Refrigerator refrigerator = getRefrigerator(request.getRefrigeratorId());
 
         //Check privileges
         FridgeRole privileges = getFridgeRoleById(request.getRefrigeratorId(),superUser.getId());
         if(privileges != FridgeRole.SUPERUSER){
             logger.warn("Member could not be added: User does not have super-privileges");
-            return null;
+            throw new UnauthorizedException("User does not have super-privileges");
         }
 
         RefrigeratorUser ru = new RefrigeratorUser();
         ru.setFridgeRole(FridgeRole.USER);
-        ru.setRefrigerator(refrigerator.get());
+        ru.setRefrigerator(refrigerator);
         ru.setUser(user);
 
         //Check if we have an instance from before
-        Optional<RefrigeratorUser> existingRu = refrigeratorUserRepository.findByUserAndRefrigerator(user,refrigerator.get());
+        Optional<RefrigeratorUser> existingRu = refrigeratorUserRepository.findByUserAndRefrigerator(user,refrigerator);
         if(existingRu.isPresent()){
-            if(request.getFridgeRole() != null){
-                existingRu.get().setFridgeRole(request.getFridgeRole());
-                try {
-                    logger.info("Checks validated, updating refrigeratorUser");
-                    RefrigeratorUser result = refrigeratorUserRepository.save(existingRu.get());
-                    return new MemberDTO(result);
-                } catch (Exception e) {
-                    logger.warn("Member could not be updated: Failed to update refrigeratoruser");
-                    return null;
-                }
+            existingRu.get().setFridgeRole(request.getFridgeRole());
+            try {
+                logger.info("Checks validated, updating refrigeratorUser");
+                RefrigeratorUser result = refrigeratorUserRepository.save(existingRu.get());
+                return new MemberDTO(result);
+            } catch (Exception e) {
+                logger.warn("Member could not be updated: Failed to update refrigeratoruser");
+                return null;
             }
-            else logger.warn("Updating role failed: request role is null");
-
         }
         else logger.warn("Updating role failed: user is not a member");
         return null;

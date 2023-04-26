@@ -292,7 +292,7 @@ public class RefrigeratorControllerTest {
 
     @Test
     @DisplayName("Test editRole with null response from service")
-    public void testEditRoleWithNullResponse() throws SaveException, UserNotFoundException, UnauthorizedException {
+    public void testEditRoleWithNullResponse() throws SaveException, UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
         MemberRequest memberRequest = new MemberRequest();
         memberRequest.setFridgeRole(FridgeRole.SUPERUSER);
         memberRequest.setRefrigeratorId(1L);
@@ -307,7 +307,7 @@ public class RefrigeratorControllerTest {
 
     @Test
     @DisplayName("Test editRole with valid input")
-    public void testEditRoleWithValidInput() throws SaveException, UserNotFoundException, UnauthorizedException {
+    public void testEditRoleWithValidInput() throws SaveException, UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
         MemberRequest memberRequest = new MemberRequest();
         memberRequest.setFridgeRole(FridgeRole.SUPERUSER);
         memberRequest.setRefrigeratorId(1L);

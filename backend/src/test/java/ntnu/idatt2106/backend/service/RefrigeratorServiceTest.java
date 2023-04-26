@@ -571,7 +571,7 @@ public class RefrigeratorServiceTest {
         when(refrigeratorUserRepository.findByRefrigeratorId(id)).thenReturn(new ArrayList<>());
 
         // Act
-        RefrigeratorDTO result = refrigeratorService.getRefrigeratorById(id);
+        RefrigeratorDTO result = refrigeratorService.getRefrigeratorDTOById(id);
 
         // Assert
         Assertions.assertNotNull(result);
@@ -588,6 +588,6 @@ public class RefrigeratorServiceTest {
         when(refrigeratorRepository.existsById(id)).thenReturn(false);
 
         // Act & Assert
-        Assertions.assertThrows(RefrigeratorNotFoundException.class, () -> refrigeratorService.getRefrigeratorById(id));
+        Assertions.assertThrows(RefrigeratorNotFoundException.class, () -> refrigeratorService.getRefrigeratorDTOById(id));
     }
 }

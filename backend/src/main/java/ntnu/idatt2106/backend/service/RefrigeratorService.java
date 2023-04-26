@@ -109,7 +109,7 @@ public class RefrigeratorService {
      * @param id Id of refrigerator to get
      * @return RefrigeratorResponse
      */
-    public RefrigeratorDTO getRefrigeratorById(long id) throws EntityNotFoundException, RefrigeratorNotFoundException {
+    public RefrigeratorDTO getRefrigeratorDTOById(long id) throws EntityNotFoundException, RefrigeratorNotFoundException {
         Refrigerator refrigerator = getRefrigerator(id);
         List<MemberDTO> users = new ArrayList<>();
         refrigeratorUserRepository.findByRefrigeratorId(id)

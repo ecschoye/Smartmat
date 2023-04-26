@@ -136,7 +136,7 @@ public class RefrigeratorController {
     public ResponseEntity<RefrigeratorDTO> getById(@Valid @PathVariable long refrigeratorId) {
         logger.info("Received request for refrigerator with id: {}", refrigeratorId);
         try {
-            RefrigeratorDTO result = refrigeratorService.getRefrigeratorById(refrigeratorId);
+            RefrigeratorDTO result = refrigeratorService.getRefrigeratorDTOById(refrigeratorId);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (EntityNotFoundException | RefrigeratorNotFoundException e) {
             logger.warn("Refrigerator could not be found");

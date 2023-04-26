@@ -142,7 +142,7 @@ public class RefrigeratorControllerTest {
         long refrigeratorId = 1L;
         RefrigeratorDTO expectedResponse = new RefrigeratorDTO();
 
-        when(refrigeratorService.getRefrigeratorById(anyLong())).thenReturn(expectedResponse);
+        when(refrigeratorService.getRefrigeratorDTOById(anyLong())).thenReturn(expectedResponse);
 
         // Act
         ResponseEntity<RefrigeratorDTO> responseEntity = refrigeratorController.getById(refrigeratorId);
@@ -158,7 +158,7 @@ public class RefrigeratorControllerTest {
         // Arrange
         long refrigeratorId = 1L;
 
-        when(refrigeratorService.getRefrigeratorById(anyLong())).thenThrow(new EntityNotFoundException("Refrigerator does not exist"));
+        when(refrigeratorService.getRefrigeratorDTOById(anyLong())).thenThrow(new EntityNotFoundException("Refrigerator does not exist"));
 
         // Act
         ResponseEntity<RefrigeratorDTO> responseEntity = refrigeratorController.getById(refrigeratorId);

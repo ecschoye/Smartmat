@@ -9,9 +9,11 @@ import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Grocery;
 import ntnu.idatt2106.backend.model.User;
+import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.response.ErrorResponse;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
+import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.service.CookieService;
 import ntnu.idatt2106.backend.service.GroceryService;
 import ntnu.idatt2106.backend.service.JwtService;
@@ -23,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -67,11 +70,21 @@ public class GroceryController {
         return ResponseEntity.ok(list);
     }
 
+    @PostMapping("/new/{refrigeratorId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> createNewGrocery(HttpServletRequest request, @RequestBody GroceryDTO grocery, @Valid @PathVariable long refrigeratorGroceryId) throws Exception {
+        try{
+            String jwt = cookieService.extractTokenFromCookie(request);
+            User user = userService.findByEmail(jwtService.extractUsername(jwt)); // Pass the JWT token instead of the request
+            logger.info("Received request to create grocery from user: "+ user.getEmail() + ".");
+            List<GroceryDTO> dtos = new ArrayList<>();
+            dtos.add(grocery);
+            groceryService.addGrocery(new SaveGroceryListRequest(refrigeratorGroceryId, dtos), request);
+            return ResponseEntity.ok(grocery);
+        }catch(Exception e){
+            throw new Exception(e);
+        }
 
 
-
-
-
-
-
+    }
 }

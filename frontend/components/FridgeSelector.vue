@@ -63,10 +63,7 @@
 </template>
 
 <script lang="ts">
-interface Fridge {
-  id: number; 
-  name: string; 
-}
+import { Refrigerator } from "~/types/RefrigeratorType";
 
 export default {
   data () {
@@ -79,7 +76,7 @@ export default {
   }, 
   props : {
     fridges : {
-      type: Array as () => Fridge[], 
+      type: Array as () => Refrigerator[], 
       required: true, 
       default: undefined
     }
@@ -97,7 +94,7 @@ export default {
   watch: {
     selected : function(newVal, oldVal) {
       if(newVal !== oldVal && newVal !== undefined) {
-        this.$emit("selectedFridgeEvent", newVal.id)
+        this.$emit("selectedFridgeEvent", newVal)
       }
     }
   }

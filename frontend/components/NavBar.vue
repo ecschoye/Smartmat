@@ -13,7 +13,7 @@
     </div>
     <div class="flex flex-1 space-x-2 items-center justify-end">
       <div class="p-0.5 rounded-md ring-1 min-w-fit ring-inset ring-gray-300 dark:ring-zinc-600 inline-flex items-center">
-        <FridgeSelector :fridges="fridges" @selected-fridge-event="handleFridgeEvent" />
+        <FridgeSelector :fridges="refridgeratorStore.getRefrigerators" @selected-fridge-event="handleFridgeEvent" />
         <button type="button"
           class="inline-flex items-center hover:cursor-pointer
               dark:button-dark-color sm:text-md outline:none
@@ -103,6 +103,7 @@
 import {computed, defineComponent} from 'vue'
 import {useUserStore} from "~/store/userStore";
 import { useNotificationStore } from "~/store/notificationStore";
+import { useRefridgeratorStore } from "~/store/refridgeratorStore";
 import {postLogOut} from "~/service/httputils/authentication/AuthenticationService";
 
 export default defineComponent({
@@ -110,6 +111,7 @@ export default defineComponent({
   setup() {
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
+    const refridgeratorStore = useRefridgeratorStore();
     const {locale, locales, t} = useI18n()
     const loggedIn = computed(() => userStore.isLoggedIn);
     return {
@@ -119,29 +121,12 @@ export default defineComponent({
       locales,
       notificationStore,
       t,
-      loggedIn
+      loggedIn,
+      refridgeratorStore
     }
   },
   data() {
     return {
-      fridges: [
-        {
-          id: 1,
-          name: 'Hjemme'
-        },
-        {
-          id: 2,
-          name: 'Hytta'
-        },
-        {
-          id: 3,
-          name: 'Kjartans Hus',
-        },
-        {
-          id: 4,
-          name: 'Kaspers Lagoon',
-        }
-      ],
       selected: -1,
       loggedInStatus: true,
       mobileMenuOpen: false
@@ -150,6 +135,7 @@ export default defineComponent({
   methods: {
     handleFridgeEvent(value: any) {
       this.selected = value;
+      this.refridgeratorStore.setSelectedRefrigerator(value);
     },
     async handleLogOut() {
       console.log('logging out')

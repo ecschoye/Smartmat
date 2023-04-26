@@ -91,7 +91,7 @@ public class GroceryService {
      * @return the added grocery
      * @throws SaveException if save fails
      */
-    private Grocery addCustomGrocery(GroceryDTO groceryDTO) throws SaveException {
+    public Grocery addCustomGrocery(GroceryDTO groceryDTO) throws SaveException {
         Grocery newGrocery = new Grocery();
         newGrocery.setName(groceryDTO.getName());
         SubCategory subCategory = subCategoryRepository.findById(groceryDTO.getId())

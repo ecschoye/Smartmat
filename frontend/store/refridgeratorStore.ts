@@ -5,222 +5,9 @@ import { Refrigerator } from '~/types/RefrigeratorType';
 
 export const useRefridgeratorStore = defineStore('refridgerator', {
     state: () => ({
-        groceries : [
-            {
-               id:1,
-               physicalExpireDate:new Date('2023-04-25'),
-               refrigerator: {
-                id:1,
-                name:'Hjemme',
-                address: 'test 123'
-               },
-               grocery: {
-                id: 1,
-                name: "Banan",
-                description: 'Gul banan',
-                groceryExpiryDate: 14,
-                subCategory: {
-                    id:1,
-                    name: 'Gul frukt',
-                        category:{
-                            id:1,
-                            name: 'Frukt'
-                        }
-                   },
-               }
-            },
-            {
-                id:2,
-                physicalExpireDate:new Date('2023-04-25'),
-                refrigerator: {
-                    id:1,
-                    name:'Hjemme',
-                    address: 'test 123'
-                   },
-                grocery: {
-                 id: 1,
-                 name: "Banan",
-                 description: 'Gul banan',
-                 groceryExpiryDate: 14,
-                 subCategory: {
-                     id:1,
-                     name: 'Gul frukt',
-                     category:{
-                         id:1,
-                         name: 'Frukt'
-                     }
-                    },
-                }
-             },
-             {
-                id:3,
-                physicalExpireDate:new Date('2023-04-25'),
-                refrigerator: {
-                    id:1,
-                    name:'Hjemme',
-                    address: 'test 123'
-                   },
-                grocery: {
-                 id: 1,
-                 name: "Banan",
-                 description: 'Gul banan',
-                 groceryExpiryDate: 14,
-                 subCategory: {
-                     id:1,
-                     name: 'Gul frukt',
-                     category:{
-                         id:1,
-                         name: 'Frukt'
-                     }
-                    },
-                }
-             },
-             {
-                id:4,
-                physicalExpireDate:new Date('2023-04-25'),
-                refrigerator: {
-                    id:1,
-                    name:'Hjemme',
-                    address: 'test 123'
-                   },
-                grocery: {
-                 id: 1,
-                 name: "Banan",
-                 description: 'Gul banan',
-                 groceryExpiryDate: 14,
-                 subCategory: {
-                     id:1,
-                     name: 'Gul frukt',
-                     category:{
-                         id:1,
-                         name: 'Frukt'
-                     }
-                    },
-                }
-             },
-             {
-                id:5,
-                physicalExpireDate:new Date('2023-04-25'),
-                refrigerator: {
-                    id:1,
-                    name:'Hjemme',
-                    address: 'test 123'
-                   },
-                grocery: {
-                 id: 2,
-                 name: "Melk",
-                 description: 'Melk 2% fett',
-                 groceryExpiryDate: 4,
-                 subCategory: {
-                     id:2,
-                     name: 'Melk',
-                     category:{
-                         id:2,
-                         name: 'Melkeprodukter'
-                     }
-                    },
-                }
-             },
-             {
-                id:6,
-                physicalExpireDate:new Date('2023-04-25'),
-                refrigerator: {
-                    id:1,
-                    name:'Hjemme',
-                    address: 'test 123'
-                   },
-                grocery: {
-                 id: 2,
-                 name: "Melk",
-                 description: 'Melk 2% fett',
-                 groceryExpiryDate: 4,
-                 subCategory: {
-                     id:2,
-                     name: 'Melk',
-                     category:{
-                         id:2,
-                         name: 'Melkeprodukter'
-                     }
-                    },
-                }
-             },
-             {
-                id:7,
-                physicalExpireDate:new Date('2023-12-12'),
-                refrigerator: {
-                    id:1,
-                    name:'Hjemme',
-                    address: 'test 123'
-                   },
-                grocery: {
-                 id: 2,
-                 name: "Melk",
-                 description: 'Melk 2% fett',
-                 groceryExpiryDate: 4,
-                 subCategory: {
-                     id:2,
-                     name: 'Melk',
-                     category:{
-                         id:2,
-                         name: 'Melkeprodukter'
-                     }
-                    },
-                }
-             },
-             {
-                id:8,
-                physicalExpireDate:new Date('2023-12-12'),
-                refrigerator: {
-                    id:1,
-                    name:'Hjemme',
-                    address: 'test 123'
-                   },
-                grocery: {
-                 id: 2,
-                 name: "Melk",
-                 description: 'Melk 2% fett',
-                 groceryExpiryDate: 4,
-                 subCategory: {
-                     id:2,
-                     name: 'Melk',
-                     category:{
-                         id:2,
-                         name: 'Melkeprodukter'
-                     }
-                    },
-                }
-             },
-             {
-                id:12,
-                physicalExpireDate: new Date('2023-12-12'),
-                refrigerator: {
-                    id:1,
-                    name:'Hjemme',
-                    address: 'test 123'
-                   },
-                grocery: {
-                 id: 4,
-                 name: "Indrefilet",
-                 description: 'Indrefilet av okse, mager',
-                 groceryExpiryDate: 28,
-                 subCategory: {
-                     id:3,
-                     name: 'Kjøtt av okse',
-                     category:{
-                         id:3,
-                         name: 'Kjøtt'
-                     }
-                    },
-                }
-             }, 
-       ] as GroceryEntity[],
-       refrigerators : {
-        type : Array as () => Refrigerator[],
-        required : true
-        },   
-        selectedRefrigerator : {
-            type : Object as () => Refrigerator,
-        },
+        groceries : [] as GroceryEntity[],
+        refrigerators : [] as Refrigerator[],   
+        selectedRefrigerator : {} as Refrigerator,
         categories : [
             {
 
@@ -238,6 +25,12 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
         getSelectedGrocery : (state) : GroceryEntity => {
             return state.selectedGrocery;
         },
+        getSelectedRefrigerator : (state) : Refrigerator => {
+            return state.selectedRefrigerator;
+        },
+        getRefrigerators: (state) : Refrigerator[] => {
+            return state.refrigerators;
+        }
     },
     actions : {
         removeGrocery(search : GroceryEntity){
@@ -253,6 +46,20 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
                 return true;
             }
             return false;
+        },
+        setGroceries(newGroceries : GroceryEntity[]){
+            this.groceries = newGroceries;
+        },
+        setSelectedRefrigerator(refrigeratorSearch : Refrigerator) : boolean {
+            const index = this.refrigerators.findIndex(refrigerator => refrigerator.id === refrigeratorSearch.id);
+            if(index !== -1){
+                this.selectedRefrigerator = refrigeratorSearch;
+                return true;
+            }
+            return false;
+        },
+        setRefrigerators(newFridges : Refrigerator[]){
+            this.refrigerators = newFridges;
         }
     }
 

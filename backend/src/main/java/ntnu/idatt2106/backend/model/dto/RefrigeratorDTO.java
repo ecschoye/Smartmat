@@ -1,5 +1,6 @@
 package ntnu.idatt2106.backend.model.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class RefrigeratorDTO {
     private long id;
+    @NotNull
     private String name;
     private String address;
     private List<MemberDTO> members;

@@ -10,6 +10,7 @@ import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
+import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.MemberDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
@@ -18,10 +19,12 @@ import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.service.CookieService;
 import ntnu.idatt2106.backend.service.JwtService;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
+import ntnu.idatt2106.backend.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +35,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 
-import java.lang.reflect.Member;
-import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,8 @@ public class RefrigeratorController {
 
     private final CookieService cookieService;
 
+    private final UserService userService;
+
     private final JwtService jwtService;
 
     Logger logger = LoggerFactory.getLogger(RefrigeratorController.class);
@@ -59,11 +62,11 @@ public class RefrigeratorController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/members/edit-role")
-    public ResponseEntity<MemberDTO> editRole(@Valid @RequestBody MemberRequest memberRequest) {
+    public ResponseEntity<MemberDTO> editRole(@Valid @RequestBody MemberRequest memberRequest, HttpServletRequest httpRequest) {
         logger.info("Received request to edit member role in refrigerator");
         MemberDTO result;
         try {
-            result = refrigeratorService.setFridgeRole(memberRequest);
+            result = refrigeratorService.setFridgeRole(memberRequest, httpRequest);
             if (result == null) throw new Exception();
         } catch (Exception e) {
             logger.error("Could not edit role");
@@ -80,11 +83,11 @@ public class RefrigeratorController {
             @ApiResponse(responseCode = "500", description = "Failed to add member")
     })
     @PostMapping("/members/new")
-    public ResponseEntity<MemberDTO> newMember(@Valid @RequestBody MemberRequest memberRequest) throws SaveException {
+    public ResponseEntity<MemberDTO> newMember(@Valid @RequestBody MemberRequest memberRequest, HttpServletRequest httpRequest) throws SaveException {
         logger.info("Received request to add new member to refrigerator");
         MemberDTO result;
         try {
-            result = refrigeratorService.addMember(memberRequest);
+            result = refrigeratorService.addMember(memberRequest, httpRequest);
             if (result == null) throw new Exception();
         } catch (Exception e) {
             throw new SaveException("Failed to add member");
@@ -103,21 +106,11 @@ public class RefrigeratorController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/members/remove")
-    public ResponseEntity<SuccessResponse> removeMember(@Valid @RequestBody RemoveMemberRequest memberRequest) {
+    public ResponseEntity<SuccessResponse> removeMember(@Valid @RequestBody RemoveMemberRequest memberRequest, HttpServletRequest httpRequest) throws Exception {
         logger.info("Received request to remove member from refrigerator");
-        try{
-            refrigeratorService.removeUserFromRefrigerator(memberRequest);
-            logger.info("Member removed successfully");
-            return new ResponseEntity<>(new SuccessResponse("Member removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
-        } catch (AccessDeniedException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        } catch (LastSuperuserException e) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        } catch(EntityNotFoundException e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch(Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        refrigeratorService.removeUserFromRefrigerator(memberRequest, httpRequest);
+        logger.info("Member removed successfully");
+        return new ResponseEntity<>(new SuccessResponse("Member removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
     @Operation(summary = "Create a new refrigerator")
@@ -126,14 +119,12 @@ public class RefrigeratorController {
             @ApiResponse(responseCode = "500", description = "Failed to create refrigerator")
     })
     @PostMapping("/new")
-    public ResponseEntity<Refrigerator> newRefrigerator(@Valid @RequestBody RefrigeratorDTO refrigerator, HttpServletRequest request) throws SaveException {
+    public ResponseEntity<Refrigerator> newRefrigerator(@Valid @RequestBody RefrigeratorDTO refrigerator, HttpServletRequest httpRequest) throws SaveException {
         logger.info("Received request to create refrigerator for refrigerator");
-        Refrigerator result = refrigeratorService.convertToEntity(refrigerator);
+        Refrigerator result;
 
-        String jwt = cookieService.extractTokenFromCookie(request);
-        String email = jwtService.extractUsername(jwt);
         try {
-            result = refrigeratorService.save(result, email);
+            result = refrigeratorService.save(refrigerator, httpRequest);
             if (result == null) throw new Exception();
         } catch (Exception e) {
             throw new SaveException("Failed to create refrigerator");
@@ -149,47 +140,36 @@ public class RefrigeratorController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @DeleteMapping("/delete/{refrigeratorId}/{username}")
-    public ResponseEntity<SuccessResponse> deleteRefrigerator(@Valid @PathVariable int refrigeratorId, @PathVariable String username) {
-        try {
-            refrigeratorService.forceDeleteRefrigerator(username,refrigeratorId);
-            logger.info("Member removed successfully");
-            return new ResponseEntity<>(new SuccessResponse("Member removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
-        } catch (AccessDeniedException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        } catch(EntityNotFoundException e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch(Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    @DeleteMapping("/delete/{refrigeratorId}/")
+    public ResponseEntity<SuccessResponse> deleteRefrigerator(@Valid @PathVariable int refrigeratorId, HttpServletRequest httpRequest) throws Exception {
+        refrigeratorService.forceDeleteRefrigerator(refrigeratorId, httpRequest);
+        logger.info("Member removed successfully");
+        return new ResponseEntity<>(new SuccessResponse("Member removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
-    @GetMapping("/user/{userName}")
-    public ResponseEntity<List<Refrigerator>> getAllByUser(@Valid @PathVariable String userName){
+    @GetMapping("/user")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<Refrigerator>> getAllByUser(HttpServletRequest request){
         logger.info("Received request for all refrigerators by user");
         try {
-            List<Refrigerator> result = refrigeratorService.getAllByUser(userName);
+            List<Refrigerator> result = refrigeratorService.getAllByUser(request);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
 
-    @Operation(summary = "Get all refrigerators by username")
+    @Operation(summary = "Get all refrigerators by user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of refrigerators fetched successfully", content = @Content(schema = @Schema(implementation = Refrigerator.class))),
             @ApiResponse(responseCode = "204", description = "No content")
     })
     @GetMapping("/{refrigeratorId}")
-    public ResponseEntity<RefrigeratorDTO> getById(@Valid @PathVariable long refrigeratorId) {
+    public ResponseEntity<RefrigeratorDTO> getById(@Valid @PathVariable long refrigeratorId, HttpServletRequest httpServletRequest) throws UserNotFoundException, RefrigeratorNotFoundException {
         logger.info("Received request for refrigerator with id: {}", refrigeratorId);
-        try {
-            RefrigeratorDTO result = refrigeratorService.getRefrigeratorDTOById(refrigeratorId);
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } catch (EntityNotFoundException | RefrigeratorNotFoundException e) {
-            logger.warn("Refrigerator could not be found");
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+
+        RefrigeratorDTO result = refrigeratorService.getRefrigeratorDTOById(refrigeratorId, httpServletRequest);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

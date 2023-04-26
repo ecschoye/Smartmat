@@ -1,4 +1,3 @@
-import { Category } from "./CategoryType";
 import { SubCategory } from "./SubCategoryType";
 
 export interface Grocery{

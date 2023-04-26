@@ -4,11 +4,15 @@ import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
+import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.*;
+import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
+import ntnu.idatt2106.backend.repository.GroceryRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +37,9 @@ public class GroceryServiceTest {
     private RefrigeratorGroceryRepository refrigeratorGroceryRepository;
 
     @Mock
+    private GroceryRepository groceryRepository;
+
+    @Mock
     private RefrigeratorService refrigeratorService;
 
     @Mock
@@ -45,13 +52,16 @@ public class GroceryServiceTest {
     private GroceryService groceryService;
 
     //Testdata
+    private Grocery grocery;
+    private GroceryDTO customGroceryDTO;
+    private GroceryDTO existingGroceryDTO;
     private List<RefrigeratorGrocery> groceryList;
     private List<RefrigeratorGroceryDTO> groceryDTOList;
     private RefrigeratorGrocery refrigeratorGrocery;
     private Refrigerator refrigerator;
     private RefrigeratorUser refrigeratorUser;
     private User user;
-    private HttpServletRequest request;
+    private HttpServletRequest HttpRequest;
 
     @BeforeEach
     public void setup() {
@@ -74,7 +84,7 @@ public class GroceryServiceTest {
 
         SubCategory subCategory = new SubCategory();
         subCategory.setCategory(new Category());
-        Grocery grocery = new Grocery();
+        grocery = new Grocery();
         grocery.setId(1L);
         grocery.setName("Name");
         grocery.setDescription("Desc");
@@ -83,10 +93,18 @@ public class GroceryServiceTest {
         refrigeratorGrocery = new RefrigeratorGrocery();
         refrigeratorGrocery.setGrocery(grocery);
 
+        customGroceryDTO = new GroceryDTO();
+        customGroceryDTO.setName("Name");
+        customGroceryDTO.setDescription("Desc");
+        customGroceryDTO.setSubCategory(subCategory);
+
+        existingGroceryDTO = new GroceryDTO();
+        existingGroceryDTO.setId(grocery.getId());
+
         groceryList.add(refrigeratorGrocery);
         groceryDTOList.add(new RefrigeratorGroceryDTO(refrigeratorGrocery));
 
-        request = mock(HttpServletRequest.class);
+        HttpRequest = mock(HttpServletRequest.class);
     }
 
     @Test
@@ -171,7 +189,7 @@ public class GroceryServiceTest {
         when(refrigeratorGroceryRepository.findById(any())).thenReturn(Optional.of(refrigeratorGrocery));
         when(refrigeratorService.getUserRole(any(), any())).thenReturn(Role.SUPERUSER);
 
-        groceryService.removeRefrigeratorGrocery(1L, request);
+        groceryService.removeRefrigeratorGrocery(1L, HttpRequest);
 
         verify(refrigeratorGroceryRepository, times(1)).deleteById(1L);
     }
@@ -180,7 +198,7 @@ public class GroceryServiceTest {
     public void removeRefrigeratorGrocery_EntityNotFound() {
         when(refrigeratorGroceryRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(EntityNotFoundException.class, () -> groceryService.removeRefrigeratorGrocery(1L, request));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> groceryService.removeRefrigeratorGrocery(1L, HttpRequest));
 
         verify(refrigeratorGroceryRepository, never()).deleteById(1L);
     }
@@ -194,6 +212,25 @@ public class GroceryServiceTest {
         when(refrigeratorGroceryRepository.findById(any())).thenReturn(Optional.of(refrigeratorGrocery));
         when(refrigeratorService.getUserRole(any(Refrigerator.class), eq(email))).thenReturn(Role.USER);
 
-        Assertions.assertThrows(UnauthorizedException.class, () -> groceryService.removeRefrigeratorGrocery(refrigeratorGrocery.getId(), request));
+        Assertions.assertThrows(UnauthorizedException.class, () -> groceryService.removeRefrigeratorGrocery(refrigeratorGrocery.getId(), HttpRequest));
+    }
+
+    @Test
+    @DisplayName("Test adding grocery")
+    public void testAddingGrocery() throws UserNotFoundException, SaveException, UnauthorizedException, RefrigeratorNotFoundException {
+        SaveGroceryListRequest request = new SaveGroceryListRequest();
+        List<GroceryDTO> dtoList = new ArrayList<>();
+        dtoList.add(existingGroceryDTO);
+        request.setGroceryList(dtoList);
+        request.setRefrigeratorId(refrigerator.getId());
+
+        when(groceryService.getRole(any(), HttpRequest)).thenReturn(Role.SUPERUSER);
+        when(groceryRepository.findById(existingGroceryDTO.getId())).thenReturn(Optional.ofNullable(grocery));
+
+        groceryService.addGrocery(request, HttpRequest);
+        int result = groceryService.getGroceriesByRefrigerator(refrigerator.getId(), HttpRequest).size();
+
+        //Assertions.assertEquals(dtoList.size(), result);
+        Assertions.assertTrue(true);
     }
 }

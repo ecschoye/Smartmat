@@ -11,17 +11,22 @@ import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Grocery;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
+import ntnu.idatt2106.backend.model.SubCategory;
+import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.enums.Role;
-import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
+import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.repository.GroceryRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
+import ntnu.idatt2106.backend.repository.SubCategoryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,14 +37,73 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GroceryService {
 
+    private static final Role ADD_PRIVILEGE = Role.SUPERUSER;
+    private static final Role REMOVE_PRIVILEGE = Role.SUPERUSER;
+
     private final Logger logger = LoggerFactory.getLogger(GroceryService.class);
 
     private final CookieService cookieService;
     private final JwtService jwtService;
-
-    private final RefrigeratorGroceryRepository refGroceryRepository;
+    private final RefrigeratorGroceryRepository refrigeratorGroceryRepository;
     private final GroceryRepository groceryRepository;
+    private final SubCategoryRepository subCategoryRepository;
     private final RefrigeratorService refrigeratorService;
+
+    /**
+     * Saves a grocery to a refrigerator. If it is a custom
+     * grocery, it gets added to the groceries first.
+     *
+     * @param saveRequest Request to save a number of groceries
+     * @param httpRequest The http request
+     * @throws RefrigeratorNotFoundException If refrigerator not found
+     * @throws UserNotFoundException If user not found
+     * @throws UnauthorizedException If user not authorized to perform action
+     * @throws SaveException If save fails
+     */
+    @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void addGrocery(SaveGroceryListRequest saveRequest, HttpServletRequest httpRequest) throws RefrigeratorNotFoundException, UserNotFoundException, UnauthorizedException, SaveException {
+        Refrigerator refrigerator = refrigeratorService.getRefrigerator(saveRequest.getRefrigeratorId());
+        Role role = getRole(refrigerator, httpRequest);
+        if(role != ADD_PRIVILEGE) throw new UnauthorizedException("User not authorized to add groceries");
+
+        logger.info("Saving grocery list to refrigerator");
+        //Handle each grocery in the list individually based on custom grocery or existing
+        for (GroceryDTO groceryDTO: saveRequest.getGroceryList()) {
+            Grocery grocery;
+            //If custom add custom grocery, else fetch
+            if(groceryDTO.isCustom()) grocery = addCustomGrocery(groceryDTO);
+            else grocery = getGroceryById(groceryDTO.getId());
+
+            //Define refrigerator grocery
+            RefrigeratorGrocery refrigeratorGrocery = new RefrigeratorGrocery();
+            refrigeratorGrocery.setGrocery(grocery);
+            refrigeratorGrocery.setRefrigerator(refrigerator);
+            refrigeratorGrocery.setPhysicalExpireDate(getPhysicalExpireDate(groceryDTO.getGroceryExpiryDays()));
+
+            saveRefrigeratorGrocery(refrigeratorGrocery);
+        }
+    }
+
+    /**
+     * Adds a custom grocery to the grocery list
+     *
+     * @param groceryDTO the data received from request
+     * @return the added grocery
+     * @throws SaveException if save fails
+     */
+    private Grocery addCustomGrocery(GroceryDTO groceryDTO) throws SaveException {
+        Grocery newGrocery = new Grocery();
+        newGrocery.setName(groceryDTO.getName());
+        SubCategory subCategory = subCategoryRepository.findById(groceryDTO.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Subcategory not found by id"));
+        newGrocery.setSubCategory(subCategory);
+        if(groceryDTO.getDescription() != null){
+            newGrocery.setDescription(groceryDTO.getDescription());
+        }
+        newGrocery.setGroceryExpiryDays(groceryDTO.getGroceryExpiryDays());
+
+        return saveGrocery(newGrocery);
+    }
 
     /**
      * Extracts username from cookie
@@ -67,12 +131,23 @@ public class GroceryService {
         Refrigerator refrigerator = refrigeratorService.getRefrigerator(refrigeratorId);
         getRole(refrigerator,request);
 
-        List<RefrigeratorGrocery> groceries = refGroceryRepository.findByRefrigerator(refrigerator);
+        List<RefrigeratorGrocery> groceries = refrigeratorGroceryRepository.findByRefrigerator(refrigerator);
         List<RefrigeratorGroceryDTO> refGroceryDTOS = new ArrayList<>();
         for (RefrigeratorGrocery grocery: groceries) {
             refGroceryDTOS.add(new RefrigeratorGroceryDTO(grocery));
         }
         return refGroceryDTOS;
+    }
+
+    /**
+     * Gets grocery by id
+     *
+     * @param groceryId id of grocery
+     * @return the grocery
+     */
+    public Grocery getGroceryById(long groceryId){
+        return groceryRepository.findById(groceryId)
+                .orElseThrow(() -> new EntityNotFoundException("Existing grocery not found"));
     }
 
     /**
@@ -82,7 +157,7 @@ public class GroceryService {
      * @return the refrigeratorGrocery
      */
     public RefrigeratorGrocery getRefrigeratorGroceryById(long refrigeratorGroceryId) throws EntityNotFoundException{
-        return refGroceryRepository.findById(refrigeratorGroceryId)
+        return refrigeratorGroceryRepository.findById(refrigeratorGroceryId)
                 .orElseThrow(() -> new EntityNotFoundException("refrigeratorGrocery not found"));
     }
 
@@ -103,6 +178,19 @@ public class GroceryService {
     }
 
     /**
+     * Creates a physical expire date by getting todays
+     * date and adding integer number of days
+     *
+     * @param groceryExpiryDays expected shelf life
+     * @return expected expiry date
+     */
+    public Date getPhysicalExpireDate(int groceryExpiryDays) {
+        Calendar calendar = Calendar.getInstance(); // get the current date and time
+        calendar.add(Calendar.DAY_OF_MONTH, groceryExpiryDays); // add groceryExpiryDays to the current date
+        return calendar.getTime();
+    }
+
+    /**
      * Removes a refrigeratorGrocery by id
      *
      * @param refrigeratorGroceryId id
@@ -113,10 +201,10 @@ public class GroceryService {
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
     public void removeRefrigeratorGrocery(long refrigeratorGroceryId, HttpServletRequest request) throws UserNotFoundException, UnauthorizedException, EntityNotFoundException {
         RefrigeratorGrocery refrigeratorGrocery = getRefrigeratorGroceryById(refrigeratorGroceryId);
-        if(getRole(refrigeratorGrocery.getRefrigerator(), request) != Role.SUPERUSER) {
+        if(getRole(refrigeratorGrocery.getRefrigerator(), request) != REMOVE_PRIVILEGE) {
             throw new UnauthorizedException("User does not have permission to remove this grocery");
         }
-        refGroceryRepository.deleteById(refrigeratorGroceryId);
+        refrigeratorGroceryRepository.deleteById(refrigeratorGroceryId);
     }
 
     /**
@@ -125,9 +213,23 @@ public class GroceryService {
      * @param grocery the grocery to be saved
      * @throws SaveException If save fails
      */
-    public void saveGrocery(Grocery grocery) throws SaveException{
+    public Grocery saveGrocery(Grocery grocery) throws SaveException{
         try {
-            groceryRepository.save(grocery);
+            return groceryRepository.save(grocery);
+        } catch (Exception e) {
+            throw new SaveException(e.getMessage());
+        }
+    }
+
+    /**
+     * Saves a refrigerator grocery to the refrigeratorGrocery table
+     *
+     * @param grocery the grocery to be saved
+     * @throws SaveException If save fails
+     */
+    public void saveRefrigeratorGrocery(RefrigeratorGrocery grocery) throws SaveException {
+        try {
+            refrigeratorGroceryRepository.save(grocery);
         } catch (Exception e) {
             throw new SaveException(e.getMessage());
         }

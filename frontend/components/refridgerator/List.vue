@@ -19,8 +19,7 @@
             </li>
          </div>
       </li>
-
-      </ul>
+    </ul>
    <ul v-else class="space-y-1 list-none list-inside">
       <li v-for="(group, index) in groups" :key="index">
          <div @click="toggleGroup(index)">
@@ -40,7 +39,6 @@
 
 <script setup lang="ts">
 import type { GroceryEntity } from '~/types/GroceryEntityType';
-import type { Grocery } from '~/types/GroceryType';
 
     const emit = defineEmits(['popup-height', 'group-closed']);
 

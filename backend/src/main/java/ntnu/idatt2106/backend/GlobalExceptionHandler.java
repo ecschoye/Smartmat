@@ -3,13 +3,14 @@ package ntnu.idatt2106.backend;
 import ntnu.idatt2106.backend.exceptions.*;
 import org.apache.http.auth.InvalidCredentialsException;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.logging.Logger;
 
 /**
  * Global exception handler for the backend API.
@@ -17,7 +18,7 @@ import java.util.logging.Logger;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    Logger logger = Logger.getLogger(GlobalExceptionHandler.class.getName());
+    Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(FileSizeLimitExceededException.class)
     public ResponseEntity<String> handleFileSizeLimitExceededException(FileSizeLimitExceededException ex) {
@@ -60,12 +61,17 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(RefrigeratorNotFoundException.class)
+    public ResponseEntity<String> handleRefrigeratorNotFoundException(RefrigeratorNotFoundException ex) {
+        logger.warn("RefrigeratorNotFoundException thrown: " + ex.getMessage());
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(OldPasswordDoesNotMatchException.class)
     public ResponseEntity<String> handleOldPasswordDoesNotMatchException(OldPasswordDoesNotMatchException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ex.getMessage());
     }
-
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception ex) {

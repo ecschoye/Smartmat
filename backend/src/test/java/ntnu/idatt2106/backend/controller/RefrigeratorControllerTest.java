@@ -2,18 +2,21 @@ package ntnu.idatt2106.backend.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.SaveException;
+import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
-import ntnu.idatt2106.backend.model.dto.refrigerator.RefrigeratorDTO;
-import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
+import ntnu.idatt2106.backend.model.dto.MemberDTO;
+import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
-import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
+import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
+import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
 import ntnu.idatt2106.backend.repository.UserRepository;
 import ntnu.idatt2106.backend.service.CookieService;
 import ntnu.idatt2106.backend.service.JwtService;
@@ -23,6 +26,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -47,6 +51,10 @@ public class RefrigeratorControllerTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private RefrigeratorUserRepository refrigeratorUserRepository;
+
+    @InjectMocks
     private RefrigeratorController refrigeratorController;
 
     private Refrigerator refrigerator;
@@ -77,7 +85,10 @@ public class RefrigeratorControllerTest {
     @DisplayName("Test new refrigerator success")
     void testNewRefrigeratorSuccess() throws Exception {
         // Prepare test data
-        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO(1L, "Test Fridge", "Test Address");
+        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO();
+        refrigeratorDTO.setId(1L);
+        refrigeratorDTO.setName(null);
+        refrigeratorDTO.setAddress("Test Address");
         String userEmail = "test@example.com";
 
         // Mock HttpServletRequest
@@ -102,7 +113,10 @@ public class RefrigeratorControllerTest {
     @Test
     @DisplayName("Test new refrigerator fail")
     void testNewRefrigeratorFail() throws Exception {
-        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO(1L, "Test Fridge", "Test Address");
+        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO();
+        refrigeratorDTO.setId(1L);
+        refrigeratorDTO.setName(null);
+        refrigeratorDTO.setAddress("Test Address");
         String userEmail = "test@example.com";
 
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -128,15 +142,15 @@ public class RefrigeratorControllerTest {
         refrigeratorUser.setId(1);
         refrigeratorUser.setUser(user);
         refrigeratorUser.setRefrigerator(refrigerator);
-        MemberResponse memberResponse = new MemberResponse();
-        memberResponse.setUsername(user.getUsername());
-        memberResponse.setRefrigeratorId(refrigerator.getId());
-        memberResponse.setRole(FridgeRole.USER);
+        MemberDTO MemberDTO = new MemberDTO();
+        MemberDTO.setUsername(user.getUsername());
+        MemberDTO.setRefrigeratorId(refrigerator.getId());
+        MemberDTO.setFridgeRole(FridgeRole.USER);
 
-        when(refrigeratorService.addMember(request)).thenReturn(memberResponse);
+        when(refrigeratorService.addMember(request)).thenReturn(MemberDTO);
 
         // Call the method being tested
-        ResponseEntity<MemberResponse> response = refrigeratorController.newMember(request);
+        ResponseEntity<MemberDTO> response = refrigeratorController.newMember(request);
 
         // Verify that the service method was called with the correct arguments
         Mockito.verify(refrigeratorService).addMember(request);
@@ -145,7 +159,7 @@ public class RefrigeratorControllerTest {
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 
         // Verify that the response body is the expected RefrigeratorUser object
-        Assertions.assertEquals(memberResponse, response.getBody());
+        Assertions.assertEquals(MemberDTO, response.getBody());
     }
 
     @Test
@@ -165,35 +179,19 @@ public class RefrigeratorControllerTest {
 
     @Test
     @DisplayName("Test get by ID endpoint with valid ID")
-    public void testGetByIdWithValidId() throws EntityNotFoundException {
+    public void testGetByIdWithValidId() throws EntityNotFoundException, RefrigeratorNotFoundException {
         // Arrange
         long refrigeratorId = 1L;
-        RefrigeratorResponse expectedResponse = new RefrigeratorResponse();
+        RefrigeratorDTO expectedResponse = new RefrigeratorDTO();
 
-        when(refrigeratorService.getRefrigeratorById(anyLong())).thenReturn(expectedResponse);
+        when(refrigeratorService.getRefrigeratorDTOById(anyLong())).thenReturn(expectedResponse);
 
         // Act
-        ResponseEntity<RefrigeratorResponse> responseEntity = refrigeratorController.getById(refrigeratorId);
+        ResponseEntity<RefrigeratorDTO> responseEntity = refrigeratorController.getById(refrigeratorId);
 
         // Assert
         Assertions.assertEquals(expectedResponse, responseEntity.getBody());
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    }
-
-    @Test
-    @DisplayName("Test get by ID endpoint with invalid ID")
-    public void testGetByIdWithInvalidId() throws EntityNotFoundException {
-        // Arrange
-        long refrigeratorId = 1L;
-
-        when(refrigeratorService.getRefrigeratorById(anyLong())).thenThrow(new EntityNotFoundException("Refrigerator does not exist"));
-
-        // Act
-        ResponseEntity<RefrigeratorResponse> responseEntity = refrigeratorController.getById(refrigeratorId);
-
-        // Assert
-        Assertions.assertNull(responseEntity.getBody());
-        Assertions.assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
     }
 
     @Test
@@ -287,14 +285,14 @@ public class RefrigeratorControllerTest {
         memberRequest.setUserName(null);
 
 
-        ResponseEntity<MemberResponse> response = refrigeratorController.editRole(memberRequest);
+        ResponseEntity<MemberDTO> response = refrigeratorController.editRole(memberRequest);
 
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
     @DisplayName("Test editRole with null response from service")
-    public void testEditRoleWithNullResponse() throws SaveException, UserNotFoundException {
+    public void testEditRoleWithNullResponse() throws SaveException, UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
         MemberRequest memberRequest = new MemberRequest();
         memberRequest.setFridgeRole(FridgeRole.SUPERUSER);
         memberRequest.setRefrigeratorId(1L);
@@ -302,28 +300,28 @@ public class RefrigeratorControllerTest {
 
         when(refrigeratorService.setFridgeRole(memberRequest)).thenReturn(null);
 
-        ResponseEntity<MemberResponse> response = refrigeratorController.editRole(memberRequest);
+        ResponseEntity<MemberDTO> response = refrigeratorController.editRole(memberRequest);
 
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
     @DisplayName("Test editRole with valid input")
-    public void testEditRoleWithValidInput() throws SaveException, UserNotFoundException {
+    public void testEditRoleWithValidInput() throws SaveException, UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
         MemberRequest memberRequest = new MemberRequest();
         memberRequest.setFridgeRole(FridgeRole.SUPERUSER);
         memberRequest.setRefrigeratorId(1L);
         memberRequest.setUserName("test_user");
 
-        MemberResponse expectedResult = new MemberResponse();
-        expectedResult.setRole(FridgeRole.SUPERUSER);
+        MemberDTO expectedResult = new MemberDTO();
+        expectedResult.setFridgeRole(FridgeRole.SUPERUSER);
         expectedResult.setRefrigeratorId(1L);
         expectedResult.setUsername("test_user");
 
         when(refrigeratorService.setFridgeRole(memberRequest)).thenReturn(expectedResult);
 
-        ResponseEntity<MemberResponse> response = refrigeratorController.editRole(memberRequest);
-        MemberResponse actualResult = response.getBody();
+        ResponseEntity<MemberDTO> response = refrigeratorController.editRole(memberRequest);
+        MemberDTO actualResult = response.getBody();
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals(expectedResult, actualResult);

@@ -18,6 +18,12 @@ export const useNotificationStore = defineStore('notification', {
                 notification.refrigeratorGrocery.physicalExpireDate = new Date(Date.parse(notification.refrigeratorGrocery.physicalExpireDate.toString()));
             })
             this.notifications = notifications;
-        }
+        },
+        deleteNotification(notification: GroceryNotification) {
+            const index = this.notifications.findIndex(n => n.id === notification.id);
+            if (index !== -1) {
+              this.notifications.splice(index, 1);
+            }
+          }
     }
 });

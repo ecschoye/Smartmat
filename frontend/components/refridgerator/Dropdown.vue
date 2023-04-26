@@ -1,20 +1,20 @@
 <template>
-  <div class="h-1/2 py-6 flex flex-col items-center justify-center sm:py-12 overflow-hidden">
+  <div class="h-1/2 py-6 flex flex-col items-center justify-center dark:bg-zinc-400 sm:py-6 overflow-hidden">
     <input
       @click="open = !open"
       type="search"
       id="input"
       v-model="selectedGroceryName"
-      placeholder="Search here..."
-      class="py-3 w-1/2 rounded shadow font-thin focus:outline-none focus:shadow-lg focus:shadow-slate-200 duration-100 shadow-gray-100"
+      :placeholder="$t('search_here')"
+      class="py-3 w-11/12 sm:w-2/3 rounded-xl shadow font-thin focus:outline-none focus:shadow-lg focus:shadow-slate-200 duration-100 shadow-gray-300"
     />
-    <div id="listwrapper" class="relative overflow-hidden border border-black rounded-lg bg-gray-200 w-1/2">
+    <div id="listwrapper" class="relative mt-2 overflow-hidden border border-black rounded-lg bg-gray-200 w-11/12 sm:w-2/3">
       <ul v-if="open" @click="open = !open" class="h-72">
         <div v-for="grocery in filteredGroceries" :key="grocery.id">
           <li
             @click="setGrocery(grocery)"
             :class="{ 'bg-orange-200': grocery.id === selectedGrocery?.id && grocery.name === selectedGroceryName }"
-            class="w-full text-gray-700 bg-gray-200 p-4 mt-2 rounded-lg hover:bg-gray-300"
+            class="w-full text-gray-700 bg-gray-200 p-2 mt-2 rounded-lg hover:bg-gray-300"
           >
             {{ grocery.name }} - {{ grocery.description }}
           </li>
@@ -27,6 +27,8 @@
 <script setup lang="ts">
 import { getGroceries } from "~/service/httputils/GroceryService";
 import { Grocery } from "~/types/GroceryType";
+
+const { t } = useI18n();
 
 let open = ref(false);
 

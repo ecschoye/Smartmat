@@ -1,40 +1,42 @@
 <template>
-   <ul v-if="listingType === 'category'" class="space-y-1 list-none list-inside">
+  <div>
+    <ul v-if="listingType === 'category'" class="space-y-1 list-none list-inside">
       <li v-for="(category, index) in categorizedGroups" :key="index">
-         <div @click="toggleCategory(index)">
-            {{ category.name }} ({{ categorySum (category) }})
-            <i :class="['fa', isCategoryOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
-         </div>
-         <div v-if="isCategoryOpen(index)">
-            <li v-for="(group, index2) in Array.from(category.groups.values())" :key="index2">
-               <div @click="toggleCategoryGroup(index, index2)">
-                  {{ group.name }} ({{ group.groceries.length }})
-                  <i :class="['fa', isCategoryGroupOpen(index,index2) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
-               </div>
-               <div v-if="isCategoryGroupOpen(index,index2)">
-                  <li>
-                     <RefridgeratorFridgeElement @element-height="(payload) => emitHeight(payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.id />
-                  </li>
-               </div>
-            </li>
-         </div>
+        <div @click="toggleCategory(index)">
+          {{ category.name }} ({{ categorySum (category) }})
+          <i :class="['fa', isCategoryOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+        </div>
+        <ul v-if="isCategoryOpen(index)" class="space-y-1 pl-2 w-11/12 list-none list-inside bg-gray-200 dark:bg-zinc-300 rounded-xl">
+          <li v-for="(group, index2) in Array.from(category.groups.values())" :key="index2">
+            <div @click="toggleCategoryGroup(index, index2)">
+              - {{ group.name }} ({{ group.groceries.length }})
+              <i :class="['fa', isCategoryGroupOpen(index,index2) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+            </div>
+            <ul v-if="isCategoryGroupOpen(index,index2)" class="space-y-1 list-none list-inside">
+              <li>
+                <RefridgeratorFridgeElement @element-height="(payload) => emitHeight(payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.id />
+              </li>
+            </ul>
+          </li>
+        </ul>
       </li>
     </ul>
-   <ul v-else class="space-y-1 list-none list-inside">
+    <ul v-else class="space-y-1 list-none list-inside">
       <li v-for="(group, index) in groups" :key="index">
-         <div @click="toggleGroup(index)">
-            {{ group.name }} ({{ group.groceries.length }})
-            <i :class="['fa', isOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
-         </div>
-         <div v-if="isOpen(index)">
-            <li>
-               <RefridgeratorFridgeElement @element-height="(payload) => emitHeight(payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.grocery.id />
-            </li>
-         </div>
+        <div @click="toggleGroup(index)" class="pl-2 hover:bg-gray-300 dark:hover:bg-zinc-500 rounded-xl">
+          {{ group.name }} ({{ group.groceries.length }})
+          <i :class="['fa', isOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+        </div>
+        <ul v-if="isOpen(index)" class="space-y-1 list-none list-inside">
+          <li>
+            <RefridgeratorFridgeElement @element-height="(payload) => emitHeight(payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.grocery.id />
+          </li>
+        </ul>
       </li>
-   </ul>
-
+    </ul>
+  </div>
 </template>
+
 
 
 <script setup lang="ts">
@@ -136,7 +138,6 @@ import type { GroceryEntity } from '~/types/GroceryEntityType';
       const categoryMap = new Map<number, Category>();
       for(const grocery of props.groceries){
          const category = grocery.grocery.subCategory.category;
-         console.log(category);
          if(!categoryMap.has(category.id)){
             categoryMap.set(category.id, {name:category.name, groups : new Map<number, Group>()});
          }

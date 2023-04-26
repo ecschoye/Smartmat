@@ -25,6 +25,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 
 import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
@@ -45,6 +52,12 @@ public class RefrigeratorController {
 
     Logger logger = LoggerFactory.getLogger(RefrigeratorController.class);
 
+
+    @Operation(summary = "Edit role of a refrigerator member")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Role edited successfully", content = @Content(schema = @Schema(implementation = MemberResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/members/edit-role")
     public ResponseEntity<MemberResponse> editRole(@Valid @RequestBody MemberRequest memberRequest) {
         logger.info("Received request to edit member role in refrigerator");
@@ -60,6 +73,12 @@ public class RefrigeratorController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+
+    @Operation(summary = "Add a new member to a refrigerator")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Member added successfully", content = @Content(schema = @Schema(implementation = MemberResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Failed to add member")
+    })
     @PostMapping("/members/new")
     public ResponseEntity<MemberResponse> newMember(@Valid @RequestBody MemberRequest memberRequest) throws SaveException {
         logger.info("Received request to add new member to refrigerator");
@@ -74,6 +93,15 @@ public class RefrigeratorController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+
+    @Operation(summary = "Remove a member from a refrigerator")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Member removed successfully", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "409", description = "Conflict"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/members/remove")
     public ResponseEntity<SuccessResponse> removeMember(@Valid @RequestBody RemoveMemberRequest memberRequest) {
         logger.info("Received request to remove member from refrigerator");
@@ -92,6 +120,11 @@ public class RefrigeratorController {
         }
     }
 
+    @Operation(summary = "Create a new refrigerator")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Refrigerator created successfully", content = @Content(schema = @Schema(implementation = Refrigerator.class))),
+            @ApiResponse(responseCode = "500", description = "Failed to create refrigerator")
+    })
     @PostMapping("/new")
     public ResponseEntity<Refrigerator> newRefrigerator(@Valid @RequestBody RefrigeratorDTO refrigerator, HttpServletRequest request) throws SaveException {
         logger.info("Received request to create refrigerator for refrigerator");
@@ -109,6 +142,13 @@ public class RefrigeratorController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @Operation(summary = "Delete a refrigerator by ID and username")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Refrigerator deleted successfully", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @DeleteMapping("/delete/{refrigeratorId}/{username}")
     public ResponseEntity<SuccessResponse> deleteRefrigerator(@Valid @PathVariable int refrigeratorId, @PathVariable String username) {
         try {
@@ -135,6 +175,11 @@ public class RefrigeratorController {
         }
     }
 
+    @Operation(summary = "Get all refrigerators by username")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of refrigerators fetched successfully", content = @Content(schema = @Schema(implementation = Refrigerator.class))),
+            @ApiResponse(responseCode = "204", description = "No content")
+    })
     @GetMapping("/{refrigeratorId}")
     public ResponseEntity<RefrigeratorResponse> getById(@Valid @PathVariable long refrigeratorId) {
         logger.info("Received request for refrigerator with id: {}", refrigeratorId);

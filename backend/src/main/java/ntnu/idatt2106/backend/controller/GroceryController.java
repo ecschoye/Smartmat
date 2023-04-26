@@ -66,12 +66,4 @@ public class GroceryController {
         }
         return ResponseEntity.ok(list);
     }
-
-
-
-
-
-
-
-
 }

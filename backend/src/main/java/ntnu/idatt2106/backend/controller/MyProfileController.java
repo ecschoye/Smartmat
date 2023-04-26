@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-@Tag(name = "Login Controller", description = "Controller to handle user login")
+@Tag(name = "My profile controller", description = "Controller to handle user login")
 public class MyProfileController {
     private final JwtService jwtService;
     private final UserService userService;

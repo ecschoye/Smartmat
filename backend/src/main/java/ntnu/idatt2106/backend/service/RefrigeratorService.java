@@ -1,6 +1,5 @@
 package ntnu.idatt2106.backend.service;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
@@ -9,7 +8,7 @@ import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
-import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
 import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
@@ -41,7 +40,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RefrigeratorService {
 
-    private final Role DEFAULT_USER_ROLE = Role.USER;
+    private final FridgeRole DEFAULT_USER_Fridge_ROLE = FridgeRole.USER;
 
     @Autowired
     private final RefrigeratorRepository refrigeratorRepository;
@@ -75,14 +74,14 @@ public class RefrigeratorService {
         }
 
         //Check privileges
-        Role privileges = getRoleById(superUser.getId(), request.getRefrigeratorId());
-        if(privileges != Role.SUPERUSER){
+        FridgeRole privileges = getFridgeRole(superUser.getId(), request.getRefrigeratorId());
+        if(privileges != FridgeRole.SUPERUSER){
             logger.warn("Member could not be added: User does not have super-privileges");
             return null;
         }
 
         RefrigeratorUser ru = new RefrigeratorUser();
-        ru.setRole(DEFAULT_USER_ROLE);
+        ru.setFridgeRole(DEFAULT_USER_Fridge_ROLE);
         ru.setRefrigerator(refrigerator.get());
         ru.setUser(user);
 
@@ -136,11 +135,11 @@ public class RefrigeratorService {
      * @param refrigeratorId Refrigerator associated
      * @return the Enum role
      */
-    protected Role getRoleById(String userId, long refrigeratorId){
+    protected FridgeRole getFridgeRole(String userId, long refrigeratorId){
         Optional<RefrigeratorUser> refrigeratorUser = refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(userId, refrigeratorId);
 
         if(refrigeratorUser.isPresent()){
-            return refrigeratorUser.get().getRole();
+            return refrigeratorUser.get().getFridgeRole();
         }
         logger.warn("Superuser not present in refrigerator");
         return null;
@@ -188,12 +187,12 @@ public class RefrigeratorService {
                 .orElseThrow(() -> new EntityNotFoundException("User not a member"));
 
         logger.info("Performing member removal");
-        if(userRole.getRole() == Role.USER && user.getId().equals(superUser.getId())){
+        if(userRole.getFridgeRole() == FridgeRole.USER && user.getId().equals(superUser.getId())){
             logger.debug("User deleting himself");
             refrigeratorUserRepository.delete(userRole);
         }
-        else if(userRole.getRole() == Role.SUPERUSER){
-            List<RefrigeratorUser> superUsers = refrigeratorUserRepository.findByRefrigeratorIdAndRole(refrigerator.getId(),Role.SUPERUSER);
+        else if(userRole.getFridgeRole() == FridgeRole.SUPERUSER){
+            List<RefrigeratorUser> superUsers = refrigeratorUserRepository.findByRefrigeratorIdAndFridgeRole(refrigerator.getId(), FridgeRole.SUPERUSER);
             if(superUsers.size() <= 1) {
                 throw new LastSuperuserException("Last superuser in refrigerator");
             }
@@ -202,7 +201,7 @@ public class RefrigeratorService {
             }
         }
         else {
-            if(superuserRole.getRole() != Role.SUPERUSER) {
+            if(superuserRole.getFridgeRole() != FridgeRole.SUPERUSER) {
                 logger.warn("User attempted to remove another user(!)");
                 throw new AccessDeniedException("User cannot remove other users");
             }
@@ -244,7 +243,7 @@ public class RefrigeratorService {
         RefrigeratorUser refrigeratorUser = new RefrigeratorUser();
         refrigeratorUser.setRefrigerator(refrigeratorResult);
         refrigeratorUser.setUser(user);
-        refrigeratorUser.setRole(Role.SUPERUSER);
+        refrigeratorUser.setFridgeRole(FridgeRole.SUPERUSER);
         try {
             refrigeratorUserRepository.save(refrigeratorUser);
         } catch (Exception e) {
@@ -260,7 +259,7 @@ public class RefrigeratorService {
      * @param request Request containing data about the super, user, role
      * @return Response containing user affected, and given role.
      */
-    public MemberResponse setRole(MemberRequest request) throws UserNotFoundException {
+    public MemberResponse setFridgeRole(MemberRequest request) throws UserNotFoundException {
         //Get Users
         logger.debug("Getting superuser");
         User superUser = getUser(request.getSuperName());
@@ -275,14 +274,14 @@ public class RefrigeratorService {
         }
 
         //Check privileges
-        Role privileges = getRoleById(superUser.getId(), request.getRefrigeratorId());
-        if(privileges != Role.SUPERUSER){
+        FridgeRole privileges = getFridgeRole(superUser.getId(), request.getRefrigeratorId());
+        if(privileges != FridgeRole.SUPERUSER){
             logger.warn("Member could not be added: User does not have super-privileges");
             return null;
         }
 
         RefrigeratorUser ru = new RefrigeratorUser();
-        ru.setRole(Role.USER);
+        ru.setFridgeRole(FridgeRole.USER);
         ru.setRefrigerator(refrigerator.get());
         ru.setUser(user);
 
@@ -290,7 +289,7 @@ public class RefrigeratorService {
         Optional<RefrigeratorUser> existingRu = refrigeratorUserRepository.findByUserAndRefrigerator(user,refrigerator.get());
         if(existingRu.isPresent()){
             if(request.getRole() != null){
-                existingRu.get().setRole(request.getRole());
+                existingRu.get().setFridgeRole(request.getRole());
                 try {
                     logger.info("Checks validated, updating refrigeratorUser");
                     RefrigeratorUser result = refrigeratorUserRepository.save(existingRu.get());
@@ -322,7 +321,7 @@ public class RefrigeratorService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         RefrigeratorUser superuserRole = refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(superUser.getId(), refrigeratorId)
                 .orElseThrow(() -> new EntityNotFoundException("User not a member"));
-        if(superuserRole.getRole() != Role.SUPERUSER){
+        if(superuserRole.getFridgeRole() != FridgeRole.SUPERUSER){
             logger.error("Failed to delete refrigerator: User not superuser");
             throw new AccessDeniedException("Failed to delete refrigerator: User not superuser");
         }

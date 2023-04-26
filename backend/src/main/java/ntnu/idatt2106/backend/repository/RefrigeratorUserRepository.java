@@ -3,7 +3,7 @@ package ntnu.idatt2106.backend.repository;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
-import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -14,7 +14,7 @@ public interface RefrigeratorUserRepository extends JpaRepository<RefrigeratorUs
 
     Optional<RefrigeratorUser> findByUserAndRefrigerator(User user, Refrigerator refrigerator);
 
-    List<RefrigeratorUser> findByRefrigeratorIdAndRole(long refrigeratorId, Role role);
+    List<RefrigeratorUser> findByRefrigeratorIdAndFridgeRole(long refrigeratorId, FridgeRole fridgeRole);
 
     List<RefrigeratorUser> findByRefrigeratorId(long refrigeratorId);
 

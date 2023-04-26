@@ -28,7 +28,7 @@
          </div>
          <div v-if="isOpen(index)">
             <li>
-               <RefridgeratorFridgeElement @element-height="(payload) => emitHeight(payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.id />
+               <RefridgeratorFridgeElement @element-height="(payload) => emitHeight(payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.grocery.id />
             </li>
          </div>
       </li>
@@ -135,7 +135,8 @@ import type { GroceryEntity } from '~/types/GroceryEntityType';
    const categorizedGroups = computed<Category[]>(() => {
       const categoryMap = new Map<number, Category>();
       for(const grocery of props.groceries){
-         const category = grocery.grocery.subCategory.category
+         const category = grocery.grocery.subCategory.category;
+         console.log(category);
          if(!categoryMap.has(category.id)){
             categoryMap.set(category.id, {name:category.name, groups : new Map<number, Group>()});
          }

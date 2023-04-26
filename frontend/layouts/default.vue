@@ -24,7 +24,7 @@
 </style>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 import { useUserStore } from "~/store/userStore";
 
 const userStore = useUserStore();
@@ -33,6 +33,13 @@ onMounted(() => {
   if (sessionStorage.getItem("user") != null){
     userStore.checkAuthStatus();
   }
+  document.body.classList.add('bg-light-color');
+  document.body.classList.add('dark:bg-dark-color');
+});
+
+onUnmounted(() => {
+  document.body.classList.remove('bg-light-color');
+  document.body.classList.remove('dark:bg-dark-color');
 });
 
 </script>

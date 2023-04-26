@@ -22,14 +22,10 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
                 subCategory: {
                     id:1,
                     name: 'Gul frukt',
-                    subCategory : {
-                        id:1,
-                        name:'Frukt',
                         category:{
                             id:1,
                             name: 'Frukt'
                         }
-                    }
                    },
                }
             },
@@ -195,98 +191,6 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
                 }
              },
              {
-                id:9,
-                physicalExpireDate:new Date('2023-12-12'),
-                refrigerator: {
-                    id:1,
-                    name:'Hjemme',
-                    address: 'test 123'
-                   },
-                grocery: {
-                 id: 3,
-                 name: "Eple",
-                 description: 'Grønn',
-                 groceryExpiryDate: 14,
-                 subCategory: {
-                     id:2,
-                     name: 'Grønn frukt',
-                     category:{
-                         id:1,
-                         name: 'Frukt'
-                     }
-                    },
-                }
-             },
-             {
-                id:9,
-                physicalExpireDate:new Date('2023-12-12'),
-                refrigerator: {
-                    id:1,
-                    name:'Hjemme',
-                    address: 'test 123'
-                   },
-                grocery: {
-                 id: 3,
-                 name: "Eple",
-                 description: 'Grønn',
-                 groceryExpiryDate: 14,
-                 subCategory: {
-                     id:2,
-                     name: 'Grønn frukt',
-                     category:{
-                         id:1,
-                         name: 'Frukt'
-                     }
-                    },
-                }
-             },
-             {
-                id:10,
-                physicalExpireDate:new Date('2023-12-12'),
-                refrigerator: {
-                    id:1,
-                    name:'Hjemme',
-                    address: 'test 123'
-                   },
-                grocery: {
-                 id: 1,
-                 name: "Banan",
-                 description: 'Gul banan',
-                 groceryExpiryDate: 14,
-                 subCategory: {
-                     id:1,
-                     name: 'Gul frukt',
-                     category:{
-                         id:1,
-                         name: 'Frukt'
-                     }
-                    },
-                }
-             },
-             {
-                id:11,
-                physicalExpireDate:new Date('2023-12-12'),
-                refrigerator: {
-                    id:1,
-                    name:'Hjemme',
-                    address: 'test 123'
-                   },
-                grocery: {
-                 id: 1,
-                 name: "Banan",
-                 description: 'Gul banan',
-                 groceryExpiryDate: 14,
-                 subCategory: {
-                     id:1,
-                     name: 'Gul frukt',
-                     category:{
-                         id:1,
-                         name: 'Frukt'
-                     }
-                    },
-                }
-             },
-             {
                 id:12,
                 physicalExpireDate: new Date('2023-12-12'),
                 refrigerator: {
@@ -307,24 +211,6 @@ export const useRefridgeratorStore = defineStore('refridgerator', {
                          name: 'Kjøtt'
                      }
                     },
-                }
-             }, 
-             {
-                id:13,
-                physicalExpireDate: new Date('2023-12-12'),
-                grocery: {
-                 id: 4,
-                 name: "Indrefilet",
-                 description: 'Indrefilet av okse, mager',
-                 groceryExpiryDate: 28,
-                 subCategory: {
-                    id:3,
-                    name: 'Kjøtt av okse',
-                    category:{
-                        id:3,
-                        name: 'Kjøtt'
-                    }
-                   },
                 }
              }, 
        ] as GroceryEntity[],

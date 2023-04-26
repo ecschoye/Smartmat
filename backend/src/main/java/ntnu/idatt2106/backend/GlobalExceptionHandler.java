@@ -1,9 +1,6 @@
 package ntnu.idatt2106.backend;
 
-import ntnu.idatt2106.backend.exceptions.OldPasswordDoesNotMatchException;
-import ntnu.idatt2106.backend.exceptions.SaveException;
-import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
-import ntnu.idatt2106.backend.exceptions.UserAlreadyExistsException;
+import ntnu.idatt2106.backend.exceptions.*;
 import org.apache.http.auth.InvalidCredentialsException;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.http.HttpStatus;
@@ -51,6 +48,24 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(ShoppingListNotFound.class)
+    public ResponseEntity<String> handleShoppingListNotFound(Exception ex) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ShoppingCartNotFound.class)
+    public ResponseEntity<String> handleShoppingCartNotFound(Exception ex) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(SubCategoryNotFound.class)
+    public ResponseEntity<String> handleSubCategoryNotFound(Exception ex) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(ex.getMessage());
+    }
+
     @ExceptionHandler(SaveException.class)
     public ResponseEntity<String> handleSaveException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -68,6 +83,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ex.getMessage());
     }
+
 
 
     @ExceptionHandler(Exception.class)

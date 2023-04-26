@@ -5,7 +5,6 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
 import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.SaveException;
@@ -36,8 +35,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 
-import java.lang.reflect.Member;
-import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,7 +159,7 @@ public class RefrigeratorController {
         }
     }
 
-    @Operation(summary = "Get all refrigerators by username")
+    @Operation(summary = "Get all refrigerators by user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of refrigerators fetched successfully", content = @Content(schema = @Schema(implementation = Refrigerator.class))),
             @ApiResponse(responseCode = "204", description = "No content")

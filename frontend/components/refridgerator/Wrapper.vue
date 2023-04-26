@@ -10,7 +10,7 @@
     </div>
 </template>
 
-<script setup lang="ts"> 
+<script setup lang="ts">
 import { useRefridgeratorStore } from '~/store/refridgeratorStore';
 import { getGroceriesByFridge } from '~/service/httputils/GroceryService';
 const refridgeratorStore = useRefridgeratorStore();
@@ -18,6 +18,10 @@ const refridgeratorStore = useRefridgeratorStore();
 const position = ref(0);
 
 const toggle = ref(false);
+async function onToggleCreate(){
+    toggleCreate.value = !toggleCreate.value;
+    loadGroceries();
+}
 
 const toggleCreate = ref(false);
 

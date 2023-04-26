@@ -1,7 +1,7 @@
 <template>
     <div ref="el" class="grid grid-cols-3 w-full justify-center p-3">
       <p class="text-start align-middle">{{ props.grocery.grocery.name }}</p>
-      <p :class="{'text-red-500': isNearExpiry()}" class="text-end align-middle">{{ props.grocery.physicalExpiryDate.toLocaleDateString() }}</p>
+      <p :class="{'text-red-500': isNearExpiry()}" class="text-end align-middle">{{ props.grocery.physicalExpireDate.toLocaleDateString() }}</p>
       <button class="justify-self-end align-middle hover:bg-black" @click="clicked()">
         <img src="../../assets\icons\menu.png" class="h-5 w-5">
       </button>
@@ -31,7 +31,7 @@
   }
   
   function isNearExpiry(): boolean {
-    const dateDifferenceInMilliseconds = Date.parse(props.grocery.physicalExpiryDate.toString()) - Date.now();
+    const dateDifferenceInMilliseconds = Date.parse(props.grocery.physicalExpireDate.toString()) - Date.now();
     const daysUntilExpiry = Math.ceil(dateDifferenceInMilliseconds / (1000 * 60 * 60 * 24));
     return daysUntilExpiry <= 3;
   }

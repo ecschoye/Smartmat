@@ -299,8 +299,8 @@ public class RefrigeratorService {
         //Check if we have an instance from before
         Optional<RefrigeratorUser> existingRu = refrigeratorUserRepository.findByUserAndRefrigerator(user,refrigerator.get());
         if(existingRu.isPresent()){
-            if(request.getRole() != null){
-                existingRu.get().setFridgeRole(request.getRole());
+            if(request.getFridgeRole() != null){
+                existingRu.get().setFridgeRole(request.getFridgeRole());
                 try {
                     logger.info("Checks validated, updating refrigeratorUser");
                     RefrigeratorUser result = refrigeratorUserRepository.save(existingRu.get());

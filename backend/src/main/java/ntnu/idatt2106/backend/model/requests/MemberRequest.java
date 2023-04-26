@@ -18,8 +18,6 @@ import ntnu.idatt2106.backend.model.enums.FridgeRole;
 @NoArgsConstructor
 public class MemberRequest {
     @NotNull
-    private String superName;
-    @NotNull
     private long refrigeratorId;
     @NotNull
     private String userName;

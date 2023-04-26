@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RemoveMemberRequest {
     @NotNull
-    private String superName;
-    @NotNull
     private long refrigeratorId;
     @NotNull
     private String userName;

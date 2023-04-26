@@ -3,15 +3,13 @@ package ntnu.idatt2106.backend.service;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import ntnu.idatt2106.backend.exceptions.ShoppingCartNotFound;
-import ntnu.idatt2106.backend.exceptions.ShoppingListNotFound;
-import ntnu.idatt2106.backend.exceptions.SubCategoryNotFound;
-import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
+import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.*;
+import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.ShoppingListElementDTO;
-import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.requests.EditGroceryRequest;
+import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.repository.*;
 import org.slf4j.Logger;
@@ -34,7 +32,6 @@ public class ShoppingListService {
     private final UserRepository userRepository;
 
     private final ShoppingCartService shoppingCartService;
-
     private final CookieService cookieService;
     private final JwtService jwtService;
 
@@ -134,8 +131,7 @@ public class ShoppingListService {
     }
 
     private String extractEmail(HttpServletRequest httpRequest) {
-        String token = cookieService.extractTokenFromCookie(httpRequest);
-        return jwtService.extractClaim(token, Claims::getSubject);
+        return jwtService.extractUsername(cookieService.extractTokenFromCookie(httpRequest));
     }
 
     private boolean isSuperUser(String eMail, long shoppingListId) {
@@ -158,6 +154,41 @@ public class ShoppingListService {
 
         logger.info("isUserSuper user {}", refrigeratorUser.get().getFridgeRole() == FridgeRole.SUPERUSER);
         return refrigeratorUser.get().getFridgeRole() == FridgeRole.SUPERUSER;
+    }
+
+    public void saveGrocery(long groceryId, long shoppingListId, int quantity, HttpServletRequest request) throws Exception {
+        String eMail = extractEmail(request);
+        logger.info("Saving grocery id: {} to shopping list with id {}", groceryId, shoppingListId);
+
+
+        Optional<ShoppingList> shoppingList = shoppingListRepository.findById(shoppingListId);
+        if (shoppingList.isEmpty()) {
+            logger.info("Could not find a shopping list with id {}", shoppingListId);
+            throw new ShoppingCartNotFound("Could not find shopping list");
+        }
+
+        Optional<Grocery> grocery = groceryRepository.findById(groceryId);
+        if (grocery.isEmpty()) {
+            logger.info("Could not find a grocery with id {}", groceryId);
+            throw new NoGroceriesFound("Could not find a grocery for the given id");
+        }
+
+        boolean isRequested = !isSuperUser(eMail, shoppingList.get().getId());
+
+        GroceryShoppingList groceryShoppingList = new GroceryShoppingList();
+        groceryShoppingList.setGrocery(grocery.get());
+        groceryShoppingList.setShoppingList(shoppingList.get());
+        groceryShoppingList.setQuantity(quantity);
+        groceryShoppingList.setRequest(isRequested);
+
+        logger.info("Saved new grocery to the grocery list");
+
+        try {
+            groceryShoppingListRepository.save(groceryShoppingList);
+        } catch (Exception e) {
+            logger.info("Failed to add grocery to shopping list");
+            throw new Exception("Failed to add grocery to shopping list");
+        }
     }
 
 
@@ -227,4 +258,6 @@ public class ShoppingListService {
             throw new UnauthorizedException("The user is not authorized to delete a grocery list item");
         }
     }
+
+
 }

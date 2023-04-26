@@ -8,13 +8,16 @@ import ntnu.idatt2106.backend.model.Category;
 import ntnu.idatt2106.backend.model.Grocery;
 import ntnu.idatt2106.backend.model.GroceryShoppingList;
 import ntnu.idatt2106.backend.model.dto.ShoppingListElementDTO;
+import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.model.requests.EditGroceryRequest;
+import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.service.ShoppingListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -80,6 +83,7 @@ public class ShoppingListController {
     }
 
     //todo: edit format of response?
+    /*
     @PostMapping("/add-grocery")
     public ResponseEntity<GroceryShoppingList> saveGroceryToShoppingList(@RequestBody SaveGroceryRequest groceryRequest, HttpServletRequest request) throws SaveException{
         logger.info("Received request to save grocery {} to shopping list with id {}", groceryRequest.getName(), groceryRequest.getForeignKey());
@@ -90,6 +94,24 @@ public class ShoppingListController {
         }
         logger.info("Returns groceries and status OK");
         return new ResponseEntity<>(groceryListItem.get(), HttpStatus.OK);
+    }
+
+     */
+
+    @PostMapping("/add-grocery/{shoppingListId}/{groceryId}/{quantity}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<SuccessResponse> saveGroceryToShoppingList(@PathVariable(name = "shoppingListId") long shoppingListId,
+                                                                     @PathVariable(name = "groceryId") long groceryId,
+                                                                     @PathVariable(name = "quantity") int quantity,
+                                                                     HttpServletRequest request) throws SaveException{
+        logger.info("Received request to save grocery with id {} to shopping list with id {}", groceryId, shoppingListId);
+        try {
+            shoppingListService.saveGrocery(groceryId, shoppingListId, quantity, request);
+            return new ResponseEntity<>(new SuccessResponse("The grocery was added successfully", HttpStatus.OK.value()), HttpStatus.OK);
+        } catch (Exception e) {
+            logger.info("No registered changes to grocery is saved");
+            throw new SaveException("Failed to add a new grocery to shopping list");
+        }
     }
 
     //todo: edit format of response?

@@ -24,7 +24,6 @@ import ntnu.idatt2106.backend.exceptions.NoGroceriesFound;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.service.GroceryService;
-import ntnu.idatt2106.backend.service.SessionStorageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -75,14 +74,14 @@ public class GroceryController {
     }
 
 
-        @GetMapping("/all")
+        @GetMapping("/allDTOs")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<GroceryDTO>> getAllGroceries(HttpServletRequest request) throws UnauthorizedException, NoGroceriesFound{
-        String token = cookieService.extractCookieFromToken(request);
+    public ResponseEntity<List<GroceryDTO>> getAllGroceriesDTOs(HttpServletRequest request) throws UnauthorizedException, NoGroceriesFound{
+        String token = cookieService.extractTokenFromCookie(request);
         if (token == null) {
             throw new UnauthorizedException("Unauthorized");
         }
-        List<GroceryDTO> groceries = groceryService.getAllGroceries();
+        List<GroceryDTO> groceries = groceryService.getAllGroceriesDTO();
 
         if(groceries.isEmpty()){
             throw new NoGroceriesFound("No groceries found");

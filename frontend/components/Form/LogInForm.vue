@@ -10,6 +10,7 @@
           <GrayButton id="new-user" :label="$t('new_user')" width="100%" height="50px" />
         </nuxt-link>
       </div>
+      <ErrorAlert class="mt-4" v-if="catchError" :errorMessage="errorMessage" />
     </form>
   </div>
 </template>
@@ -20,9 +21,11 @@ import GrayButton from "~/components/Button/GrayButton.vue";
 import BaseInput from "~/components/Form/BaseInput.vue";
 import { useUserStore } from "~/store/userStore";
 import { postLogin } from "~/service/httputils/authentication/AuthenticationService";
+import ErrorAlert from "~/components/AlertBox/ErrorAlert.vue";
 
 const userStore = useUserStore();
-const errorMessage = ref("");
+const catchError = ref(false);
+const errorMessage = ref('');
 const router = useRouter();
 
 const form = reactive({
@@ -40,7 +43,8 @@ const sendForm = async () => {
       await router.push('/');
     }
   } catch (error: any) {
-    errorMessage.value = error.response;
+    errorMessage.value = error.response.data || 'An error occurred.';
+    catchError.value = true;
   }
 };
 

@@ -3,8 +3,8 @@ package ntnu.idatt2106.backend.model.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ntnu.idatt2106.backend.model.Category;
 import ntnu.idatt2106.backend.model.Grocery;
+import ntnu.idatt2106.backend.model.SubCategory;
 
 /**
  * Grocery DTO
@@ -17,7 +17,7 @@ public class GroceryDTO {
     private String name;
     private String description;
     private int groceryExpiryDays;
-    private Category category;
+    private SubCategory subCategory;
     private boolean custom;
 
     public GroceryDTO(Grocery grocery) {
@@ -25,6 +25,6 @@ public class GroceryDTO {
         this.name = grocery.getName();
         this.description = grocery.getDescription();
         this.groceryExpiryDays = grocery.getGroceryExpiryDays();
-        this.category = grocery.getSubCategory().getCategory();
+        this.subCategory = grocery.getSubCategory();
     }
 }

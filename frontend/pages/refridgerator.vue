@@ -32,6 +32,10 @@ function setPos(payload: number) {
   position.value = payload;
 }
 
+function getGroceries(){
+    
+}
+
 
 </script>
 

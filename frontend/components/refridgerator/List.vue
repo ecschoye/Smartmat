@@ -135,7 +135,7 @@ import type { GroceryEntity } from '~/types/GroceryEntityType';
    const categorizedGroups = computed<Category[]>(() => {
       const categoryMap = new Map<number, Category>();
       for(const grocery of props.groceries){
-         const category = grocery.grocery.category
+         const category = grocery.grocery.subCategory.category
          if(!categoryMap.has(category.id)){
             categoryMap.set(category.id, {name:category.name, groups : new Map<number, Group>()});
          }

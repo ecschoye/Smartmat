@@ -2,6 +2,7 @@ package ntnu.idatt2106.backend.service;
 
 
 import lombok.RequiredArgsConstructor;
+import ntnu.idatt2106.backend.exceptions.NotificationException;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.GroceryNotificationDTO;
 import ntnu.idatt2106.backend.repository.GroceryNotificationRepository;
@@ -10,10 +11,7 @@ import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -91,6 +89,22 @@ public class NotificationService {
                 });
 
         notifications.forEach(groceryNotification -> groceryNotificationRepository.save(groceryNotification));
+    }
+
+    public GroceryNotificationDTO deleteNotification(User user, long notifId) throws NotificationException {
+        Optional<GroceryNotification> notif = groceryNotificationRepository.findById(notifId);
+        if(notif.isEmpty()){
+            throw new NotificationException("Could not find notification by id");
+        }
+        GroceryNotification found = notif.get();
+        if(found.getUser() != user){
+            throw new NotificationException("Could not delete notification, user is not owner of notif");
+        }
+        try{groceryNotificationRepository.delete(found);}
+        catch(Exception e){
+            throw new NotificationException("Could not find notification in repository when deleting" + e.getMessage());
+        }
+        return new GroceryNotificationDTO(found);
     }
 
     private long getDaysBetweenTodayAndDate(Date date) {

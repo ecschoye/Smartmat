@@ -19,10 +19,7 @@ import ntnu.idatt2106.backend.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -58,6 +55,19 @@ public class NotificationController {
             return ResponseEntity.ok(notifications);
         }catch(Exception e){
             throw new NotificationException("Caught exception when retrieving all notifications");
+        }
+    }
+
+    @PostMapping("/delete")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> delete(HttpServletRequest request, @RequestBody long id) throws NotificationException {
+        User user = userService.findByEmail(jwtService.extractUsername(sessionStorageService.extractTokenFromAuthorizationHeader(request)));
+        GroceryNotificationDTO deleted = notificationService.deleteNotification(user, id);
+        if(deleted.getId() == id){
+            return ResponseEntity.ok(deleted);
+        }
+        else{
+            throw new NotificationException("Unexpected error occured");
         }
     }
 }

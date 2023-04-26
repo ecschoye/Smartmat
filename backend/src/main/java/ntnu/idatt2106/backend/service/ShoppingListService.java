@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.model.*;
-import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.requests.EditGroceryRequest;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.repository.*;
@@ -131,8 +131,8 @@ public class ShoppingListService {
             return false;
         }
 
-        logger.info("isUserSuper user {}", refrigeratorUser.get().getRole() == Role.SUPERUSER);
-        return refrigeratorUser.get().getRole() == Role.SUPERUSER;
+        logger.info("isUserSuper user {}", refrigeratorUser.get().getFridgeRole() == FridgeRole.SUPERUSER);
+        return refrigeratorUser.get().getFridgeRole() == FridgeRole.SUPERUSER;
     }
 
 

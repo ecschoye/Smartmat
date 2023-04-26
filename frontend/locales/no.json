@@ -1,5 +1,10 @@
 {
   "create_grocery" : "Opprett matvare",
+  "Notification" : "Varslinger",
+  "expires_today" : "går ut i dag",
+  "expires_tomorrow" : "går ut i morgen",
+  "days" : "dager",
+  "expires_in" : "går ut om",
   "welcome_to_smart_mat": "Velkommen til SmartMat",
   "home": "Hjem",
   "weekly_menu": "Ukesmeny",
@@ -31,5 +36,18 @@
   "change_password": "Endre passord",
   "go_back": "Gå tilbake",
   "update": "Oppdater",
-  "new_fridge": "Nytt kjøleskap"
+  "update_user_details": "Oppdater brukerdetaljer",
+  "new_fridge": "Nytt kjøleskap",
+  "enter_your_old_password": "Skriv inn ditt gamle passord:",
+  "old_password": "Gammelt passord",
+  "enter_your_new_password": "Skriv inn ditt nye passord:",
+  "new_password": "Nytt passord",
+  "confirm_your_new_password": "Bekreft ditt nye passord:",
+  "verify_new_password": "Bekreft nytt passord",
+  "old_password_is_incorrect": "Gammelt passord er feil",
+  "edit_user_details": "Endre brukerdetaljer",
+  "who_is_smart_mat_for": "Hvem er SmartMat for?",
+  "who_is_smart_mat_for_response": "SmartMat er en applikasjon som er spesielt egnet for husholdninger som ønsker å redusere matsvinn, spare penger og ta vare på miljøet. Med SmartMat-appen kan brukerne enkelt planlegge og organisere måltidene sine på en mer effektiv måte.",
+  "who_is_behind_smart_mat": "Hvem står bak SmartMat?",
+  "who_is_behind_smart_mat_response": "SmartMat er et produkt som er utviklet og designet av Scrum Team 5 under Systemutvikling 2 våren 2023. Teamet består av en gruppe dedikerte studenter ved NTNU som samarbeider tett for å utvikle og forbedre applikasjonen."
 }

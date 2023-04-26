@@ -1,5 +1,5 @@
 <template>
-  <div class="w-3/4 sm:w-2/3 min-h-fit bg-white dark:bg-zinc-500 border-5px mx-auto text-center rounded-md py-6 mt-10">
+  <div class="w-3/4 sm:w-2/3 min-h-fit bg-white dark:bg-zinc-500 border-5px mx-auto text-center rounded-xl py-6 mt-10">
 
     <p class="text-center dark:text-white mt-7 text-xl font-bold">{{t('system_settings')}}</p>
 

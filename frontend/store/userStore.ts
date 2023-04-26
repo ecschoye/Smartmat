@@ -33,7 +33,6 @@ export const useUserStore = defineStore({
             sessionStorage.removeItem("user");
         },
         logIn(data: any) {
-            sessionStorage.setItem("SmartMatAccessToken", data.token);
             this.authenticated = true;
             this.role = data.userRole;
             this.userId = data.userId;
@@ -43,9 +42,11 @@ export const useUserStore = defineStore({
                 const response = await axiosInstance.get('/api/user-status');
                 if (response.status === 200){
                     console.log("User status fetched successfully");
-                    this.authenticated = true; // Set authenticated to true on successful response
-                    this.role = response.data.role;
-                    this.userId = response.data.userId;
+                    if (response.data.state === "AUTHENTICATED"){
+                        this.authenticated = true;
+                        this.role = response.data.role;
+                        this.userId = response.data.userId;
+                    }
                 }
                 else if (response.status === 401){
                     this.authenticated = false;
@@ -60,7 +61,6 @@ export const useUserStore = defineStore({
                 this.authenticated = false; // Set authenticated to false on error
             }
         },
-
     },
     persist: {
         storage: persistedState.sessionStorage,

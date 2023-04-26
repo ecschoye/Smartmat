@@ -30,7 +30,7 @@ import java.util.logging.Logger;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
-@Tag(name = "Login Controller", description = "Controller to handle user login")
+@Tag(name = "My profile controller", description = "Controller to handle user login")
 public class MyProfileController {
     private final JwtService jwtService;
     private final UserService userService;
@@ -89,23 +89,19 @@ public class MyProfileController {
             })
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/user-status")
-    public ResponseEntity<?> getUserStatus(HttpServletRequest request) {
+    public ResponseEntity<?> getUserStatus( HttpServletRequest request) throws Exception {
         try {
             String jwt = cookieService.extractTokenFromCookie(request); // Extract the token from the cookie
-            if (jwt == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Unauthorized"));
-            }
+
             User user = userService.findByEmail(jwtService.extractUsername(jwt)); // Pass the JWT token instead of the request
-            AuthenticationState state = jwtService.getAuthenticationState(jwt, user);
-            String role = user.getRole().toString();
+            logger.info("Received request to get user status on user: "+ user.getEmail() + ".");
 
-            logger.info("Received request to get user status on user: "+ user.getEmail() + " " + user.getName() + ". User status: " + state + " Role: " + role);
-
-            UserStatusResponse userStatusResponse = new UserStatusResponse(state, role);
+            //use builder to build a userStatusResponse
+            UserStatusResponse userStatusResponse = UserStatusResponse.builder().userId(user.getId()).role(user.getUserRole().toString()).state(jwtService.getAuthenticationState(jwt, user)).build();
 
             return ResponseEntity.ok(userStatusResponse);
-        } catch (TokenExpiredException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Token expired"));
+        } catch (Exception e) {
+            throw new Exception(e);
         }
     }
 

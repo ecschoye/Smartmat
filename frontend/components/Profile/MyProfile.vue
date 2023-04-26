@@ -1,11 +1,11 @@
 <template>
-  <div class="profile-container h-36 w-3/4 sm:w-1/2 md:1/2 lg:w-4/12">
+  <div class="profile-container h-40 w-3/4  sm:w-1/2 md:w-1/2 lg:w-6/12 lg:h-52 justify-center items-center">
     <div class="user-details pt-5">
-      <h1 class="user-name text-white text-center text-6xl font-light">{{ user.name }}</h1>
+      <h1 class="user-name text-white ml-1 md:text-4xl lg:text-4xl font-light">{{ user.name }}</h1>
       <p class="user-email mt-2 ml-1 text-white text-sm font-light">{{ user.email }}</p>
     </div>
-    <div class="pt-5">
-      <img class=" hidden md:block h-24 w-24 ml-10" src="~/assets/profile.png" alt="Profile Picture" />
+    <div class="pt-5 flex-none">
+      <img class=" hidden md:block h-24 lg:h-32 w-24 lg:w-32 mr-1" src="~/assets/profile.png" alt="Profile Picture" />
     </div>
     <button class="logout-btn" @click="logOut">Log out</button>
   </div>

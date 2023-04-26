@@ -79,4 +79,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("An unexpected error occurred: " + ex.getMessage());
     }
+
+    @ExceptionHandler(NotificationException.class)
+    public ResponseEntity<String> handleNotificationException(NotificationException ex){
+        logger.info("An error uccured when retrieving notifications" + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("An unexpected error occurred when retrieving notifications: " + ex.getMessage());
+    }
 }

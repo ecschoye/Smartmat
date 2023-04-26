@@ -14,7 +14,7 @@ import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.SubCategory;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
-import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.repository.GroceryRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
@@ -37,8 +37,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GroceryService {
 
-    private static final Role ADD_PRIVILEGE = Role.SUPERUSER;
-    private static final Role REMOVE_PRIVILEGE = Role.SUPERUSER;
+    private static final FridgeRole ADD_PRIVILEGE = FridgeRole.SUPERUSER;
+    private static final FridgeRole REMOVE_PRIVILEGE = FridgeRole.SUPERUSER;
 
     private final Logger logger = LoggerFactory.getLogger(GroceryService.class);
 
@@ -63,8 +63,8 @@ public class GroceryService {
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
     public void addGrocery(SaveGroceryListRequest saveRequest, HttpServletRequest httpRequest) throws RefrigeratorNotFoundException, UserNotFoundException, UnauthorizedException, SaveException {
         Refrigerator refrigerator = refrigeratorService.getRefrigerator(saveRequest.getRefrigeratorId());
-        Role role = getRole(refrigerator, httpRequest);
-        if(role != ADD_PRIVILEGE) throw new UnauthorizedException("User not authorized to add groceries");
+        FridgeRole FridgeRole = getFridgeRole(refrigerator, httpRequest);
+        if(FridgeRole != ADD_PRIVILEGE) throw new UnauthorizedException("User not authorized to add groceries");
 
         logger.info("Saving grocery list to refrigerator");
         //Handle each grocery in the list individually based on custom grocery or existing
@@ -129,9 +129,9 @@ public class GroceryService {
     public List<RefrigeratorGroceryDTO> getGroceriesByRefrigerator(long refrigeratorId, HttpServletRequest request) throws RefrigeratorNotFoundException, UserNotFoundException, UnauthorizedException {
         //Throws if refrigerator does not exist
         Refrigerator refrigerator = refrigeratorService.getRefrigerator(refrigeratorId);
-        getRole(refrigerator,request);
+        getFridgeRole(refrigerator,request);
 
-        List<RefrigeratorGrocery> groceries = refrigeratorGroceryRepository.findByRefrigerator(refrigerator);
+        List<RefrigeratorGrocery> groceries = refrigeratorGroceryRepository.findAllByRefrigeratorId(refrigerator.getId());
         List<RefrigeratorGroceryDTO> refGroceryDTOS = new ArrayList<>();
         for (RefrigeratorGrocery grocery: groceries) {
             refGroceryDTOS.add(new RefrigeratorGroceryDTO(grocery));
@@ -162,19 +162,19 @@ public class GroceryService {
     }
 
     /**
-     * Gets the role of user that requested action
+     * Gets the FridgeRole of user that requested action
      *
-     * @param refrigerator refrigerator role is in
+     * @param refrigerator refrigerator FridgeRole is in
      * @param request request to api
-     * @return Role of user
+     * @return FridgeRole of user
      * @throws UserNotFoundException if user not found
      * @throws UnauthorizedException if user not member
      */
-    public Role getRole(Refrigerator refrigerator, HttpServletRequest request) throws UserNotFoundException, UnauthorizedException {
+    public FridgeRole getFridgeRole(Refrigerator refrigerator, HttpServletRequest request) throws UserNotFoundException, UnauthorizedException {
         logger.info("Checking if user is member");
         String email = extractEmail(request);
         //Throws if user is not member
-        return refrigeratorService.getUserRole(refrigerator, email);
+        return refrigeratorService.getFridgeRole(refrigerator, email);
     }
 
     /**
@@ -201,7 +201,7 @@ public class GroceryService {
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
     public void removeRefrigeratorGrocery(long refrigeratorGroceryId, HttpServletRequest request) throws UserNotFoundException, UnauthorizedException, EntityNotFoundException {
         RefrigeratorGrocery refrigeratorGrocery = getRefrigeratorGroceryById(refrigeratorGroceryId);
-        if(getRole(refrigeratorGrocery.getRefrigerator(), request) != REMOVE_PRIVILEGE) {
+        if(getFridgeRole(refrigeratorGrocery.getRefrigerator(), request) != REMOVE_PRIVILEGE) {
             throw new UnauthorizedException("User does not have permission to remove this grocery");
         }
         refrigeratorGroceryRepository.deleteById(refrigeratorGroceryId);

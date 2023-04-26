@@ -4,13 +4,15 @@
         <p class="mt-7 text-6xl">Whops</p>
         <p class="mt-7"> {{ error.message }}</p>
 
-        <GreenButton @click="handleClearError" :label="$t('go_to_home')" width="100%" height="50px" class="px-3 mt-5 text-center"/>
+        <GreenButton @click="handleClearError" :label="t('go_to_home')" width="100%" height="50px" class="px-3 mt-5 text-center"/>
 
     </div>
 </template>
 
 <script setup>
+    import { useI18n } from 'vue-i18n';
     import GreenButton from "~/components/Button/GreenButton.vue";
+    const {t} = useI18n();
 
     defineProps(['error'])
 

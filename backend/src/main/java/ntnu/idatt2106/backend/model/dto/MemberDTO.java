@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
-import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.enums.FridgeRole;
 
 /**
  * Model class used to return public information about a member in a refrigerator
@@ -16,12 +16,12 @@ public class MemberDTO {
     private long refrigeratorId;
     private String name;
     private String username;
-    private Role role;
+    private FridgeRole fridgeRole;
 
     public MemberDTO(RefrigeratorUser ru) {
         this.refrigeratorId = ru.getRefrigerator().getId();
         this.name = ru.getUser().getName();
         this.username = ru.getUser().getUsername();
-        this.role = ru.getRole();
+        this.fridgeRole = ru.getFridgeRole();
     }
 }

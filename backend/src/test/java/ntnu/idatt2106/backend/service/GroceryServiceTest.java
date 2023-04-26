@@ -10,10 +10,11 @@ import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
-import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.repository.GroceryRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
+import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,6 +39,9 @@ public class GroceryServiceTest {
 
     @Mock
     private GroceryRepository groceryRepository;
+
+    @Mock
+    private RefrigeratorRepository refrigeratorRepository;
 
     @Mock
     private RefrigeratorService refrigeratorService;
@@ -77,7 +81,7 @@ public class GroceryServiceTest {
         refrigeratorUser = new RefrigeratorUser();
         refrigeratorUser.setUser(user);
         refrigeratorUser.setRefrigerator(refrigerator);
-        refrigeratorUser.setRole(Role.USER);
+        refrigeratorUser.setFridgeRole(FridgeRole.USER);
 
         groceryList = new ArrayList<>();
         groceryDTOList = new ArrayList<>();
@@ -120,8 +124,8 @@ public class GroceryServiceTest {
         Mockito.when(cookieService.extractTokenFromCookie(request)).thenReturn(token);
         Mockito.when(jwtService.extractClaim(token, Claims::getSubject)).thenReturn(expectedEmail);
         Mockito.when(refrigeratorService.getRefrigerator(refrigeratorId)).thenReturn(refrigerator);
-        Mockito.when(refrigeratorService.getUserRole(any(), any())).thenReturn(Role.USER);
-        Mockito.when(refrigeratorGroceryRepository.findByRefrigerator(refrigerator)).thenReturn(groceries);
+        Mockito.when(refrigeratorService.getFridgeRole(any(), any())).thenReturn(FridgeRole.USER);
+        Mockito.when(refrigeratorGroceryRepository.findAllByRefrigeratorId(refrigerator.getId())).thenReturn(groceries);
 
         // Execute
         List<RefrigeratorGroceryDTO> result = groceryService.getGroceriesByRefrigerator(refrigeratorId, request);
@@ -157,7 +161,7 @@ public class GroceryServiceTest {
         Mockito.when(cookieService.extractTokenFromCookie(request)).thenReturn(token);
         Mockito.when(jwtService.extractClaim(token, Claims::getSubject)).thenReturn(user.getUsername());
         Mockito.when(refrigeratorService.getRefrigerator(refrigeratorId)).thenReturn(refrigerator);
-        Mockito.when(refrigeratorService.getUserRole(any(), any())).thenThrow(new UnauthorizedException("User not member"));
+        Mockito.when(refrigeratorService.getFridgeRole(any(), any())).thenThrow(new UnauthorizedException("User not member"));
 
         // Execute and Assert
         assertThrows(UnauthorizedException.class, () -> groceryService.getGroceriesByRefrigerator(refrigeratorId, request));
@@ -174,7 +178,7 @@ public class GroceryServiceTest {
         Mockito.when(cookieService.extractTokenFromCookie(request)).thenReturn(token);
         Mockito.when(jwtService.extractClaim(token, Claims::getSubject)).thenReturn(expectedEmail);
         Mockito.when(refrigeratorService.getRefrigerator(refrigeratorId)).thenReturn(refrigerator);
-        Mockito.when(refrigeratorService.getUserRole(any(),any())).thenThrow(new UserNotFoundException("User not found"));
+        Mockito.when(refrigeratorService.getFridgeRole(any(),any())).thenThrow(new UserNotFoundException("User not found"));
 
         // Execute and Assert
         assertThrows(UserNotFoundException.class, () -> groceryService.getGroceriesByRefrigerator(refrigeratorId, request));
@@ -187,7 +191,7 @@ public class GroceryServiceTest {
         when(cookieService.extractTokenFromCookie(any(HttpServletRequest.class))).thenReturn("token");
         when(jwtService.extractClaim(eq("token"), any())).thenReturn(email);
         when(refrigeratorGroceryRepository.findById(any())).thenReturn(Optional.of(refrigeratorGrocery));
-        when(refrigeratorService.getUserRole(any(), any())).thenReturn(Role.SUPERUSER);
+        when(refrigeratorService.getFridgeRole(any(), any())).thenReturn(FridgeRole.SUPERUSER);
 
         groceryService.removeRefrigeratorGrocery(1L, HttpRequest);
 
@@ -210,7 +214,7 @@ public class GroceryServiceTest {
         when(cookieService.extractTokenFromCookie(any(HttpServletRequest.class))).thenReturn("token");
         when(jwtService.extractClaim(eq("token"), any())).thenReturn(email);
         when(refrigeratorGroceryRepository.findById(any())).thenReturn(Optional.of(refrigeratorGrocery));
-        when(refrigeratorService.getUserRole(any(Refrigerator.class), eq(email))).thenReturn(Role.USER);
+        when(refrigeratorService.getFridgeRole(any(Refrigerator.class), eq(email))).thenReturn(FridgeRole.USER);
 
         Assertions.assertThrows(UnauthorizedException.class, () -> groceryService.removeRefrigeratorGrocery(refrigeratorGrocery.getId(), HttpRequest));
     }
@@ -224,9 +228,11 @@ public class GroceryServiceTest {
         request.setGroceryList(dtoList);
         request.setRefrigeratorId(refrigerator.getId());
 
-        when(groceryService.getRole(any(), HttpRequest)).thenReturn(Role.SUPERUSER);
+        when(groceryService.getFridgeRole(refrigerator, any())).thenReturn(FridgeRole.SUPERUSER);
         when(groceryRepository.findById(existingGroceryDTO.getId())).thenReturn(Optional.ofNullable(grocery));
-        when(refrigeratorGroceryRepository.findByRefrigerator(any())).thenReturn(groceryList);
+        when(refrigeratorGroceryRepository.findAllByRefrigeratorId(any())).thenReturn(groceryList);
+        when(refrigeratorRepository.findById(any())).thenReturn(Optional.ofNullable(refrigerator));
+        when(refrigeratorService.getRefrigerator(refrigerator.getId())).thenReturn(refrigerator);
 
         groceryService.addGrocery(request, HttpRequest);
         int result = groceryService.getGroceriesByRefrigerator(refrigerator.getId(), HttpRequest).size();

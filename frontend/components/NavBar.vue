@@ -1,9 +1,9 @@
 <template>
-<header class="navbar-light-color dark:navbar-dark-color" style="min-width:360px;">
+<header class="navbar-light-color dark:navbar-dark-color" style="min-width:360px; max-height: 96px;">
   <nav class="mx-auto flex max-w-7xl items-center p-6 lg:px-8" aria-label="Global">
     <NuxtLink sm:hidden :to="localePath('/')" class="-m-1.5 p-1.5 mr-4 hidden pointer-events-none sm:block sm:pointer-events-auto">
       <span class="sr-only">SmartMat</span>
-      <img class=" h-12 w-auto" src="../assets/icons/smartmat/leafTransparent.png" alt="">
+      <img class="h-12 w-auto hover:transform hover:scale-125" src="../assets/icons/smartmat/leafTransparent.png" alt="">
     </NuxtLink>
     <div class="hidden lg:flex flex-1 space-x-5 items-center lg:justify-start">
       <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:text-xl hover:text-green-custom">{{t('home')}}</NuxtLink>
@@ -34,12 +34,12 @@
         <NuxtLink v-if="loggedInStatus" href="/notifications" title="Varslinger" class="-m-1.5 p-1.5 text-sm font-semibold leading-6 text-gray-900">
           <span class="sr-only">Varslinger</span>
           <img v-if = "notificationStore.getNotifications.length > 0" class="h-8 w-auto" src="../assets/icons/bell-not.png" alt="">
-          <img v-else class="h-8 w-auto" src="../assets/icons/bell.png" alt="">
+          <img v-else class="h-8 w-auto hover:transform hover:scale-125" src="../assets/icons/bell.png" alt="">
         </NuxtLink>
         <HeadlessMenu v-if="loggedInStatus" as="div" class="relative inline-block text-left">
           <div>
             <HeadlessMenuButton title="Kontovalg og innstillinger" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white dark:bg-zinc-600 px-3 py-2 text-sm font-semibold text-gray-900" >
-              <img class="h-8 w-auto" src="../assets/icons/profile.png" alt="">
+              <img class="h-8 w-auto hover:transform hover:scale-125" src="../assets/icons/profile.png" alt="">
             </HeadlessMenuButton>
           </div>
  

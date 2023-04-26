@@ -5,12 +5,16 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
+import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
+import ntnu.idatt2106.backend.model.Grocery;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
+import ntnu.idatt2106.backend.repository.GroceryRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +38,7 @@ public class GroceryService {
     private final JwtService jwtService;
 
     private final RefrigeratorGroceryRepository refGroceryRepository;
+    private final GroceryRepository groceryRepository;
     private final RefrigeratorService refrigeratorService;
 
     /**
@@ -71,6 +76,17 @@ public class GroceryService {
     }
 
     /**
+     * Gets refigeratorGrocery by id
+     *
+     * @param refrigeratorGroceryId refigeratorGrocery id
+     * @return the refrigeratorGrocery
+     */
+    public RefrigeratorGrocery getRefrigeratorGroceryById(long refrigeratorGroceryId) throws EntityNotFoundException{
+        return refGroceryRepository.findById(refrigeratorGroceryId)
+                .orElseThrow(() -> new EntityNotFoundException("refrigeratorGrocery not found"));
+    }
+
+    /**
      * Gets the role of user that requested action
      *
      * @param refrigerator refrigerator role is in
@@ -104,14 +120,16 @@ public class GroceryService {
     }
 
     /**
-     * Gets refigeratorGrocery by id
+     * Saves a grocery to the grocery table
      *
-     * @param refrigeratorGroceryId refigeratorGrocery id
-     * @return the refrigeratorGrocery
+     * @param grocery the grocery to be saved
+     * @throws SaveException If save fails
      */
-    public RefrigeratorGrocery getRefrigeratorGroceryById(long refrigeratorGroceryId) throws EntityNotFoundException{
-        return refGroceryRepository.findById(refrigeratorGroceryId)
-                .orElseThrow(() -> new EntityNotFoundException("refrigeratorGrocery not found"));
+    public void saveGrocery(Grocery grocery) throws SaveException{
+        try {
+            groceryRepository.save(grocery);
+        } catch (Exception e) {
+            throw new SaveException(e.getMessage());
+        }
     }
-
 }

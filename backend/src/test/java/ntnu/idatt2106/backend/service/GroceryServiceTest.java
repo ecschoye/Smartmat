@@ -1,7 +1,7 @@
 package ntnu.idatt2106.backend.service;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwt;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
@@ -10,8 +10,7 @@ import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
-import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
-import ntnu.idatt2106.backend.repository.UserRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,13 +19,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 public class GroceryServiceTest {
 
@@ -52,6 +51,7 @@ public class GroceryServiceTest {
     private Refrigerator refrigerator;
     private RefrigeratorUser refrigeratorUser;
     private User user;
+    private HttpServletRequest request;
 
     @BeforeEach
     public void setup() {
@@ -85,6 +85,8 @@ public class GroceryServiceTest {
 
         groceryList.add(refrigeratorGrocery);
         groceryDTOList.add(new RefrigeratorGroceryDTO(refrigeratorGrocery));
+
+        request = mock(HttpServletRequest.class);
     }
 
     @Test
@@ -92,7 +94,7 @@ public class GroceryServiceTest {
     public void testGetGroceriesByRefrigeratorSucceeds() throws RefrigeratorNotFoundException, UserNotFoundException, UnauthorizedException {
         // Setup
         long refrigeratorId = 1L;
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
         String expectedEmail = "testuser@test.com";
         String token = "valid_token";
         List<RefrigeratorGrocery> groceries = new ArrayList<>();
@@ -116,7 +118,7 @@ public class GroceryServiceTest {
     public void testGetGroceriesByRefrigeratorFailsWhenRefrigeratorNotFound() throws RefrigeratorNotFoundException {
         // Setup
         long refrigeratorId = 1L;
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
         String expectedEmail = "testuser@test.com";
         String token = "valid_token";
         Mockito.when(cookieService.extractTokenFromCookie(request)).thenReturn(token);
@@ -132,7 +134,7 @@ public class GroceryServiceTest {
     public void testGetGroceriesByRefrigeratorFailsWhenUserNotMember() throws RefrigeratorNotFoundException, UserNotFoundException, UnauthorizedException {
         // Setup
         long refrigeratorId = 1L;
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
         String token = "valid_token";
         Mockito.when(cookieService.extractTokenFromCookie(request)).thenReturn(token);
         Mockito.when(jwtService.extractClaim(token, Claims::getSubject)).thenReturn(user.getUsername());
@@ -148,7 +150,7 @@ public class GroceryServiceTest {
     public void testGetGroceriesByRefrigeratorFailsWhenUserNotFound() throws RefrigeratorNotFoundException, UserNotFoundException, UnauthorizedException {
         // Setup
         long refrigeratorId = 1L;
-        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
         String expectedEmail = "testuser@test.com";
         String token = "valid_token";
         Mockito.when(cookieService.extractTokenFromCookie(request)).thenReturn(token);
@@ -158,5 +160,40 @@ public class GroceryServiceTest {
 
         // Execute and Assert
         assertThrows(UserNotFoundException.class, () -> groceryService.getGroceriesByRefrigerator(refrigeratorId, request));
+    }
+
+    @Test
+    public void removeRefrigeratorGrocery_SuccessfulRemoval() throws UserNotFoundException, UnauthorizedException, EntityNotFoundException {
+        String email = "user@example.com";
+
+        when(cookieService.extractTokenFromCookie(any(HttpServletRequest.class))).thenReturn("token");
+        when(jwtService.extractClaim(eq("token"), any())).thenReturn(email);
+        when(refrigeratorGroceryRepository.findById(any())).thenReturn(Optional.of(refrigeratorGrocery));
+        when(refrigeratorService.getUserRole(any(), any())).thenReturn(Role.SUPERUSER);
+
+        groceryService.removeRefrigeratorGrocery(1L, request);
+
+        verify(refrigeratorGroceryRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    public void removeRefrigeratorGrocery_EntityNotFound() {
+        when(refrigeratorGroceryRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(EntityNotFoundException.class, () -> groceryService.removeRefrigeratorGrocery(1L, request));
+
+        verify(refrigeratorGroceryRepository, never()).deleteById(1L);
+    }
+
+    @Test
+    public void removeRefrigeratorGrocery_UnauthorizedUser() throws UserNotFoundException, EntityNotFoundException, UnauthorizedException {
+        String email = "user@example.com";
+
+        when(cookieService.extractTokenFromCookie(any(HttpServletRequest.class))).thenReturn("token");
+        when(jwtService.extractClaim(eq("token"), any())).thenReturn(email);
+        when(refrigeratorGroceryRepository.findById(any())).thenReturn(Optional.of(refrigeratorGrocery));
+        when(refrigeratorService.getUserRole(any(Refrigerator.class), eq(email))).thenReturn(Role.USER);
+
+        Assertions.assertThrows(UnauthorizedException.class, () -> groceryService.removeRefrigeratorGrocery(refrigeratorGrocery.getId(), request));
     }
 }

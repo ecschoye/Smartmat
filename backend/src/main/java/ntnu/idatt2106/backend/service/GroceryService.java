@@ -15,6 +15,8 @@ import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +84,34 @@ public class GroceryService {
         String email = extractEmail(request);
         //Throws if user is not member
         return refrigeratorService.getUserRole(refrigerator, email);
+    }
+
+    /**
+     * Removes a refrigeratorGrocery by id
+     *
+     * @param refrigeratorGroceryId id
+     * @param request http request by user
+     * @throws UserNotFoundException If refrigeratorGrocery not found
+     * @throws UnauthorizedException If user does not have permission
+     */
+    @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void removeRefrigeratorGrocery(long refrigeratorGroceryId, HttpServletRequest request) throws UserNotFoundException, UnauthorizedException, EntityNotFoundException {
+        RefrigeratorGrocery refrigeratorGrocery = getRefrigeratorGroceryById(refrigeratorGroceryId);
+        if(getRole(refrigeratorGrocery.getRefrigerator(), request) != Role.SUPERUSER) {
+            throw new UnauthorizedException("User does not have permission to remove this grocery");
+        }
+        refGroceryRepository.deleteById(refrigeratorGroceryId);
+    }
+
+    /**
+     * Gets refigeratorGrocery by id
+     *
+     * @param refrigeratorGroceryId refigeratorGrocery id
+     * @return the refrigeratorGrocery
+     */
+    public RefrigeratorGrocery getRefrigeratorGroceryById(long refrigeratorGroceryId) throws EntityNotFoundException{
+        return refGroceryRepository.findById(refrigeratorGroceryId)
+                .orElseThrow(() -> new EntityNotFoundException("refrigeratorGrocery not found"));
     }
 
 }

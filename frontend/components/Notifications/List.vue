@@ -1,5 +1,5 @@
 <template>
-    <div class="font-mono align-middle flex justify-center align-middle bg-white border-black border rounded-xl p-5">
+    <div class="font-mono align-middle flex justify-center bg-white border-black border rounded-xl p-5">
         <ul v-if="notifications.length > 0">
             <li v-for="notification in props.notifications" :key="notification.id">
                 <NotificationsElement @delete-notif = "(payload) => emit('delete-notif', payload)" :notification="notification"/>

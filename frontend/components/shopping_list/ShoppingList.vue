@@ -11,22 +11,25 @@
             </div>
             <div class="flex justify-center">
                 <div v-if="menuOptions.isAllElementsSelected">
-                    <div v-if="shoppingList" class="grid grid-cols-1 gap-8">
+                    <div v-if="shoppingList === null || shoppingList.length === 0">
+                        <h3> Du har ingen varer i handlelisten </h3>
+                    </div>
+                    <div v-else class="grid grid-cols-1 gap-8">
                         <ShoppingListElement
                             v-for="element in shoppingList"
                             :key="element.id"
                             :ElementDetails=element>
                         </ShoppingListElement>
                     </div>
-                    <div v-else>
-                        <h3> Du har ingen varer i handlelisten </h3>
-                    </div>
                     <div class="p-2 flex justify-end absolute bottom-0 right-0">
                         <button @click.stop="addNewElementSelected = true" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-200 bg-sky-300"> Legg til Ny Vare </button>
                     </div>
                 </div>
                 <div v-if="menuOptions.isCategoriesSelected">
-                    <div v-if="categoryList" class="grid grid-cols-1 gap-8">
+                    <div v-if="categoryList === null || categoryList.length === 0">
+                        <h3> Du har ingen varer i handlelisten </h3>
+                    </div>
+                    <div v-else class="grid grid-cols-1 gap-8">
                         <ShoppingListCategory
                             v-for="category in categoryList"
                             :key="category.id"
@@ -34,26 +37,26 @@
                             :ShoppingListId="shoppingListId">
                         </ShoppingListCategory>
                     </div>
-                    <div v-else>
-                        <h3> Du har ingen varer i handlelisten </h3>
-                    </div>
                     <div class="p-2 flex justify-end absolute bottom-0 right-0">
                         <button @click.stop="addNewElementSelected = true" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-200 bg-sky-300"> Legg til Ny Vare </button>
                     </div>                </div>
                 <div v-if="menuOptions.isSuggestionsSelected">
-                    <div v-if="suggestionsList" class="grid grid-cols-1 gap-8">
+                    <div v-if="suggestionsList === null || suggestionsList.length === 0">
+                        <h3> Du har ingen forslag til handlelisten </h3>
+                    </div>
+                    <div v-else class="grid grid-cols-1 gap-8">
                         <ShoppingListElement
                         v-for="element in suggestionsList"
                         :key="element.id"
                         :ElementDetails=element>
                     </ShoppingListElement>
                     </div>
-                    <div v-else>
-                        <h3> Du har ingen forslag til handlelisten </h3>
-                    </div>
                 </div>
                 <div v-if="menuOptions.isInShoppingCartSelected">
-                    <div v-if="shoppingCart" class="grid grid-cols-1 gap-8">
+                    <div v-if="shoppingCart === null || shoppingCart.length === 0">
+                        <h3> Du har ingen varer i handlevognen </h3>
+                    </div>
+                    <div v-else class="grid grid-cols-1 gap-8">
                         <ShoppingListElement
                             v-for="element in shoppingCart"
                             :key="element.id"
@@ -62,9 +65,6 @@
                         <div class="p-2 flex justify-end absolute bottom-0 right-0">
                             <button @click.stop="addAllElementsToRefrigerator" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-200 bg-sky-300"> Legg alt i Kjøleskapet </button>
                         </div>
-                    </div>
-                    <div v-else>
-                        <h3> Du har ingen varer i handlevognen </h3>
                     </div>
                 </div>
             </div>
@@ -86,7 +86,6 @@
 import ShoppingListService from "~/service/httputils/ShoppingListService";
 import ShoppingCartService from "~/service/httputils/ShoppingCartService";
 import ShoppingListElement from "./ShoppingListElement.vue";
-import console from "console";
 import AddNewElement from "./AddNewElement.vue";
     export default defineComponent({
     props: {
@@ -127,27 +126,35 @@ import AddNewElement from "./AddNewElement.vue";
             //TODO: END
             //loads shopping list
             let response = await ShoppingListService.getGroceriesFromShoppingList(this.shoppingListId);
-            response.data.forEach((element: ResponseGrocery) => {
-                let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
-                this.shoppingList.push(object);
-            });
+            if (response.data.length > 0) {
+                response.data.forEach((element: ResponseGrocery) => {
+                    let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
+                    this.shoppingList.push(object);
+                });
+            }
             //loads categories
             let responseCategories = await ShoppingListService.getCategoriesFromShoppingList(this.shoppingListId);
-            responseCategories.data.forEach((element: ShoppingListCategory) => {
-                this.categoryList.push(element);
-            });
+            if (responseCategories.data.length > 0) {
+                responseCategories.data.forEach((element: ShoppingListCategory) => {
+                    this.categoryList.push(element);
+                });
+            }
             //loads suggestions
             let responseSuggestions = await ShoppingListService.getRequestedGroceries(this.shoppingListId);
-            responseSuggestions.data.forEach((element: ResponseGrocery) => {
-                let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
-                this.suggestionsList.push(object);
-            });
+            if (responseSuggestions.data.length > 0) {
+                responseSuggestions.data.forEach((element: ResponseGrocery) => {
+                    let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
+                    this.suggestionsList.push(object);
+                });
+            }
             //loads shopping cart
             let responseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);
-            responseCart.data.forEach((element: ResponseGrocery) => {
-                let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true };
-                this.shoppingCart.push(object);
-            });
+            if (responseCart.data.length > 0) {
+                responseCart.data.forEach((element: ResponseGrocery) => {
+                    let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true };
+                    this.shoppingCart.push(object);
+                });
+            } 
         },
         selectTab(tab: string) {
             Object.keys(this.$data.menuOptions).forEach((key) => {

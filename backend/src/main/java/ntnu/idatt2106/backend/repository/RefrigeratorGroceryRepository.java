@@ -14,4 +14,6 @@ public interface RefrigeratorGroceryRepository extends JpaRepository<Refrigerato
     Optional<RefrigeratorGrocery> findById(Long aLong);
 
     List<RefrigeratorGrocery> findAllByRefrigeratorId(Long aLong);
+
+    void removeByRefrigeratorId(long refrigeratorId);
 }

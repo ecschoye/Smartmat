@@ -1,22 +1,26 @@
 <template>
-  <div class="edit-container">
+  <div class="header text-white mt-8 text-center text-4xl font-bold">{{t('change_password')}}</div>
+  <div class="edit-container w-5/6 h-11/12 md:w-3/5 lg:w-5/12 mt-5 mx-auto form-light-color dark:form-dark-color">
     <div class="user-details">
-      <div class="header text-center">{{t('change_password')}}</div>
-      <div class="form-group">
-        <p class="-mb-8 text-xl font-semibold">{{t('enter_your_old_password')}}</p>
-        <BaseInput id="oldPassword" type="password" class="w-full" :label="$t('old_password')" v-model="oldPassword"/>
+      <div class="form-group w-full">
+        <p class="text-l font-semibold">{{t('enter_your_old_password')}}</p>
+        <BaseInput id="oldPassword" type="password" class="" :label="$t('old_password')" v-model="oldPassword"/>
       </div>
       <div class="form-group">
-        <p class="-mb-8 text-xl font-semibold">{{t('enter_your_new_password')}}</p>
-        <BaseInput id="newPassword" type="password" class="w-full" :label="$t('new_password')" v-model="newPassword"/>
+        <p class="text-xl font-semibold">{{t('enter_your_new_password')}}</p>
+        <BaseInput id="newPassword" type="password" class="" :label="$t('new_password')" v-model="newPassword"/>
       </div>
       <div class="form-group">
-        <p class="-mb-8 text-xl font-semibold">{{t('confirm_your_new_password')}}</p>
-        <BaseInput id="verifyNewPassword" type="password" class="w-full" :label="$t('verify_new_password')" v-model="verifyNewPassword"/>
+        <p class="text-xl font-semibold">{{t('confirm_your_new_password')}}</p>
+        <BaseInput id="verifyNewPassword" type="password" class="" :label="$t('verify_new_password')" v-model="verifyNewPassword"/>
       </div>
       <div class="button-wrapper">
-        <button @click="route('/my-profile')" class="update-btn">{{t('go_back')}}</button>
-        <button @click="updatePassword()" class="update-btn">{{t('change_password')}}</button>
+        <NuxtLink :to="localePath('/my-profile')">
+          <button class="w-36 h-14 button-light-color dark:button-dark-color dark:text-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 sm:flex sm:justify-center">
+            {{t('go_back')}}
+          </button>
+        </NuxtLink>
+        <button @click="updatePassword()" class="w-36 h-14 button-light-color dark:button-dark-color dark:text-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center rounded transform hover:scale-100 sm:flex sm:justify-center">{{t('change_password')}}</button>
       </div>
     </div>
   </div>
@@ -130,7 +134,7 @@ async function loadData() {
   transform: scale(1.05);
 }
 
-
+/*
 @media (min-width: 768px) {
   .new-btn {
     width: auto;
@@ -138,6 +142,10 @@ async function loadData() {
   }
 }
 
+ */
+
+
+/*
 .update-btn{
   font-size: 1.25rem;
   color: black;
@@ -152,17 +160,24 @@ async function loadData() {
   z-index: 1000;
 }
 
+ */
+
+
 .update-btn:hover{
   background-color: #cbcaca;
   color: black;
   transform: scale(1.05);
 }
+/*
 @media (min-width: 768px) {
   button {
     width: auto;
   }
 }
 
+ */
+
+/*
 .header{
   font-size: 4rem;
   color: white;
@@ -170,6 +185,8 @@ async function loadData() {
   height: fit-content;
   margin-bottom: 20px;
 }
+
+ */
 
 .user-email{
   font-size: 1.4rem;
@@ -180,14 +197,11 @@ async function loadData() {
 
 .edit-container{
   position: relative;
-  width: 40%;
   flex-direction: column;
   align-items: flex-start;
   border: solid 3px white;
   border-radius: 20px;
   padding: 2rem;
-  margin: 50px auto;
-  height: fit-content;
 }
 
 .user-details {
@@ -250,13 +264,6 @@ p {
   color: white;
 }
 
-.input-container {
-  margin-top: 40px;
-  height: 50px;
-  position: relative;
-  width: 40%;
-  margin-bottom: 20px;
-}
 
 .input {
   background-color: rgb(92, 88, 88);
@@ -318,6 +325,7 @@ p {
   color: white;
 }
 
+/*
 @media (max-width: 768px) {
   .profile-picture {
     width: 200px;
@@ -351,4 +359,6 @@ p {
     margin-top: 50px;
   }
 }
+
+ */
 </style>

@@ -91,8 +91,8 @@
             </div>
             <div class="py-6">
               <NuxtLink v-if="loggedIn" :to="localePath('/my-profile')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('edit_profile')}}</NuxtLink>
+              <NuxtLink v-else :to="localePath('/login')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('log_in')}}</NuxtLink>
               <NuxtLink :to="localePath('/system-settings')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('system_settings')}}</NuxtLink>
-              <a href="#" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400">{{t('log_in')}}</a>
             </div>
           </div>
         </div>

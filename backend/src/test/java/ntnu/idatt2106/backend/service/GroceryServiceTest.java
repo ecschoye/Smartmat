@@ -226,11 +226,11 @@ public class GroceryServiceTest {
 
         when(groceryService.getRole(any(), HttpRequest)).thenReturn(Role.SUPERUSER);
         when(groceryRepository.findById(existingGroceryDTO.getId())).thenReturn(Optional.ofNullable(grocery));
+        when(refrigeratorGroceryRepository.findByRefrigerator(any())).thenReturn(groceryList);
 
         groceryService.addGrocery(request, HttpRequest);
         int result = groceryService.getGroceriesByRefrigerator(refrigerator.getId(), HttpRequest).size();
 
-        //Assertions.assertEquals(dtoList.size(), result);
-        Assertions.assertTrue(true);
+        Assertions.assertEquals(dtoList.size(), result);
     }
 }

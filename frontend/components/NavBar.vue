@@ -6,10 +6,10 @@
       <img class=" h-12 w-auto" src="../assets/icons/smartmat/leafTransparent.png" alt="">
     </NuxtLink>
     <div class="hidden lg:flex flex-1 space-x-5 items-center lg:justify-start">
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900">{{t('home')}}</NuxtLink>
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900">{{t('weekly_menu')}}</NuxtLink>
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900">{{t('recipes')}}</NuxtLink>
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900">{{t('statistics')}}</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:text-xl hover:text-green-custom">{{t('home')}}</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:text-xl hover:text-green-custom">{{t('weekly_menu')}}</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:text-xl hover:text-green-custom">{{t('recipes')}}</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:text-xl hover:text-green-custom">{{t('statistics')}}</NuxtLink>
     </div>
     <div class="flex flex-1 space-x-2 items-center justify-end">
       <div class="p-0.5 rounded-md ring-1 min-w-fit ring-inset ring-gray-300 dark:ring-zinc-600 inline-flex items-center">

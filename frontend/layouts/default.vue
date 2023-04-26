@@ -30,7 +30,9 @@ import { useUserStore } from "~/store/userStore";
 const userStore = useUserStore();
 
 onMounted(() => {
-  userStore.checkAuthStatus();
+  if (sessionStorage.getItem("user") != null){
+    userStore.checkAuthStatus();
+  }
 });
 
 </script>

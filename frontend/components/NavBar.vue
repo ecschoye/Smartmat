@@ -53,11 +53,9 @@
                   <NuxtLink :to="localePath('/system-settings')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-900', 'block px-4 py-2 text-sm']">{{t('system_settings')}}</NuxtLink>
                 </HeadlessMenuItem>
                 <!-- TODO: delete post -->
-                <form method="POST" action="#">
                   <HeadlessMenuItem v-if="loggedIn" v-slot="{ active }">
                     <button @click="handleLogOut()" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900' : 'text-gray-700 dark:text-gray-900', 'block w-full px-4 py-2 text-left text-sm']">{{t('log_out')}}</button>
                   </HeadlessMenuItem>
-                </form>
               </div>
             </HeadlessMenuItems>
           </transition>
@@ -105,6 +103,7 @@
 import {computed, defineComponent} from 'vue'
 import {useUserStore} from "~/store/userStore";
 import { useNotificationStore } from "~/store/notificationStore";
+import {postLogOut} from "~/service/httputils/authentication/AuthenticationService";
 
 export default defineComponent({
 
@@ -152,9 +151,20 @@ export default defineComponent({
     handleFridgeEvent(value: any) {
       this.selected = value;
     },
-    handleLogOut() {
-      this.userStore.logOut();
-    },
+    async handleLogOut() {
+      console.log('logging out')
+        try{
+          const response = await postLogOut();
+          const userStore = useUserStore();
+          const router = useRouter();
+          if (response.status === 200){
+            userStore.logOut();
+            window.location.reload();
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      },
     closeMobileMenu() {
       this.mobileMenuOpen = false;
     }

@@ -3,7 +3,7 @@
         <h1 class="p-5">
             {{t("Notification")}}
         </h1>
-        <NotificationsList @delete-notif="(payload) => deleteNotif(payload)" :notifications="notificationStore.getNotifications"/> 
+        <NotificationsList @delete-notif="(payload) => deleteNotification(payload)" :notifications="notificationStore.getNotifications"/>
     </div>
 </template>
 
@@ -12,8 +12,15 @@ import { useNotificationStore } from '~/store/notificationStore';
 import { getNotifications } from '~/service/httputils/NotificationService';
 import { GroceryNotification } from '~/types/GroceryNotificationType';
 import { deleteNotifications } from '~/service/httputils/NotificationService'
-const { t } = useI18n();
+import { useUserStore } from "~/store/userStore";
+import { onMounted } from 'vue';
+
 const notificationStore = useNotificationStore();
+
+const userStore = useUserStore();
+
+
+const { t } = useI18n();
 
 async function loadNotifications(){
     try{
@@ -26,20 +33,20 @@ async function loadNotifications(){
     }
   }
 
-  async function deleteNotif(notification : GroceryNotification){
-    try{
-        const response = await deleteNotifications(notification.id);
-        if(response.status == 200){
-            notificationStore.deleteNotification(notification);
-        }
-    }
-    catch(error : any){
-        console.log("Error occured while deleting notification" + error);
-    }
+
+async function deleteNotification(notification : GroceryNotification){
+  try{
+      const response = await deleteNotifications(notification.id);
+      if(response.status == 200){
+          notificationStore.deleteNotification(notification);
+      }
+  }
+  catch(error : any){
+      console.log("Error occured while deleting notification" + error);
+  }
   }
 
-
-  onMounted(() => {
-    loadNotifications();
-  })
+onMounted(() => {
+  loadNotifications();
+});
 </script>

@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.model.*;
-import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.repository.*;
 import org.slf4j.Logger;
@@ -80,8 +80,8 @@ public class ShoppingCartService {
             return false;
         }
 
-        logger.info("isUserSuper user {}", refrigeratorUser.get().getRole() == Role.SUPERUSER);
-        return refrigeratorUser.get().getRole() == Role.SUPERUSER;
+        logger.info("isUserSuper user {}", refrigeratorUser.get().getFridgeRole() == FridgeRole.SUPERUSER);
+        return refrigeratorUser.get().getFridgeRole() == FridgeRole.SUPERUSER;
     }
 
     public Optional<GroceryShoppingCart> saveGrocery(SaveGroceryRequest groceryRequest, HttpServletRequest httpRequest) throws UnauthorizedException {

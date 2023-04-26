@@ -1,12 +1,17 @@
 package ntnu.idatt2106.backend.repository;
 
-import ntnu.idatt2106.backend.model.Refrigerator;
+
 import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface RefrigeratorGroceryRepository extends JpaRepository<RefrigeratorGrocery,Long> {
+@Repository
+public interface RefrigeratorGroceryRepository extends JpaRepository<RefrigeratorGrocery, Long> {
+    @Override
+    Optional<RefrigeratorGrocery> findById(Long aLong);
 
-    List<RefrigeratorGrocery> findByRefrigerator(Refrigerator refrigerator);
+    List<RefrigeratorGrocery> findAllByRefrigeratorId(Long aLong);
 }

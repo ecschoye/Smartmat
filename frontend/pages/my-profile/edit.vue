@@ -1,18 +1,22 @@
 <template>
-  <div class="edit-container">
-    <div class="user-details">
-      <div class="header">Endre brukerdetaljer</div>
-      <div class="form-group">
-        <BaseInput id="inpName" class="input-container" type="text" label="Navn" v-model="user.name"/>
+  <div class="header text-white mt-8 text-center text-4xl font-bold">{{ t('edit_user_details') }}</div>
+  <div class="edit-container w-5/6 h-5/6 md:w-1/3 mt-2 mx-auto form-light-color dark:form-dark-color">
+    <div class="user-details ">
+      <div class="form-group w-full">
+        <BaseInput id="inpName" class="input-container" type="text" :label="$t('name')" v-model="user.name"/>
       </div>
-      <div class="form-group">
-        <BaseInput id="inpEmail" class="input-container" type="text" label="Email" v-model="user.email"/>
+      <div class="form-group w-full">
+        <BaseInput id="inpEmail" class="input-container" type="text" :label="$t('email')" v-model="user.email"/>
       </div>
       <div class="button-wrapper">
-        <button @click="route('/my-profile')" class="update-btn">Gå tilbake</button>
-        <button @click="route('/my-profile/change-password')" class="update-btn">Endre passord</button>
+        <NuxtLink :to="localePath('/my-profile')">
+          <button class="update-btn py-2 px-4 mr-4 lg:py-4 lg:px-5 form-light-button text-white">{{t('go_back')}}</button>
+        </NuxtLink>
+        <NuxtLink :to="localePath('/my-profile/change-password')">
+          <button class="update-btn py-2 px-4 mt-2 lg:py-4 lg:px-5 form-light-button text-white">{{ t('change_password') }}</button>
+        </NuxtLink>
       </div>
-      <button @click="updateAccount" id="update" class="update-btn">Oppdater bruker</button>
+      <button @click="updateAccount" id="update" class="update-btn py-1 px-4 mt-5 lg:py-4 lg:px-5 form-light-button text-white">{{ t('update_user_details') }}</button>
     </div>
   </div>
 </template>
@@ -27,6 +31,8 @@ import axiosInstance from "@/service/AxiosInstance";
 import BaseInput from "@/components/Form/BaseInput.vue";
 import GreenButton from "~/components/Button/GreenButton.vue";
 import GrayButton from "~/components/Button/GrayButton.vue";
+
+const { t } = useI18n();
 
 const userStore = useUserStore();
 
@@ -86,11 +92,13 @@ async function loadData() {
 
 <style scoped>
 
-
+/*
 .button-wrapper {
   display: flex;
   justify-content: space-between;
 }
+
+ */
 
 
 .submit:hover{
@@ -99,7 +107,7 @@ async function loadData() {
   transform: scale(1.05);
 }
 
-
+/*
 @media (min-width: 768px) {
   .new-btn {
     width: auto;
@@ -107,17 +115,14 @@ async function loadData() {
   }
 }
 
+ */
+
 .update-btn{
   font-size: 1.25rem;
-  color: black;
-  background-color: white;
   border: none;
-  padding: 10px 20px;
   cursor: pointer;
   transition: background-color 0.3s;
   border-radius: 5px;
-  margin-top: 30px;
-  width: 40%;
   z-index: 1000;
 }
 
@@ -132,6 +137,7 @@ async function loadData() {
   }
 }
 
+/*
 .header{
   font-size: 4rem;
   color: white;
@@ -139,6 +145,8 @@ async function loadData() {
   height: fit-content;
   margin-bottom: 20px;
 }
+
+ */
 
 .user-email{
   font-size: 1.4rem;
@@ -149,14 +157,11 @@ async function loadData() {
 
 .edit-container{
   position: relative;
-  width: 40%;
   flex-direction: column;
   align-items: flex-start;
   border: solid 3px white;
   border-radius: 20px;
   padding: 2rem;
-  margin: 50px auto;
-  height: fit-content;
 }
 
 .user-details {
@@ -223,7 +228,6 @@ p {
   margin-top: 40px;
   height: 50px;
   position: relative;
-  width: 40%;
   margin-bottom: 20px;
 }
 
@@ -286,7 +290,7 @@ p {
 .input:focus~.placeholder {
   color: white;
 }
-
+/*
 @media (max-width: 768px) {
   .profile-picture {
     width: 200px;
@@ -320,4 +324,6 @@ p {
     margin-top: 50px;
   }
 }
+
+ */
 </style>

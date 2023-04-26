@@ -9,7 +9,7 @@ import ntnu.idatt2106.backend.model.authentication.AuthenticationRequest;
 import ntnu.idatt2106.backend.model.authentication.RegisterRequest;
 import ntnu.idatt2106.backend.model.dto.response.AuthenticationResponse;
 import ntnu.idatt2106.backend.model.dto.response.RegisterResponse;
-import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.enums.UserRole;
 import ntnu.idatt2106.backend.service.AuthenticationService;
 import ntnu.idatt2106.backend.service.UserService;
 import org.apache.http.auth.InvalidCredentialsException;
@@ -87,7 +87,7 @@ public class AuthenticationTests {
         when(user.getId()).thenReturn(String.valueOf(UUID.randomUUID()));
 
         // Set up the mock to return a non-null Role object
-        when(user.getRole()).thenReturn(Role.SUPERUSER); // Replace Role.USER with the appropriate enum constant
+        when(user.getUserRole()).thenReturn(UserRole.USER); // Replace Role.USER with the appropriate enum constant
 
         ResponseEntity<AuthenticationResponse> response = loginController.authenticate(authenticationRequest, httpServletResponse);
 

@@ -2,19 +2,21 @@ package ntnu.idatt2106.backend.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
-import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
-import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
+import ntnu.idatt2106.backend.model.dto.refrigerator.RefrigeratorDTO;
+import ntnu.idatt2106.backend.model.dto.response.RefrigeratorResponse;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
-import ntnu.idatt2106.backend.model.requests.RefrigeratorRequest;
-import ntnu.idatt2106.backend.model.dto.MemberDTO;
+import ntnu.idatt2106.backend.model.dto.response.MemberResponse;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
+import ntnu.idatt2106.backend.service.CookieService;
+import ntnu.idatt2106.backend.service.JwtService;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,18 +25,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 
 import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Controller for API calls regarding refrigerator and its members
- *
- * TODO change to fetch email from cookie
- * TODO usae global exception handlers
- */
 @RestController
 @RequestMapping("/api/refrigerator")
 @RequiredArgsConstructor
@@ -43,14 +46,24 @@ public class RefrigeratorController {
 
     private final RefrigeratorService refrigeratorService;
 
+    private final CookieService cookieService;
+
+    private final JwtService jwtService;
+
     Logger logger = LoggerFactory.getLogger(RefrigeratorController.class);
 
+
+    @Operation(summary = "Edit role of a refrigerator member")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Role edited successfully", content = @Content(schema = @Schema(implementation = MemberResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/members/edit-role")
-    public ResponseEntity<MemberDTO> editRole(@Valid @RequestBody MemberRequest memberRequest) {
+    public ResponseEntity<MemberResponse> editRole(@Valid @RequestBody MemberRequest memberRequest) {
         logger.info("Received request to edit member role in refrigerator");
-        MemberDTO result;
+        MemberResponse result;
         try {
-            result = refrigeratorService.setRole(memberRequest);
+            result = refrigeratorService.setFridgeRole(memberRequest);
             if (result == null) throw new Exception();
         } catch (Exception e) {
             logger.error("Could not edit role");
@@ -60,10 +73,16 @@ public class RefrigeratorController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+
+    @Operation(summary = "Add a new member to a refrigerator")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Member added successfully", content = @Content(schema = @Schema(implementation = MemberResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Failed to add member")
+    })
     @PostMapping("/members/new")
-    public ResponseEntity<MemberDTO> newMember(@Valid @RequestBody MemberRequest memberRequest) throws SaveException {
+    public ResponseEntity<MemberResponse> newMember(@Valid @RequestBody MemberRequest memberRequest) throws SaveException {
         logger.info("Received request to add new member to refrigerator");
-        MemberDTO result;
+        MemberResponse result;
         try {
             result = refrigeratorService.addMember(memberRequest);
             if (result == null) throw new Exception();
@@ -74,6 +93,15 @@ public class RefrigeratorController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+
+    @Operation(summary = "Remove a member from a refrigerator")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Member removed successfully", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "409", description = "Conflict"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/members/remove")
     public ResponseEntity<SuccessResponse> removeMember(@Valid @RequestBody RemoveMemberRequest memberRequest) {
         logger.info("Received request to remove member from refrigerator");
@@ -92,12 +120,20 @@ public class RefrigeratorController {
         }
     }
 
+    @Operation(summary = "Create a new refrigerator")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Refrigerator created successfully", content = @Content(schema = @Schema(implementation = Refrigerator.class))),
+            @ApiResponse(responseCode = "500", description = "Failed to create refrigerator")
+    })
     @PostMapping("/new")
-    public ResponseEntity<Refrigerator> newRefrigerator(@Valid @RequestBody RefrigeratorRequest refrigerator) throws SaveException {
+    public ResponseEntity<Refrigerator> newRefrigerator(@Valid @RequestBody RefrigeratorDTO refrigerator, HttpServletRequest request) throws SaveException {
         logger.info("Received request to create refrigerator for refrigerator");
-        Refrigerator result;
+        Refrigerator result = refrigeratorService.convertToEntity(refrigerator);
+
+        String jwt = cookieService.extractTokenFromCookie(request);
+        String email = jwtService.extractUsername(jwt);
         try {
-            result = refrigeratorService.save(refrigerator);
+            result = refrigeratorService.save(result, email);
             if (result == null) throw new Exception();
         } catch (Exception e) {
             throw new SaveException("Failed to create refrigerator");
@@ -106,6 +142,13 @@ public class RefrigeratorController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @Operation(summary = "Delete a refrigerator by ID and username")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Refrigerator deleted successfully", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @DeleteMapping("/delete/{refrigeratorId}/{username}")
     public ResponseEntity<SuccessResponse> deleteRefrigerator(@Valid @PathVariable int refrigeratorId, @PathVariable String username) {
         try {
@@ -132,13 +175,18 @@ public class RefrigeratorController {
         }
     }
 
+    @Operation(summary = "Get all refrigerators by username")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of refrigerators fetched successfully", content = @Content(schema = @Schema(implementation = Refrigerator.class))),
+            @ApiResponse(responseCode = "204", description = "No content")
+    })
     @GetMapping("/{refrigeratorId}")
-    public ResponseEntity<RefrigeratorDTO> getById(@Valid @PathVariable long refrigeratorId) {
+    public ResponseEntity<RefrigeratorResponse> getById(@Valid @PathVariable long refrigeratorId) {
         logger.info("Received request for refrigerator with id: {}", refrigeratorId);
         try {
-            RefrigeratorDTO result = refrigeratorService.getRefrigeratorDTOById(refrigeratorId);
+            RefrigeratorResponse result = refrigeratorService.getRefrigeratorById(refrigeratorId);
             return new ResponseEntity<>(result, HttpStatus.OK);
-        } catch (EntityNotFoundException | RefrigeratorNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             logger.warn("Refrigerator could not be found");
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

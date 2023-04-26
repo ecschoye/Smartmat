@@ -1,6 +1,6 @@
 package ntnu.idatt2106.backend.model.enums;
 
-public enum Role {
-    SUPERUSER,
+public enum UserRole {
+    ADMIN,
     USER
 }

@@ -1,11 +1,13 @@
 <template>
-  <div class="profile-container h-40 w-3/4  sm:w-1/2 md:w-1/2 lg:w-6/12 lg:h-52 justify-center items-center">
-    <div class="user-details pt-5">
-      <h1 class="user-name text-white ml-1 md:text-4xl lg:text-4xl font-light">{{ user.name }}</h1>
-      <p class="user-email mt-2 ml-1 text-white text-sm font-light">{{ user.email }}</p>
-    </div>
-    <div class="pt-5 flex-none">
-      <img class=" hidden md:block h-24 lg:h-32 w-24 lg:w-32 mr-1" src="~/assets/profile.png" alt="Profile Picture" />
+  <div class="profile-container p-2 h-40 w-3/4  sm:w-1/2 md:w-1/2 lg:w-6/12 lg:h-52 justify-center items-center">
+    <div class="flex flex-row justify-between align-middle h-full relative">
+      <div class="user-details pt-5">
+        <h1 class="user-name text-white ml-1 md:text-4xl lg:text-8xl font-light">{{ user.name }}</h1>
+        <p class="user-email mt-4 ml-1 text-white lg:text-4xl text-sm font-light">{{ user.email }}</p>
+      </div>
+      <div class="flex items-center">
+        <img class=" hidden md:block h-24 lg:h-32 w-24 lg:w-32 mr-1" src="~/assets/profile.png" alt="Profile Picture" />
+      </div>
     </div>
     <button class="logout-btn" @click="logOut">Log out</button>
   </div>
@@ -91,11 +93,9 @@ async function loadData() {
  */
 
 .profile-container {
-  display: flex;
   flex-direction: row;
   justify-content: center;
   margin: 0 auto;
-  align-items: flex-start;
   border: solid 3px white;
   border-radius: 10px;
   position: relative;

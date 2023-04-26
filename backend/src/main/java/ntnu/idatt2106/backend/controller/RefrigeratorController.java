@@ -43,7 +43,7 @@ public class RefrigeratorController {
         logger.info("Received request to edit member role in refrigerator");
         MemberResponse result;
         try {
-            result = refrigeratorService.setRole(memberRequest);
+            result = refrigeratorService.setFridgeRole(memberRequest);
             if (result == null) throw new Exception();
         } catch (Exception e) {
             logger.error("Could not edit role");

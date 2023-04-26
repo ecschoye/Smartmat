@@ -16,7 +16,6 @@
 </template>
 
 <script setup lang="ts">
-
 import GreenButton from "~/components/Button/GreenButton.vue";
 import GrayButton from "~/components/Button/GrayButton.vue";
 import BaseInput from "~/components/Form/BaseInput.vue";

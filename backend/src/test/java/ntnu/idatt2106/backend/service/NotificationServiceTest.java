@@ -1,7 +1,10 @@
 package ntnu.idatt2106.backend.service;
 
 
+import ntnu.idatt2106.backend.exceptions.NotificationException;
 import ntnu.idatt2106.backend.model.*;
+import ntnu.idatt2106.backend.model.dto.GroceryNotificationDTO;
+import ntnu.idatt2106.backend.model.enums.Role;
 import ntnu.idatt2106.backend.repository.GroceryNotificationRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
@@ -15,11 +18,10 @@ import org.mockito.MockitoAnnotations;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class NotificationServiceTest {
@@ -133,14 +135,20 @@ public class NotificationServiceTest {
     @Test
     public void testGenerateNotificationsItemDoesNotNeedAlreadyExists() throws ParseException {
         List<RefrigeratorGrocery> refrigeratorGroceries = new ArrayList<>();
+        // Create a new Date object
+        Date currentDate = new Date();
 
-        String date_string = "26-04-2023";
-        //Instantiating the SimpleDateFormat class
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        //Parsing the given String to Date object
-        Date date = formatter.parse(date_string);
+// Create a Calendar object and set it to the current date
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
 
-        refrigeratorGrocery.setPhysicalExpireDate(date);
+// Add three days to the calendar object
+        calendar.add(Calendar.DATE, 3);
+
+// Get the new date from the calendar object
+        Date newDate = calendar.getTime();
+
+        refrigeratorGrocery.setPhysicalExpireDate(newDate);
         refrigeratorGroceries.add(refrigeratorGrocery);
 
         ArrayList<GroceryNotification> notifications = new ArrayList<>();
@@ -175,5 +183,51 @@ public class NotificationServiceTest {
         notificationService.generateNotifications(refrigeratorGroceries, user);
 
         verify(groceryNotificationRepository, times(1)).save(Mockito.any(GroceryNotification.class));
+    }
+
+
+    @Test
+    void deleteNotification_Successful() throws NotificationException {
+        long notifId = 1L;
+        GroceryNotification groceryNotification = new GroceryNotification(1, user, refrigeratorGrocery, (long)3);
+        Mockito.when(groceryNotificationRepository.findById(notifId))
+                .thenReturn(Optional.of(groceryNotification));
+        GroceryNotificationDTO result = notificationService.deleteNotification(user, notifId);
+        assertEquals(new GroceryNotificationDTO(groceryNotification), result);
+        Mockito.verify(groceryNotificationRepository, Mockito.times(1)).delete(groceryNotification);
+    }
+
+    @Test
+    void deleteNotification_NotFound() {
+        long notifId = 1L;
+        Mockito.when(groceryNotificationRepository.findById(notifId)).thenReturn(Optional.empty());
+        assertThrows(NotificationException.class, () ->
+                notificationService.deleteNotification(user, notifId));
+        Mockito.verify(groceryNotificationRepository, Mockito.never()).delete(Mockito.any());
+    }
+
+    @Test
+    void deleteNotification_Unauthorized() {
+        long notifId = 1L;
+        User otherUser = new User("123", "otherUser", "123@123.no", "123", Role.USER);
+        GroceryNotification groceryNotification = new GroceryNotification(1, otherUser, refrigeratorGrocery, (long)3);
+        Mockito.when(groceryNotificationRepository.findById(notifId))
+                .thenReturn(Optional.of(groceryNotification));
+        assertThrows(NotificationException.class, () ->
+                notificationService.deleteNotification(user, notifId));
+        Mockito.verify(groceryNotificationRepository, Mockito.never()).delete(Mockito.any());
+    }
+
+    @Test
+    void deleteNotification_FailedToDelete() {
+        long notifId = 1L;
+        GroceryNotification groceryNotification = new GroceryNotification(1, user, refrigeratorGrocery, (long)3);
+        Mockito.when(groceryNotificationRepository.findById(notifId))
+                .thenReturn(Optional.of(groceryNotification));
+        Mockito.doThrow(new RuntimeException()).when(groceryNotificationRepository).delete(groceryNotification);
+
+        assertThrows(NotificationException.class, () ->
+                notificationService.deleteNotification(user, notifId));
+        Mockito.verify(groceryNotificationRepository, Mockito.times(1)).delete(groceryNotification);
     }
 }

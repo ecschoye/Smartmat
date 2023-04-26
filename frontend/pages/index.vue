@@ -40,6 +40,8 @@
   import { onMounted, computed } from "vue";
   import { getNotifications } from "~/service/httputils/NotificationService";
   import { useNotificationStore } from '~/store/notificationStore';
+  import { getRefrigerators } from "~/service/httputils/RefridgeratorService";
+import { useRefridgeratorStore } from "~/store/refridgeratorStore";
   const { t, locale } = useI18n({
     useScope: 'local'
   })
@@ -48,6 +50,7 @@
   const loggedIn = computed(() => userStore.isLoggedIn);
 
   const notificationStore = useNotificationStore();
+  const refridgeratorStore = useRefridgeratorStore();
 
 
 
@@ -62,8 +65,20 @@
     }
   }
 
+  async function loadRefrigerators(){
+    try{
+      const response = await getRefrigerators();
+      refridgeratorStore.setRefrigerators(response.data);
+      refridgeratorStore.setSelectedRefrigerator(refridgeratorStore.getRefrigerators[0]);
+    }
+    catch(error){
+      console.log(error);
+    }
+  }
+
   onMounted(() => {
     loadNotifications();
+    loadRefrigerators();
   })
 </script>
 

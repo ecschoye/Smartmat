@@ -8,5 +8,10 @@ export const getGroceries = async () : Promise<AxiosResponse> => {
 
 
 export const getGroceriesByFridge = async (fridgeId : number) : Promise<AxiosResponse> => {
-    return axiosInstance.get("/api/refrigerator/grocery/${fridgeId}")
+    return axiosInstance.get(`/api/refrigerator/grocery/${fridgeId}`);
 }
+
+export const createGrocery = async (fridgeId : number) : Promise<AxiosResponse> => {
+    return axiosInstance.post(`/api/refrigerator/grocery/new/${fridgeId}`);
+}
+

@@ -18,6 +18,10 @@ const refridgeratorStore = useRefridgeratorStore();
 const position = ref(0);
 
 const toggle = ref(false);
+async function onToggleCreate(){
+    toggleCreate.value = !toggleCreate.value;
+    loadGroceries();
+}
 
 const toggleCreate = ref(false);
 

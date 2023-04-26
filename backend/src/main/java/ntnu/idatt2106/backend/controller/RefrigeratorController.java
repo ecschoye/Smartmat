@@ -164,12 +164,12 @@ public class RefrigeratorController {
         }
     }
 
-    @Operation(summary = "Get all refrigerators by username")
+    @Operation(summary = "Get all refrigerators by user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of refrigerators fetched successfully", content = @Content(schema = @Schema(implementation = Refrigerator.class))),
             @ApiResponse(responseCode = "204", description = "No content")
     })
-    @GetMapping("/{refrigeratorId}")
+    @GetMapping("/{fridgeId}")
     public ResponseEntity<RefrigeratorDTO> getById(@Valid @PathVariable long refrigeratorId) {
         logger.info("Received request for refrigerator with id: {}", refrigeratorId);
         try {

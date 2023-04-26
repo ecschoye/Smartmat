@@ -10,12 +10,13 @@
 </template>
 
 <script setup lang="ts">
-
+import { createGrocery } from '~/service/httputils/GroceryService';
+import { useRefridgeratorStore } from '~/store/refridgeratorStore';
 import { Grocery } from '~/types/GroceryType';
     const { t } = useI18n();
 
     let grocery : Grocery | null = null;
-
+    const refridgeratorStore = useRefridgeratorStore();
 
 function modelValue() : Grocery | undefined {
     if(grocery === null){
@@ -29,7 +30,15 @@ function modelValue() : Grocery | undefined {
 const emit = defineEmits(['toggle'])
 
 
-function onSubmit(){
-    emit('toggle');
+async function onSubmit(){
+    try{
+        const response = await createGrocery(refridgeratorStore.getSelectedRefrigerator.id);
+        if(response.status == 200){
+           emit('toggle'); 
+        }
+    }catch(error){
+        console.log(error);
+        emit('toggle');
+    }
 }
 </script>

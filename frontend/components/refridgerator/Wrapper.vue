@@ -10,7 +10,7 @@
     </div>
 </template>
 
-<script setup lang="ts"> 
+<script setup lang="ts">
 import { useRefridgeratorStore } from '~/store/refridgeratorStore';
 import { getGroceriesByFridge } from '~/service/httputils/GroceryService';
 const refridgeratorStore = useRefridgeratorStore();

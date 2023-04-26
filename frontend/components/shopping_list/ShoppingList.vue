@@ -137,14 +137,14 @@ import AddNewElement from "./AddNewElement.vue";
                 this.categoryList.push(element);
             });
             //loads suggestions
-            let resonseSuggestions = await ShoppingListService.getRequestedGroceries(this.shoppingListId);
-            resonseSuggestions.data.forEach((element: ResponseGrocery) => {
+            let responseSuggestions = await ShoppingListService.getRequestedGroceries(this.shoppingListId);
+            responseSuggestions.data.forEach((element: ResponseGrocery) => {
                 let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
                 this.suggestionsList.push(object);
             });
             //loads shopping cart
-            let resonseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);
-            resonseCart.data.forEach((element: ResponseGrocery) => {
+            let responseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);
+            responseCart.data.forEach((element: ResponseGrocery) => {
                 let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true };
                 this.shoppingCart.push(object);
             });
@@ -159,8 +159,19 @@ import AddNewElement from "./AddNewElement.vue";
                 }
             });
         },
-        addAllElementsToRefrigerator() {
+        async addAllElementsToRefrigerator() {
             // Add a element from the shoppingCart to the Refrigerator
+            let groceryIds: Number[] = [];
+            this.shoppingCart.forEach((element: ShoppingListElement) => {
+                groceryIds.push(element.id);
+            })
+            
+            let transferStatus = await ShoppingCartService.tranferAllToRefrigerator(groceryIds);            
+            if (transferStatus.status == 200) {
+                alert("Varen ble vellykket overført")
+            } else {
+                alert("Det oppstod en feil ved overføring av varen")
+            }
         }
     },
     components: { AddNewElement }

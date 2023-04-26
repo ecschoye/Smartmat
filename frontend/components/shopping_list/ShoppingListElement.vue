@@ -99,8 +99,13 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                     alert("Det oppstod en feil ved sletting av varen")
                 }
             },
-            addElementToRefrigerator() {
-                // Add the element to the refrigerator
+            async addElementToRefrigerator() {
+                let transferStatus = await ShoppingCartService.transferToRefrigerator(this.ElementDetails.id);                
+                if (transferStatus.status == 200) {
+                    alert("Varen ble vellykket overført")
+                } else {
+                    alert("Det oppstod en feil ved overføring av varen")
+                }
             },
             async addElementToShoppingCart() {
                 console.log("Inside addElementToShoppingCart")

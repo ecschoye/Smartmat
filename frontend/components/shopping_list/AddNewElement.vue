@@ -29,7 +29,9 @@
 </template>
 
 <script lang="ts">
-import GroceryService from "~/service/httputils/GroceryService";
+import {getGroceriesDTOs} from "~/service/httputils/GroceryService";
+import ShoppingListService from "~/service/httputils/ShoppingListService";
+
 export default defineComponent({
     props: {
         shoppingListId: {
@@ -48,18 +50,21 @@ export default defineComponent({
     methods: {
         async loadGroceries() {
             //loads grocery list
-            let responseGroceries = await GroceryService.getGroceries();
-            console.log(responseGroceries);
+            let responseGroceries = await getGroceriesDTOs();
             responseGroceries.data.forEach((grocery: ResponseGrocery) => {
                 let element:GroceryListElement = { id: grocery.id, name: grocery.name, subCategoryName: grocery.subCategoryName, quantity: 1 };
                 this.groceryList.push(element);
             });
         },
-        /*
-        addGroceryToShoppingList(groceryId: number, quantity: number) {
-            GroceryListService.saveGroceryToShoppingList(this.shoppingListId, groceryId, quantity)
+        async addGroceryToShoppingList(groceryId: number, quantity: number) {
+            let responseStatus = await ShoppingListService.saveGroceryToShoppingList(this.shoppingListId, groceryId, quantity);
+            if (responseStatus.status === 200) {
+                alert("Varen er lagt til i handlelisten")
+            } else {
+                alert("Det oppstod en feil ved overføring av varen til handlelisten")
+            }
+        
         }
-        */
     }
 })
 </script>

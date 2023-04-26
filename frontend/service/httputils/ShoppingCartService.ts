@@ -20,9 +20,19 @@ const transferGroceryToShoppingList = (groceryShoppingCartId: Number): Promise<A
     return axiosInstance.post(`/api/shopping-cart/transfer-shopping-list/${groceryShoppingCartId}`);
 };
 
+const transferToRefrigerator = (groceryShoppingCartId: Number): Promise<AxiosResponse> => {
+    return axiosInstance.post(`api/shopping-cart/transfer-refrigerator/${groceryShoppingCartId}`)
+};
+
+const tranferAllToRefrigerator = (groceryIds: Number[]): Promise<AxiosResponse> => {
+    return axiosInstance.post(`api/shopping-cart/all/transfer-refrigerator/${groceryIds}`)
+};
+
 export default {
     createShoppingCart,
     getGroceriesFromShoppingCart,
     saveGroceryToShoppingCart,
-    transferGroceryToShoppingList
+    transferGroceryToShoppingList,
+    transferToRefrigerator,
+    tranferAllToRefrigerator
 }

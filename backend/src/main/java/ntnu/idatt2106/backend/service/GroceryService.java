@@ -234,4 +234,8 @@ public class GroceryService {
             throw new SaveException(e.getMessage());
         }
     }
+
+    public List<Grocery> getAllGroceries() {
+        return groceryRepository.findAll();
+    }
 }

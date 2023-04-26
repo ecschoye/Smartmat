@@ -7,6 +7,7 @@ import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.repository.*;
 import org.slf4j.Logger;
@@ -28,7 +29,7 @@ public class ShoppingCartService {
     private final GroceryRepository groceryRepository;
     private final GroceryShoppingCartRepository groceryShoppingCartRepository;
 
-    private final SessionStorageService sessionStorageService;
+    private final CookieService cookieService;
     private final JwtService jwtService;
     private Logger logger = LoggerFactory.getLogger(ShoppingCartService.class);
 
@@ -69,7 +70,7 @@ public class ShoppingCartService {
 
     // todo: is duplicate with method in ShoppingListService - remove
     private String extractEmail(HttpServletRequest httpRequest) {
-        String token = sessionStorageService.extractTokenFromAuthorizationHeader(httpRequest);
+        String token = cookieService.extractTokenFromCookie(httpRequest);
         return jwtService.extractClaim(token, Claims::getSubject);
     }
 
@@ -91,8 +92,8 @@ public class ShoppingCartService {
             return false;
         }
 
-        logger.info("isUserSuper user {}", refrigeratorUser.get().getRole() == Role.SUPERUSER);
-        return refrigeratorUser.get().getRole() == Role.SUPERUSER;
+        logger.info("isUserSuper user {}", refrigeratorUser.get().getFridgeRole() == FridgeRole.SUPERUSER);
+        return refrigeratorUser.get().getFridgeRole() == FridgeRole.SUPERUSER;
     }
 
     public Optional<GroceryShoppingCart> saveGrocery(SaveGroceryRequest groceryRequest, HttpServletRequest httpRequest) throws UnauthorizedException {

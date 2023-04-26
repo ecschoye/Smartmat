@@ -8,6 +8,11 @@ export const postLogin = async (login: LoginData): Promise<AxiosResponse> => {
     return axiosInstance.post('/api/auth/login', login);
 };
 
+export const postLogOut = async (): Promise<AxiosResponse> => {
+    return axiosInstance.post('/api/auth/logout');
+};
+
+
 export const postRegister = async (registerData: RegisterData): Promise<AxiosResponse> => {
     return axiosInstance.post('/api/auth/register', registerData);
 };

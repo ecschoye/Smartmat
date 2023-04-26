@@ -1,10 +1,7 @@
-import type { AxiosResponse } from 'axios';
-import axiosInstance from "~/service/AxiosInstance";
+import axiosInstance from "../AxiosInstance";
+import type { AxiosResponse } from "axios";
 
-const getGroceries = async (): Promise<AxiosResponse> => {
-    return axiosInstance.get(`/api/groceries/all`);
-};
 
-export default {
-    getGroceries,
+export const getGroceries = async () : Promise<AxiosResponse> => {
+    return axiosInstance.get("/api/refrigerator/grocery/all");
 }

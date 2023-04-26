@@ -50,7 +50,7 @@ public class JwtService {
     @Autowired
     public JwtService(Environment environment, @Value("${MY_JWT_SECRET_KEY:}") String secretKey) {
         String LOCAL_SECRET_KEY = "THISKEYISONLYUSEDLOCALLYTHISKEYISONLYUSEDLOCALLYTHISKEYISONLYUSEDLOCALLY";
-        this.SECRET_KEY = Arrays.asList(environment.getActiveProfiles()).contains("dev") ? LOCAL_SECRET_KEY : secretKey;
+        this.SECRET_KEY = Arrays.asList(environment.getActiveProfiles()).contains("dev") || Arrays.asList(environment.getActiveProfiles()).contains("test") ? LOCAL_SECRET_KEY : secretKey;
     }
     /**
 

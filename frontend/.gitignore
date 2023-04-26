@@ -22,3 +22,8 @@ dist
 .idea/
 *.iml
 *xml
+
+# cypress
+/cypress/screenshots
+/cypress/videos
+

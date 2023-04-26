@@ -1,11 +1,13 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  ssr: false,
   modules: [
     '@nuxtjs/tailwindcss',
     'nuxt-headlessui',
     '@pinia/nuxt',
     '@nuxtjs/color-mode',
     '@nuxtjs/i18n',
+    '@pinia-plugin-persistedstate/nuxt',
   ],
   colorMode: {
     classSuffix: ''
@@ -14,7 +16,6 @@ export default defineNuxtConfig({
     cssPath: '~/assets/global.css',
     configPath: 'tailwind.config.js',
     exposeConfig: false,
-    config: {},
     injectPosition: 0,
     viewer: true,
   },

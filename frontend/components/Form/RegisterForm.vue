@@ -11,7 +11,7 @@
           <GrayButton :label="$t('go_to_log_in')" width="100%" height="50px" />
         </nuxt-link>
       </div>
-      <ErrorAlert v-if="hasError" :errorMessage="errorMessage.value"></ErrorAlert>
+      <ErrorAlert v-if="catchError" :errorMessage="errorMessage" />
     </form>
   </div>
 </template>
@@ -20,7 +20,6 @@
 import GreenButton from "~/components/Button/GreenButton.vue";
 import GrayButton from "~/components/Button/GrayButton.vue";
 import BaseInput from "~/components/Form/BaseInput.vue";
-import { useUserStore } from "~/store/userStore";
 import { postRegister } from "~/service/httputils/authentication/AuthenticationService";
 import ErrorAlert from "~/components/AlertBox/ErrorAlert.vue";
 
@@ -35,14 +34,13 @@ const form = reactive({
   password: '',
 });
 
-const errorMessage = ref("");
+const catchError = ref(false);
+const errorMessage = ref('');
 
-const hasError = computed(() => {
-  return errorMessage.value !== "";
-});
 
 
 const sendForm = async () => {
+  catchError.value = false;
   try {
     const response = await postRegister(form);
     if (response.status === 200) {
@@ -52,7 +50,8 @@ const sendForm = async () => {
       await router.push('/');
     }
   } catch (error: any) {
-    errorMessage = error.response.data;
+    errorMessage.value = error.response.data || 'An error occurred.';
+    catchError.value = true;
   }
 };
 

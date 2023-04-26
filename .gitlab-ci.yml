@@ -55,10 +55,14 @@ package_backend:
   artifacts:
     paths:
       - target/*.jar
+      - target/site/jacoco/
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
       changes:
         - backend/**/*
+  after_script:
+    - mvn -f backend/pom.xml jacoco:report
+    - mvn -f backend/pom.xml jacoco:report-aggregate
 
 test_frontend:
   stage: test_frontend

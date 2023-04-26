@@ -54,7 +54,6 @@ export default {
     editGroceryQuantity,
     removeGroceryFromShoppingList,
     getRequestedGroceries,
-    transferGroceryToShoppingCart
-    getRequestedGroceries,
+    transferGroceryToShoppingCart,
     updateQuantity
 }

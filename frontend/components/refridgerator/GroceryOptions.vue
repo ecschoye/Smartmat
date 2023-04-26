@@ -18,6 +18,7 @@
 
 <script setup lang="ts">
 import { useRefridgeratorStore } from '~/store/refridgeratorStore';
+import { deleteGrocery } from '~/service/httputils/GroceryService';
 
 const { t } = useI18n();
 const refridgeratorStore = useRefridgeratorStore();
@@ -38,22 +39,44 @@ onMounted(() => {
     elementHeight.value = document.querySelector('#box')?.clientHeight ?? 0;
 });
 
-function removeGrocery() {
-    refridgeratorStore.removeGrocery(refridgeratorStore.selectedGrocery);
-    emit('toggleOptions');
-    //TODO: api call and interaction with shopping cart. 
+async function removeGrocery() {
+
+    try{
+        const response = await deleteGrocery(refridgeratorStore.selectedGrocery);
+        if(response.status == 200){
+            refridgeratorStore.removeGrocery(refridgeratorStore.selectedGrocery);
+            emit('toggleOptions');
+        }
+    }
+    catch(error){
+        console.log(error)
+    } 
 }
 
-function eatGrocery() {
-    refridgeratorStore.removeGrocery(refridgeratorStore.selectedGrocery);
-    //TODO: api call and interaction with shopping cart. 
-    emit('toggleOptions');
+async function eatGrocery() {
+    try{
+        const response = await deleteGrocery(refridgeratorStore.selectedGrocery);
+        if(response.status == 200){
+            refridgeratorStore.removeGrocery(refridgeratorStore.selectedGrocery);
+            emit('toggleOptions');
+        }
+    }
+    catch(error){
+        console.log(error)
+    } 
 }
 
-function trashGrocery() {
-    refridgeratorStore.removeGrocery(refridgeratorStore.selectedGrocery);
-    //TODO: api call and interaction with shopping cart. 
-    emit('toggleOptions');
+async function trashGrocery() {
+    try{
+        const response = await deleteGrocery(refridgeratorStore.selectedGrocery);
+        if(response.status == 200){
+            refridgeratorStore.removeGrocery(refridgeratorStore.selectedGrocery);
+            emit('toggleOptions');
+        }
+    }
+    catch(error){
+        console.log(error)
+    } 
 }
 
 

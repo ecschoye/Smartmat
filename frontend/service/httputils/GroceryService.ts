@@ -1,5 +1,7 @@
 import axiosInstance from "../AxiosInstance";
 import type { AxiosResponse } from "axios";
+import axios from "axios";
+import { GroceryEntity } from "~/types/GroceryEntityType";
 import type { Grocery } from "~/types/GroceryType";
 
 
@@ -18,3 +20,7 @@ export const createGrocery = async (refrigeratorId : number, grocery : Grocery) 
 export const getGroceriesDTOs = async () : Promise<AxiosResponse> => {
     return axiosInstance.get("/api/refrigerator/grocery/allDTOs");
 }
+
+export const deleteGrocery = async (grocery : GroceryEntity) : Promise<AxiosResponse> => {
+    return axios.delete(`/api/refrigerator/grocery/remove/${grocery.id}`);
+} 

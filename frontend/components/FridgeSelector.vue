@@ -1,11 +1,12 @@
 <template>
-  <div v-if="fridges && fridges.length" style="min-width:150px;">
+  <div style="min-width:150px;">
     <HeadlessListbox as="div" v-model="selected">
       <HeadlessListboxLabel></HeadlessListboxLabel>
       <div class="relative">
-        <HeadlessListboxButton class="relative w-full cursor-default rounded-md bg-white dark:bg-zinc-600 py-1.5 pr-10 text-left text-gray-900 shadow-sm sm:leading-6 hover:cursor-pointer">
+        <HeadlessListboxButton class="relative w-full h-full cursor-default rounded-md bg-white dark:bg-zinc-600 py-1.5 pr-10 text-left text-gray-900 shadow-sm sm:leading-6 hover:cursor-pointer">
           <span class="flex items-center">
-            <span class="ml-3 block truncate">{{ selected.name }}</span>
+            <span v-if="selected.id === -1" class="ml-3 block truncate opacity-70">{{ $t('select_fridge') }}</span>
+            <span v-else class="ml-3 block truncate">{{ selected.name }}</span>
           </span>
           <span class="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
             <svg 
@@ -68,7 +69,7 @@ export default {
   data () {
     return {
       selected : {
-        id: 0, 
+        id: -1, 
         name: ''
       },
 
@@ -82,8 +83,10 @@ export default {
     }
   },
   mounted () {
-    if(this.fridges !== undefined && this.fridges !== null ){
+    if (this.fridges && this.fridges.length > 0) {
       this.selected = this.fridges[0]
+    } else {
+      this.selected = { id: -1, name: '' }
     }
   },
   setup() {
@@ -94,7 +97,7 @@ export default {
   watch: {
     selected : function(newVal, oldVal) {
       if(newVal !== oldVal && newVal !== undefined) {
-        this.$emit("selectedFridgeEvent", newVal)
+        if(newVal !== -1) this.$emit("selectedFridgeEvent", newVal)
       }
     }
   }

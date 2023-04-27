@@ -48,24 +48,21 @@
                 <HeadlessMenuItem v-if="loggedIn" v-slot="{ active }">
                   <NuxtLink :to="localePath('/my-profile')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-900', 'block px-4 py-2 text-sm']">{{t('edit_profile')}}</NuxtLink>
                 </HeadlessMenuItem>
-                <HeadlessMenuItem v-else v-slot="{ active }">
-                  <NuxtLink :to="localePath('/login')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-900', 'block px-4 py-2 text-sm']">{{t('log_in')}}</NuxtLink>
-                </HeadlessMenuItem>
                 <HeadlessMenuItem v-slot="{ active }">
                   <NuxtLink :to="localePath('/system-settings')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-900', 'block px-4 py-2 text-sm']">{{t('system_settings')}}</NuxtLink>
                 </HeadlessMenuItem>
                 <!-- TODO: delete post -->
-                  <HeadlessMenuItem v-if="loggedIn" v-slot="{ active }">
-                    <button @click="handleLogOut()" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900' : 'text-gray-700 dark:text-gray-900', 'block w-full px-4 py-2 text-left text-sm']">{{t('log_out')}}</button>
-                  </HeadlessMenuItem>
+                <li class="border-t border-gray-200 max-h-10 list-none"></li>
+                <HeadlessMenuItem v-if="loggedIn" v-slot="{ active }">
+                  <button @click="handleLogOut()" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900' : 'text-gray-700 dark:text-gray-900', 'block w-full px-4 py-2 text-left text-sm']">{{t('log_out')}}</button>
+                </HeadlessMenuItem>
+                <HeadlessMenuItem v-else v-slot="{ active }">
+                  <NuxtLink :to="localePath('/login')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-900', 'block px-4 py-2 text-sm']">{{t('log_in')}}</NuxtLink>
+                </HeadlessMenuItem>
               </div>
             </HeadlessMenuItems>
           </transition>
         </HeadlessMenu>
-        <NuxtLink v-else title="Logg inn" href="/" class="-m-1.5 p-1.5 text-sm font-semibold leading-6 text-gray-900">
-          <span class="sr-only">Logg Inn</span>
-          <img class="h-8 w-auto" src="../assets/icons/profile.png" alt="">
-        </NuxtLink>
       </div>
     </div>
   </nav>

@@ -18,7 +18,7 @@
           class="inline-flex items-center hover:cursor-pointer
               dark:button-dark-color sm:text-md outline:none hover:opacity-70
               transition duration-150 p-2 border-l border-gray-300">
-          <img class="h-5 w-auto mr-2 pt-0.5" src="../assets/icons/settings.png" alt="">
+          <img class="h-5 w-auto mr-2 pt-0.5" src="../assets/icons/refrigerator.png" alt="">
           {{t('manage')}}
         </button>
       </div>
@@ -47,6 +47,9 @@
               <div class="py-1">
                 <HeadlessMenuItem v-if="loggedIn" v-slot="{ active }">
                   <NuxtLink :to="localePath('/my-profile')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-900', 'block px-4 py-2 text-sm']">{{t('edit_profile')}}</NuxtLink>
+                </HeadlessMenuItem>
+                <HeadlessMenuItem v-else v-slot="{ active }">
+                  <NuxtLink :to="localePath('/login')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-900', 'block px-4 py-2 text-sm']">{{t('log_in')}}</NuxtLink>
                 </HeadlessMenuItem>
                 <HeadlessMenuItem v-slot="{ active }">
                   <NuxtLink :to="localePath('/system-settings')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-900', 'block px-4 py-2 text-sm']">{{t('system_settings')}}</NuxtLink>
@@ -151,6 +154,14 @@ export default defineComponent({
       },
     closeMobileMenu() {
       this.mobileMenuOpen = false;
+    }
+  },
+  computed: {
+    opacityClass: function() {
+      return {
+        "opacity-70" : this.selected === -1,
+        "" : this.selected !== 0
+      }
     }
   }
 

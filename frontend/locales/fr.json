@@ -56,5 +56,6 @@
   "new_grocery": "Nouveau produit",
   "remove": "Supprimer",
   "use": "Utiliser",
-  "throw_away": "Jeter"
+  "throw_away": "Jeter",
+  "select_fridge" : "Sélectionnez Réfrigérateur"
 }

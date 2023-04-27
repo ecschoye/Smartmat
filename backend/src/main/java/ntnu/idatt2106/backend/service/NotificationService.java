@@ -11,6 +11,7 @@ import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
 import org.springframework.stereotype.Service;
 
+import javax.management.Notification;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -109,6 +110,19 @@ public class NotificationService {
             throw new NotificationException("Could not find notification in repository when deleting" + e.getMessage());
         }
         return new GroceryNotificationDTO(found);
+    }
+
+    public List<GroceryNotificationDTO> deleteNotificationsByRefrigeratorGrocery(RefrigeratorGrocery refrigeratorGrocery) throws NotificationException{
+        List<GroceryNotification> delete = groceryNotificationRepository.findAllByGroceryEntity(refrigeratorGrocery);
+        delete.stream()
+                .forEach((groceryNotification -> {
+                    groceryNotificationRepository.delete(groceryNotification);
+                }));
+        List <GroceryNotificationDTO> list = delete.stream()
+                .map(groceryNotification -> new GroceryNotificationDTO(groceryNotification))
+                .collect(Collectors.toList());
+
+        return list;
     }
 
     private long getDaysBetweenTodayAndDate(Date date) {

@@ -1,5 +1,5 @@
 <template>
-    <div class ="border w-1/3 mt-4 ml-2 border-black rounded-xl bg-white dark:bg-zinc-400 ">
+    <div class ="w-full border mt-4 ml-2 border-black rounded-xl bg-white dark:bg-zinc-400 ">
         <form @submit.prevent="onSubmit" class ="form bg-white mt-3 ml-2 dark:bg-zinc-400 w-11/12 flex flex-col">
             <div>
                 <RefridgeratorDropdown @update-value="(payload) => {grocery = payload}"  />

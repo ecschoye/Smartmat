@@ -37,7 +37,7 @@
   "go_back": "Volver",
   "update": "Actualizar",
   "update_user_details": "Actualizar detalles de usuario",
-  "new_fridge": "Nueva nevera",
+  "new_fridge": "Nueva Frigorífico",
   "enter_your_old_password": "Ingrese su antigua contraseña:",
   "old_password": "Antigua contraseña",
   "enter_your_new_password": "Ingrese su nueva contraseña:",
@@ -56,5 +56,6 @@
   "new_grocery": "Nuevo comestible",
   "remove": "Eliminar",
   "use": "Usar",
-  "throw_away": "Tirar"
+  "throw_away": "Tirar",
+  "select_fridge" : "Seleccione Frigorífico"
 }

@@ -56,5 +56,6 @@
   "new_grocery": "New grocery",
   "remove": "Remove",
   "use": "Use",
-  "throw_away": "Throw away"
+  "throw_away": "Throw away",
+  "select_fridge" : "Select Fridge"
 }

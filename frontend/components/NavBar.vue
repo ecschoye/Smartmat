@@ -16,9 +16,8 @@
         <FridgeSelector :fridges="refridgeratorStore.getRefrigerators" @selected-fridge-event="handleFridgeEvent" />
         <button type="button"
           class="inline-flex items-center hover:cursor-pointer
-              dark:button-dark-color sm:text-md outline:none
-            transition duration-150 hover:border-emerald-400
-            p-2 pressed:border-emerald-600 border-l border-gray-300">
+              dark:button-dark-color sm:text-md outline:none hover:opacity-70
+              transition duration-150 p-2 border-l border-gray-300">
           <img class="h-5 w-auto mr-2 pt-0.5" src="../assets/icons/settings.png" alt="">
           {{t('manage')}}
         </button>

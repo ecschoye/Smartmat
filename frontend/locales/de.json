@@ -56,5 +56,6 @@
 "new_grocery": "Neues Lebensmittel",
 "remove": "Entfernen",
 "use": "Verwenden",
-"throw_away": "Wegwerfen"
+"throw_away": "Wegwerfen",
+"select_fridge" : "Kühlschrank auswählen"
 }

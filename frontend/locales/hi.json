@@ -27,5 +27,6 @@
   "change_password": "पासवर्ड बदलें",
   "go_back": "वापस जाएं",
   "update": "अपडेट करें",
-  "new_fridge": "नया फ्रिज"
+  "new_fridge": "नया फ्रिज",
+  "select_fridge" : "रेफ्रिजरेटर का चयन करें"
 }

@@ -27,5 +27,6 @@
   "change_password": "修改密码",
   "go_back": "返回",
   "update": "更新",
-  "new_fridge": "新冰箱"
+  "new_fridge": "新冰箱",
+  "select_fridge" : "选择冰箱"
 }

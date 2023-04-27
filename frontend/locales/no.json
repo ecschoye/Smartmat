@@ -56,6 +56,6 @@
   "new_grocery": "Ny matvare",
   "remove": "Fjern",
   "use": "Bruk",
-  "throw_away": "Kast"
-
+  "throw_away": "Kast",
+  "select_fridge" : "Velg Kjøleskap"
 }

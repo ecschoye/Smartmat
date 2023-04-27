@@ -12,11 +12,15 @@
 <script>
 import CreateFridgeForm from "~/components/Form/CreateFridgeForm.vue";
 
-const { t } = useI18n();
 
 export default {
   name: "create-fridge.vue",
-  components: {CreateFridgeForm}
+  components: {CreateFridgeForm},
+  setup() {
+    const { t } = useI18n();
+
+    return { t };
+  },
 }
 </script>
 

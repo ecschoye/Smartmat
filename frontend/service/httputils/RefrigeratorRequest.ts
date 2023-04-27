@@ -3,5 +3,5 @@ import {AxiosResponse} from "axios";
 import axiosInstance from "~/service/AxiosInstance";
 
 export const postRegisterFridge = async (refrigeratorRegisterData : RefrigeratorRegisterData): Promise<AxiosResponse> => {
-    return axiosInstance.post('/api/new', refrigeratorRegisterData);
+    return axiosInstance.post('/api/refrigerator/new', refrigeratorRegisterData);
 }

@@ -6,6 +6,7 @@
       <div class="button-wrapper">
         <GreenButton label="Lag kjølskap" width="100%" height="50px" />
       </div>
+      <ErrorAlert class="mt-4" v-if="catchError" :errorMessage="errorMessage" />
     </form>
   </div>
 </template>
@@ -21,8 +22,12 @@ import {RefrigeratorRegisterData} from "~/types/RefrigeratorRegisterData";
 import {AxiosResponse} from "axios";
 import axiosInstance from "~/service/AxiosInstance";
 import { postRegisterFridge } from "~/service/httputils/RefrigeratorRequest";
+import { useRefridgeratorStore} from "~/store/refridgeratorStore";
+import ErrorAlert from "~/components/AlertBox/ErrorAlert.vue";
 
+const refrigeratorStore = useRefridgeratorStore();
 
+const catchError = ref(false);
 const errorMessage = ref("");
 const router = useRouter();
 
@@ -43,6 +48,7 @@ const sendForm = async () => {
   } catch (error: any) {
     errorMessage.value = error.response;
     console.error(error.response);
+    catchError.value = true;
   }
 };
 

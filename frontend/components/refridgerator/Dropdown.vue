@@ -1,5 +1,5 @@
 <template>
-  <div class="h-1/2 py-6 flex flex-col items-center justify-center dark:bg-zinc-400 sm:py-6 overflow-hidden">
+  <div class="h-1/2 w-full py-6 flex flex-col items-center justify-center dark:bg-zinc-400 sm:py-6 overflow-hidden">
     <input
       @click="open = !open"
       type="search"

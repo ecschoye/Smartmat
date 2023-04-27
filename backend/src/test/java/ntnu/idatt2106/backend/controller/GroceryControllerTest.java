@@ -13,6 +13,7 @@ import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.service.CookieService;
 import ntnu.idatt2106.backend.service.GroceryService;
 import ntnu.idatt2106.backend.service.JwtService;
+import ntnu.idatt2106.backend.service.NotificationService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,9 @@ class GroceryControllerTest {
 
     @Mock
     private JwtService jwtService;
+
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private GroceryController groceryController;

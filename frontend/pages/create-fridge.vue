@@ -1,7 +1,7 @@
 <template>
   <div class="create-fridge-wrapper">
     <div class=" mt-14">
-      <h1 class="flex justify-center text-white text-4xl ">{{ t('create_fridge') }}</h1>
+      <h1 class="flex justify-center text-white text-4xl ">{{ t('new_fridge') }}</h1>
     </div>
     <div class="form-wrapper mx-auto">
       <CreateFridgeForm id="fridge"></CreateFridgeForm>
@@ -12,11 +12,15 @@
 <script>
 import CreateFridgeForm from "~/components/Form/CreateFridgeForm.vue";
 
-const { t } = useI18n();
 
 export default {
   name: "create-fridge.vue",
-  components: {CreateFridgeForm}
+  components: {CreateFridgeForm},
+  setup() {
+    const { t } = useI18n();
+
+    return { t };
+  },
 }
 </script>
 

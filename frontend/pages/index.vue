@@ -14,7 +14,7 @@
     </div>
 
     <div class="sm:flex sm:justify-center text-center" >
-      <NuxtLink v-if="loggedIn" :to="localePath('/my-fridge')" class="sm:mt-5 sm:pr-4">
+      <NuxtLink v-if="loggedIn" :to="localePath('/home')" class="sm:mt-5 sm:pr-4">
         <button class="w-54 h-14 sm:w-50 button-light-color dark:button-dark-color dark:text-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
           {{  t('go_to_my_fridge') }}
         </button>
@@ -40,8 +40,8 @@
   import { onMounted, computed } from "vue";
   import { getNotifications } from "~/service/httputils/NotificationService";
   import { useNotificationStore } from '~/store/notificationStore';
-  import { getRefrigerators } from "~/service/httputils/RefridgeratorService";
-import { useRefridgeratorStore } from "~/store/refridgeratorStore";
+  import { getRefrigerators } from "~/service/httputils/RefrigeratorService";
+import { useRefridgeratorStore } from "~/store/refrigeratorStore";
   const { t, locale } = useI18n({
     useScope: 'local'
   })

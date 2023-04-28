@@ -1,30 +1,29 @@
 package ntnu.idatt2106.backend.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
-import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
-import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
+import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.Grocery;
+import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.response.ErrorResponse;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
-import ntnu.idatt2106.backend.service.CookieService;
-import ntnu.idatt2106.backend.service.GroceryService;
-import ntnu.idatt2106.backend.service.JwtService;
-import ntnu.idatt2106.backend.service.UserService;
+import ntnu.idatt2106.backend.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
-import ntnu.idatt2106.backend.exceptions.NoGroceriesFound;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
-import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.service.GroceryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,27 +39,54 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/refrigerator/grocery")
 @RequiredArgsConstructor
+@Tag(name = "Grocery Controller", description = "Controller to handle the groceries in a refrigerator")
 public class GroceryController {
 
     private final GroceryService groceryService;
     private final CookieService cookieService;
     private final UserService userService;
     private final JwtService jwtService;
+    private final NotificationService notificationService;
     Logger logger = LoggerFactory.getLogger(GroceryController.class);
 
+    @Operation(summary = "Get all groceries by refrigerator id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of groceries fetched successfully", content = @Content(schema = @Schema(implementation = RefrigeratorGroceryDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Refrigerator not found"),
+            @ApiResponse(responseCode = "401", description = "User is not authorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/{refrigeratorId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<RefrigeratorGroceryDTO>> getGroceriesByRefrigerator(@Valid @PathVariable long refrigeratorId, HttpServletRequest httpServletRequest) throws UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
         logger.info("Received request for groceries by refrigerator with id: {}", refrigeratorId);
         return new ResponseEntity<>(groceryService.getGroceriesByRefrigerator(refrigeratorId, httpServletRequest), HttpStatus.OK);
     }
 
+    @Operation(summary = "Remove a refrigerator grocery by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Refrigerator grocery removed successfully", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Refrigerator grocery not found"),
+            @ApiResponse(responseCode = "401", description = "User is unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @DeleteMapping("/remove/{refrigeratorGroceryId}")
-    public ResponseEntity<SuccessResponse> removeRefrigeratorGrocery(@Valid @PathVariable long refrigeratorGroceryId, HttpServletRequest httpServletRequest) throws UserNotFoundException, UnauthorizedException, EntityNotFoundException {
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<SuccessResponse> removeRefrigeratorGrocery(@Valid @PathVariable long refrigeratorGroceryId, HttpServletRequest httpServletRequest) throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException {
+        System.out.println("I was called!!!!");
         logger.info("Received request to remove refrigeratorGrocery with id: {}",refrigeratorGroceryId);
+        RefrigeratorGrocery refrigeratorGrocery = groceryService.getRefrigeratorGroceryById(refrigeratorGroceryId);
+        notificationService.deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);
         groceryService.removeRefrigeratorGrocery(refrigeratorGroceryId, httpServletRequest);
         return new ResponseEntity<>(new SuccessResponse("Grocery removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
+    @Operation(summary = "Get all groceries")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of groceries fetched successfully", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Grocery.class)))),
+            @ApiResponse(responseCode = "204", description = "No content", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @GetMapping("/all")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getAllGroceries(HttpServletRequest request){
@@ -76,6 +102,14 @@ public class GroceryController {
         return ResponseEntity.ok(list);
     }
 
+    @Operation(summary = "Create a new grocery")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Grocery created successfully", content = @Content(schema = @Schema(implementation = GroceryDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PostMapping("/new/{refrigeratorId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> createNewGrocery(HttpServletRequest request, @RequestBody GroceryDTO grocery, @Valid @PathVariable long refrigeratorId) throws Exception {
@@ -93,7 +127,13 @@ public class GroceryController {
         }
     }
 
-        @GetMapping("/allDTOs")
+    @Operation(summary = "Get all grocery DTOs")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of grocery DTOs fetched successfully", content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroceryDTO.class)))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "204", description = "No groceries found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @GetMapping("/allDTOs")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<GroceryDTO>> getAllGroceriesDTOs(HttpServletRequest request) throws UnauthorizedException, NoGroceriesFound{
         String token = cookieService.extractTokenFromCookie(request);

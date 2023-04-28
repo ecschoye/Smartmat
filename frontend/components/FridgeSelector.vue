@@ -1,11 +1,12 @@
 <template>
-  <div v-if="fridges && fridges.length" style="min-width:150px;">
+  <div style="min-width:150px;">
     <HeadlessListbox as="div" v-model="selected">
       <HeadlessListboxLabel></HeadlessListboxLabel>
       <div class="relative">
-        <HeadlessListboxButton class="relative w-full cursor-default rounded-md bg-white dark:bg-zinc-600 py-1.5 pr-10 text-left text-gray-900 shadow-sm sm:leading-6 hover:cursor-pointer">
+        <HeadlessListboxButton class="relative w-full h-full cursor-default rounded-md bg-white dark:bg-zinc-600 py-1.5 pr-10 text-left text-gray-900 shadow-sm sm:leading-6 hover:cursor-pointer">
           <span class="flex items-center">
-            <span class="ml-3 block truncate">{{ selected.name }}</span>
+            <span v-if="selected.id === -1" class="ml-3 block truncate opacity-70">{{ $t('select_fridge') }}</span>
+            <span v-else class="ml-3 block truncate">{{ selected.name }}</span>
           </span>
           <span class="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
             <svg 
@@ -47,7 +48,7 @@
               </HeadlessListboxOption>
               <li class="border-t border-gray-200 my-2"></li>
               <HeadlessListboxOption v-slot="{ active, selected }" as="template" :value="{ id: 'link', name: 'Link to page' }">
-                <NuxtLink to="/" :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'block cursor-default select-none py-2 pl-3 pr-2','hover:cursor-pointer']" :aria-selected="selected">
+                <NuxtLink to="/create-fridge" :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'block cursor-default select-none py-2 pl-3 pr-2','hover:cursor-pointer']" :aria-selected="selected">
                   <div class="flex items-center ">
                     <img class="hidden sm:block h-5 w-auto" src="../assets/icons/add.png" alt="">
                     <span :class="[selected ? 'font-semibold' : 'font-normal', 'ml-1 sm:ml-3 block truncate']">{{ $t('new_fridge') }}</span>
@@ -64,11 +65,12 @@
 
 <script lang="ts">
 import { Refrigerator } from "~/types/RefrigeratorType";
+
 export default {
   data () {
     return {
       selected : {
-        id: 0, 
+        id: -1, 
         name: ''
       },
 
@@ -82,20 +84,27 @@ export default {
     }
   },
   mounted () {
-    if(this.fridges !== undefined && this.fridges !== null ){
+    if (this.fridges && this.fridges.length > 0) {
       this.selected = this.fridges[0]
+    } else {
+      this.selected = { id: -1, name: '' }
     }
   },
   setup() {
-    const { t } = useI18n()
+    const {locale, locales, t} = useI18n()
 
-    return { t }
+    return { t,locale,locales}
   },
   watch: {
     selected : function(newVal, oldVal) {
       if(newVal !== oldVal && newVal !== undefined) {
-        this.$emit("selectedFridgeEvent", newVal)
+        if(newVal !== -1) this.$emit("selectedFridgeEvent", newVal)
       }
+    }
+  },
+  methods: {
+    goToCreateFridgePage() {
+      this.$router.push(this.$nuxt.localePath('/create-fridge'))
     }
   }
 }

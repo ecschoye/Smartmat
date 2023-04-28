@@ -2,6 +2,7 @@ package ntnu.idatt2106.backend.controller;
 
 import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
+import ntnu.idatt2106.backend.exceptions.NotificationException;
 import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
@@ -12,6 +13,7 @@ import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.service.CookieService;
 import ntnu.idatt2106.backend.service.GroceryService;
 import ntnu.idatt2106.backend.service.JwtService;
+import ntnu.idatt2106.backend.service.NotificationService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +41,9 @@ class GroceryControllerTest {
 
     @Mock
     private JwtService jwtService;
+
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private GroceryController groceryController;
@@ -81,7 +86,7 @@ class GroceryControllerTest {
     }
 
     @Test
-    void removeRefrigeratorGrocery_validInput_removesGrocery() throws UserNotFoundException, UnauthorizedException, EntityNotFoundException {
+    void removeRefrigeratorGrocery_validInput_removesGrocery() throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException {
         // Arrange
         long refrigeratorGroceryId = 1L;
 

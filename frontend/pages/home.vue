@@ -1,9 +1,9 @@
 <template>
-    <div class="m-1 flex flex-col">
-        <div class="self-start">
-            <RefridgeratorWrapper /> 
+    <div class="m-1 w-full">
+        <div class="w-1/2">
+            <RefrigeratorWrapper /> 
         </div>
-        <div class="self-end\">
+        <div class="">
             <ShoppingList 
             :shopping-list = "shoppingList"
             :category-list = "categoryList"

@@ -6,20 +6,19 @@
       <img class="h-12 w-auto hover:transform hover:scale-125" src="../assets/icons/smartmat/leafTransparent.png" alt="">
     </NuxtLink>
     <div class="hidden lg:flex flex-1 space-x-5 items-center lg:justify-start">
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:text-xl hover:text-green-custom">{{t('home')}}</NuxtLink>
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:text-xl hover:text-green-custom">{{t('weekly_menu')}}</NuxtLink>
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:text-xl hover:text-green-custom">{{t('recipes')}}</NuxtLink>
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:text-xl hover:text-green-custom">{{t('statistics')}}</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('home')}}</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('weekly_menu')}}</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('recipes')}}</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('statistics')}}</NuxtLink>
     </div>
     <div class="flex flex-1 space-x-2 items-center justify-end">
       <div class="p-0.5 rounded-md ring-1 min-w-fit ring-inset ring-gray-300 dark:ring-zinc-600 inline-flex items-center">
         <FridgeSelector :fridges="refridgeratorStore.getRefrigerators" @selected-fridge-event="handleFridgeEvent" />
         <button type="button"
           class="inline-flex items-center hover:cursor-pointer
-              dark:button-dark-color sm:text-md outline:none
-            transition duration-150 hover:border-emerald-400
-            p-2 pressed:border-emerald-600 border-l border-gray-300">
-          <img class="h-5 w-auto mr-2 pt-0.5" src="../assets/icons/settings.png" alt="">
+              dark:button-dark-color sm:text-md outline:none hover:opacity-70
+              transition duration-150 p-2 border-l border-gray-300">
+          <img class="h-5 w-auto mr-2 pt-0.5" src="../assets/icons/refrigerator.png" alt="">
           {{t('manage')}}
         </button>
       </div>
@@ -53,17 +52,17 @@
                   <NuxtLink :to="localePath('/system-settings')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-900', 'block px-4 py-2 text-sm']">{{t('system_settings')}}</NuxtLink>
                 </HeadlessMenuItem>
                 <!-- TODO: delete post -->
-                  <HeadlessMenuItem v-if="loggedIn" v-slot="{ active }">
-                    <button @click="handleLogOut()" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900' : 'text-gray-700 dark:text-gray-900', 'block w-full px-4 py-2 text-left text-sm']">{{t('log_out')}}</button>
-                  </HeadlessMenuItem>
+                <li class="border-t border-gray-200 max-h-10 list-none"></li>
+                <HeadlessMenuItem v-if="loggedIn" v-slot="{ active }">
+                  <button @click="handleLogOut()" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900' : 'text-gray-700 dark:text-gray-900', 'block w-full px-4 py-2 text-left text-sm']">{{t('log_out')}}</button>
+                </HeadlessMenuItem>
+                <HeadlessMenuItem v-else v-slot="{ active }">
+                  <NuxtLink :to="localePath('/login')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-900', 'block px-4 py-2 text-sm']">{{t('log_in')}}</NuxtLink>
+                </HeadlessMenuItem>
               </div>
             </HeadlessMenuItems>
           </transition>
         </HeadlessMenu>
-        <NuxtLink v-else title="Logg inn" href="/" class="-m-1.5 p-1.5 text-sm font-semibold leading-6 text-gray-900">
-          <span class="sr-only">Logg Inn</span>
-          <img class="h-8 w-auto" src="../assets/icons/profile.png" alt="">
-        </NuxtLink>
       </div>
     </div>
   </nav>
@@ -103,7 +102,7 @@
 import {computed, defineComponent} from 'vue'
 import {useUserStore} from "~/store/userStore";
 import { useNotificationStore } from "~/store/notificationStore";
-import { useRefridgeratorStore } from "~/store/refridgeratorStore";
+import { useRefridgeratorStore } from "~/store/refrigeratorStore";
 import {postLogOut} from "~/service/httputils/authentication/AuthenticationService";
 
 export default defineComponent({
@@ -144,7 +143,7 @@ export default defineComponent({
           const router = useRouter();
           if (response.status === 200){
             userStore.logOut();
-            router.push('/');
+            router.push('/login');
           }
         } catch (error) {
           console.error(error);

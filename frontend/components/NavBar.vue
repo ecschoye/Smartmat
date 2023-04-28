@@ -13,7 +13,7 @@
     </div>
     <div class="flex flex-1 space-x-2 items-center justify-end">
       <div class="p-0.5 rounded-md ring-1 min-w-fit ring-inset ring-gray-300 dark:ring-zinc-600 inline-flex items-center">
-        <FridgeSelector :fridges="refrigeratorStore.getRefrigerators" @selected-fridge-event="handleFridgeEvent" />
+        <FridgeSelector @selected-fridge-event="handleFridgeEvent" />
         <button type="button"
           class="inline-flex items-center hover:cursor-pointer
               dark:button-dark-color sm:text-md outline:none hover:opacity-70

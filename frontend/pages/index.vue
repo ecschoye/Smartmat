@@ -3,8 +3,10 @@
     <div class="">
       <h1 class="text-white text-center text-4xl sm:text-6xl mb-8 mt-14">{{t('welcome_to_smart_mat')}}</h1>
     </div>
-
-    <div class="flex justify-center pb-5 sm:pb-0 dark:hidden">
+    <div v-if="select" class="flex justify-center">
+      <SelectPrompt @clicked="(payload) => goToFridge(payload)" :refrigerators="refrigeratorStore.getRefrigerators"/>
+    </div>
+    <div v-else class="flex justify-center pb-5 sm:pb-0 dark:hidden">
       <!-- logo -->
       <img src="../assets/icons/smartmat/smartMat.png" alt="logo" class="w-72 h-auto sm:w-3/5 sm:h-auto image">
     </div>
@@ -14,11 +16,18 @@
     </div>
 
     <div class="sm:flex sm:justify-center text-center" >
-      <NuxtLink v-if="loggedIn" :to="localePath('/home')" class="sm:mt-5 sm:pr-4">
+      <NuxtLink v-if="loggedIn && isSelected()" :to="localePath('/home')" class="sm:mt-5 sm:pr-4">
         <button class="w-54 h-14 sm:w-50 button-light-color dark:button-dark-color dark:text-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
           {{  t('go_to_my_fridge') }}
         </button>
       </NuxtLink>
+
+      <NuxtLink v-else-if="loggedIn" @click="toggleSelect()" class="sm:mt-5 sm:pr-4">
+        <button class="w-54 h-14 sm:w-50 button-light-color dark:button-dark-color dark:text-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
+          {{  t('go_to_my_fridge') }}
+        </button>
+      </NuxtLink>
+
 
       <NuxtLink v-else :to="localePath('/login')" class="sm:mt-5 sm:pr-4">
         <button class="w-52 h-14 sm:w-50 button-light-color dark:button-dark-color dark:text-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
@@ -41,9 +50,10 @@
   import { getNotifications } from "~/service/httputils/NotificationService";
   import { useNotificationStore } from '~/store/notificationStore';
   import { getRefrigerators } from "~/service/httputils/RefrigeratorService";
-import { useRefrigeratorStore } from "~/store/refrigeratorStore";
-import { Refrigerator } from '~/types/RefrigeratorType';
-  const { t, locale } = useI18n({
+  import { useRefrigeratorStore } from "~/store/refrigeratorStore";
+  import { Refrigerator } from '~/types/RefrigeratorType';
+  const router = useRouter();
+  const { t, locale, locales } = useI18n({
     useScope: 'local'
   })
 
@@ -53,6 +63,27 @@ import { Refrigerator } from '~/types/RefrigeratorType';
   const notificationStore = useNotificationStore();
   const refrigeratorStore = useRefrigeratorStore();
 
+
+
+  const select = ref(false);
+  function toggleSelect(){
+    select.value = !select.value
+  }
+
+  function isSelected(){
+    try{
+      return refrigeratorStore.getSelectedRefrigerator!.id > 0;
+    }
+    catch(error){
+      return false;
+    };
+  }
+
+
+  function goToFridge(value : any){
+    refrigeratorStore.setSelectedRefrigerator(value);
+      router.push('/home');
+  }
 
 
   async function loadNotifications(){

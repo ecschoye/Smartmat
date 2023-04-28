@@ -75,8 +75,6 @@ export default {
       refrigeratorStore
     }
   }, 
-  props : {
-  },
   computed:{
     selected(){
       if(refrigeratorStore.getSelectedRefrigerator){

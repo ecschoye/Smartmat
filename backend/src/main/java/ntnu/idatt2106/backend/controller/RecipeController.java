@@ -37,7 +37,7 @@ public class RecipeController {
             @ApiResponse(responseCode = "200", description = "Recipes fetched successfully", content = @Content(schema = @Schema(implementation = Recipe.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @GetMapping("{refrigeratorId}")
+    @GetMapping("/{refrigeratorId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> fetchRecipes(@Valid @PathVariable long refrigeratorId) throws Exception {
         logger.info("Received request to fetch recipes for user");

@@ -140,27 +140,20 @@ public class ShoppingListService {
         return categories;
     }
 
-    /*
-    public Optional<GroceryShoppingList> editGrocery(EditGroceryRequest groceryRequest, HttpServletRequest httpRequest) {
-        String eMail = groceryService.extractEmail(httpRequest);
-        logger.info("Editing grocery with id: {} to shopping list with id {}", groceryRequest.getId(), groceryRequest.getShoppingListId());
 
-        Optional<GroceryShoppingList> groceryShoppingList = groceryShoppingListRepository.findById(groceryRequest.getId());
-        if (groceryShoppingList.isPresent()) {
-            logger.info("Found grocery in the shopping list");
-            boolean isRequested = !isSuperUser(eMail, groceryRequest.getShoppingListId());
+    public GroceryShoppingList editGrocery(long groceryShoppingListId, int quantity, HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, UnauthorizedException, SaveException {
+        GroceryShoppingList groceryShoppingList = groceryShoppingListRepository.findById(groceryShoppingListId)
+                .orElseThrow(() -> new NoGroceriesFound("Could not find a grocery with the given i"));
+        FridgeRole fridgeRole = groceryService.getFridgeRole(groceryShoppingList.getShoppingList().getRefrigerator(), httpRequest);
 
-            groceryShoppingList.get().setRequest(isRequested);
-            groceryShoppingList.get().setQuantity(groceryRequest.getQuantity());
-
-            logger.info("Edit grocery in the grocery list");
-            return Optional.of(groceryShoppingListRepository.save(groceryShoppingList.get()));
+        if (fridgeRole == FridgeRole.SUPERUSER) {
+            groceryShoppingList.setQuantity(quantity);
+            groceryShoppingList.setRequest(true);
+            groceryShoppingListRepository.save(groceryShoppingList);
+            return groceryShoppingList;
         }
-        logger.info("Could not find the grocery in the shopping list");
-        return Optional.empty();
+        throw new SaveException("Failed to add a edit the grocery item with id " + groceryShoppingListId);
     }
-
-     */
 
     /**
      * Adds predefined grocery to the shopping list

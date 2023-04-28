@@ -147,16 +147,17 @@ public class RefrigeratorController {
         return new ResponseEntity<>(new SuccessResponse("Member removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
+    @Operation(summary = "Get all refrigerators by user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of refrigerators fetched successfully", content = @Content(schema = @Schema(implementation = Refrigerator.class))),
+            @ApiResponse(responseCode = "204", description = "User not found")
+    })
     @GetMapping("/user")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Refrigerator>> getAllByUser(HttpServletRequest request){
+    public ResponseEntity<List<Refrigerator>> getAllByUser(HttpServletRequest request) throws UserNotFoundException {
         logger.info("Received request for all refrigerators by user");
-        try {
-            List<Refrigerator> result = refrigeratorService.getAllByUser(request);
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } catch (UserNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+        List<Refrigerator> result = refrigeratorService.getAllByUser(request);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @Operation(summary = "Get all refrigerators by user")

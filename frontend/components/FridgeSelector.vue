@@ -48,7 +48,7 @@
               </HeadlessListboxOption>
               <li class="border-t border-gray-200 my-2"></li>
               <HeadlessListboxOption v-slot="{ active, selected }" as="template" :value="{ id: 'link', name: 'Link to page' }">
-                <NuxtLink to="/" :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'block cursor-default select-none py-2 pl-3 pr-2','hover:cursor-pointer']" :aria-selected="selected">
+                <NuxtLink to="/create-fridge" :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'block cursor-default select-none py-2 pl-3 pr-2','hover:cursor-pointer']" :aria-selected="selected">
                   <div class="flex items-center ">
                     <img class="hidden sm:block h-5 w-auto" src="../assets/icons/add.png" alt="">
                     <span :class="[selected ? 'font-semibold' : 'font-normal', 'ml-1 sm:ml-3 block truncate']">{{ $t('new_fridge') }}</span>
@@ -65,6 +65,7 @@
 
 <script lang="ts">
 import { Refrigerator } from "~/types/RefrigeratorType";
+
 export default {
   data () {
     return {
@@ -90,15 +91,20 @@ export default {
     }
   },
   setup() {
-    const { t } = useI18n()
+    const {locale, locales, t} = useI18n()
 
-    return { t }
+    return { t,locale,locales}
   },
   watch: {
     selected : function(newVal, oldVal) {
       if(newVal !== oldVal && newVal !== undefined) {
         if(newVal !== -1) this.$emit("selectedFridgeEvent", newVal)
       }
+    }
+  },
+  methods: {
+    goToCreateFridgePage() {
+      this.$router.push(this.$nuxt.localePath('/create-fridge'))
     }
   }
 }

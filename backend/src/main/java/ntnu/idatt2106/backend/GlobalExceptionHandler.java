@@ -84,6 +84,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
+        logger.warn("RefrigeratorNotFoundException thrown: " + ex.getMessage());
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NO_CONTENT);
+    }
+
     @ExceptionHandler(OldPasswordDoesNotMatchException.class)
     public ResponseEntity<String> handleOldPasswordDoesNotMatchException(OldPasswordDoesNotMatchException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

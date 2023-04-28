@@ -162,7 +162,7 @@ public class RefrigeratorController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @Operation(summary = "Get all refrigerators by user")
+    @Operation(summary = "Get refrigerators by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of refrigerators fetched successfully", content = @Content(schema = @Schema(implementation = Refrigerator.class))),
             @ApiResponse(responseCode = "204", description = "No content")

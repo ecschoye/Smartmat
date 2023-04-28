@@ -76,7 +76,7 @@
     }
     catch(error){
       return false;
-    };
+    }
   }
 
 
@@ -122,7 +122,21 @@
       console.log(error);
     }
   }
+
+  async function ensureLoggedIn(){
+    if (userStore.isLoggedIn) return;
+    try{
+      const usedLocale = computed(() => {
+        return (locales.value).filter(i => i.code === locale.value)
+      })
+      router.push(`/${usedLocale.value[0].code}/login`);
+    } catch (error : any){
+      console.log(error);
+    }
+  }
+
   onMounted(() => {
+    ensureLoggedIn();
     loadNotifications();
     loadRefrigerators();
   });

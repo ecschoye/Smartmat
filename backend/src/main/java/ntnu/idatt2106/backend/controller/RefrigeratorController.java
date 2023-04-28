@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.SaveException;
+import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.dto.MemberDTO;
@@ -132,6 +133,21 @@ public class RefrigeratorController {
         }
         logger.info("Returning refrigerator with id {}", result.getId());
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Edits a refrigerator")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Refrigerator updated successfully", content = @Content(schema = @Schema(implementation = Refrigerator.class))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "500", description = "Failed to create refrigerator"),
+    })
+    @PostMapping("/edit")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<SuccessResponse> editRefrigerator(@Valid @RequestBody RefrigeratorDTO refrigerator, HttpServletRequest httpRequest) throws UserNotFoundException, SaveException, UnauthorizedException, RefrigeratorNotFoundException {
+        logger.info("Received request to edit refrigerator");
+        refrigeratorService.editRefrigerator(refrigerator, httpRequest);
+        return new ResponseEntity<>(new SuccessResponse("Refrigerator updated successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
     @Operation(summary = "Delete a refrigerator by ID and username")

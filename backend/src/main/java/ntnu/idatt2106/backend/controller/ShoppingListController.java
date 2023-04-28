@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.Category;
+import ntnu.idatt2106.backend.model.GroceryShoppingList;
 import ntnu.idatt2106.backend.model.dto.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.service.ShoppingListService;
@@ -96,21 +97,19 @@ public class ShoppingListController {
         }
     }
 
-    //todo: to be implemented and rewritten
-    /*
-    @PostMapping("/edit-grocery")
-    public ResponseEntity<GroceryShoppingList> editGroceryQuantity(@RequestBody EditGroceryRequest groceryRequest, HttpServletRequest httpRequest) throws SaveException{
-        logger.info("Received request to edit grocery with id to {} in shopping list with id {}", groceryRequest.getId(), groceryRequest.getShoppingListId());
-        Optional<GroceryShoppingList> grocery = shoppingListService.editGrocery(groceryRequest, httpRequest);
-        if (grocery.isEmpty()) {
+    @PostMapping("/edit-grocery/{groceryShoppingListId}/{quantity}")
+    public ResponseEntity<GroceryShoppingList> editGroceryQuantity(@PathVariable("groceryShoppingListId") long groceryShoppingListId,
+                                                                   @PathVariable("quantity") int quantity,
+                                                                   HttpServletRequest httpRequest) throws SaveException{
+        logger.info("Received request to edit grocery item with id {}", groceryShoppingListId);
+        try {
+            GroceryShoppingList grocery = shoppingListService.editGrocery(groceryShoppingListId, quantity, httpRequest);
+            return new ResponseEntity<>(grocery, HttpStatus.OK);
+        } catch (Exception e) {
             logger.info("No registered changes to grocery");
-            throw new SaveException("Failed to add a edit the grocery in the shopping list");
+            throw new SaveException("Failed to add a edit the grocery item with id " + groceryShoppingListId);
         }
-        logger.info("Returns edited grocery and status OK");
-        return new ResponseEntity<>(grocery.get(), HttpStatus.OK);
     }
-
-     */
 
     @DeleteMapping("/delete-grocery/{groceryListId}")
     public ResponseEntity<Boolean> removeGroceryFromShoppingList(@PathVariable(name="groceryListId") long groceryListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {

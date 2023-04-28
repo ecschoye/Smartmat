@@ -12,6 +12,7 @@ import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.MemberDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
+import ntnu.idatt2106.backend.model.refrigerator.NewRefrigeratorDTO;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
@@ -90,8 +91,7 @@ public class RefrigeratorServiceTest {
     @DisplayName("Test saving a refrigerator with a valid user")
     public void testSaveRefrigeratorWithValidUser() throws Exception {
         // Arrange
-        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO();
-        refrigeratorDTO.setId(1L);
+        NewRefrigeratorDTO refrigeratorDTO = new NewRefrigeratorDTO();
         refrigeratorDTO.setName("name");
         refrigeratorDTO.setAddress("Test Address");
         String userEmail = "user@example.com";
@@ -142,8 +142,7 @@ public class RefrigeratorServiceTest {
     @DisplayName("Test saving a refrigerator with an invalid user")
     public void testSaveRefrigeratorWithInvalidUser() {
         // Arrange
-        RefrigeratorDTO refrigeratorDTO = new RefrigeratorDTO();
-        refrigeratorDTO.setId(1L);
+        NewRefrigeratorDTO refrigeratorDTO = new NewRefrigeratorDTO();
         refrigeratorDTO.setName(null);
         refrigeratorDTO.setAddress("Test Address");
         String userEmail = "invalid@example.com";

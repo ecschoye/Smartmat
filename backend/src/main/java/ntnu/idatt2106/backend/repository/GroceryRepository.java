@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface GroceryRepository extends JpaRepository<Grocery, Long>{
     @Override
     Optional<Grocery> findById(Long aLong);
+
+    Optional<Object> findByName(String name);
 }

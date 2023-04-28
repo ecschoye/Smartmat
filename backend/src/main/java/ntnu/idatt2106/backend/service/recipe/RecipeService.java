@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +25,8 @@ public class RecipeService {
 
     private final RefrigeratorGroceryRepository refrigeratorGroceryRepository;
     private final RecipeGroceryRepository recipeGroceryRepository;
+
+    private final Logger logger = Logger.getLogger(RecipeService.class.getName());
 
 
     /**
@@ -63,6 +66,8 @@ public class RecipeService {
         List<Recipe> sortedRecipes = recipeMatchCount.entrySet().stream()
                 .sorted(Map.Entry.<Recipe, Long>comparingByValue().reversed())
                 .map(Map.Entry::getKey).toList();
+
+        logger.info("Found " + sortedRecipes.size() + " recipes for the given refrigerator ID.");
 
         return sortedRecipes;
     }

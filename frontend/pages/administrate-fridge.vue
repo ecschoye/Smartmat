@@ -15,7 +15,7 @@
           </div>
           <div v-if="fridge !== null">
               <h1 class="title">Rediger Brukere</h1>
-              <div class="userlist-wrapper" v-for="member in fridge.members" :key="member.email">
+              <div class="userlist-wrapper" v-for="member in fridge.members" :key="member.username">
                   <div class="userinfo-divider">
                       <div class="userinfo">
                           <div class="username">
@@ -23,16 +23,16 @@
                               <h3>{{ member.name }}</h3>
                           </div>
                           <div class="email-wrapper">
-                           <h4>{{ member.email }}</h4>  
+                           <h4>{{ member.username }}</h4>  
                           </div>
                       </div>
                       <div class="member-role">
-                          <select v-model="member.refrigeratorRole" @change="handleOptionChange({ id: member.id, name: member.name, username: member.email, role: member.refrigeratorRole })">
+                          <select v-model="member.fridgeRole" @change="handleOptionChange({ id: member.id, name: member.name, username: member.email, role: member.refrigeratorRole })">
                               <option value="USER">User</option>
                               <option value="SUPERUSER">Superuser</option>
                           </select>
                       </div>
-                      <div class="choice-wrapper" v-if="member.email === currentUser" @click="leaveFridge({ id: member.id, name: member.name, username: member.email, role: member.refrigeratorRole })">
+                      <div class="choice-wrapper" v-if="isUser(member.username)" @click="leaveFridge({ id: member.id, name: member.name, username: member.email, role: member.refrigeratorRole })">
                           <div class="action-choice">
                               <img class="choice-image" src="@/assets/icons/openDoor.png">
                               <h4>Forlat Kjøleskap</h4>
@@ -40,7 +40,7 @@
                       </div>
                       <div class="choice-wrapper" v-else @click="deleteMember({ id: member.id, name: member.name, username: member.email, role: member.refrigeratorRole })">
                           <div class="action-choice">
-                              <img class="choice-image" src="@/assets/icons/delete.png">
+                              <img class="choice-image" src="@/assets/icons/trash.png">
                               <h4>Fjern fra Kjøleskap</h4>
                           </div>
                       </div>
@@ -62,19 +62,21 @@ import { useRefridgeratorStore } from '~/store/refrigeratorStore';
 import type { Refrigerator } from '~/types/RefrigeratorType'
 import { getRefrigeratorById } from '~/service/httputils/RefrigeratorService';
 import type {Member} from "~/types/MemberType"
+import { getUserData } from "~/service/httputils/authentication/AuthenticationService";
 
 export default {
   data() {
       return {
           changes: [] as string[],
           fridge: null as Refrigerator | null,
-          currentUser : null as String | null,
+          currentUser : null as String | null
       };
   },
   setup() {
       const errorMessage = ref("");
       const refrigeratorStore = useRefridgeratorStore();
       const {locale, locales, t} = useI18n()
+
 
       const sendForm = async () => {
             try {
@@ -94,10 +96,11 @@ export default {
           refrigeratorStore,
           sendForm, 
           errorMessage,
-          form
+          form,
       }
   },
   methods: {
+    
 
       handleOptionChange(member: { id: number; name: string; username: string; role: string }) {
         return 
@@ -122,16 +125,30 @@ export default {
           let element : Refrigerator = response.data; 
           let membersResponse = [] as Member[]; 
           element.members?.forEach((element : Member) => {
-              const object : Member = {id : element.id, name : element.name, email : element.email, refrigeratorRole : element.refrigeratorRole}
+              const object : Member = {refrigeratorid : element.refrigeratorid, name : element.name, username : element.username, fridgeRole : element.fridgeRole}
               membersResponse.push(object); 
           })
           refrigerator = {id: element.id, name: element.name, address: element.address, members: membersResponse}
+          console.log(membersResponse)
           this.fridge = refrigerator
+
       }
-      }
+      },
+      isUser(email : String):  boolean {
+        return email == this.currentUser; 
+      },
+
+      async getUserData() {
+            const response = await getUserData();
+            if (response) {
+                this.currentUser = response.email
+            }
+        },
   },
   created(){
+    this.getUserData();
     this.getRefrigerator();
+    
   }
 }
 </script>

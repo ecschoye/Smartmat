@@ -1,7 +1,7 @@
 <template>
     <div class = "flex h-4/5 w-full">
         <RefrigeratorNew v-if="toggleCreate" @toggle="(payload) => onToggleCreate(payload)" />
-        <RefrigeratorDisplay v-else @toggle-create="(payload) => onToggleCreate(payload)" class="font-mono" @group-closed="togglePos(false)" :groceries="refridgeratorStore.getGroceries" @popup-height="(payload) => setPos(payload)" />
+        <RefrigeratorDisplay v-else @toggle-create="(payload) => onToggleCreate(payload)" :refrigerator="refridgeratorStore.getSelectedRefrigerator" class="font-mono" @group-closed="togglePos(false)" :groceries="refridgeratorStore.getGroceries" @popup-height="(payload) => setPos(payload)" />
             <div>
             <Transition>
                 <RefrigeratorEditGrocery :pos="position" v-if="toggle" @toggle-options="togglePos(false)"/>

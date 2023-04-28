@@ -16,5 +16,5 @@ public class UserStatusResponse {
     private String userId;
     private AuthenticationState state;
     private String role;
-    private long favoriteRefrigeratorId;
+    private Long favoriteRefrigeratorId;
 }

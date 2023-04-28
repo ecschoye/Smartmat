@@ -47,7 +47,7 @@ public class User implements UserDetails {
 
     @Column(name = "favorite_refrigeratorId")
     @Schema(description = "The id of a optional favorite refrigerator")
-    private long favoriteRefrigeratorId;
+    private Long favoriteRefrigeratorId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -111,9 +111,8 @@ public class GroceryService {
      * @param httpRequest Request we are extracting from
      * @return username
      */
-    public String extractEmail(HttpServletRequest httpRequest) {
-        String token = cookieService.extractTokenFromCookie(httpRequest);
-        return jwtService.extractClaim(token, Claims::getSubject);
+    protected String extractEmail(HttpServletRequest httpRequest) {
+        return jwtService.extractUsername(cookieService.extractTokenFromCookie(httpRequest));
     }
 
     /**

@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.NoSuchElementException;
 import ntnu.idatt2106.backend.model.dto.MemberDTO;
+import ntnu.idatt2106.backend.model.dto.RecipeDTO;
 import ntnu.idatt2106.backend.model.recipe.Recipe;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.service.recipe.RecipeService;
@@ -42,7 +43,7 @@ public class RecipeController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> fetchRecipes(@Valid @PathVariable long refrigeratorId) throws NoSuchElementException {
         logger.info("Received request to fetch recipes for user");
-        List<Recipe> recipes = recipeService.getRecipesByGroceriesAndExpirationDates(refrigeratorId);
+        List<RecipeDTO> recipes = recipeService.getRecipesByGroceriesAndExpirationDates(refrigeratorId);
         return ResponseEntity.ok(recipes);
     }
 }

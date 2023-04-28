@@ -1,50 +1,43 @@
 <template>
     <div class="wrapper">
       <form @submit.prevent="sendForm" class="form">
-        <BaseInput id="email" class="input-container" type="email" label="Email" v-model="form.email" />
+        <FormBaseInput id="email" class="input-container" type="email" label="Email" v-model="form.email" />
         <div class="button-wrapper">
-          <GreenButton label="Inviter Bruker" width="100%" height="50px" />
+          <ButtonGreenButton label="Inviter Bruker" width="100%" height="50px" />
         </div>
       </form>
     </div>
   </template>
   
-  <script setup lang="ts">
-  import { useRefridgeratorStore } from '~/store/refridgeratorStore';
-  import GreenButton from "~/components/Button/GreenButton.vue";
-  import GrayButton from "~/components/Button/GrayButton.vue";
-  import BaseInput from "~/components/Form/BaseInput.vue";
+  <script lang="ts">
+  import { useRefridgeratorStore } from '~/store/refrigeratorStore';
   import { useUserStore } from "~/store/userStore";
   import { postRegister } from "~/service/httputils/authentication/AuthenticationService";
+  import { Refrigerator } from '~/types/RefrigeratorType'
   
-  const errorMessage = ref("");
-  const router = useRouter();
-  const refrigeratorStore = useRefridgeratorStore();
+  export default {
+    props: {
+      refrigerator : Object as () => Refrigerator | null
   
-  const form = reactive({
-    email: '',
-  });
+    },
+    setup() {
+      const form = reactive({
+        email: '',
+      });
 
-  const currentFridge = computed(() => refrigeratorStore.$state.selectedRefrigerator);
-    console.log(currentFridge);
-  
-  const sendForm = async () => {
-    
-  };
+      
+      const sendForm = async () => {
+        
+      };
+
+      return {form, sendForm}
+    }
+  }
 
   
 
-
-  
-  </script>
-  
-  
-  
-  
+</script>
   <style scoped>
-  
-  
-  
   .form {
     width: 400px;
     height: fit-content;

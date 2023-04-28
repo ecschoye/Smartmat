@@ -1,47 +1,44 @@
 <template>
     <div class="wrapper">
       <form @submit.prevent="sendForm" class="form">
-        <BaseInput id="adress" class="input-container" type="adress" :label="currentFridge?.address" v-model="form.adress" />
-        <BaseInput id="name" class="input-container" type="name" :label="currentFridge?.name" v-model="form.name" />
+        <FormBaseInput id="name" class="input-container" type="name" :label="refrigerator?.name" v-model="form.name" />
+        <FormBaseInput id="adress" class="input-container" type="adress" :label="refrigerator?.address" v-model="form.adress" />
         <div class="button-wrapper">
-          <GreenButton label="Oppdater Informasjon" width="100%" height="50px" />
+          <ButtonGreenButton label="Oppdater Informasjon" width="100%" height="50px" />
         </div>
       </form>
     </div>
   </template>
   
   <script lang="ts">
-  
-  import GreenButton from "~/components/Button/GreenButton.vue";
-  import GrayButton from "~/components/Button/GrayButton.vue";
-  import BaseInput from "~/components/Form/BaseInput.vue";
   import { useUserStore } from "~/store/userStore";
   import { postRegister } from "~/service/httputils/authentication/AuthenticationService";
   import { Refrigerator } from '~/types/RefrigeratorType'
-  import { useRefridgeratorStore } from '~/store/refridgeratorStore';
+  import { useRefridgeratorStore } from '~/store/refrigeratorStore';
   export default {
-
+    props: {
+      refrigerator : Object as () => Refrigerator | null
+  
+    },
     setup() {
         const errorMessage = ref("");
         const router = useRouter();
         const refrigeratorStore = useRefridgeratorStore();
-
-        const sendForm = async () => {
-            try {
-                console.log("hei")
-                console.log(`code to change to ${form.name} and ${form.adress}`)
-            } catch (error: any) {
-            errorMessage.value = error.response;
-            }
-        };
 
         const form = reactive({
             adress: '',
             name: '',
         });
 
-        const currentFridge = computed(() => refrigeratorStore.$state.selectedRefrigerator);
-        console.log(currentFridge);
+        const sendForm = async () => {
+            try {
+                
+            } catch (error: any) {
+              errorMessage.value = error.response;
+            }
+        };
+
+     
 
         return {
             errorMessage,
@@ -49,7 +46,6 @@
             refrigeratorStore,
             sendForm,
             form,
-            currentFridge,
         }
     },
 

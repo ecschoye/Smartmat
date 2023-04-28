@@ -1,12 +1,15 @@
 package ntnu.idatt2106.backend.config;
 
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.model.Category;
 import ntnu.idatt2106.backend.model.Grocery;
 import ntnu.idatt2106.backend.model.SubCategory;
+import ntnu.idatt2106.backend.model.recipe.RecipeCategory;
 import ntnu.idatt2106.backend.repository.CategoryRepository;
 import ntnu.idatt2106.backend.repository.GroceryRepository;
 import ntnu.idatt2106.backend.repository.SubCategoryRepository;
+import ntnu.idatt2106.backend.repository.recipe.RecipeCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +29,7 @@ import java.util.Arrays;
  *  Chocolate Milk, 14% fat
  */
 @Component
+@RequiredArgsConstructor
 public class TestDataSerializer {
 
     @Autowired
@@ -38,11 +42,27 @@ public class TestDataSerializer {
     private Category category;
     private SubCategory subCategory;
 
+    private final RecipeCategoryRepository recipeCategoryRepository;
+
 
     @PostConstruct
     public void init() throws IOException, NumberFormatException {
         serialize();
+        createRecipeCategories();
     }
+
+    /**
+     * Method that creates categories for recipes.
+     */
+    private void createRecipeCategories() {
+        String[] categories = {"Breakfast", "Lunch", "Dinner", "Dessert", "Snack"};
+        Arrays.stream(categories).forEach(category -> {
+            recipeCategoryRepository.save(RecipeCategory.builder()
+                    .name(category).build());
+        });
+    }
+
+
 
     /**
      * Method that reads csv file and calls methods for creating entities.

@@ -65,18 +65,16 @@ public class TestDataSerializer {
 
     private void createRecipeGroceries() {
         // An array of recipe names
-        String[] recipeNames = {"Scrambled Eggs", "Grilled Cheese Sandwich", "Spaghetti Bolognese", "Chocolate Cake", "Fruit Salad"};
+        String[] recipeNames = {"Eggerøre", "Ostesmørbrød", "Pølse i brød"};
 
         // An array of grocery names
-        long[] groceryNames = {9, 95, 153, 185, 217, 428};
+        long[] groceryNames = {153, 95, 724, 870, 320};
 
         // An array of quantities for each recipe-grocery pair
         int[][] quantities = {
-                {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 4, 1, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 2, 1, 1, 1, 1, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1}
+                {4, 0, 0, 0, 0}, // Eggerøre needs one of 153
+                {0, 2, 1, 0, 0}, // Ostesmørbrød needs two of 95 and one of 724
+                {0, 0, 0, 1, 1}  // Pølse i brød needs one of 870 and one of 320
         };
 
         for (int i = 0; i < recipeNames.length; i++) {
@@ -123,20 +121,17 @@ public class TestDataSerializer {
 
 
     private void createRecipes() {
-        String[] recipeNames = {"Scrambled Eggs", "Grilled Cheese Sandwich", "Spaghetti Bolognese", "Chocolate Cake", "Fruit Salad"};
+        String[] recipeNames = {"Eggerøre", "Ostesmørbrød", "Pølse i brød"};
         String[] recipeUrls = {
-                "https://www.example.com/recipes/scrambled-eggs",
-                "https://www.example.com/recipes/grilled-cheese-sandwich",
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsP-2AGz4oV39TsB-8_Fq2gtuPhdY2a9bg-g&usqp=CAU",
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT63fKEnYFM1G0UdBFjhPYRjtPKEiooGZU7kA&usqp=CAU",
                 "https://www.example.com/recipes/spaghetti-bolognese",
-                "https://www.example.com/recipes/chocolate-cake",
-                "https://www.example.com/recipes/fruit-salad"
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwZNzTD7pUbIO7zEnTSKwZgv0dOvyHiD5B8Q&usqp=CAU"
         };
         RecipeCategory[] categories = {
                 getRecipeCategoryByName("Breakfast"),
                 getRecipeCategoryByName("Lunch"),
-                getRecipeCategoryByName("Dinner"),
-                getRecipeCategoryByName("Dessert"),
-                getRecipeCategoryByName("Snack")
+                getRecipeCategoryByName("Dinner")
         };
 
         for (int i = 0; i < recipeNames.length; i++) {

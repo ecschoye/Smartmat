@@ -25,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @RestController
@@ -97,7 +98,13 @@ public class MyProfileController {
             logger.info("Received request to get user status on user: "+ user.getEmail() + ".");
 
             //use builder to build a userStatusResponse
-            UserStatusResponse userStatusResponse = UserStatusResponse.builder().userId(user.getId()).role(user.getUserRole().toString()).state(jwtService.getAuthenticationState(jwt, user)).build();
+            UserStatusResponse userStatusResponse = UserStatusResponse.builder()
+                    .userId(user.getId())
+                    .role(user.getUserRole()
+                            .toString())
+                    .state(jwtService.getAuthenticationState(jwt, user))
+                    .favoriteRefrigeratorId(Optional.ofNullable(user.getFavoriteRefrigeratorId()).orElse(null))
+                    .build();
 
             return ResponseEntity.ok(userStatusResponse);
         } catch (Exception e) {

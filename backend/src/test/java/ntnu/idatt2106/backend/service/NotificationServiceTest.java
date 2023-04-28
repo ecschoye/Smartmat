@@ -210,7 +210,13 @@ public class NotificationServiceTest {
     @Test
     void deleteNotification_Unauthorized() {
         long notifId = 1L;
-        User otherUser = new User("123", "otherUser", "123@123.no", "123", UserRole.USER);
+        User otherUser = User.builder()
+                .id("123")
+                .name("otherUser")
+                .email("123@123.no")
+                .password("123")
+                .userRole(UserRole.USER)
+                .build();
         GroceryNotification groceryNotification = new GroceryNotification(1, otherUser, refrigeratorGrocery, (long)3, false);
         Mockito.when(groceryNotificationRepository.findById(notifId))
                 .thenReturn(Optional.of(groceryNotification));

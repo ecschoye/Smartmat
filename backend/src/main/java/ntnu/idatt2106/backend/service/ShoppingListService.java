@@ -1,15 +1,11 @@
 package ntnu.idatt2106.backend.service;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.*;
-import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
-import ntnu.idatt2106.backend.model.requests.EditGroceryRequest;
-import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.repository.*;
 import org.slf4j.Logger;
@@ -17,23 +13,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ShoppingListService {
     private final ShoppingListRepository shoppingListRepository;
-    private final RefrigeratorRepository refrigeratorRepository;
-    private final RefrigeratorUserRepository refrigeratorUserRepository;
     private final GroceryShoppingListRepository groceryShoppingListRepository;
-    private final SubCategoryRepository subCategoryRepository;
-    private final GroceryRepository groceryRepository;
-    private final UserRepository userRepository;
 
     private final ShoppingCartService shoppingCartService;
-    private final CookieService cookieService;
-    private final JwtService jwtService;
+    private final RefrigeratorService refrigeratorService;
+    private final GroceryService groceryService;
 
     private Logger logger = LoggerFactory.getLogger(ShoppingListService.class);
 
@@ -166,7 +156,7 @@ public class ShoppingListService {
 
         if (fridgeRole == FridgeRole.SUPERUSER) {
             groceryShoppingList.setQuantity(quantity);
-            groceryShoppingList.setRequest(true);
+            groceryShoppingList.setRequest(false);
             groceryShoppingListRepository.save(groceryShoppingList);
             return groceryShoppingList;
         }

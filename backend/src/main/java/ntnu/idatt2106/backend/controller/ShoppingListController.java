@@ -29,6 +29,7 @@ public class ShoppingListController {
     Logger logger = LoggerFactory.getLogger(ShoppingListController.class);
 
     @PostMapping("/create/{refrigeratorId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Long> createShoppingList(@PathVariable(name = "refrigeratorId") long refrigeratorId) throws RefrigeratorNotFoundException {
         logger.info("Received request to create shopping list for refrigerator with id {}", refrigeratorId);
         long shoppingListId = shoppingListService.createShoppingList(refrigeratorId);
@@ -38,6 +39,7 @@ public class ShoppingListController {
     }
 
     @GetMapping("/groceries/{shoppingListId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ShoppingListElementDTO>> getGroceriesFromShoppingList(@PathVariable(name="shoppingListId") long shoppingListId) throws NoGroceriesFound {
         logger.info("Received request to get groceries from shopping list with id {}", shoppingListId);
         List<ShoppingListElementDTO> groceries = shoppingListService.getGroceries(shoppingListId);
@@ -47,6 +49,7 @@ public class ShoppingListController {
     }
 
     @GetMapping("/category/groceries/{shoppingListId}/{categoryId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ShoppingListElementDTO>> getGroceriesFromCategorizedShoppingList(@PathVariable(name="shoppingListId") long shoppingListId,
                                                                                                 @PathVariable(name="categoryId") long categoryId) throws NoGroceriesFound {
         logger.info("Received request to get groceries with category id {} from shopping list with id {}", categoryId, shoppingListId);
@@ -57,6 +60,7 @@ public class ShoppingListController {
     }
 
     @GetMapping("/categories/{shoppingListId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Category>> getCategoriesFromShoppingList(@PathVariable(name="shoppingListId") long shoppingListId) throws CategoryNotFound {
         logger.info("Received request to get categories from shopping list with id {}", shoppingListId);
         List<Category> categories = shoppingListService.getCategories(shoppingListId);
@@ -98,6 +102,7 @@ public class ShoppingListController {
     }
 
     @PostMapping("/edit-grocery/{groceryShoppingListId}/{quantity}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<GroceryShoppingList> editGroceryQuantity(@PathVariable("groceryShoppingListId") long groceryShoppingListId,
                                                                    @PathVariable("quantity") int quantity,
                                                                    HttpServletRequest httpRequest) throws SaveException{
@@ -112,6 +117,7 @@ public class ShoppingListController {
     }
 
     @DeleteMapping("/delete-grocery/{groceryListId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Boolean> removeGroceryFromShoppingList(@PathVariable(name="groceryListId") long groceryListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {
         logger.info("Received request to delete grocery list item with id {}", groceryListId);
         shoppingListService.deleteGrocery(groceryListId, httpRequest); //throws error if the deletion was unsuccessful
@@ -121,6 +127,7 @@ public class ShoppingListController {
     }
 
     @GetMapping("requested/groceries/{shoppingListId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ShoppingListElementDTO>> getRequestedGroceries(@PathVariable("shoppingListId") long shoppingListId) throws NoGroceriesFound {
         logger.info("Received request to get groceries requested to the shopping list with id {}", shoppingListId);
         List<ShoppingListElementDTO> groceries = shoppingListService.getRequestedGroceries(shoppingListId);
@@ -130,6 +137,7 @@ public class ShoppingListController {
     }
 
     @GetMapping("/requested/groceries/{shoppingListId}/{categoryId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ShoppingListElementDTO>> getRequestedGroceriesFromCategorizedShoppingList(@PathVariable("shoppingListId") long shoppingListId,
                                                                                                          @PathVariable("categoryId") long categoryId) throws NoGroceriesFound {
         logger.info("Received request to get groceries requested to the shopping list with id {}", shoppingListId);
@@ -144,6 +152,7 @@ public class ShoppingListController {
 
 
     @PostMapping("transfer-shopping-cart/{groceryShoppingListId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Boolean> transferToShoppingCart(@PathVariable("groceryShoppingListId") long groceryShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SubCategoryNotFound {
         logger.info("Received request to transfer grocery item with id {} in shopping list to shopping cart", groceryShoppingListId);
 

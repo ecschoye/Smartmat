@@ -32,12 +32,11 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class TestDataSerializer {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
-    @Autowired
-    private SubCategoryRepository subCategoryRepository;
-    @Autowired
-    private GroceryRepository groceryRepository;
+    private final CategoryRepository categoryRepository;
+
+    private final SubCategoryRepository subCategoryRepository;
+
+    private final GroceryRepository groceryRepository;
 
     private Category category;
     private SubCategory subCategory;

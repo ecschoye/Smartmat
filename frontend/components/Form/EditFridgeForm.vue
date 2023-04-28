@@ -1,8 +1,8 @@
 <template>
     <div class="wrapper">
       <form @submit.prevent="sendForm" class="form">
-        <FormBaseInput id="name" class="input-container" type="name" :label="refrigerator?.name" v-model="form.name" />
-        <FormBaseInput id="adress" class="input-container" type="adress" :label="refrigerator?.address" v-model="form.adress" />
+        <FormBaseInput id="name" class="input-container" type="name" :label="$t('name')" :initiated-value="refrigerator?.name" v-model="form.name" />
+        <FormBaseInput id="address" class="input-container" type="address" :label="$t('address')" :initiated-value="refrigerator?.address" v-model="form.address" />
         <div class="button-wrapper">
           <ButtonGreenButton label="Oppdater Informasjon" width="100%" height="50px" />
         </div>
@@ -15,41 +15,62 @@
   import { postRegister } from "~/service/httputils/authentication/AuthenticationService";
   import { Refrigerator } from '~/types/RefrigeratorType'
   import { useRefridgeratorStore } from '~/store/refrigeratorStore';
+  import { postEditFridge } from "~/service/httputils/RefrigeratorService";
+
   export default {
     props: {
       refrigerator : Object as () => Refrigerator | null
   
     },
     setup() {
+        const {locale, locales, t} = useI18n()
         const errorMessage = ref("");
         const router = useRouter();
         const refrigeratorStore = useRefridgeratorStore();
 
         const form = reactive({
-            adress: '',
+            address: '',
             name: '',
-        });
-
-        const sendForm = async () => {
-            try {
-                
-                
-            } catch (error: any) {
-              errorMessage.value = error.response;
-            }
-        };
-
-     
+        });     
 
         return {
             errorMessage,
             router,
             refrigeratorStore,
-            sendForm,
             form,
+            locale,
+            locales,
+            t
         }
     },
+    methods : {
+      sendForm (){
+          try {
+              if(this.refrigerator !== undefined && this.refrigerator !== null && (this.form.name !== this.refrigerator.name || this.form.address !== this.refrigerator.address)){
+                console.log("1")
+                if(this.form.name.length > 0 && this.form.name.length < 255){
+                  console.log("2")
+                  let refrigeratorDTO : Refrigerator = {id : this.refrigerator.id, name : this.form.name, address : this.form.address, members : null}
+                  postEditFridge(refrigeratorDTO).then((response) => {
+                    if(response){
+                      location.reload(); 
+                      alert("Refrigerator edited successfully")
+                    }
+                    else{
+                      this.errorMessage = "Refrigerator could not be updated"
+                    }
+                  })
 
+                }
+                else {
+                  this.errorMessage = "Invalid entries, please fill in valid name"
+                }
+              }
+          } catch (error: any) {
+            this.errorMessage = error.response;
+          }
+      }
+    }
   }
   
   

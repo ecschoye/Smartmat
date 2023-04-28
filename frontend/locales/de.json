@@ -57,5 +57,6 @@
 "remove": "Entfernen",
 "use": "Verwenden",
 "throw_away": "Wegwerfen",
-"select_fridge" : "Kühlschrank auswählen"
+"select_fridge" : "Kühlschrank auswählen",
+"address" : "Adresse"
 }

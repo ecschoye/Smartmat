@@ -57,5 +57,6 @@
   "remove": "Fjern",
   "use": "Bruk",
   "throw_away": "Kast",
-  "select_fridge" : "Velg Kjøleskap"
+  "select_fridge" : "Velg Kjøleskap",
+  "address" : "Addresse"
 }

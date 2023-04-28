@@ -14,13 +14,15 @@
     <div class="flex flex-1 space-x-2 items-center justify-end">
       <div class="p-0.5 rounded-md ring-1 min-w-fit ring-inset ring-gray-300 dark:ring-zinc-600 inline-flex items-center">
         <FridgeSelector :fridges="refridgeratorStore.getRefrigerators" @selected-fridge-event="handleFridgeEvent" />
-        <button type="button"
+        <NuxtLink to="administrate-fridge">
+          <button type="button"
           class="inline-flex items-center hover:cursor-pointer
               dark:button-dark-color sm:text-md outline:none hover:opacity-70
               transition duration-150 p-2 border-l border-gray-300">
           <img class="h-5 w-auto mr-2 pt-0.5" src="../assets/icons/refrigerator.png" alt="">
           {{t('manage')}}
         </button>
+        </NuxtLink>
       </div>
       <div class=" w-8"></div>
       <div class="flex lg:hidden">

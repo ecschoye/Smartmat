@@ -35,7 +35,24 @@ export default defineComponent({
       type: String,
       default: 'text',
     },
+    initiatedValue: {
+      type:[String, Number],
+      required: false 
+    }
   },
+  methods : {
+    updateInitiatedValue(){
+      if(this.initiatedValue !== undefined && this.modelValue === '') {
+        this.$emit('update:modelValue', this.initiatedValue); 
+      }
+    }
+  },
+  watch : {
+    initiatedValue(){this.updateInitiatedValue()}
+  },
+  mounted() {
+    this.updateInitiatedValue(); 
+  }
 });
 </script>
 

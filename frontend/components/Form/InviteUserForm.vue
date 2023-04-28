@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
       <form @submit.prevent="sendForm" class="form">
-        <FormBaseInput id="email" class="input-container" type="email" label="Email" v-model="form.email" />
+        <FormBaseInput id="email" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
         <div class="button-wrapper">
           <ButtonGreenButton label="Inviter Bruker" width="100%" height="50px" />
         </div>

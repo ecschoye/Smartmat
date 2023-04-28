@@ -4,10 +4,7 @@ import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
-import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
-import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
-import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
+import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
@@ -43,6 +40,7 @@ import java.util.Optional;
 public class RefrigeratorService {
 
     private final FridgeRole DEFAULT_USER_Fridge_ROLE = FridgeRole.USER;
+    private final FridgeRole EDIT_PRIVILEGE = FridgeRole.SUPERUSER;
 
     private final CookieService cookieService;
     private final JwtService jwtService;
@@ -92,6 +90,41 @@ public class RefrigeratorService {
         }
     }
 
+    /**
+     * Method to edit a refrigerator. Takes a refrigeratorDTO and
+     * changes the refrigerator with its values.
+     *
+     * @param refrigeratorDTO Updated refrigerator data
+     * @param request http request
+     * @throws UnauthorizedException If user not superuser
+     * @throws RefrigeratorNotFoundException If refrigerator by id returns empty
+     * @throws UserNotFoundException if user not found
+     * @throws SaveException if refrigerator could not be updated
+     */
+    @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void editRefrigerator(RefrigeratorDTO refrigeratorDTO, HttpServletRequest request) throws UnauthorizedException, UserNotFoundException, SaveException, RefrigeratorNotFoundException {
+        User user = getUser(extractEmail(request));
+        Refrigerator refrigerator = getRefrigerator(refrigeratorDTO.getId());
+        RefrigeratorUser refrigeratorUser = refrigeratorUserRepository.findByUserAndRefrigerator(user, refrigerator)
+                .orElseThrow(() -> new UnauthorizedException("User not a member"));
+        FridgeRole role = getFridgeRole(refrigerator, user.getEmail());
+
+        if(role != EDIT_PRIVILEGE) throw new UnauthorizedException("User not authorized to edit refrigerator");
+        logger.info("Updating refrigerator");
+
+        refrigerator.setName(refrigeratorDTO.getName());
+        if(refrigeratorDTO.getAddress() != null){
+            refrigerator.setAddress(refrigeratorDTO.getAddress());
+        }
+        try{
+            refrigerator = refrigeratorRepository.save(refrigerator);
+            refrigeratorUserRepository.save(refrigeratorUser);
+        }
+        catch(Exception e){
+            throw new SaveException("Refrigerator could not be updated");
+        }
+        refrigeratorUser.setRefrigerator(refrigerator);
+    }
     /**
      * Retrieves all refrigerators where a given user is a member
      *

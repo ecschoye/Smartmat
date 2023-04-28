@@ -57,5 +57,6 @@
   "remove": "Eliminar",
   "use": "Usar",
   "throw_away": "Tirar",
-  "select_fridge" : "Seleccione Frigorífico"
+  "select_fridge" : "Seleccione Frigorífico",
+  "address" : "Dirección"
 }

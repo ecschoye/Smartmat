@@ -22,8 +22,7 @@
     * Light mode background color
      */
     .bg-light-color {
-        #background-color: #31C48D;
-        @apply bg-white;
+        background-color: #31C48D;
     }
 
     /*

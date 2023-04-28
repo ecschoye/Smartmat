@@ -5,12 +5,13 @@
                 <NotificationsElement @delete-notif = "(payload) => emit('delete-notif', payload)" :notification="notification"/>
             </li>
         </ul>
-        <div v-else>Du har ingen varslinger!</div>
+        <div v-else>{{ t('no_notifications') }}!</div>
     </div>
 </template>
 
 <script setup lang="ts">
 import type { GroceryNotification } from '~/types/GroceryNotificationType';
+const { t } = useI18n();
 const props = defineProps({
     notifications:{
         type : Array as () => GroceryNotification[],

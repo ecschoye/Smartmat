@@ -14,6 +14,7 @@ import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
+import ntnu.idatt2106.backend.model.refrigerator.NewRefrigeratorDTO;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.dto.MemberDTO;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
@@ -104,12 +105,11 @@ public class RefrigeratorService {
         return refrigerators;
     }
 
-    public Refrigerator convertToEntity(RefrigeratorDTO refrigeratorDTO){
+    public Refrigerator convertToEntity(NewRefrigeratorDTO refrigeratorDTO){
         if (refrigeratorDTO == null) return null;
 
 
         Refrigerator refrigerator = Refrigerator.builder()
-                .id(refrigeratorDTO.getId())
                 .name(refrigeratorDTO.getName())
                 .address(refrigeratorDTO.getAddress())
                 .build();
@@ -192,8 +192,8 @@ public class RefrigeratorService {
      * @return The saved refrigerator.
      */
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
-    public Refrigerator save(RefrigeratorDTO refrigeratorDTO, HttpServletRequest httpRequest) throws Exception {
-        logger.info("Converting to refrigeretor object");
+    public Refrigerator save(NewRefrigeratorDTO refrigeratorDTO, HttpServletRequest httpRequest) throws Exception {
+        logger.info("Converting to refrigerator object");
         Refrigerator refrigerator = convertToEntity(refrigeratorDTO);
 
         //Check user exists

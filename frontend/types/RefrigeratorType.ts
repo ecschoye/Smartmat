@@ -4,5 +4,5 @@ export interface Refrigerator {
     id : number,
     name : string,
     address : string, 
-    members : Member[]
+    members : Member[] | null
 }

@@ -1,12 +1,12 @@
 <template>
-    <div class="border w-1/3 h-4/5 mt-5 ml-5 border-black rounded-lg bg-white dark:bg-zinc-400 overflow-hidden flex flex-col absolute" id="wrapper">
+    <div class="border w-1/3 h-4/5 mt-5 border-black rounded-lg bg-white dark:bg-zinc-400 overflow-hidden flex flex-col absolute" id="wrapper">
       <div class="text-lg text-center m-3 font-semibold" v-if="refrigerator">
         {{ refrigerator.name }}
       </div>
-      <div v-else>
+      <div class="text-lg text-center m-3 font-semibold" v-else>
         {{ t('my_refrigerator') }}
       </div>
-      <div id="listwrapper" class = "pb-5 ml-1 sm:ml-5">
+      <div id="listwrapper" class = "pb-5 justify-center">
         <RefrigeratorList
             class="my-5"
             :groceries="props.groceries"

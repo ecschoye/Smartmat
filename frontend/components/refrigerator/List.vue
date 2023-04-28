@@ -1,12 +1,12 @@
 <template>
   <div>
-    <ul v-if="groceries.length > 0" class="space-y-1 list-none list-inside">
+    <ul v-if="groceries.length > 0" class="space-y-1 list-none list-inside px-3">
       <li v-for="(category, index) in categorizedGroups" :key="index">
         <div @click="toggleCategory(index)">
           {{ category.name }} ({{ categorySum (category) }})
           <i :class="['fa', isCategoryOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
         </div>
-        <ul v-if="isCategoryOpen(index)" class="space-y-1 pl-2 w-11/12 list-none list-inside bg-gray-200 dark:bg-zinc-300 rounded-xl">
+        <ul v-if="isCategoryOpen(index)" class="py-2 px-3 w-12/12 list-none list-inside bg-gray-200 dark:bg-zinc-300 rounded-xl">
           <li v-for="(group, index2) in Array.from(category.groups.values())" :key="index2">
             <div @click="toggleCategoryGroup(index, index2)">
               - {{ group.name }} ({{ group.groceries.length }})
@@ -52,7 +52,7 @@ const { t } = useI18n();
     }
     interface Category {
       name: string,
-      groups: Map<number, Group>
+      groups: Map<string, Group>
     }
 
 
@@ -95,26 +95,24 @@ const { t } = useI18n();
   emit('group-closed');
 }
 
-   const categorizedGroups = computed<Category[]>(() => {
-      const categoryMap = new Map<number, Category>();
-      for(const grocery of props.groceries){
-         const category = grocery.grocery.subCategory.category;
-         if(!categoryMap.has(category.id)){
-            categoryMap.set(category.id, {name:category.name, groups : new Map<number, Group>()});
-         }
-         const group = grocery.grocery
-         const groupMap = categoryMap.get(category.id)?.groups!
-         if(!groupMap.has(group.id)){
-            groupMap.set(group.id, {name : group.name, groceries : []})
-         }
-         groupMap.get(group.id)?.groceries.push(grocery);
-      }
-      const sortedCategories = Array.from(categoryMap.values())
-      .sort((a, b) => a.name.localeCompare(b.name));
-      sortedCategories.forEach((group) => {
-        group.groups = new Map([...group.groups.entries()].sort((a,b) => a[1].name.localeCompare(b[1].name)));
-      });
-      return sortedCategories;
-      
-   })
+const categorizedGroups = computed<Category[]>(() => {
+  const categoryMap = new Map<number, Category>();
+  for (const grocery of props.groceries) {
+    const category = grocery.grocery.subCategory.category;
+    if (!categoryMap.has(category.id)) {
+      categoryMap.set(category.id, { name: category.name, groups: new Map<string, Group>() });
+    }
+    const group = grocery.grocery;
+    const groupMap = categoryMap.get(category.id)?.groups!;
+    if (!groupMap.has(group.name)) {
+      groupMap.set(group.name, { name: group.name, groceries: [] });
+    }
+    groupMap.get(group.name)?.groceries.push(grocery);
+  }
+  const sortedCategories = Array.from(categoryMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+  sortedCategories.forEach((category) => {
+    category.groups = new Map([...category.groups.entries()].sort((a, b) => a[1].name.localeCompare(b[1].name)));
+  });
+  return sortedCategories;
+});
 </script>

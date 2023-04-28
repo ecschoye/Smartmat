@@ -57,5 +57,6 @@
   "remove": "Remove",
   "use": "Use",
   "throw_away": "Throw away",
-  "select_fridge" : "Select Fridge"
+  "select_fridge" : "Select Fridge",
+  "address" : "Address"
 }

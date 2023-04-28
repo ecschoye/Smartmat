@@ -57,5 +57,6 @@
   "remove": "Supprimer",
   "use": "Utiliser",
   "throw_away": "Jeter",
-  "select_fridge" : "Sélectionnez Réfrigérateur"
+  "select_fridge" : "Sélectionnez Réfrigérateur",
+  "address" : "Adresse" 
 }

@@ -28,5 +28,6 @@
   "go_back": "返回",
   "update": "更新",
   "new_fridge": "新冰箱",
-  "select_fridge" : "选择冰箱"
+  "select_fridge" : "选择冰箱", 
+  "address" :"地址"
 }

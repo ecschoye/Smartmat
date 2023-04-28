@@ -6,7 +6,7 @@
         </div>
         <div class="p-2 flex justify-end absolute right-0">
             <div v-if="isElementSuggested">
-                <button @click.stop="acceptSuggestion" class="h-5 w-5 mr-1">
+                <button @click.stop="updateQuantity(ElementDetails.quantity)" class="h-5 w-5 mr-1">
                     <img src="../../assets/icons/done.png" alt="Accept">
                 </button>
             </div>
@@ -127,7 +127,8 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
             updateQuantity(newQuantity: number) {
                 this.ElementDetails.quantity = newQuantity
                 let quantity = newQuantity
-                this.editGrocery(quantity, this.ElementDetails.isSuggested)
+                //this.editGrocery(quantity, this.ElementDetails.isSuggested)
+                ShoppingListService.updateQuantity(this.ElementDetails.id, quantity)
             },
             acceptSuggestion() {
                 this.isElementSuggested = false

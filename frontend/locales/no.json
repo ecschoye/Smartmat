@@ -1,4 +1,7 @@
 {
+  "no_items_in_refrigerator" : "Du har ingen matvarer i kjøleskapet",
+  "no_notifications" : "Du har ingen varslinger",
+  "my_refrigerator" : "Mitt kjøleskap",
   "create_grocery" : "Opprett matvare",
   "Notification" : "Varslinger",
   "expires_today" : "går ut i dag",

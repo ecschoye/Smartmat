@@ -1,16 +1,13 @@
 package ntnu.idatt2106.backend.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
 import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
-import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.MemberDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
@@ -62,6 +59,7 @@ public class RefrigeratorController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/members/edit-role")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<MemberDTO> editRole(@Valid @RequestBody MemberRequest memberRequest, HttpServletRequest httpRequest) {
         logger.info("Received request to edit member role in refrigerator");
         MemberDTO result;
@@ -83,6 +81,7 @@ public class RefrigeratorController {
             @ApiResponse(responseCode = "500", description = "Failed to add member")
     })
     @PostMapping("/members/new")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<MemberDTO> newMember(@Valid @RequestBody MemberRequest memberRequest, HttpServletRequest httpRequest) throws SaveException {
         logger.info("Received request to add new member to refrigerator");
         MemberDTO result;
@@ -106,6 +105,7 @@ public class RefrigeratorController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/members/remove")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<SuccessResponse> removeMember(@Valid @RequestBody RemoveMemberRequest memberRequest, HttpServletRequest httpRequest) throws Exception {
         logger.info("Received request to remove member from refrigerator");
         refrigeratorService.removeUserFromRefrigerator(memberRequest, httpRequest);
@@ -119,6 +119,7 @@ public class RefrigeratorController {
             @ApiResponse(responseCode = "500", description = "Failed to create refrigerator")
     })
     @PostMapping("/new")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Refrigerator> newRefrigerator(@Valid @RequestBody RefrigeratorDTO refrigerator, HttpServletRequest httpRequest) throws SaveException {
         logger.info("Received request to create refrigerator for refrigerator");
         Refrigerator result;
@@ -141,6 +142,7 @@ public class RefrigeratorController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @DeleteMapping("/delete/{refrigeratorId}/")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<SuccessResponse> deleteRefrigerator(@Valid @PathVariable int refrigeratorId, HttpServletRequest httpRequest) throws Exception {
         refrigeratorService.forceDeleteRefrigerator(refrigeratorId, httpRequest);
         logger.info("Member removed successfully");
@@ -160,12 +162,13 @@ public class RefrigeratorController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @Operation(summary = "Get all refrigerators by user")
+    @Operation(summary = "Get refrigerators by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of refrigerators fetched successfully", content = @Content(schema = @Schema(implementation = Refrigerator.class))),
             @ApiResponse(responseCode = "204", description = "No content")
     })
     @GetMapping("/{refrigeratorId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<RefrigeratorDTO> getById(@Valid @PathVariable long refrigeratorId, HttpServletRequest httpServletRequest) throws UserNotFoundException, RefrigeratorNotFoundException {
         logger.info("Received request for refrigerator with id: {}", refrigeratorId);
 

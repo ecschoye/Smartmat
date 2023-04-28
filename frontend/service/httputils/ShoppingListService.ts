@@ -54,6 +54,10 @@ const acceptSuggestion = (groceryId: Number, requested: boolean): Promise<AxiosR
     return axiosInstance.get(`/api/shopping-list/update/groceries/${groceryId}` + requested);
 };
 
+const editGrocery = (groceryId: Number, quantity: Number, requested: boolean): Promise<AxiosResponse> => {
+    return axiosInstance.get(`/api/shopping-list/update/groceries/${groceryId}` + quantity + requested);
+};
+
 export default {
     createShoppingList,
     getGroceriesFromShoppingList,
@@ -66,5 +70,6 @@ export default {
     getRequestedGroceriesInCategories,
     transferGroceryToShoppingCart,
     updateQuantity,
-    acceptSuggestion
+    acceptSuggestion,
+    editGrocery
 }

@@ -97,6 +97,14 @@
         background-color: #5c5850;
     }
 
+    .bg-light-container {
+        background-color: #31C48D;
+    }
+
+    .bg-dark-container {
+        @apply bg-zinc-700;
+    }
+
 
 
 }

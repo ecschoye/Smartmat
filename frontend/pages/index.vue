@@ -41,7 +41,8 @@
   import { getNotifications } from "~/service/httputils/NotificationService";
   import { useNotificationStore } from '~/store/notificationStore';
   import { getRefrigerators } from "~/service/httputils/RefrigeratorService";
-import { useRefridgeratorStore } from "~/store/refrigeratorStore";
+import { useRefrigeratorStore } from "~/store/refrigeratorStore";
+import { Refrigerator } from '~/types/RefrigeratorType';
   const { t, locale } = useI18n({
     useScope: 'local'
   })
@@ -50,7 +51,7 @@ import { useRefridgeratorStore } from "~/store/refrigeratorStore";
   const loggedIn = computed(() => userStore.isLoggedIn);
 
   const notificationStore = useNotificationStore();
-  const refridgeratorStore = useRefridgeratorStore();
+  const refrigeratorStore = useRefrigeratorStore();
 
 
 
@@ -72,9 +73,19 @@ import { useRefridgeratorStore } from "~/store/refrigeratorStore";
     }
       try{
       const response = await getRefrigerators();
-      refridgeratorStore.setRefrigerators(response.data);
-      refridgeratorStore.setSelectedRefrigerator(refridgeratorStore.getRefrigerators[0]);
-      console.log(refridgeratorStore.getRefrigerators[0])
+      refrigeratorStore.setRefrigerators(response.data);
+      if(refrigeratorStore.getSelectedRefrigerator){
+        console.log(userStore.favoriteRefrigeratorId)
+        if(userStore.favoriteRefrigeratorId !== null){
+        const favoriteRefrigerator = refrigeratorStore.getRefrigeratorById(userStore.favoriteRefrigeratorId);
+        if(favoriteRefrigerator !== undefined){
+          refrigeratorStore.setSelectedRefrigerator(favoriteRefrigerator);
+        }
+        else{
+          console.log("Could not find favorite refrigerator in store");
+        }
+      }
+      }
     }
     catch(error){
       console.log(error);

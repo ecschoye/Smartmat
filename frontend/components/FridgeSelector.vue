@@ -65,6 +65,9 @@
 
 <script lang="ts">
 import { Refrigerator } from "~/types/RefrigeratorType";
+import { useRefrigeratorStore } from "~/store/refrigeratorStore";
+
+const refrigeratorStore = useRefrigeratorStore();
 
 export default {
   data () {
@@ -73,7 +76,7 @@ export default {
         id: -1, 
         name: ''
       },
-
+      refrigeratorStore
     }
   }, 
   props : {
@@ -85,9 +88,12 @@ export default {
   },
   mounted () {
     if (this.fridges && this.fridges.length > 0) {
-      this.selected = this.fridges[0]
-    } else {
+      if(this.refrigeratorStore.getSelectedRefrigerator !== null){
+      this.selected = this.refrigeratorStore.getSelectedRefrigerator;
+      }
+      else {
       this.selected = { id: -1, name: '' }
+    }
     }
   },
   setup() {

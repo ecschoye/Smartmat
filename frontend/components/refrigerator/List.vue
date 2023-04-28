@@ -14,7 +14,7 @@
             </div>
             <ul v-if="isCategoryGroupOpen(index,index2)" class="space-y-1 list-none list-inside">
               <li>
-                <RefridgeratorFridgeElement @element-height="(payload) => emitHeight(payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.id />
+                <RefrigeratorElement @element-height="(payload) => emitHeight(payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.id />
               </li>
             </ul>
           </li>
@@ -29,7 +29,7 @@
         </div>
         <ul v-if="isOpen(index)" class="space-y-1 list-none list-inside">
           <li>
-            <RefridgeratorFridgeElement @element-height="(payload) => emitHeight(payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.grocery.id />
+            <RefrigeratorElement @element-height="(payload) => emitHeight(payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.grocery.id />
           </li>
         </ul>
       </li>

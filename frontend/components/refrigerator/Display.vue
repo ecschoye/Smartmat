@@ -19,13 +19,13 @@
         </button>
       </div>
       <div id="listwrapper" class = "pb-5 ml-1 sm:ml-5">
-        <RefridgeratorList
+        <RefrigeratorList
             class="my-5"
             :groceries="props.groceries"
             :listing-type="listingType"
             @group-closed="emit('group-closed')"
             @popup-height="(payload : number) => emitHeight(payload)"
-        ></RefridgeratorList>
+        ></RefrigeratorList>
       </div>
       <div class ="absolute bottom-0 w-full flex justify-end border-t self-end border-black bg-gray-200">
         <button

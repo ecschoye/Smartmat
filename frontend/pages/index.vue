@@ -40,8 +40,8 @@
   import { onMounted, computed } from "vue";
   import { getNotifications } from "~/service/httputils/NotificationService";
   import { useNotificationStore } from '~/store/notificationStore';
-  import { getRefrigerators } from "~/service/httputils/RefridgeratorService";
-import { useRefridgeratorStore } from "~/store/refridgeratorStore";
+  import { getRefrigerators } from "~/service/httputils/RefrigeratorService";
+import { useRefridgeratorStore } from "~/store/refrigeratorStore";
   const { t, locale } = useI18n({
     useScope: 'local'
   })

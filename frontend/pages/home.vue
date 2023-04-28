@@ -1,7 +1,7 @@
 <template>
     <div class="m-1 w-full">
         <div class="w-1/2">
-            <RefridgeratorWrapper /> 
+            <RefrigeratorWrapper /> 
         </div>
         <div class="">
             <ShoppingList 

@@ -144,7 +144,7 @@ public class ShoppingListController {
     }
 
     @GetMapping("requested/groceries/{shoppingListId}")
-    public ResponseEntity<List<ShoppingListElementDTO>> getRequestedGroceries(@PathVariable("shoppingListId") long shoppingListId) {
+    public ResponseEntity<List<ShoppingListElementDTO>> getRequestedGroceries(@PathVariable("shoppingListId") long shoppingListId) throws NoGroceriesFound {
         logger.info("Received request to get groceries requested to the shopping list with id {}", shoppingListId);
         List<ShoppingListElementDTO> groceries = shoppingListService.getRequestedGroceries(shoppingListId);
         if (groceries.isEmpty()) {
@@ -154,6 +154,20 @@ public class ShoppingListController {
         logger.info("Returns groceries and status OK");
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
+
+    @GetMapping("/requested/groceries/{shoppingListId}/{categoryId}")
+    public ResponseEntity<List<ShoppingListElementDTO>> getRequestedGroceriesFromCategorizedShoppingList(@PathVariable("shoppingListId") long shoppingListId,
+                                                                                                         @PathVariable("categoryId") long categoryId) throws NoGroceriesFound {
+        logger.info("Received request to get groceries requested to the shopping list with id {}", shoppingListId);
+        List<ShoppingListElementDTO> groceries = shoppingListService.getRequestedGroceries(shoppingListId, categoryId);
+        if (groceries.isEmpty()) {
+            logger.info("Received no groceries. Return status NO_CONTENT");
+            throw new NullPointerException("Received no groceries");
+        }
+        logger.info("Returns groceries and status OK");
+        return new ResponseEntity<>(groceries, HttpStatus.OK);
+    }
+
 
     @PostMapping("transfer-shopping-cart/{groceryShoppingListId}")
     public ResponseEntity<Boolean> transferToShoppingCart(@PathVariable("groceryShoppingListId") long groceryShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, ShoppingCartNotFound, SubCategoryNotFound {

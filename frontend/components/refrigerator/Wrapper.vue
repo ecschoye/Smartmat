@@ -1,17 +1,17 @@
 <template>
     <div class = "flex h-4/5 w-full">
-        <RefridgeratorNew v-if="toggleCreate" @toggle="(payload) => onToggleCreate(payload)" />
-        <RefridgeratorFridge v-else @toggle-create="(payload) => onToggleCreate(payload)" class="font-mono" @group-closed="togglePos(false)" :groceries="refridgeratorStore.getGroceries" @popup-height="(payload) => setPos(payload)" />
+        <RefrigeratorNew v-if="toggleCreate" @toggle="(payload) => onToggleCreate(payload)" />
+        <RefrigeratorDisplay v-else @toggle-create="(payload) => onToggleCreate(payload)" :refrigerator="refridgeratorStore.getSelectedRefrigerator" class="font-mono" @group-closed="togglePos(false)" :groceries="refridgeratorStore.getGroceries" @popup-height="(payload) => setPos(payload)" />
             <div>
             <Transition>
-                <RefridgeratorGroceryOptions :pos="position" v-if="toggle" @toggle-options="togglePos(false)"/>
+                <RefrigeratorEditGrocery :pos="position" v-if="toggle" @toggle-options="togglePos(false)"/>
             </Transition>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { useRefridgeratorStore } from '~/store/refridgeratorStore';
+import { useRefridgeratorStore } from '~/store/refrigeratorStore';
 import { getGroceriesByFridge } from '~/service/httputils/GroceryService';
 import { Refrigerator } from '~/types/RefrigeratorType';
 import { GroceryEntity } from '~/types/GroceryEntityType';

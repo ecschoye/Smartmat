@@ -11,7 +11,7 @@ export interface RefrigeratorState{
     selectedGrocery : GroceryEntity
 }
 
-export const useRefridgeratorStore = defineStore('refridgerator', {
+export const useRefridgeratorStore = defineStore('refrigerator', {
     state: () : RefrigeratorState => ({
         groceries : [] as GroceryEntity[],
         refrigerators : [] as Refrigerator[],   

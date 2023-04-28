@@ -23,10 +23,7 @@ import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
-import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.service.GroceryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +57,7 @@ public class GroceryController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/{refrigeratorId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<RefrigeratorGroceryDTO>> getGroceriesByRefrigerator(@Valid @PathVariable long refrigeratorId, HttpServletRequest httpServletRequest) throws UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
         logger.info("Received request for groceries by refrigerator with id: {}", refrigeratorId);
         return new ResponseEntity<>(groceryService.getGroceriesByRefrigerator(refrigeratorId, httpServletRequest), HttpStatus.OK);
@@ -73,6 +71,7 @@ public class GroceryController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @DeleteMapping("/remove/{refrigeratorGroceryId}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<SuccessResponse> removeRefrigeratorGrocery(@Valid @PathVariable long refrigeratorGroceryId, HttpServletRequest httpServletRequest) throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException {
         System.out.println("I was called!!!!");
         logger.info("Received request to remove refrigeratorGrocery with id: {}",refrigeratorGroceryId);

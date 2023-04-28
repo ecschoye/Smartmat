@@ -17,7 +17,7 @@
 
 
 <script setup lang="ts">
-import { useRefridgeratorStore } from '~/store/refridgeratorStore';
+import { useRefridgeratorStore } from '~/store/refrigeratorStore';
 import { deleteGrocery } from '~/service/httputils/GroceryService';
 
 const { t } = useI18n();

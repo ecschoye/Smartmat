@@ -21,8 +21,8 @@ import { postRegister } from "~/service/httputils/authentication/AuthenticationS
 import {RefrigeratorRegisterData} from "~/types/RefrigeratorRegisterData";
 import {AxiosResponse} from "axios";
 import axiosInstance from "~/service/AxiosInstance";
-import { postRegisterFridge } from "~/service/httputils/RefrigeratorRequest";
-import { useRefridgeratorStore} from "~/store/refridgeratorStore";
+import { postRegisterFridge } from "~/service/httputils/RefrigeratorService";
+import { useRefridgeratorStore} from "~/store/refrigeratorStore";
 import ErrorAlert from "~/components/AlertBox/ErrorAlert.vue";
 
 const refrigeratorStore = useRefridgeratorStore();

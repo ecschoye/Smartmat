@@ -84,14 +84,6 @@ export default {
     };
   },
 
-  props: {
-    fridgeId: {
-        type: [String, Array],
-        default: " ",
-        required: true,
-    }
-  },
-
    setup() {
     const refrigeratorStore = useRefridgeratorStore();
     const {locale, locales, t} = useI18n()
@@ -104,47 +96,26 @@ export default {
       t
     }
   },
-  methods: {
+    methods: {
 
-  handleOptionChange(member: { id: number; name: string; username: string; role: string }) {
+    handleOptionChange(member: { id: number; name: string; username: string; role: string }) {
 
-  },
+    },
 
-  saveUserRoles() {
+    saveUserRoles() {
+        
+    },
+
+    leaveFridge(member: { id: number; name: string; username: string; role: string }) {
+
+    },
+
+    deleteMember(member: { id: number; name: string; username: string; role: string }) {
+        
+    },
+
     
-  },
-
-  leaveFridge(member: { id: number; name: string; username: string; role: string }) {
-
-  },
-
-  deleteMember(member: { id: number; name: string; username: string; role: string }) {
-    
-  },
-
-  async changeFridgeId() {
-        try {
-            let response = await getRefrigeratorById(this.fridgeId);
-            console.log(response);
-            if (response.data) {
-                const { id, name, address, members } = response.data; 
-                let obj: Refrigerator = { id: id, name: name, address: address, members: members }; 
-                this.refrigeratorStore.$state.selectedRefrigerator = obj;
-                this.fridge = obj;
-                console.log(this.refrigeratorStore.$state.selectedRefrigerator)
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    
-  }
-},
-
-watch: {
-    fridgeId() {
-        this.changeFridgeId();
-    }
-}
+    },
 
 
 }

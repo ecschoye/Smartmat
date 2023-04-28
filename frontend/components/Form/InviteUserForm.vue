@@ -10,7 +10,7 @@
   </template>
   
   <script setup lang="ts">
-  
+  import { useRefridgeratorStore } from '~/store/refridgeratorStore';
   import GreenButton from "~/components/Button/GreenButton.vue";
   import GrayButton from "~/components/Button/GrayButton.vue";
   import BaseInput from "~/components/Form/BaseInput.vue";
@@ -19,42 +19,18 @@
   
   const errorMessage = ref("");
   const router = useRouter();
+  const refrigeratorStore = useRefridgeratorStore();
   
   const form = reactive({
     email: '',
   });
 
-  const props = defineProps({
-    fridgeInfo: {
-        type: Object,
-        required: true,
-    },
-});
-
-    const { fridgeInfo } = props;
+  const currentFridge = computed(() => refrigeratorStore.$state.selectedRefrigerator);
+    console.log(currentFridge);
   
   const sendForm = async () => {
-    if(!UsernameInFridge(form.email)) {
-        try {
-            console.log(`kode for å legge til bruker med email ${form.email} til kjøleskap: ${fridgeInfo.name}`)
-        } catch (error: any) {
-            errorMessage.value = error.response;
-        }
-    } else {
-        alert("Denne brukeren er allerede en del av dette kjøleskapet")
-    }
     
   };
-
-  function UsernameInFridge(email: string): boolean {
-    const members = fridgeInfo.members; // get the members array from fridgeInfo object
-    for (const member of members) {
-      if (member.username === email) {
-        return true; // return true if email matches
-      }
-    }
-    return false; // return false if no match found
-  }
 
   
 

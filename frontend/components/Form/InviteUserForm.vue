@@ -24,28 +24,31 @@
 
     },
     setup() {
+        const {locale, locales, t} = useI18n()
         const refrigeratorStore = useRefridgeratorStore();
         const errorMessage = ref("");
         const form = reactive({
-        email: '',
-      });
+          email: '',
+        });
 
-      
-    const sendForm = async () => {
-    try {
-        const newMember: MemberRequest = {
-        refrigeratorId: refrigeratorStore.$state.selectedRefrigerator.id, 
-        userName: form.email,
-        fridgeRole: "USER", 
-        };
-        const response = await postAddMember(newMember);
-        console.log(response.data); 
-    } catch (error: any) {
-        console.log(error);
-        errorMessage.value = error.response;
-    }
-};
-      return {form, sendForm, errorMessage}
+        const sendForm = async () => {
+        try {
+            const newMember: MemberRequest = {
+            refrigeratorId: refrigeratorStore.$state.selectedRefrigerator.id, 
+            userName: form.email,
+            fridgeRole: "USER", 
+            };
+            const response = await postAddMember(newMember);
+            if(response !== null) {
+              alert(t("new_member_success"))
+              location.reload(); 
+            }
+          } catch (error: any) {
+              console.log(error);
+              errorMessage.value = error.response;
+          }
+      };
+      return {form, sendForm, errorMessage, locale, locales, t}
     },
   }
 

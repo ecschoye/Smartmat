@@ -58,5 +58,7 @@
   "use": "Bruk",
   "throw_away": "Kast",
   "select_fridge" : "Velg Kjøleskap",
-  "address" : "Addresse"
+  "address" : "Addresse",
+  "edit_success" : "Kjøleskap endret.",
+  "member_add_success" : "Medlem lagt til."
 }

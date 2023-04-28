@@ -39,7 +39,7 @@ public class RecipeController {
     })
     @GetMapping("{refrigeratorId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> editRole(@Valid @PathVariable long refrigeratorId) throws Exception {
+    public ResponseEntity<?> fetchRecipes(@Valid @PathVariable long refrigeratorId) throws Exception {
         logger.info("Received request to fetch recipes for user");
         try{
             List<Recipe> recipes = recipeService.getRecipesByGroceriesAndExpirationDates(refrigeratorId);

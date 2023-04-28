@@ -193,12 +193,15 @@ public class RefrigeratorService {
      */
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
     public Refrigerator save(RefrigeratorDTO refrigeratorDTO, HttpServletRequest httpRequest) throws Exception {
+        logger.info("Converting to refrigeretor object");
         Refrigerator refrigerator = convertToEntity(refrigeratorDTO);
 
         //Check user exists
+        logger.info("Checking user");
         User user = getUser(extractEmail(httpRequest));
         Refrigerator refrigeratorResult;
         try {
+            logger.info("Saving refrigerator");
             refrigeratorResult = refrigeratorRepository.save(refrigerator);
         } catch (Exception e) {
             logger.warn("Refrigerator could not be added: refrigerator could not be added");
@@ -206,6 +209,7 @@ public class RefrigeratorService {
         }
 
         //Connect user to
+        logger.info("Connecting user as member");
         RefrigeratorUser refrigeratorUser = new RefrigeratorUser();
         refrigeratorUser.setRefrigerator(refrigeratorResult);
         refrigeratorUser.setUser(user);

@@ -6,7 +6,7 @@
         </div>
         <div class="p-2 flex justify-end absolute right-0">
             <div v-if="isElementSuggested">
-                <button @click.stop="updateQuantity(ElementDetails.quantity)" class="h-5 w-5 mr-1">
+                <button @click.stop="updateGrocery(ElementDetails.quantity)" class="h-5 w-5 mr-1">
                     <img src="../../assets/icons/done.png" alt="Accept">
                 </button>
             </div>
@@ -48,7 +48,7 @@
                     <button @click.stop="newQuantity++" class="h-5 w-5 mr-8">
                         <img src="../../assets/icons/expandLess.png" alt="increment">
                     </button> 
-                    <button @click.stop="updateQuantity(newQuantity)" class="h-5 w-5 mr-3">
+                    <button @click.stop="updateGrocery(newQuantity)" class="h-5 w-5 mr-3">
                         <img src="../../assets/icons/done.png" alt="Done">
                     </button>
                     <button @click.stop="editElement = false" class="h-5 w-5"> 
@@ -124,19 +124,10 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                     alert("Det oppstod en feil ved overføring av varen")
                 }
             },
-            updateQuantity(newQuantity: number) {
+            updateGrocery(newQuantity: number) {
                 this.ElementDetails.quantity = newQuantity
                 let quantity = newQuantity
-                //this.editGrocery(quantity, this.ElementDetails.isSuggested)
-                ShoppingListService.updateQuantity(this.ElementDetails.id, quantity)
-            },
-            acceptSuggestion() {
-                this.isElementSuggested = false
-                let requested = this.isElementSuggested
-                this.editGrocery(this.ElementDetails.quantity, requested)
-            },
-            editGrocery(quantity: number, requested: boolean) {
-                ShoppingListService.editGrocery(this.ElementDetails.id, quantity, requested)
+                ShoppingListService.updateGrocery(this.ElementDetails.id, quantity)
             }
         }
     })

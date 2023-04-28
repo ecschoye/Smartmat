@@ -46,16 +46,8 @@ const transferGroceryToShoppingCart = (groceryShoppingListId: Number): Promise<A
     return axiosInstance.post(`/api/shopping-list/transfer-shopping-cart/${groceryShoppingListId}`);
 };
 
-const updateQuantity = (groceryId: Number, quantity: Number): Promise<AxiosResponse> => {
-    return axiosInstance.get(`/api/shopping-list/update/groceries/${groceryId}/${quantity}`);
-};
-
-const acceptSuggestion = (groceryId: Number, requested: boolean): Promise<AxiosResponse> => {
-    return axiosInstance.get(`/api/shopping-list/update/groceries/${groceryId}/${requested}`);
-};
-
-const editGrocery = (groceryId: Number, quantity: Number, requested: boolean): Promise<AxiosResponse> => {
-    return axiosInstance.get(`/api/shopping-list/update/groceries/${groceryId}` + quantity + requested);
+const updateGrocery = (groceryId: Number, quantity: Number): Promise<AxiosResponse> => {
+    return axiosInstance.post(`/api/shopping-list/edit-grocery/${groceryId}/${quantity}`);
 };
 
 export default {
@@ -69,7 +61,5 @@ export default {
     getRequestedGroceries,
     getRequestedGroceriesInCategories,
     transferGroceryToShoppingCart,
-    updateQuantity,
-    acceptSuggestion,
-    editGrocery
+    updateGrocery
 }

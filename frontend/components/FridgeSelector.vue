@@ -25,7 +25,7 @@
         <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
           <div class="max-h-64 overflow-y-scroll">
             <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-b-md bg-white dark:bg-zinc-600 py-0 text-base  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-              <HeadlessListboxOption as="template" v-for="fridge in fridges" :key="fridge.id" :value="fridge" v-slot="{ active, selected }">
+              <HeadlessListboxOption as="template" v-for="fridge in refrigeratorStore.getRefrigerators" :key="fridge.id" :value="fridge" v-slot="{ active, selected }" @click ="setSelected(fridge)">
                 <li :class="[active ? 'bg-emerald-400 dark:bg-green-500 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-1 pr-4','hover:cursor-pointer']">
                   <div class="flex items-center">
                     <span :class="[selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate']">{{ fridge.name }}</span>
@@ -47,7 +47,7 @@
                 </li>
               </HeadlessListboxOption>
               <li class="border-t border-gray-200 my-2"></li>
-              <HeadlessListboxOption v-slot="{ active, selected }" as="template" :value="{ id: 'link', name: 'Link to page' }">
+              <HeadlessListboxOption v-slot="{ active, selected }" as="template" :value="{ id: 'link', name: 'Link to page' }" >
                 <NuxtLink to="/create-fridge" :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'block cursor-default select-none py-2 pl-3 pr-2','hover:cursor-pointer']" :aria-selected="selected">
                   <div class="flex items-center ">
                     <img class="hidden sm:block h-5 w-auto" src="../assets/icons/add.png" alt="">
@@ -65,29 +65,27 @@
 
 <script lang="ts">
 import { Refrigerator } from "~/types/RefrigeratorType";
+import { useRefrigeratorStore } from "~/store/refrigeratorStore";
+
+const refrigeratorStore = useRefrigeratorStore();
 
 export default {
   data () {
     return {
-      selected : {
-        id: -1, 
-        name: ''
-      },
-
+      refrigeratorStore
     }
   }, 
-  props : {
-    fridges : {
-      type: Array as () => Refrigerator[], 
-      required: true, 
-      default: undefined
-    }
-  },
-  mounted () {
-    if (this.fridges && this.fridges.length > 0) {
-      this.selected = this.fridges[0]
-    } else {
-      this.selected = { id: -1, name: '' }
+  computed:{
+    selected(){
+      if(refrigeratorStore.getSelectedRefrigerator){
+        return refrigeratorStore.getSelectedRefrigerator;
+      }
+      else{
+        return {
+        id: -1, 
+        name: ''
+      }
+      }
     }
   },
   setup() {
@@ -95,16 +93,20 @@ export default {
 
     return { t,locale,locales}
   },
+
   watch: {
     selected : function(newVal, oldVal) {
       if(newVal !== oldVal && newVal !== undefined) {
-        if(newVal !== -1) this.$emit("selectedFridgeEvent", newVal)
+        if(newVal !== -1) this.refrigeratorStore.setSelectedRefrigerator(newVal);
       }
-    }
+    },
   },
   methods: {
     goToCreateFridgePage() {
       this.$router.push(this.$nuxt.localePath('/create-fridge'))
+    },
+    setSelected(fridge : Refrigerator){
+      this.refrigeratorStore.setSelectedRefrigerator(fridge);
     }
   }
 }

@@ -73,7 +73,6 @@ public class GroceryController {
     @DeleteMapping("/remove/{refrigeratorGroceryId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<SuccessResponse> removeRefrigeratorGrocery(@Valid @PathVariable long refrigeratorGroceryId, HttpServletRequest httpServletRequest) throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException {
-        System.out.println("I was called!!!!");
         logger.info("Received request to remove refrigeratorGrocery with id: {}",refrigeratorGroceryId);
         RefrigeratorGrocery refrigeratorGrocery = groceryService.getRefrigeratorGroceryById(refrigeratorGroceryId);
         notificationService.deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);

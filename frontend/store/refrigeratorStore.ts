@@ -6,16 +6,16 @@ import { Refrigerator } from '~/types/RefrigeratorType';
 export interface RefrigeratorState{
     groceries : GroceryEntity[],
     refrigerators : Refrigerator[],
-    selectedRefrigerator : Refrigerator,
+    selectedRefrigerator : Refrigerator | null,
     categories : Category[],
     selectedGrocery : GroceryEntity
 }
 
-export const useRefridgeratorStore = defineStore('refrigerator', {
+export const useRefrigeratorStore = defineStore('refrigerator', {
     state: () : RefrigeratorState => ({
         groceries : [] as GroceryEntity[],
         refrigerators : [] as Refrigerator[],   
-        selectedRefrigerator : {} as Refrigerator,
+        selectedRefrigerator : {} as Refrigerator | null,
         categories : [
             {
 
@@ -36,12 +36,15 @@ export const useRefridgeratorStore = defineStore('refrigerator', {
         getSelectedGrocery : (state : RefrigeratorState) : GroceryEntity => {
             return state.selectedGrocery;
         },
-        getSelectedRefrigerator : (state : RefrigeratorState) : Refrigerator => {
+        getSelectedRefrigerator : (state : RefrigeratorState) : Refrigerator | null => {
             return state.selectedRefrigerator;
         },
         getRefrigerators: (state : RefrigeratorState) : Refrigerator[] => {
             return state.refrigerators;
-        }
+        },
+        getRefrigeratorById: (state: RefrigeratorState) => (id: number): Refrigerator | undefined => {
+            return state.refrigerators.find(refrigerator => refrigerator.id === id);
+          },
     },
     actions : {
         removeGrocery(search : GroceryEntity){

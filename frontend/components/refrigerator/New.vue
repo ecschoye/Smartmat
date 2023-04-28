@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { createGrocery } from '~/service/httputils/GroceryService';
-import { useRefridgeratorStore } from '~/store/refrigeratorStore';
+import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 import { Grocery } from '~/types/GroceryType';
 
 const router = useRouter();
@@ -19,7 +19,7 @@ const router = useRouter();
     const { t } = useI18n();
 
     let grocery : Grocery | null = null;
-    const refridgeratorStore = useRefridgeratorStore();
+    const refrigeratorStore = useRefrigeratorStore();
 const emit = defineEmits(['toggle'])
 
 onBeforeUnmount(() => {
@@ -30,7 +30,7 @@ onBeforeUnmount(() => {
 async function onSubmit(){
     if(grocery !== null){
             try{
-        const response = await createGrocery(refridgeratorStore.getSelectedRefrigerator.id, grocery!);
+        const response = await createGrocery(refrigeratorStore.getSelectedRefrigerator!.id, grocery!);
         if(response.status == 200){
            emit('toggle', false); 
         }

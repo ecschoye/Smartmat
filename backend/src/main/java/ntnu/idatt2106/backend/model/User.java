@@ -39,10 +39,15 @@ public class User implements UserDetails {
     @Column(name = "password")
     @Schema(description = "The password of the user")
     private String password;
+
     @Column(name = "user_role")
     @Schema(description = "The role of the user")
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+
+    @Column(name = "favorite_refrigeratorId")
+    @Schema(description = "The id of a optional favorite refrigerator")
+    private Long favoriteRefrigeratorId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

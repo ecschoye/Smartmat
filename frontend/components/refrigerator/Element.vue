@@ -8,10 +8,10 @@
     </div>
   </template>
   <script setup lang="ts">
-  import { useRefridgeratorStore } from '~/store/refrigeratorStore';
+  import { useRefrigeratorStore } from '~/store/refrigeratorStore';
   import type { GroceryEntity } from '~/types/GroceryEntityType';
   
-  const refridgeratorStore = useRefridgeratorStore();
+  const refrigeratorStore = useRefrigeratorStore();
   const props = defineProps({
     grocery: {
       type: Object as () => GroceryEntity,
@@ -23,7 +23,7 @@
   const emit = defineEmits(['element-height']);
   
   function clicked() {
-    if (refridgeratorStore.setSelectedGrocery(props.grocery)) {
+    if (refrigeratorStore.setSelectedGrocery(props.grocery)) {
       emit('element-height', el.value?.getBoundingClientRect().y);
     } else {
       throw new ReferenceError('Could not find selected grocery in grocery store');

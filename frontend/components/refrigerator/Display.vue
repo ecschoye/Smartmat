@@ -42,7 +42,7 @@ import { Refrigerator } from '~/types/RefrigeratorType';
       required: true,
     },
     refrigerator : {
-      type : Object as () => Refrigerator
+      type : Object as () => Refrigerator | null
     }
   })
   

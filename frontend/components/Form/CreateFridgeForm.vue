@@ -22,10 +22,10 @@ import {RefrigeratorRegisterData} from "~/types/RefrigeratorRegisterData";
 import {AxiosResponse} from "axios";
 import axiosInstance from "~/service/AxiosInstance";
 import { postRegisterFridge } from "~/service/httputils/RefrigeratorService";
-import { useRefridgeratorStore} from "~/store/refrigeratorStore";
+import { useRefrigeratorStore} from "~/store/refrigeratorStore";
 import ErrorAlert from "~/components/AlertBox/ErrorAlert.vue";
 
-const refrigeratorStore = useRefridgeratorStore();
+const refrigeratorStore = useRefrigeratorStore();
 
 const catchError = ref(false);
 const errorMessage = ref("");

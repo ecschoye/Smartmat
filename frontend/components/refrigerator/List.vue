@@ -109,7 +109,12 @@ const { t } = useI18n();
          }
          groupMap.get(group.id)?.groceries.push(grocery);
       }
-      return Array.from(categoryMap.values());
+      const sortedCategories = Array.from(categoryMap.values())
+      .sort((a, b) => a.name.localeCompare(b.name));
+      sortedCategories.forEach((group) => {
+        group.groups = new Map([...group.groups.entries()].sort((a,b) => a[1].name.localeCompare(b[1].name)));
+      });
+      return sortedCategories;
       
    })
 </script>

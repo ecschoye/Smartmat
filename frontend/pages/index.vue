@@ -91,7 +91,6 @@ import { Refrigerator } from '~/types/RefrigeratorType';
       console.log(error);
     }
   }
-
   onMounted(() => {
     loadNotifications();
     loadRefrigerators();

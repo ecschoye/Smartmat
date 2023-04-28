@@ -8,7 +8,7 @@
     </div>
   </template>
   <script setup lang="ts">
-  import { useRefridgeratorStore } from '~/store/refridgeratorStore';
+  import { useRefridgeratorStore } from '~/store/refrigeratorStore';
   import type { GroceryEntity } from '~/types/GroceryEntityType';
   
   const refridgeratorStore = useRefridgeratorStore();

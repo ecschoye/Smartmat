@@ -102,7 +102,7 @@
 import {computed, defineComponent} from 'vue'
 import {useUserStore} from "~/store/userStore";
 import { useNotificationStore } from "~/store/notificationStore";
-import { useRefridgeratorStore } from "~/store/refridgeratorStore";
+import { useRefridgeratorStore } from "~/store/refrigeratorStore";
 import {postLogOut} from "~/service/httputils/authentication/AuthenticationService";
 
 export default defineComponent({

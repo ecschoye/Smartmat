@@ -14,24 +14,39 @@
   import { useUserStore } from "~/store/userStore";
   import { postRegister } from "~/service/httputils/authentication/AuthenticationService";
   import { Refrigerator } from '~/types/RefrigeratorType'
+  import type { Member } from '~/types/MemberType';
+  import { postAddMember } from '~/service/httputils/RefrigeratorService';
+  import type { MemberRequest } from "~/types/MemberRequest";
   
   export default {
     props: {
-      refrigerator : Object as () => Refrigerator | null
-  
+        refrigerator : Object as () => Refrigerator | null,
+
     },
     setup() {
-      const form = reactive({
+        const refrigeratorStore = useRefridgeratorStore();
+        const errorMessage = ref("");
+        const form = reactive({
         email: '',
       });
 
       
-      const sendForm = async () => {
-        
-      };
-
-      return {form, sendForm}
+    const sendForm = async () => {
+    try {
+        const newMember: MemberRequest = {
+        refrigeratorId: refrigeratorStore.$state.selectedRefrigerator.id, 
+        userName: form.email,
+        fridgeRole: "USER", 
+        };
+        const response = await postAddMember(newMember);
+        console.log(response.data); 
+    } catch (error: any) {
+        console.log(error);
+        errorMessage.value = error.response;
     }
+};
+      return {form, sendForm, errorMessage}
+    },
   }
 
   

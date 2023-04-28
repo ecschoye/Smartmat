@@ -3,6 +3,7 @@ import {AxiosResponse} from "axios";
 import {RefrigeratorRegisterData} from "~/types/RefrigeratorRegisterData";
 import type {Refrigerator} from "~/types/RefrigeratorType"; 
 import type {Member} from "~/types/MemberType"
+import type { MemberRequest } from "~/types/MemberRequest";
 
 export const getRefrigerators = async () : Promise<AxiosResponse> => {
     return axiosInstance.get('/api/refrigerator/user');
@@ -16,7 +17,7 @@ export const postRegisterFridge = async (refrigeratorRegisterData : Refrigerator
     return axiosInstance.post('/api/refrigerator/new', refrigeratorRegisterData);
 }
 
-export const postAddMember = async (memberRequest : Member) : Promise<AxiosResponse> => {
+export const postAddMember = async (memberRequest : MemberRequest) : Promise<AxiosResponse> => {
     return axiosInstance.post('/api/refrigerator/members/new', memberRequest); 
 }
 

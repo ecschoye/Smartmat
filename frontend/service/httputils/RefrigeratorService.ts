@@ -16,6 +16,10 @@ export const postRegisterFridge = async (refrigeratorRegisterData : Refrigerator
     return axiosInstance.post('/api/refrigerator/new', refrigeratorRegisterData);
 }
 
+export const postEditFridge = async (refrigerator : Refrigerator): Promise<AxiosResponse> => {
+    return axiosInstance.post('/api/refrigerator/edit', refrigerator);
+}
+
 export const postAddMember = async (memberRequest : Member) : Promise<AxiosResponse> => {
     return axiosInstance.post('/api/refrigerator/members/new', memberRequest); 
 }

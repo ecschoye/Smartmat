@@ -10,12 +10,12 @@
 
 <script setup lang="ts">
 import {fetchRecipes } from "~/service/httputils/RecipeService";
-import { useRefridgeratorStore } from "~/store/refrigeratorStore";
+import { useRefrigeratorStore } from "~/store/refrigeratorStore";
 import {onMounted} from "vue";
 
 
 const { t } = useI18n();
-const refrigeratorStore = useRefridgeratorStore();
+const refrigeratorStore = useRefrigeratorStore();
 
 interface Recipe {
   name: string;
@@ -51,7 +51,7 @@ function nextPage(): void {
 
 const loadRecipes = async () => {
   try {
-    const refrigeratorId = refrigeratorStore.getSelectedRefrigerator.id;
+    const refrigeratorId = refrigeratorStore.getSelectedRefrigerator!.id;
     const response = await fetchRecipes(refrigeratorId);
     if (response.status === 200) {
       console.log(response.data);

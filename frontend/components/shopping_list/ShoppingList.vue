@@ -3,8 +3,8 @@
         <div class="w-2/5 h-96 p-1 overflow-auto bg-white border-2 rounded-lg border-black relative">
             <div>
                 <div class="m-1 pl-2 pr-2 flex justify-center text-lg font-sans font-medium">
-                    <button @click.stop="selectTab('isShoppingListSelected')" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingListSelected}" class="pl-4 pr-4 bg-white border-2 rounded-l-lg border-black cursor-pointer hover:bg-slate-200"> Handleliste </button>
-                    <button @click.stop="selectTab('isShoppingCartSelected')" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingCartSelected}" class="pl-4 pr-4 bg-white border-2 rounded-r-lg border-black cursor-pointer hover:bg-slate-200"> Handlevogn </button>
+                    <button @click.stop="selectTab('isShoppingListSelected')" :class="{'hover:bg-sky-400 bg-sky-500': menuOptions.isShoppingListSelected}" class="pl-4 pr-4 bg-white border-2 rounded-l-lg border-black cursor-pointer hover:bg-slate-200"> Handleliste </button>
+                    <button @click.stop="selectTab('isShoppingCartSelected')" :class="{'hover:bg-sky-400 bg-sky-500': menuOptions.isShoppingCartSelected}" class="pl-4 pr-4 bg-white border-2 rounded-r-lg border-black cursor-pointer hover:bg-slate-200"> Handlevogn </button>
                 </div>
             </div>
             <div class="flex justify-center">
@@ -84,6 +84,7 @@ import AddNewElement from "./AddNewElement.vue";
     },
     methods: {
         async loadLists() {
+            
             //TODO: SHOULD BE DONE AUTOMATIC IN BACKEND WHEN CREATING REFRIGERATOR
             //create shopping list
             let responseListId = await ShoppingListService.createShoppingList(this.refrigeratorId);
@@ -92,7 +93,7 @@ import AddNewElement from "./AddNewElement.vue";
             let responseCartId = await ShoppingCartService.createShoppingCart(this.shoppingListId);
             this.shoppingCartId = responseCartId.data;
             //TODO: END
-            
+
             //loads categories
             let responseCategories = await ShoppingListService.getCategoriesFromShoppingList(this.shoppingListId);
             if (responseCategories.data.length > 0) {
@@ -100,7 +101,6 @@ import AddNewElement from "./AddNewElement.vue";
                     this.categoryList.push(element);
                 });
             }
-            
             //loads shopping cart
             let responseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);
             if (responseCart.data.length > 0) {
@@ -121,7 +121,7 @@ import AddNewElement from "./AddNewElement.vue";
             });
         },
         async addAllElementsToRefrigerator() {
-            // Add a element from the shoppingCart to the Refrigerator
+            // Add an element from the shoppingCart to the Refrigerator
             let groceryIds: Number[] = [];
             this.shoppingCart.forEach((element: ShoppingListElement) => {
                 groceryIds.push(element.id);

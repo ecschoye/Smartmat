@@ -1,21 +1,14 @@
 <template>
     <div class="items stretch text-sm">
-        <div class="ml-4 p-2 flex justify-end absolute left-0">
+        <div :class="{'text-blue-800 font-bold': isElementSuggested}" class="ml-4 p-2 flex justify-end absolute left-0">
             <h3 class="mr-2"> {{ ElementDetails.name }} </h3>
             <h5> ({{ ElementDetails.quantity }})</h5>
         </div>
         <div class="p-2 flex justify-end absolute right-0">
-            <div v-if="isElementSuggested" class="mr-8">
-                <div>
-                    <button @click.stop="isElementSuggested = false" class="h-5 w-5 mr-4">
-                        <img src="../../assets/icons/done.png" alt="Accept">
-                    </button>
-                </div>
-                <div>
-                    <button @click.stop="declineSuggestion" class="h-5 w-5 mr-4">
-                        <img src="../../assets/icons/close.png" alt="Decline">
-                    </button>
-                </div>
+            <div v-if="isElementSuggested">
+                <button @click.stop="acceptSuggestion(ElementDetails.id)" class="h-5 w-5 mr-1">
+                    <img src="../../assets/icons/done.png" alt="Accept">
+                </button>
             </div>
             <div v-if="!editElement">
                <div v-if="isElementAddedToCart">
@@ -136,8 +129,10 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 let quantity = newQuantity
                 ShoppingListService.updateQuantity(groceryId, quantity)
             },
-            declineSuggestion() {
-                // Remove element from shoppinglist
+            acceptSuggestion(groceryId: number) {
+                this.isElementSuggested = false
+                let requested = this.isElementSuggested
+                ShoppingListService.acceptSuggestion(groceryId, requested)
             }
         }
     })

@@ -3,31 +3,14 @@
         <div class="w-2/5 h-96 p-1 overflow-auto bg-white border-2 rounded-lg border-black relative">
             <div>
                 <div class="m-1 pl-2 pr-2 flex justify-center text-lg font-sans font-medium">
-                    <button @click.stop="selectTab('isAllElementsSelected')" :class="{'hover:bg-sky-200 bg-sky-300': menuOptions.isAllElementsSelected}" class="pl-4 pr-4 bg-white border-2 rounded-l-lg border-black cursor-pointer hover:bg-slate-200"> Alle Varer </button>
-                    <button @click.stop="selectTab('isCategoriesSelected')" :class="{'hover:bg-sky-200 bg-sky-300': menuOptions.isCategoriesSelected}" class="pl-4 pr-4 bg-white border-2 rounded-none border-black cursor-pointer hover:bg-slate-200"> Kategorier </button>
-                    <button @click.stop="selectTab('isSuggestionsSelected')" :class="{'hover:bg-sky-200 bg-sky-300': menuOptions.isSuggestionsSelected}" class="pl-4 pr-4 bg-white border-2 rounded-none border-black cursor-pointer hover:bg-slate-200"> Ønsker </button>
-                    <button @click.stop="selectTab('isInShoppingCartSelected')" :class="{'hover:bg-sky-200 bg-sky-300': menuOptions.isInShoppingCartSelected}" class="pl-4 pr-4 bg-white border-2 rounded-r-lg border-black cursor-pointer hover:bg-slate-200"> Handlevogn </button>
+                    <button @click.stop="selectTab('isShoppingListSelected')" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingListSelected}" class="pl-4 pr-4 bg-white border-2 rounded-l-lg border-black cursor-pointer hover:bg-slate-200"> Handleliste </button>
+                    <button @click.stop="selectTab('isShoppingCartSelected')" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingCartSelected}" class="pl-4 pr-4 bg-white border-2 rounded-r-lg border-black cursor-pointer hover:bg-slate-200"> Handlevogn </button>
                 </div>
             </div>
             <div class="flex justify-center">
-                <div v-if="menuOptions.isAllElementsSelected">
-                    <div v-if="shoppingList === null || shoppingList.length === 0">
-                        <h3> Du har ingen varer i handlelisten </h3>
-                    </div>
-                    <div v-else class="grid grid-cols-1 gap-8">
-                        <ShoppingListElement
-                            v-for="element in shoppingList"
-                            :key="element.id"
-                            :ElementDetails=element>
-                        </ShoppingListElement>
-                    </div>
-                    <div class="p-2 flex justify-end absolute bottom-0 right-0">
-                        <button @click.stop="addNewElementSelected = true" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-200 bg-sky-300"> Legg til Ny Vare </button>
-                    </div>
-                </div>
-                <div v-if="menuOptions.isCategoriesSelected">
+                <div v-if="menuOptions.isShoppingListSelected">
                     <div v-if="categoryList === null || categoryList.length === 0">
-                        <h3> Du har ingen varer i handlelisten </h3>
+                        <h3 class="mt-3"> Du har ingen varer i handlelisten </h3>
                     </div>
                     <div v-else class="grid grid-cols-1 gap-8">
                         <ShoppingListCategory
@@ -38,23 +21,12 @@
                         </ShoppingListCategory>
                     </div>
                     <div class="p-2 flex justify-end absolute bottom-0 right-0">
-                        <button @click.stop="addNewElementSelected = true" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-200 bg-sky-300"> Legg til Ny Vare </button>
-                    </div>                </div>
-                <div v-if="menuOptions.isSuggestionsSelected">
-                    <div v-if="suggestionsList === null || suggestionsList.length === 0">
-                        <h3> Du har ingen forslag til handlelisten </h3>
-                    </div>
-                    <div v-else class="grid grid-cols-1 gap-8">
-                        <ShoppingListElement
-                        v-for="element in suggestionsList"
-                        :key="element.id"
-                        :ElementDetails=element>
-                    </ShoppingListElement>
-                    </div>
+                        <button @click.stop="addNewElementSelected = true" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-300 bg-sky-400"> Legg til Ny Vare </button>
+                    </div>                
                 </div>
-                <div v-if="menuOptions.isInShoppingCartSelected">
+                <div v-if="menuOptions.isShoppingCartSelected">
                     <div v-if="shoppingCart === null || shoppingCart.length === 0">
-                        <h3> Du har ingen varer i handlevognen </h3>
+                        <h3 class="mt-3"> Du har ingen varer i handlevognen </h3>
                     </div>
                     <div v-else class="grid grid-cols-1 gap-8">
                         <ShoppingListElement
@@ -63,7 +35,7 @@
                             :ElementDetails=element>
                         </ShoppingListElement>
                         <div class="p-2 flex justify-end absolute bottom-0 right-0">
-                            <button @click.stop="addAllElementsToRefrigerator" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-200 bg-sky-300"> Legg alt i Kjøleskapet </button>
+                            <button @click.stop="addAllElementsToRefrigerator" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-300 bg-sky-400"> Legg alt i Kjøleskapet </button>
                         </div>
                     </div>
                 </div>
@@ -97,17 +69,13 @@ import AddNewElement from "./AddNewElement.vue";
     data() {
         return {
             menuOptions: {
-                isAllElementsSelected: false,
-                isCategoriesSelected: false,
-                isSuggestionsSelected: false,
-                isInShoppingCartSelected: false,
+                isShoppingListSelected: false,
+                isShoppingCartSelected: false,
             },
             addNewElementSelected: false,
             shoppingListId: -1,
             shoppingCartId: -1,
-            shoppingList: [] as ShoppingListElement[],
             categoryList: [] as ShoppingListCategory[],
-            suggestionsList: [] as ShoppingListElement[],
             shoppingCart: [] as ShoppingListElement[]
         };
     },
@@ -124,14 +92,7 @@ import AddNewElement from "./AddNewElement.vue";
             let responseCartId = await ShoppingCartService.createShoppingCart(this.shoppingListId);
             this.shoppingCartId = responseCartId.data;
             //TODO: END
-            //loads shopping list
-            let response = await ShoppingListService.getGroceriesFromShoppingList(this.shoppingListId);
-            if (response.data.length > 0) {
-                response.data.forEach((element: ResponseGrocery) => {
-                    let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
-                    this.shoppingList.push(object);
-                });
-            }
+            
             //loads categories
             let responseCategories = await ShoppingListService.getCategoriesFromShoppingList(this.shoppingListId);
             if (responseCategories.data.length > 0) {
@@ -139,19 +100,12 @@ import AddNewElement from "./AddNewElement.vue";
                     this.categoryList.push(element);
                 });
             }
-            //loads suggestions
-            let responseSuggestions = await ShoppingListService.getRequestedGroceries(this.shoppingListId);
-            if (responseSuggestions.data.length > 0) {
-                responseSuggestions.data.forEach((element: ResponseGrocery) => {
-                    let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
-                    this.suggestionsList.push(object);
-                });
-            }
+            
             //loads shopping cart
             let responseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);
             if (responseCart.data.length > 0) {
                 responseCart.data.forEach((element: ResponseGrocery) => {
-                    let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true };
+                    let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true, isSuggested: false };
                     this.shoppingCart.push(object);
                 });
             } 

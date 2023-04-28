@@ -38,17 +38,26 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
         data() {
             return {
                 isCategoryExpanded: false,
-                categoryListItems: [] as ShoppingListElement[]
+                categoryListItems: [] as ShoppingListElement[],
             }
         },
-        async mounted() {            
+        async mounted() {   
+             //loads shopping list         
             let response = await ShoppingListService.getGroceriesFromCategorizedShoppingList(this.ShoppingListId, this.CategoryDetails.id)                                                             
-
-            response.data.forEach((element: ResponseGrocery) => {
-                    let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
+            if (response.data.length > 0) {
+                response.data.forEach((element: ResponseGrocery) => {
+                    let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: false };
                     this.categoryListItems.push(object);
-                });    
+                }); 
+            }
+            //loads suggestions
+            let responseSuggestions = await ShoppingListService.getRequestedGroceries(this.ShoppingListId);
+            if (responseSuggestions.data.length > 0) {
+                responseSuggestions.data.forEach((element: ResponseGrocery) => {
+                    let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true };
+                    this.categoryListItems.push(object);
+                });
+            }
         }
-
     })
 </script>

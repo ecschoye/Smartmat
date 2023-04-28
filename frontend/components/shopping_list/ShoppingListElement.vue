@@ -5,6 +5,18 @@
             <h5> ({{ ElementDetails.quantity }})</h5>
         </div>
         <div class="p-2 flex justify-end absolute right-0">
+            <div v-if="isElementSuggested" class="mr-8">
+                <div>
+                    <button @click.stop="isElementSuggested = false" class="h-5 w-5 mr-4">
+                        <img src="../../assets/icons/done.png" alt="Accept">
+                    </button>
+                </div>
+                <div>
+                    <button @click.stop="declineSuggestion" class="h-5 w-5 mr-4">
+                        <img src="../../assets/icons/close.png" alt="Decline">
+                    </button>
+                </div>
+            </div>
             <div v-if="!editElement">
                <div v-if="isElementAddedToCart">
                     <button @click.stop="removeElementFromCart" class="h-5 w-5 mr-4">
@@ -68,12 +80,14 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
         data() {
             return {
                 isElementAddedToCart:false,
+                isElementSuggested:false,
                 editElement:false,
-                newQuantity:1      
+                newQuantity:1
             }
         },
         mounted() {        
             this.isElementAddedToCart = this.ElementDetails.isAddedToCart
+            this.isElementSuggested = this.ElementDetails.isSuggested
             this.newQuantity = this.ElementDetails.quantity
         },
         methods: {
@@ -121,7 +135,10 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 this.ElementDetails.quantity = newQuantity
                 let quantity = newQuantity
                 ShoppingListService.updateQuantity(groceryId, quantity)
-            }        
+            },
+            declineSuggestion() {
+                // Remove element from shoppinglist
+            }
         }
     })
 </script>

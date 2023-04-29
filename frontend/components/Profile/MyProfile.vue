@@ -1,12 +1,15 @@
 <template>
-  <div class="profile-container">
-    <div class="user-details">
-      <h1 class="user-name">{{ user.name }}</h1>
-      <p class="user-email">{{ user.email }}</p>
+  <div class="profile-container p-2 h-40 w-3/4  sm:w-1/2 md:w-1/2 lg:w-6/12 lg:h-52 justify-center items-center">
+    <div class="flex flex-row justify-between align-middle h-full relative">
+      <div class="user-details pt-5">
+        <h1 class="user-name text-white ml-1 md:text-4xl lg:text-8xl font-light">{{ user.name }}</h1>
+        <p class="user-email mt-4 ml-1 text-white lg:text-4xl text-sm font-light">{{ user.email }}</p>
+      </div>
+      <div class="flex items-center">
+        <img class=" hidden md:block h-24 lg:h-32 w-24 lg:w-32 mr-1" src="~/assets/profile.png" alt="Profile Picture" />
+      </div>
     </div>
-    <div class="profile-picture-container">
-      <img class="profile-picture w-1/4" src="~/assets/profile.png" alt="Profile Picture" />
-    </div>
+    <button class="logout-btn" @click="logOut">Log out</button>
   </div>
 </template>
 
@@ -17,15 +20,28 @@ import { getUserData } from "~/service/httputils/authentication/AuthenticationSe
 import type { User } from "@/types/UserType";
 import { onMounted, ref } from 'vue';
 import { useUserStore } from "~/store/userStore";
+import { postLogOut} from "~/service/httputils/authentication/AuthenticationService";
 
 const userStore = useUserStore();
 
 const user = ref({} as User);
+const router = useRouter();
 
 onMounted(() => {
   loadData();
 });
 
+async function logOut() {
+  try{
+    const response = await postLogOut();
+    if (response.status === 200){
+      userStore.logOut();
+      router.push('/')
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 async function loadData() {
   try {
@@ -44,30 +60,57 @@ async function loadData() {
 
 <style scoped>
 
+.logout-btn {
+  position: absolute;
+  bottom: -24px;
+  left: 90px;
+  background-color: white;
+  border: none;
+  width: fit-content;
+  font-size: 1.2rem;
+  color: #1c1c1c;
+  cursor: pointer;
+  padding: 7px 15px;
+  border-radius: 15px;
+}
+
+/*
 .user-email{
   font-size: 1.4rem;
   color: white;
   font-weight: 300;
-  margin-top: 50px;
 }
 
+ */
+
+/*
 .profile-picture-container{
+  flex: 0.5;
   display: flex;
   justify-content: right;
 }
 
+ */
+
 .profile-container {
-  display: flex;
   flex-direction: row;
   justify-content: center;
-  padding: 5px;
+  margin: 0 auto;
+  border: solid 3px white;
+  border-radius: 10px;
+  position: relative;
 }
 
+/*
 .user-details {
   grid-row: 1;
   grid-column: 1;
+  margin-right: 20px;
 }
 
+ */
+
+/*
 .user-name {
   font-size: 6rem;
   color: white;
@@ -75,10 +118,20 @@ async function loadData() {
   height: fit-content;
 }
 
-p {
-  color: white;
+ */
+
+/*
+.profile-picture {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
+ */
+
+
+/*
 @media (max-width: 768px) {
   .profile-picture{
     width: 100px;
@@ -95,4 +148,6 @@ p {
 
 
 }
+
+ */
 </style>

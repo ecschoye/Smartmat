@@ -1,27 +1,31 @@
 <template>
   <div class="wrapper">
-    <form @submit.prevent="sendForm" class="form bg-white dark:bg-zinc-700">
-      <BaseInput id="inpEmail" class="input-container" type="email" label="Email" v-model="form.email" />
-      <BaseInput id="inpPassword" class="input-container" type="password" label="Password" v-model="form.password" />
+    <form @submit.prevent="sendForm" class="form form-light-color dark:form-dark-color">
+      <BaseInput :cutWidth="'58px'" id="inpEmail" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
+      <BaseInput :cutWidth="'68px'" id="inpPassword" class="input-container" type="password" :label="$t('log_in')" v-model="form.password" />
       <div class="button-wrapper">
-        <GreenButton label="Logg inn" width="100%" height="50px" />
+        <GreenButton id="login" :label="$t('log_in')" width="100%" height="50px" />
         <div class="divider"></div>
-          <span class="mr-6">Har du ikke bruker?</span><nuxt-link to="/register">Registrer deg her</nuxt-link>
+        <nuxt-link :to="localePath('/register')">
+          <GrayButton id="new-user" :label="$t('new_user')" width="100%" height="50px" />
+        </nuxt-link>
       </div>
+      <ErrorAlert class="mt-4" v-if="catchError" :errorMessage="errorMessage" />
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
-
 import GreenButton from "~/components/Button/GreenButton.vue";
 import GrayButton from "~/components/Button/GrayButton.vue";
 import BaseInput from "~/components/Form/BaseInput.vue";
 import { useUserStore } from "~/store/userStore";
 import { postLogin } from "~/service/httputils/authentication/AuthenticationService";
+import ErrorAlert from "~/components/AlertBox/ErrorAlert.vue";
 
 const userStore = useUserStore();
-const errorMessage = ref("");
+const catchError = ref(false);
+const errorMessage = ref('');
 const router = useRouter();
 
 const form = reactive({
@@ -34,12 +38,14 @@ const sendForm = async () => {
     const response = await postLogin(form);
     if (response.status === 200) {
       userStore.logIn(response.data);
+      userStore.checkAuthStatus();
       form.email = '';
       form.password = '';
       await router.push('/');
     }
   } catch (error: any) {
-    errorMessage.value = error.response;
+    errorMessage.value = error.response.data || 'An error occurred.';
+    catchError.value = true;
   }
 };
 
@@ -68,7 +74,6 @@ h1{
 .form {
   width: 400px;
   height: fit-content;
-  background: white;
   padding: 0 40px 40px 40px;
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

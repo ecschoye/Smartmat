@@ -1,19 +1,30 @@
 package ntnu.idatt2106.backend.config;
 
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.model.Category;
 import ntnu.idatt2106.backend.model.Grocery;
 import ntnu.idatt2106.backend.model.SubCategory;
+import ntnu.idatt2106.backend.model.recipe.Recipe;
+import ntnu.idatt2106.backend.model.recipe.RecipeCategory;
+import ntnu.idatt2106.backend.model.recipe.RecipeGrocery;
 import ntnu.idatt2106.backend.repository.CategoryRepository;
 import ntnu.idatt2106.backend.repository.GroceryRepository;
 import ntnu.idatt2106.backend.repository.SubCategoryRepository;
+import ntnu.idatt2106.backend.repository.recipe.RecipeCategoryRepository;
+import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
+import ntnu.idatt2106.backend.repository.recipe.RecipeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Class that serialises data into database from formatted csv file with categories, subcategories and groceries.
@@ -26,23 +37,128 @@ import java.util.Arrays;
  *  Chocolate Milk, 14% fat
  */
 @Component
+@RequiredArgsConstructor
+@Profile("dev")
 public class TestDataSerializer {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
-    @Autowired
-    private SubCategoryRepository subCategoryRepository;
-    @Autowired
-    private GroceryRepository groceryRepository;
+    private final CategoryRepository categoryRepository;
+
+    private final SubCategoryRepository subCategoryRepository;
+
+    private final GroceryRepository groceryRepository;
 
     private Category category;
     private SubCategory subCategory;
+
+    private final RecipeCategoryRepository recipeCategoryRepository;
+
+    private final RecipeRepository recipeRepository;
+
+    private final RecipeGroceryRepository recipeGroceryRepository;
 
 
     @PostConstruct
     public void init() throws IOException, NumberFormatException {
         serialize();
+        createRecipeCategories();
+        createRecipes();
+        createRecipeGroceries();
     }
+
+    private void createRecipeGroceries() {
+        // An array of recipe names
+        String[] recipeNames = {"Eggerøre", "Ostesmørbrød", "Pølse i brød"};
+
+        // An array of grocery names
+        long[] groceryNames = {153, 95, 724, 870, 320};
+
+        // An array of quantities for each recipe-grocery pair
+        int[][] quantities = {
+                {4, 0, 0, 0, 0}, // Eggerøre needs one of 153
+                {0, 2, 1, 0, 0}, // Ostesmørbrød needs two of 95 and one of 724
+                {0, 0, 0, 1, 1}  // Pølse i brød needs one of 870 and one of 320
+        };
+
+        for (int i = 0; i < recipeNames.length; i++) {
+            Recipe recipe = getRecipeByName(recipeNames[i]);
+
+            for (int j = 0; j < groceryNames.length; j++) {
+                if (quantities[i][j] > 0) {
+                    Grocery grocery = getGroceryById(groceryNames[j]);
+
+                    if (!recipeGroceryRepository.existsByRecipeAndGrocery(recipe, grocery)) {
+                        recipeGroceryRepository.save(RecipeGrocery.builder()
+                                .recipe(recipe)
+                                .grocery(grocery)
+                                .quantity(quantities[i][j])
+                                .build());
+                    }
+                }
+            }
+        }
+    }
+
+    private Recipe getRecipeByName(String name) {
+        return (Recipe) recipeRepository.findByName(name)
+                .orElseThrow(() -> new RuntimeException("Recipe not found: " + name));
+    }
+
+    private Grocery getGroceryById(long id) {
+        return groceryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Grocery not found: " + id));
+    }
+
+    /**
+     * Method that creates categories for recipes.
+     */
+    private void createRecipeCategories() {
+        String[] categories = {"Breakfast", "Lunch", "Dinner", "Dessert", "Snack"};
+        Arrays.stream(categories).forEach(category -> {
+            if (!recipeCategoryRepository.existsByName(category)) {
+                recipeCategoryRepository.save(RecipeCategory.builder()
+                        .name(category).build());
+            }
+        });
+    }
+
+
+    private void createRecipes() {
+        String[] recipeNames = {"Eggerøre", "Ostesmørbrød", "Pølse i brød"};
+        String[] recipeUrls = {
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsP-2AGz4oV39TsB-8_Fq2gtuPhdY2a9bg-g&usqp=CAU",
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT63fKEnYFM1G0UdBFjhPYRjtPKEiooGZU7kA&usqp=CAU",
+                "https://www.example.com/recipes/spaghetti-bolognese",
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwZNzTD7pUbIO7zEnTSKwZgv0dOvyHiD5B8Q&usqp=CAU"
+        };
+        RecipeCategory[] categories = {
+                getRecipeCategoryByName("Breakfast"),
+                getRecipeCategoryByName("Lunch"),
+                getRecipeCategoryByName("Dinner")
+        };
+
+        for (int i = 0; i < recipeNames.length; i++) {
+            if (!recipeRepository.existsByName(recipeNames[i])) {
+                recipeRepository.save(Recipe.builder()
+                        .name(recipeNames[i])
+                        .url(recipeUrls[i])
+                        .category(categories[i])
+                        .build());
+            }
+        }
+    }
+
+
+    private RecipeCategory getRecipeCategoryByName(String name) {
+        Optional<RecipeCategory> categories = recipeCategoryRepository.findByName(name);
+
+        if (categories.isEmpty()) {
+            throw new RuntimeException("Recipe category not found: " + name);
+        }
+
+        return categories.get();
+    }
+
+
 
     /**
      * Method that reads csv file and calls methods for creating entities.

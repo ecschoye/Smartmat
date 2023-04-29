@@ -2,6 +2,7 @@ package ntnu.idatt2106.backend.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,15 +24,18 @@ public class RefrigeratorGrocery {
     @Schema(description = "The id for the connection between refrigerator and grocery, automatically generated")
     private long id;
 
+    @NotNull
     @Column(name = "physicalExpireDate")
     @Schema(description = "Expire date for the grocery")
     private Date physicalExpireDate;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "refrigeratorId")
     @Schema(description = "The refrigerator the grocery is in")
     private Refrigerator refrigerator;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "groceryId")
     @Schema(description = "Grocery in the refrigerator")

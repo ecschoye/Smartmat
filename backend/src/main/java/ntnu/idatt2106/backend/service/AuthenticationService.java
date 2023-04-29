@@ -6,7 +6,8 @@ import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.authentication.AuthenticationRequest;
 import ntnu.idatt2106.backend.model.authentication.RegisterRequest;
 import ntnu.idatt2106.backend.model.dto.response.AuthenticationResponse;
-import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.dto.response.RegisterResponse;
+import ntnu.idatt2106.backend.model.enums.UserRole;
 import ntnu.idatt2106.backend.repository.UserRepository;
 import org.apache.http.auth.InvalidCredentialsException;
 import org.slf4j.Logger;
@@ -43,20 +44,19 @@ public class AuthenticationService {
 
      @throws UserAlreadyExistsException if the email is already in use
      */
-    public AuthenticationResponse register(RegisterRequest request) throws UserAlreadyExistsException {
+    public RegisterResponse register(RegisterRequest request) throws UserAlreadyExistsException {
         var user = User.builder()
                 .id(String.valueOf(java.util.UUID.randomUUID()))
                 .email(request.getEmail())
                 .name(request.getName())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .userRole(UserRole.USER)
                 .build();
 
         if (repository.findByEmail(user.getEmail()).isPresent())
             throw new UserAlreadyExistsException("Email is already in use");
         repository.save(user);
-        var jwToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwToken).build();
+        return RegisterResponse.builder().userId(user.getId()).userRole(String.valueOf(user.getUserRole())).message("User registered successfully!").build();
     }
 
 
@@ -76,7 +76,7 @@ public class AuthenticationService {
         var user = repository.findByEmail(request.getEmail()).orElseThrow(() -> new InvalidCredentialsException("Invalid credentials"));
 
         var jwToken = jwtService.generateToken(user);
-        logger.info("token issued:" + jwToken);
+        logger.info("User {} logged in", user.getEmail());
         return AuthenticationResponse.builder().token(jwToken).build();
     }
 

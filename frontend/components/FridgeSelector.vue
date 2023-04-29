@@ -1,11 +1,12 @@
 <template>
-  <div v-if="fridges && fridges.length" style="min-width:150px;">
+  <div style="min-width:150px;">
     <HeadlessListbox as="div" v-model="selected">
       <HeadlessListboxLabel></HeadlessListboxLabel>
       <div class="relative">
-        <HeadlessListboxButton class="relative w-full cursor-default rounded-md bg-white py-1.5 pr-10 text-left text-gray-900 shadow-sm sm:leading-6 hover:cursor-pointer">
+        <HeadlessListboxButton class="relative w-full h-full cursor-default rounded-md bg-white dark:bg-zinc-600 py-1.5 pr-10 text-left text-gray-900 shadow-sm sm:leading-6 hover:cursor-pointer">
           <span class="flex items-center">
-            <span class="ml-3 block truncate">{{ selected.name }}</span>
+            <span v-if="selected.id === -1" class="ml-3 block truncate opacity-70">{{ $t('select_fridge') }}</span>
+            <span v-else class="ml-3 block truncate">{{ selected.name }}</span>
           </span>
           <span class="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
             <svg 
@@ -23,9 +24,9 @@
 
         <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
           <div class="max-h-64 overflow-y-scroll">
-            <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-b-md bg-white py-0 text-base  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-              <HeadlessListboxOption as="template" v-for="fridge in fridges" :key="fridge.id" :value="fridge" v-slot="{ active, selected }">
-                <li :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-1 pr-4','hover:cursor-pointer']">
+            <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-b-md bg-white dark:bg-zinc-600 py-0 text-base  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+              <HeadlessListboxOption as="template" v-for="fridge in refrigeratorStore.getRefrigerators" :key="fridge.id" :value="fridge" v-slot="{ active, selected }" @click ="setSelected(fridge)">
+                <li :class="[active ? 'bg-emerald-400 dark:bg-green-500 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-1 pr-4','hover:cursor-pointer']">
                   <div class="flex items-center">
                     <span :class="[selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate']">{{ fridge.name }}</span>
                   </div>
@@ -46,11 +47,11 @@
                 </li>
               </HeadlessListboxOption>
               <li class="border-t border-gray-200 my-2"></li>
-              <HeadlessListboxOption v-slot="{ active, selected }" as="template" :value="{ id: 'link', name: 'Link to page' }">
-                <NuxtLink to="/" :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'block cursor-default select-none py-2 pl-3 pr-2','hover:cursor-pointer']" :aria-selected="selected">
+              <HeadlessListboxOption v-slot="{ active, selected }" as="template" :value="{ id: 'link', name: 'Link to page' }" >
+                <NuxtLink to="/create-fridge" :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'block cursor-default select-none py-2 pl-3 pr-2','hover:cursor-pointer']" :aria-selected="selected">
                   <div class="flex items-center ">
                     <img class="hidden sm:block h-5 w-auto" src="../assets/icons/add.png" alt="">
-                    <span :class="[selected ? 'font-semibold' : 'font-normal', 'ml-1 sm:ml-3 block truncate']">{{ 'Nytt Kjøleskap' }}</span>
+                    <span :class="[selected ? 'font-semibold' : 'font-normal', 'ml-1 sm:ml-3 block truncate']">{{ $t('new_fridge') }}</span>
                   </div>
                 </NuxtLink>
               </HeadlessListboxOption>
@@ -63,37 +64,49 @@
 </template>
 
 <script lang="ts">
-interface Fridge {
-  id: number; 
-  name: string; 
-}
+import { Refrigerator } from "~/types/RefrigeratorType";
+import { useRefrigeratorStore } from "~/store/refrigeratorStore";
+
+const refrigeratorStore = useRefrigeratorStore();
 
 export default {
   data () {
     return {
-      selected : {
-        id: 0, 
-        name: ''
-      }
+      refrigeratorStore
     }
   }, 
-  props : {
-    fridges : {
-      type: Array as () => Fridge[], 
-      required: true, 
-      default: undefined
+  computed:{
+    selected(){
+      if(refrigeratorStore.getSelectedRefrigerator){
+        return refrigeratorStore.getSelectedRefrigerator;
+      }
+      else{
+        return {
+        id: -1, 
+        name: ''
+      }
+      }
     }
   },
-  mounted () {
-    if(this.fridges !== undefined && this.fridges !== null ){
-      this.selected = this.fridges[0]
-    }
+  setup() {
+    const {locale, locales, t} = useI18n()
+
+    return { t,locale,locales}
   },
+
   watch: {
     selected : function(newVal, oldVal) {
       if(newVal !== oldVal && newVal !== undefined) {
-        this.$emit("selectedFridgeEvent", newVal.id)
+        if(newVal !== -1) this.refrigeratorStore.setSelectedRefrigerator(newVal);
       }
+    },
+  },
+  methods: {
+    goToCreateFridgePage() {
+      this.$router.push(this.$nuxt.localePath('/create-fridge'))
+    },
+    setSelected(fridge : Refrigerator){
+      this.refrigeratorStore.setSelectedRefrigerator(fridge);
     }
   }
 }

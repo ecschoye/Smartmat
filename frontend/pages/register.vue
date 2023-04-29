@@ -1,12 +1,15 @@
 <template>
-  <div class=" mt-14">
-    <h1 class="flex justify-center text-white text-4xl ">Logg deg inn eller lag en ny bruker her</h1>
+  <div class="mt-14">
+    <h1 class="w-3/4 text-center mx-auto flex justify-center text-white text-2xl sm:text-4xl ">{{t('create_new_account')}}</h1>
   </div>
-  <div class="wrapper">
-    <div class="logo hidden md:flex">
-      <img src="../assets/icons/smartmat/smartMat.png" alt="logo" class="image">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-4xl mx-auto mt-8">
+    <div class="hidden dark:hidden md:block md:pointer-events-none">
+      <img src="../assets/icons/smartmat/smartMat.png" alt="logo" class="w-96 h-auto">
     </div>
-    <div class="form-wrapper">
+    <div class="hidden dark:md:block md:pointer-events-none">
+      <img src="../assets/icons/smartmat/smartMat_transparent.png" alt="logo" class="w-96 h-auto">
+    </div>
+    <div class="mx-auto">
       <RegisterForm id="log-in-form"></RegisterForm>
     </div>
   </div>
@@ -14,38 +17,11 @@
 
 <script setup>
 import RegisterForm from "~/components/Form/RegisterForm.vue";
+
+const { t } = useI18n();
 </script>
 
 <style scoped>
-.wrapper {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: center;
-  justify-content: center;
-  max-width: 800px;
-  margin: 40px auto 0 auto;
-  gap: 2rem;
-}
-
-.logo {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-.image {
-  width: 100%;
-}
-.form-wrapper {
-  width: 100%;
-  max-width: 400px;
-}
-
-#log-in-form {
-  display: flex;
-  justify-content: center;
-  height: 100%;
-}
-
 h1{
   margin-top: 30px;
 }

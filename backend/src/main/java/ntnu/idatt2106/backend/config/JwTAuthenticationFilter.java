@@ -3,8 +3,8 @@ package ntnu.idatt2106.backend.config;
 
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.model.enums.AuthenticationState;
+import ntnu.idatt2106.backend.service.CookieService;
 import ntnu.idatt2106.backend.service.JwtService;
-import ntnu.idatt2106.backend.service.SessionStorageService;
 import org.springframework.lang.NonNull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -32,7 +32,7 @@ public class JwTAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    private final SessionStorageService sessionStorageService;
+    private final CookieService cookieService;
 
     /**
      * Method for extracting the jwt token from the cookie.
@@ -47,7 +47,21 @@ public class JwTAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-        final String jwt = sessionStorageService.extractTokenFromAuthorizationHeader(request);
+        String requestURI = request.getRequestURI();
+
+        // Bypass filter for login and register endpoints
+        if (requestURI != null &&
+                (requestURI.startsWith("/h2-ui") // change this line
+                        || requestURI.startsWith("/swagger-ui")
+                        || requestURI.startsWith("/v3/api-docs")
+                        || requestURI.matches("/api/auth/(login|register)")
+                        || requestURI.matches(".*(css|jpg|png|gif|js|html|ico)$"))) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
+        final String jwt = cookieService.extractTokenFromCookie(request);
 
         String username = null;
         AuthenticationState authState = AuthenticationState.UNAUTHENTICATED;

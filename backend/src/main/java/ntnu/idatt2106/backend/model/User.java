@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ntnu.idatt2106.backend.model.enums.Role;
+import ntnu.idatt2106.backend.model.enums.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,14 +40,18 @@ public class User implements UserDetails {
     @Schema(description = "The password of the user")
     private String password;
 
-    @Column(name = "role")
+    @Column(name = "user_role")
     @Schema(description = "The role of the user")
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private UserRole userRole;
+
+    @Column(name = "favorite_refrigeratorId")
+    @Schema(description = "The id of a optional favorite refrigerator")
+    private Long favoriteRefrigeratorId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(userRole.name()));
     }
 
     public String getPassword() {

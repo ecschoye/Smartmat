@@ -13,26 +13,16 @@ const axiosInstance: AxiosInstance = axios.create({
         'Content-Type': 'application/json',
     }
 });
-
-axiosInstance.interceptors.request.use(
-    (config) => {
-        const token = sessionStorage.getItem('SmartMatAccessToken');
-        if (token) {
-            config.headers.Authorization = 'Bearer ' + token;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
-
 axiosInstance.interceptors.response.use(
     (response) => {
         return response;
     },
     (error) => {
-        console.log(error.response.headers)
+        if (!error.response) {
+            console.error("An error occurred, but no response was provided:", error);
+            return Promise.reject(error);
+        }
+
         if (error.response.headers['error-message']) {
             alert("Old password is incorrect. Please try again.");
             return;
@@ -48,4 +38,5 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
 export default axiosInstance;

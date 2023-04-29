@@ -1,30 +1,32 @@
 <template>
   <div class="wrapper">
-    <form @submit.prevent="sendForm" class="form">
-      <BaseInput id="inpName" class="input-container" type="name" label="Name" v-model="form.name" />
-      <BaseInput id="inpEmail" class="input-container" type="email" label="Email" v-model="form.email" />
-      <BaseInput id="inpPassword" class="input-container" type="password" label="Password" v-model="form.password" />
+    <form @submit.prevent="sendForm" class="form form-light-color dark:form-dark-color">
+      <BaseInput :cutWidth="'50px'" id="inpName" class="input-container" type="name" :label="$t('name')" v-model="form.name" />
+      <BaseInput :cutWidth="'58px'" id="inpEmail" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
+      <BaseInput :cutWidth="'68px'" id="inpPassword" class="input-container" type="password" :label="$t('password')" v-model="form.password" />
       <div class="button-wrapper">
-        <GreenButton label="Lag bruker" width="100%" height="50px" />
+        <GreenButton id="register" :label="$t('create_account')" width="100%" height="50px" />
         <div class="divider"></div>
-        <nuxt-link to="/login">
-          <GrayButton label="Gå til logg inn" width="100%" height="50px" />
+        <nuxt-link :to="localePath('/login')">
+          <GrayButton :label="$t('go_to_log_in')" width="100%" height="50px" />
         </nuxt-link>
       </div>
+      <ErrorAlert class="mt-4" v-if="catchError" :errorMessage="errorMessage" />
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
-
 import GreenButton from "~/components/Button/GreenButton.vue";
 import GrayButton from "~/components/Button/GrayButton.vue";
 import BaseInput from "~/components/Form/BaseInput.vue";
-import { useUserStore } from "~/store/userStore";
 import { postRegister } from "~/service/httputils/authentication/AuthenticationService";
+import ErrorAlert from "~/components/AlertBox/ErrorAlert.vue";
 
-const errorMessage = ref("");
+
 const router = useRouter();
+
+const { t } = useI18n();
 
 const form = reactive({
   name: '',
@@ -32,7 +34,13 @@ const form = reactive({
   password: '',
 });
 
+const catchError = ref(false);
+const errorMessage = ref('');
+
+
+
 const sendForm = async () => {
+  catchError.value = false;
   try {
     const response = await postRegister(form);
     if (response.status === 200) {
@@ -42,7 +50,8 @@ const sendForm = async () => {
       await router.push('/');
     }
   } catch (error: any) {
-    errorMessage.value = error.response;
+    errorMessage.value = error.response.data || 'An error occurred.';
+    catchError.value = true;
   }
 };
 
@@ -71,7 +80,6 @@ h1{
 .form {
   width: 400px;
   height: fit-content;
-  background: white;
   padding: 0 40px 40px 40px;
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

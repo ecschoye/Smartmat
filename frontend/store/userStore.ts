@@ -1,27 +1,29 @@
 import { defineStore } from 'pinia'
 import axiosInstance from '~/service/AxiosInstance';
-import {Session} from "inspector";
 
 interface UserState {
-    user_id: string;
+    userId: string;
     authenticated: boolean;
     role: string;
+    favoriteRefrigeratorId : number | null
 }
 
-export const useUserStore = defineStore('user', {
-    state: () => ({
-        user_id: "",
+export const useUserStore = defineStore({
+    id: 'user',
+    state: (): UserState => ({
+        userId: "",
         authenticated: false,
-        role: "",
+        role: '',
+        favoriteRefrigeratorId : null,
     }),
     getters: {
         isLoggedIn: (state: UserState) => state.authenticated,
-        getLoggedInUserId: (state: UserState) => state.user_id,
+        getLoggedInUserId: (state: UserState) => state.userId,
         getLoggedInUserRole: (state: UserState) => state.role,
     },
     actions: {
         setLoggedInUserId(id: string) {
-            this.user_id = id;
+            this.userId = id;
         },
         setLoggedInUserRole(role: string) {
             this.role = role;
@@ -30,24 +32,27 @@ export const useUserStore = defineStore('user', {
             this.authenticated = status;
         },
         logOut() {
-            sessionStorage.removeItem("SmartMatAccessToken");
-            this.user_id = "";
             this.authenticated = false;
             this.role = "";
+            this.userId = "";
+            this.favoriteRefrigeratorId = null;
         },
         logIn(data: any) {
-            sessionStorage.setItem("SmartMatAccessToken", data.token);
             this.authenticated = true;
-            this.role = "";
-            this.user_id = data.user_id;
+            this.role = data.userRole;
+            this.userId = data.userId;
+            this.favoriteRefrigeratorId = data.favoriteRefrigeratorId;
         },
         async checkAuthStatus() {
             try {
                 const response = await axiosInstance.get('/api/user-status');
                 if (response.status === 200){
-                    console.log("User status fetched successfully");
-                    this.authenticated = true; // Set authenticated to true on successful response
-                    this.role = response.data.role;
+                    if (response.data.state === "AUTHENTICATED"){
+                        this.authenticated = true;
+                        this.role = response.data.role;
+                        this.userId = response.data.userId;
+                        this.favoriteRefrigeratorId = response.data.favoriteRefrigeratorId;
+                    }
                 }
                 else if (response.status === 401){
                     this.authenticated = false;
@@ -62,5 +67,8 @@ export const useUserStore = defineStore('user', {
                 this.authenticated = false; // Set authenticated to false on error
             }
         },
+    },
+    persist: {
+        storage: persistedState.sessionStorage,
     },
 });

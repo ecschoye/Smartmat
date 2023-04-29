@@ -2,7 +2,6 @@ import axiosInstance from "~/service/AxiosInstance";
 import {AxiosResponse} from "axios";
 import {RefrigeratorRegisterData} from "~/types/RefrigeratorRegisterData";
 import type {Refrigerator} from "~/types/RefrigeratorType"; 
-import type {Member} from "~/types/MemberType"
 import type { MemberRequest } from "~/types/MemberRequest";
 
 export const getRefrigerators = async () : Promise<AxiosResponse> => {
@@ -25,11 +24,11 @@ export const postEditFridge = async (refrigerator : Refrigerator): Promise<Axios
     return axiosInstance.post('/api/refrigerator/edit', refrigerator);
 }
 
-export const postEditMember = async (memberRequest : Member) : Promise<AxiosResponse> => {
+export const postEditMember = async (memberRequest : MemberRequest) : Promise<AxiosResponse> => {
     return axiosInstance.post('/api/refrigerator/members/edit-role', memberRequest); 
 }
 
-export const postRemoveMember = async (memberRequest : Member) : Promise<AxiosResponse> => {
+export const postRemoveMember = async (memberRequest : MemberRequest) : Promise<AxiosResponse> => {
     return axiosInstance.post('/api/refrigerator/members/remove', memberRequest); 
 }
 

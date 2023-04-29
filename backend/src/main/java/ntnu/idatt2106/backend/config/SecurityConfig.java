@@ -97,7 +97,8 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedOrigin("https://smartmat-oaa9.onrender.com");
-        configuration.addAllowedOrigin("https://smartmat.online");
+        configuration.addAllowedOrigin("https://www.smartmat.online/");
+        configuration.addAllowedOrigin("https://smartmat.online/");
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type")); // Add this line

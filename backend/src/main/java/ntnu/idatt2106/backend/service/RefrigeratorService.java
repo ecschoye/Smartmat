@@ -75,6 +75,11 @@ public class RefrigeratorService {
             return null;
         }
 
+        Optional<RefrigeratorUser> existing = refrigeratorUserRepository.findByUserAndRefrigerator(user, refrigerator);
+        if(existing.isPresent()) {
+            return new MemberDTO(existing.get());
+        }
+
         RefrigeratorUser ru = new RefrigeratorUser();
         ru.setFridgeRole(DEFAULT_USER_Fridge_ROLE);
         ru.setRefrigerator(refrigerator);

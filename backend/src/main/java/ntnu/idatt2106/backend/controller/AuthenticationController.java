@@ -16,6 +16,7 @@ import ntnu.idatt2106.backend.model.dto.response.RegisterResponse;
 import ntnu.idatt2106.backend.service.AuthenticationService;
 import ntnu.idatt2106.backend.service.UserService;
 import org.apache.http.auth.InvalidCredentialsException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,6 +32,13 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
     private final UserService userService;
+
+    @Value("${cookie.domain}")
+    private String cookieDomain;
+
+    @Value("${cookie.secure}")
+    private boolean cookieSecure;
+
 
     Logger logger = Logger.getLogger(AuthenticationController.class.getName());
 
@@ -53,7 +61,6 @@ public class AuthenticationController {
             AuthenticationResponse authResponse = authenticationService.authenticate(authenticationRequest);
 
             Cookie accessTokenCookie = getCookie(authResponse);
-            accessTokenCookie.setDomain("localhost");
             response.addCookie(accessTokenCookie);
 
             User user = userService.findByEmail(authenticationRequest.getEmail());
@@ -90,13 +97,17 @@ public class AuthenticationController {
      * @param authResponse AuthenticationResponse object containing the access token.
      * @return Cookie object containing the access token as an HttpOnly cookie.
      */
-    public Cookie getCookie(AuthenticationResponse authResponse){
+    public Cookie getCookie(AuthenticationResponse authResponse) {
         // Set access token as an HttpOnly cookie
         Cookie accessTokenCookie = new Cookie("SmartMatAccessToken", authResponse.getToken());
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(20 * 60); // 5 minutes
+        accessTokenCookie.setMaxAge(20 * 60); // 20 minutes
+
+        accessTokenCookie.setDomain(cookieDomain);
+        accessTokenCookie.setSecure(cookieSecure);
 
         return accessTokenCookie;
     }
+
 }

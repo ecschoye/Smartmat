@@ -10,7 +10,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import ntnu.idatt2106.backend.exceptions.NoSuchElementException;
 import ntnu.idatt2106.backend.model.dto.MemberDTO;
+import ntnu.idatt2106.backend.model.dto.RecipeDTO;
 import ntnu.idatt2106.backend.model.recipe.Recipe;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.service.recipe.RecipeService;
@@ -39,14 +41,9 @@ public class RecipeController {
     })
     @GetMapping("/{refrigeratorId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> fetchRecipes(@Valid @PathVariable long refrigeratorId) throws Exception {
+    public ResponseEntity<?> fetchRecipes(@Valid @PathVariable long refrigeratorId) throws NoSuchElementException {
         logger.info("Received request to fetch recipes for user");
-        try{
-            List<Recipe> recipes = recipeService.getRecipesByGroceriesAndExpirationDates(refrigeratorId);
-            return ResponseEntity.ok(recipes);
-        }
-        catch (Exception e){
-            throw new Exception (e);
-        }
+        List<RecipeDTO> recipes = recipeService.getRecipesByGroceriesAndExpirationDates(refrigeratorId);
+        return ResponseEntity.ok(recipes);
     }
 }

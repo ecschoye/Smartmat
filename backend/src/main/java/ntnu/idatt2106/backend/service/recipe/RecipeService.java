@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.NoSuchElementException;
 import ntnu.idatt2106.backend.model.Grocery;
 import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
+import ntnu.idatt2106.backend.model.dto.RecipeDTO;
 import ntnu.idatt2106.backend.model.recipe.Recipe;
 import ntnu.idatt2106.backend.model.recipe.RecipeGrocery;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,15 +27,18 @@ public class RecipeService {
     private final RefrigeratorGroceryRepository refrigeratorGroceryRepository;
     private final RecipeGroceryRepository recipeGroceryRepository;
 
+    private final Logger logger = Logger.getLogger(RecipeService.class.getName());
+
 
     /**
      * Method to fetch recipes based on what the user has stored in their fridge
      * Also finds the recipes that uses groceries that are about to expire
      */
-    public List<Recipe> getRecipesByGroceriesAndExpirationDates(long refrigeratorId) throws NoSuchElementException {
+    public List<RecipeDTO> getRecipesByGroceriesAndExpirationDates(long refrigeratorId) throws NoSuchElementException {
 
         //first fetch all groceries the user has in fridge
         List<RefrigeratorGrocery> allGroceries = refrigeratorGroceryRepository.findAllByRefrigeratorId(refrigeratorId);
+        logger.info("Found " + allGroceries.size() + " groceries for the given refrigerator ID.");
 
         if (allGroceries.isEmpty()) {
             throw new NoSuchElementException("No groceries found for the given refrigerator ID.");
@@ -64,6 +69,14 @@ public class RecipeService {
                 .sorted(Map.Entry.<Recipe, Long>comparingByValue().reversed())
                 .map(Map.Entry::getKey).toList();
 
-        return sortedRecipes;
+        logger.info("Found " + sortedRecipes.size() + " recipes that match the available groceries.");
+        logger.info("Recipes: " + sortedRecipes);
+
+        return convertToDTOs(sortedRecipes);
+    }
+
+
+    public List<RecipeDTO> convertToDTOs(List<Recipe> recipes) {
+        return recipes.stream().map(RecipeDTO::new).toList();
     }
 }

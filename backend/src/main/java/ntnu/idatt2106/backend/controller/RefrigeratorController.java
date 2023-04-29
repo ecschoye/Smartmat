@@ -68,7 +68,7 @@ public class RefrigeratorController {
             result = refrigeratorService.setFridgeRole(memberRequest, httpRequest);
             if (result == null) throw new Exception();
         } catch (Exception e) {
-            logger.error("Could not edit role");
+            logger.error("Could not edit role: " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         logger.info("Returning response");

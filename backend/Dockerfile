@@ -5,9 +5,9 @@ RUN mvn dependency:go-offline
 COPY src ./src
 
 RUN mvn clean package
-FROM openjdk:17-jdk-slim
+FROM openjdk:18-jdk-slim
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
-ENV SPRING_PROFILES_ACTIVE=prod
+ENV SPRING_PROFILES_ACTIVE=prod MY_PORT=8080
 EXPOSE ${MY_PORT}
 ENTRYPOINT ["java", "-jar", "app.jar"]

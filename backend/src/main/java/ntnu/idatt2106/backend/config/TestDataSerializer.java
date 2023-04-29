@@ -15,6 +15,7 @@ import ntnu.idatt2106.backend.repository.recipe.RecipeCategoryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -37,6 +38,7 @@ import java.util.Optional;
  */
 @Component
 @RequiredArgsConstructor
+@Profile("dev")
 public class TestDataSerializer {
 
     private final CategoryRepository categoryRepository;

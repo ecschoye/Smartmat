@@ -1,5 +1,5 @@
 export interface Member {
-  refrigeratorid: number;
+  refrigeratorId: number;
   name: string;
   username: string;
   fridgeRole: string;

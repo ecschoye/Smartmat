@@ -1,9 +1,9 @@
 <template>
   <div class="wrapper">
     <form @submit.prevent="sendForm" class="form form-light-color dark:form-dark-color">
-      <BaseInput id="inpName" class="input-container" type="name" :label="$t('name')" v-model="form.name" />
-      <BaseInput id="inpEmail" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
-      <BaseInput id="inpPassword" class="input-container" type="password" :label="$t('password')" v-model="form.password" />
+      <BaseInput :cutWidth="'50px'" id="inpName" class="input-container" type="name" :label="$t('name')" v-model="form.name" />
+      <BaseInput :cutWidth="'58px'" id="inpEmail" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
+      <BaseInput :cutWidth="'68px'" id="inpPassword" class="input-container" type="password" :label="$t('password')" v-model="form.password" />
       <div class="button-wrapper">
         <GreenButton id="register" :label="$t('create_account')" width="100%" height="50px" />
         <div class="divider"></div>

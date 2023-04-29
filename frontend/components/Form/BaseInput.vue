@@ -9,7 +9,7 @@
         required
         @input="$emit('update:modelValue', $event.target.value)"
     >
-    <div class="cut"></div>
+    <div class="cut" :style="{ width: cutWidth }"></div>
     <label :for="id" class="placeholder">{{ label }}</label>
   </div>
 </template>
@@ -35,15 +35,13 @@ export default defineComponent({
       type: String,
       default: 'text',
     },
+    cutWidth: {
+      type: String,
+      default: '70px',
+    },
   },
 });
 </script>
-
-
-
-
-
-
 
 <style scoped>
 .input-container {
@@ -74,7 +72,6 @@ export default defineComponent({
   top: -20px;
   transform: translateY(0);
   transition: transform 200ms;
-  width: 70px;
 }
 
 .input:focus ~ .cut,

@@ -1,13 +1,10 @@
 package ntnu.idatt2106.backend.controller;
 
 
-import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 import ntnu.idatt2106.backend.exceptions.UserAlreadyExistsException;
@@ -71,8 +68,6 @@ public class AuthenticationController {
             }
             response.addCookie(accessTokenCookie);
 
-
-
             User user = userService.findByEmail(authenticationRequest.getEmail());
             authResponse.setUserId(user.getId());
             authResponse.setUserRole(user.getUserRole().toString());
@@ -115,7 +110,7 @@ public class AuthenticationController {
         accessTokenCookie.setMaxAge(20 * 60); // 20 minutes
 
         if (production) {
-            accessTokenCookie.setDomain(".smartmat.online");
+            accessTokenCookie.setDomain("smartmat.online");
             accessTokenCookie.setSecure(true);
         } else {
             accessTokenCookie.setDomain("localhost");
@@ -123,4 +118,5 @@ public class AuthenticationController {
         }
         return accessTokenCookie;
     }
+
 }

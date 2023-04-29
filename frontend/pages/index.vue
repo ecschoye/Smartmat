@@ -123,8 +123,18 @@
     }
   }
 
-  async function ensureLoggedIn(){
+
+  //todo: diskutabel
+  definePageMeta({
+    "requiresAuth": true,
+    middleware: [
+      'auth',
+    ],
+  })
+
+/*  async function ensureLoggedIn(){
     if (userStore.isLoggedIn) return;
+    console.log("Not logged in");
     try{
       const usedLocale = computed(() => {
         return (locales.value).filter(i => i.code === locale.value)
@@ -133,10 +143,10 @@
     } catch (error : any){
       console.log(error);
     }
-  }
+  }*/
 
   onMounted(() => {
-    ensureLoggedIn();
+    //ensureLoggedIn();
     loadNotifications();
     loadRefrigerators();
   });

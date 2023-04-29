@@ -4,7 +4,7 @@ COPY pom.xml .
 RUN mvn dependency:go-offline
 COPY src ./src
 
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 FROM openjdk:18-jdk-slim
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar

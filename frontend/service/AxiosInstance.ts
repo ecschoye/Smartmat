@@ -8,7 +8,7 @@ import {Session} from "inspector";
 //if we're in production mode, use the domain name as baseURL
 //const baseURL = "http://localhost:8080";
 
-const baseURL = process.env.NODE_ENV === 'production' ? "https://smartmat-frontend.onrender.com" : "http://localhost:8080";
+const baseURL = process.env.NODE_ENV === 'production' ? "https://smartmat-oaa9.onrender.com" : "http://localhost:8080";
 
 const axiosInstance: AxiosInstance = axios.create({
     baseURL,

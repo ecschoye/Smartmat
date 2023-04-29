@@ -1,36 +1,39 @@
-# Use the official Node.js image as the base
-FROM node:latest as build
+FROM node:18-alpine3.17 as build
 
-# Set the working directory
+# update and install the latest dependencies
+# Add non root user to the docker image and set the user
+RUN apk update && apk upgrade && adduser -D nuxtuser
+
+USER nuxtuser
+
+# set work dir as app
 WORKDIR /app
+# copy the nuxt project content with proper permission for the user nuxtuser
+COPY --chown=nuxtuser:nuxtuser . /app
+# COPY . ./
+# install all the project npm dependencies
+# build the nuxt project to generate the artifacts in .output directory
+RUN npm install && npx nuxt build
 
-# Copy the package.json and package-lock.json files into the image
-COPY package*.json ./
+# we are using multi stage build process to keep the image size as small as possible
+FROM node:18-alpine3.17
+# update and install latest dependencies, add dumb-init package
+# add a non root user
+RUN apk update && apk upgrade && apk add dumb-init && adduser -D nuxtuser 
+# set non root user
+USER nuxtuser
 
-# Install dependencies
-RUN npm ci
-
-# Copy the source code into the image
-COPY . .
-
-# Build the project
-RUN npm run build
-
-# Create the runtime image
-FROM node:latest
-
-# Set the working directory
+# set work dir as app
 WORKDIR /app
-
-# Copy the built files from the build image
-COPY --from=build /app/dist /app/dist
-
-# Install production dependencies
-COPY package*.json ./
-RUN npm ci --production
-
-# Expose the service port
+# copy the output directory to the /app directory from 
+# build stage with proper permissions for user nuxt user
+COPY --chown=nuxtuser:nuxtuser --from=build /app/.output ./
+# expose the port you want to use on container
 EXPOSE 3000
 
-# Run the service
-CMD ["npm", "run",  "start"]
+# set app host and port . In nuxt 3 this is based on nitor and you can read
+#more on this https://nitro.unjs.io/deploy/node#environment-variables
+ENV HOST=0.0.0.0 PORT=3000 NODE_ENV=production
+# start the app with dumb init to spawn the Node.js runtime process
+# with signal support
+CMD ["dumb-init","node","/app/server/index.mjs"]

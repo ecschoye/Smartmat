@@ -47,7 +47,6 @@ export const useUserStore = defineStore({
             try {
                 const response = await axiosInstance.get('/api/user-status');
                 if (response.status === 200){
-                    console.log("User status fetched successfully");
                     if (response.data.state === "AUTHENTICATED"){
                         this.authenticated = true;
                         this.role = response.data.role;

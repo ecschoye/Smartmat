@@ -78,21 +78,28 @@ public class AuthenticationController {
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response){
-        logger.info("Logging out user");
         Cookie[] cookies = request.getCookies();
         if(cookies != null){
             for(Cookie cookie : cookies){
                 if(cookie.getName().equals("SmartMatAccessToken")){
                     logger.info("Deleting cookie");
-                    cookie.setValue("");
-                    cookie.setPath("/");
-                    cookie.setMaxAge(0);
-                    response.addCookie(cookie);
+
+                    String cookieValue = "SmartMatAccessToken=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax";
+
+                    if (!request.getServerName().equals("localhost")){
+                        cookieValue += "; Domain=smartmat.online; Secure";
+                    } else {
+                        cookieValue += "; Domain=localhost";
+                    }
+
+                    response.addHeader("Set-Cookie", cookieValue);
                 }
             }
         }
         return ResponseEntity.ok("Logged out");
     }
+
+
 
     /**
      * Sets an access token as an HttpOnly cookie with SameSite=Lax.

@@ -59,14 +59,12 @@ public class AuthenticationController {
         try {
             AuthenticationResponse authResponse = authenticationService.authenticate(authenticationRequest);
 
-            Cookie accessTokenCookie;
             if (!request.getServerName().equals("localhost")){
-                accessTokenCookie = getCookie(authResponse, true);
+                setCookie(authResponse, response, true);
             }
             else{
-                accessTokenCookie = getCookie(authResponse, false);
+                setCookie(authResponse, response, false);
             }
-            response.addCookie(accessTokenCookie);
 
             User user = userService.findByEmail(authenticationRequest.getEmail());
             authResponse.setUserId(user.getId());
@@ -97,26 +95,22 @@ public class AuthenticationController {
     }
 
     /**
-     * Creates an access token as an HttpOnly cookie.
+     * Sets an access token as an HttpOnly cookie with SameSite=Lax.
      *
      * @param authResponse AuthenticationResponse object containing the access token.
-     * @return Cookie object containing the access token as an HttpOnly cookie.
+     * @param response HttpServletResponse object used to set the cookie.
+     * @param production Boolean indicating if the environment is production or not.
      */
-    public Cookie getCookie(AuthenticationResponse authResponse, boolean production) {
-        // Set access token as an HttpOnly cookie
-        Cookie accessTokenCookie = new Cookie("SmartMatAccessToken", authResponse.getToken());
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(20 * 60); // 20 minutes
+    public void setCookie(AuthenticationResponse authResponse, HttpServletResponse response, boolean production) {
+        String cookieValue = String.format("SmartMatAccessToken=%s; Path=/; Max-Age=%d; HttpOnly; SameSite=Lax", authResponse.getToken(), 20 * 60);
 
         if (production) {
-            accessTokenCookie.setDomain("smartmat.online");
-            accessTokenCookie.setSecure(true);
+            cookieValue += "; Domain=smartmat.online; Secure";
         } else {
-            accessTokenCookie.setDomain("localhost");
-            accessTokenCookie.setSecure(false);
+            cookieValue += "; Domain=localhost";
         }
-        return accessTokenCookie;
+
+        response.addHeader("Set-Cookie", cookieValue);
     }
 
 }

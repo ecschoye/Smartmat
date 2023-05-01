@@ -1,6 +1,6 @@
 <template>
     <div class="w-full flex justify-center">
-      <div class="border-2 w-11/12 h-2/5 md:h-3/5 mt-5 border-black rounded-lg bg-white dark:bg-zinc-400 overflow-hidden flex flex-col absolute" id="wrapper">
+      <div class="border-2 w-11/12 md:w-9/12 h-3/5 mt-5 border-black rounded-lg bg-white dark:bg-zinc-400 overflow-hidden flex flex-col absolute" id="wrapper">
         <div class="text-lg text-center m-3 font-semibold" v-if="refrigerator">
           {{ refrigerator.name }}
         </div>

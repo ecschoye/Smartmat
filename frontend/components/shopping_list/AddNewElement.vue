@@ -1,6 +1,6 @@
 <template>
 <div>
-    <h1 class="pl-2 text-lg text-slate-600 font-sans"> Legg til en vare fra listen: </h1>
+    <h1 class="pl-2 text-lg text-slate-600 font-sans"> {{ t('add_a_grocery_from_the_list') }} </h1>
     <ul class="grid grid-cols-1 gap-8">
         <li v-for="element in groceryList" :key="element.id"> 
             <div class="ml-4 p-2 flex justify-end absolute left-0">
@@ -38,6 +38,11 @@ export default defineComponent({
             type: Number,
             required: true
         }
+    },
+    setup() {
+      const { t } = useI18n();
+
+      return { t }
     },
     data() {
         return {

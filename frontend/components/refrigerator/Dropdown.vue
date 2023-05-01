@@ -1,5 +1,5 @@
 <template>
-  <div class="h-72 w-full py-6 flex flex-col items-center justify-center dark:bg-zinc-400 sm:py-6 overflow-hidden">
+  <div class="h-80 w-full py-6 flex flex-col items-center dark:bg-zinc-400 sm:py-6 overflow-hidden">
     <div class="w-full flex justify-center">
       <input
           @click="open = !open"
@@ -11,7 +11,7 @@
       />
     </div>
     <div id="listwrapper" class="relative mt-2 overflow-hidden border border-black rounded-lg bg-gray-200 w-11/12 sm:w-2/3">
-      <ul v-if="open" @click="open = !open" class="h-72">
+      <ul v-if="open" @click="open = !open" class="h-fit">
         <div v-for="grocery in filteredGroceries" :key="grocery.id">
           <li
             @click="setGrocery(grocery)"

@@ -1,7 +1,7 @@
 <template>
     <div ref="el" class="grid grid-cols-10 w-11/12 justify-center py-3 ml-5">
       <p class ="col-span-8">{{ props.grocery.grocery.description }}</p>
-      <p :class="{'text-red-500': isNearExpiry()}" class="text-end align-middle hidden md:block">{{ props.grocery.physicalExpireDate.toLocaleDateString() }}</p>
+      <p :class="{'text-red-500': isNearExpiry()}" class="text-end align-middle hidden sm:block">{{ props.grocery.physicalExpireDate.toLocaleDateString() }}</p>
       <button class="justify-self-end align-middle hover:bg-zinc-500 rounded-3xl" @click="clicked()">
         <img src="../../assets\icons\menu.png" alt="Menu" class="h-5 w-5">
       </button>

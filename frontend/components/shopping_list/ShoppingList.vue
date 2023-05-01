@@ -59,6 +59,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
 import ShoppingCartService from "~/service/httputils/ShoppingCartService";
 import ShoppingListElement from "./ShoppingListElement.vue";
 import AddNewElement from "./AddNewElement.vue";
+import { data } from "cypress/types/jquery";
     export default defineComponent({
     props: {
         refrigeratorId: {
@@ -95,20 +96,30 @@ import AddNewElement from "./AddNewElement.vue";
             //TODO: END
 
             //loads categories
-            let responseCategories = await ShoppingListService.getCategoriesFromShoppingList(this.shoppingListId);
-            if (responseCategories.data.length > 0) {
-                responseCategories.data.forEach((element: ShoppingListCategory) => {
-                    this.categoryList.push(element);
-                });
+            try {
+                let responseCategories = await ShoppingListService.getCategoriesFromShoppingList(this.shoppingListId);
+                if (responseCategories.data.length > 0) {
+                    responseCategories.data.forEach((element: ShoppingListCategory) => {
+                        this.categoryList.push(element);
+                    });
+                }
+            } catch (error) {
+                console.error(error);
+                this.categoryList = [];
             }
             //loads shopping cart
-            let responseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);
-            if (responseCart.data.length > 0) {
-                responseCart.data.forEach((element: ResponseGrocery) => {
-                    let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true, isSuggested: false };
-                    this.shoppingCart.push(object);
-                });
-            } 
+            try {
+                let responseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);
+                if (responseCart.data.length > 0) {
+                    responseCart.data.forEach((element: ResponseGrocery) => {
+                        let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true, isSuggested: false };
+                        this.shoppingCart.push(object);
+                    }); 
+                }
+            } catch (error) {
+                console.error(error);
+                this.shoppingCart = [];
+            }
         },
         selectTab(tab: string) {
             Object.keys(this.$data.menuOptions).forEach((key) => {

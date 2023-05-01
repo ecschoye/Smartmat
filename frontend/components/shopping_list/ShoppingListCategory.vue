@@ -42,21 +42,26 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
             }
         },
         async mounted() {   
-             //loads shopping list         
-            let response = await ShoppingListService.getGroceriesFromCategorizedShoppingList(this.ShoppingListId, this.CategoryDetails.id)                                                             
-            if (response.data.length > 0) {
+            //loads shopping list    
+            try {
+                let response = await ShoppingListService.getGroceriesFromCategorizedShoppingList(this.ShoppingListId, this.CategoryDetails.id)                                                             
                 response.data.forEach((element: ResponseGrocery) => {
                     let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: false };
                     this.categoryListItems.push(object);
                 }); 
+            } catch (error) {
+                console.error(error)
             }
+            
             //loads suggestions
-            let responseSuggestions = await ShoppingListService.getRequestedGroceriesInCategories(this.ShoppingListId, this.CategoryDetails.id);
-            if (responseSuggestions.data.length > 0) {
+            try {
+                let responseSuggestions = await ShoppingListService.getRequestedGroceriesInCategories(this.ShoppingListId, this.CategoryDetails.id);
                 responseSuggestions.data.forEach((element: ResponseGrocery) => {
                     let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true };
                     this.categoryListItems.push(object);
-                });
+                }); 
+            } catch (error) {
+                console.error(error)                
             }
         }
     })

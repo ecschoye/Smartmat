@@ -8,6 +8,7 @@ import ntnu.idatt2106.backend.model.SubCategory;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.enums.UserRole;
+import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.recipe.Recipe;
 import ntnu.idatt2106.backend.model.recipe.RecipeCategory;
 import ntnu.idatt2106.backend.model.recipe.RecipeGrocery;
@@ -16,6 +17,7 @@ import ntnu.idatt2106.backend.repository.recipe.RecipeCategoryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeRepository;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -66,6 +68,7 @@ public class TestDataSerializer {
 
     private final RefrigeratorGroceryRepository refrigeratorGroceryRepository;
 
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @PostConstruct
     public void init() throws NumberFormatException {
@@ -141,7 +144,7 @@ public class TestDataSerializer {
             userRepository.save(User.builder()
                     .name(name)
                     .email(email)
-                    .password(password)
+                    .password(passwordEncoder.encode(password))
                     .userRole(UserRole.USER)
                     .build());
         }

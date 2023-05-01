@@ -164,6 +164,7 @@
     border-color: 1px solid black;
   }
 
+
   .location {
     margin-top: 5px;
   }

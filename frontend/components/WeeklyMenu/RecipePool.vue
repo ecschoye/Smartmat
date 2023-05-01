@@ -2,23 +2,23 @@
     <div>
         <button class="random-button" @click="randomRecipesEvent">Tilfeldige oppskrifter</button>
     </div>
-    <h1 v-if="chosenWeek === 1" class="title">Denne uken</h1>
+    <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title">Denne uken</h1>
     <h1 v-else class="title">Neste uke</h1>
-    <div class="recepe-pool" v-if="chosenWeek === 1">
+    <div class="recepe-pool" v-if="weeklyMenuStore.$state.chosenWeek === 1">
         <div v-for="weekday in activeWeekdays" :key="weekday" class="recepe-card">
             <div class="recepe-content">
                 <div class="weekday">
                     {{ weekday }}
                 </div>
-                <div v-if="currentweek[getDayIndex(weekday)] === null">
+                <div v-if="weeklyMenuStore.$state.currentWeek[getDayIndex(weekday)] === null">
                     <UnknownRecipe @add-recepe-event="addRecepe(getDayIndex(weekday))"/>
                 </div>
                 <div v-else>
                     <WeeklyMenuRecipeWeeklyCard @unlocked-event="unlockRecipe(getDayIndex(weekday))" 
                     @locked-event="lockRecipe(getDayIndex(weekday))" 
                     @remove-event="removeRecepe(getDayIndex(weekday))" 
-                    :recepe-info="currentweek[getDayIndex(weekday)]" 
-                    :locked-boolean="currentWeekLocks[getDayIndex(weekday)]" />
+                    :recepe-info="weeklyMenuStore.$state.currentWeek[getDayIndex(weekday)]" 
+                    :locked-boolean="weeklyMenuStore.$state.currentWeekLocks[getDayIndex(weekday)]" />
                 </div>
             </div>
         </div>
@@ -29,23 +29,23 @@
                 <div class="weekday">
                     {{ weekday }}
                 </div>
-                <div v-if="nextweek[getDayIndex(weekday)] === null">
+                <div v-if="weeklyMenuStore.$state.nextWeek[getDayIndex(weekday)] === null">
                     <UnknownRecipe @add-recepe-event="addRecepe(getDayIndex(weekday))"/>
                 </div>
                 <div v-else>
                     <WeeklyMenuRecipeWeeklyCard @unlocked-event="unlockRecipe(getDayIndex(weekday))" 
                     @locked-event="lockRecipe(getDayIndex(weekday))" 
                     @remove-event="removeRecepe(getDayIndex(weekday))" 
-                    :recepe-info="nextweek[getDayIndex(weekday)]" 
-                    :locked-boolean="nextWeekLocks[getDayIndex(weekday)]"/>
+                    :recepe-info="weeklyMenuStore.$state.nextWeek[getDayIndex(weekday)]" 
+                    :locked-boolean="weeklyMenuStore.$state.nextWeekLocks[getDayIndex(weekday)]"/>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="navigation-buttons">
-      <button @click="goToPreviousWeek" :disabled="chosenWeek === 1" class="week-button">Forrige uke</button>
-      <button @click="goToNextWeek" :disabled="chosenWeek === 2" class="week-button">Neste uke</button>
+      <button @click="goToPreviousWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 1" class="week-button">Forrige uke</button>
+      <button @click="goToNextWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 2" class="week-button">Neste uke</button>
     </div>
     
 </template>
@@ -61,11 +61,6 @@ export default {
     data() {
         return {
             Weekdays: ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"],
-            currentweek: (new Array(7)).fill(null) as Recipe[] | null[],
-            nextweek: (new Array(7)).fill(null) as Recipe[] | null[],
-            currentWeekLocks: Array(7).fill(false) as boolean[],
-            nextWeekLocks: Array(7).fill(false) as boolean[],
-            chosenWeek: 1,
             randomRecipes: [
             {id: 1,
             name: "Spaghetti Bolognese",
@@ -136,9 +131,69 @@ export default {
         };
     },
 
-    
+    setup() {
+    const weeklyMenuStore = useWeeklyMenuStore();
+
+    const addRecepe = (index: number, recipe : Recipe) => {
+      // Logic to add a recipe to the current or next week
+      if (weeklyMenuStore.chosenWeek === 1) {
+        weeklyMenuStore.setCurrentWeek(index, recipe);
+      } else {
+        weeklyMenuStore.setNextWeek(index, recipe);
+      }
+    };
+
+    const lockRecipe = (index: number) => {
+      // Logic to lock a recipe in the current or next week
+      if (weeklyMenuStore.chosenWeek === 1) {
+        weeklyMenuStore.setCurrentWeekLock(index, true);
+      } else {
+        weeklyMenuStore.setNextWeekLock(index, true);
+      }
+    };
+
+    const unlockRecipe = (index: number) => {
+      // Logic to unlock a recipe in the current or next week
+      if (weeklyMenuStore.chosenWeek === 1) {
+        weeklyMenuStore.setCurrentWeekLock(index, false);
+      } else {
+        weeklyMenuStore.setNextWeekLock(index, false);
+      }
+    };
+
+    const removeRecepe = (index: number) => {
+      // Logic to remove a recipe from the current or next week
+      if (weeklyMenuStore.chosenWeek === 1) {
+        weeklyMenuStore.setCurrentWeek(index, null);
+      } else {
+        weeklyMenuStore.setNextWeek(index, null);
+      }
+    };
+
+
+    const goToPreviousWeek = () => {
+      // Logic to go to the previous week
+      weeklyMenuStore.setChosenWeek(1);
+    };
+
+    const goToNextWeek = () => {
+      // Logic to go to the next week
+      weeklyMenuStore.setChosenWeek(2);
+    };
+
+    return {
+      weeklyMenuStore,
+      addRecepe,
+      lockRecipe,
+      unlockRecipe,
+      removeRecepe,
+      goToPreviousWeek,
+      goToNextWeek,
+    };
+  },
 
     computed: {
+        //gets the remaining days of the current week
         activeWeekdays() {
             const currentDate = new Date();
             const currentDay = currentDate.getDay();
@@ -148,67 +203,36 @@ export default {
     },
     methods: {
         goToPreviousWeek() {
-            if (this.chosenWeek === 2) {
-                this.chosenWeek = 1;
-            }
+            this.goToPreviousWeek();
         },
         goToNextWeek() {
-            if (this.chosenWeek === 1) {
-                this.chosenWeek = 2;
-            }
+            this.goToNextWeek();
         },
 
         removeRecepe(dayIndex : number) {
-            if(this.chosenWeek === 1) {
-                console.log(this.currentweek[dayIndex])
-                this.currentweek[dayIndex] = null;
-            } else {
-                this.nextweek[dayIndex] = null;
-            }
+                this.removeRecepe(dayIndex)
         },
 
         addRecepe(dayIndex: number) {
-            if(this.chosenWeek === 1) {
-                this.currentweek[dayIndex] = this.randomRecipes[2];
-            } else {
-                this.nextweek[dayIndex] = this.randomRecipes[2];
-            }
+            //TODO: fetch a recipe from backend and pass it in the addRecepe method where this.randomRecipes[1] is
+            this.addRecepe(dayIndex, this.randomRecipes[1]);
         },
 
         randomRecipesEvent() {
-            if(this.chosenWeek == 1) {
-                for(let i = 0; i < this.currentweek.length; i++) {
-                    if(!this.currentWeekLocks[i]) {
-                        const randomIndex = Math.floor(Math.random() * this.randomRecipes.length);
-                        this.currentweek[i] = this.randomRecipes[randomIndex];
-                    }
-                    
-                }
+            //TODO: fetch list of random recipes from backend and insert into methods
+            if(this.weeklyMenuStore.$state.chosenWeek === 1) {
+                this.weeklyMenuStore.setCurrentWeekRandomly(this.randomRecipes)
             } else {
-                console.log("hei")
-                for(let i = 0; i < this.nextweek.length; i++) {
-                    if(!this.nextWeekLocks[i]) {
-                        const randomIndex = Math.floor(Math.random() * this.randomRecipes.length);
-                        this.nextweek[i] = this.randomRecipes[randomIndex];
-                    }
-                }
+                this.weeklyMenuStore.setNextWeekRandomly(this.randomRecipes)
             }
         },
 
         lockRecipe(dayIndex : number) {
-            if(this.chosenWeek === 1) {
-                this.currentWeekLocks[dayIndex] = true;
-            } else {
-                this.nextWeekLocks[dayIndex] = true;
-            }
+            this.lockRecipe(dayIndex);
         },
 
         unlockRecipe(dayIndex : number) {
-            if(this.chosenWeek === 1) {
-                this.currentWeekLocks[dayIndex] = false;
-            } else {
-                this.nextWeekLocks[dayIndex] = false;
-            }
+            this.unlockRecipe(dayIndex);
         },
 
         getDayIndex(weekday : string){

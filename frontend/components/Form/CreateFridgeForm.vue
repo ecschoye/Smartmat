@@ -1,10 +1,10 @@
 <template>
   <div class="wrapper">
     <form @submit.prevent="sendForm" class="form">
-      <BaseInput :cutWidth="'118px'" id="name" class="input-container" type="name" label="Navn på kjøleskap" v-model="form.name" />
-      <BaseInput :cutWidth="'65px'" id="address" class="input-container" type="address" label="Adresse" v-model="form.address" />
+      <BaseInput :cutWidth="'118px'" id="name" class="input-container" type="name" :label="$t('name')" v-model="form.name" />
+      <BaseInput :cutWidth="'65px'" id="address" class="input-container" type="address" :label="$t('address')" v-model="form.address" />
       <div class="button-wrapper">
-        <GreenButton label="Lag kjølskap" width="100%" height="50px" />
+        <GreenButton :label="$t('create_refrigerator')" width="100%" height="50px" />
       </div>
       <ErrorAlert class="mt-4" v-if="catchError" :errorMessage="errorMessage" />
     </form>

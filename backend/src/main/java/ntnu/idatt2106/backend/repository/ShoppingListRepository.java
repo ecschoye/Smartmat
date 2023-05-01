@@ -18,4 +18,6 @@ public interface ShoppingListRepository extends JpaRepository<ShoppingList, Long
 
     @Query(value = "SELECT s.refrigerator FROM ShoppingList s WHERE s.id = :id")
     Refrigerator findRefrigeratorById(Long id);
+
+    void removeByRefrigerator_Id(long refrigeratorId);
 }

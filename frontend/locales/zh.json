@@ -28,5 +28,19 @@
   "go_back": "返回",
   "update": "更新",
   "new_fridge": "新冰箱",
-  "select_fridge" : "选择冰箱"
+  "select_fridge" : "选择冰箱", 
+  "address" :"地址",
+  "edit_refrigerator_success" : "冰箱已保存",
+  "edit_refrigerator_failure" : "无法保存冰箱",
+  "member_add_success" : "已添加成员",
+  "last_superuser_alert" : "警告！冰箱必须始终拥有超级用户",
+  "create_refrigerator" : "新冰箱",
+  "administrate_refrigerator" : "管理冰箱",
+  "add_member" : "添加成员",
+  "edit_members" : "编辑用户",
+  "update_information" : "更新信息",
+  "save_userroles" : "保存用户",
+  "invite_user" : "邀请用户",
+  "leave_refrigerator" : "离开冰箱",
+  "remove_member" : "从冰箱中删除"
 }

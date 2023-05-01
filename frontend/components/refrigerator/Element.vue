@@ -3,7 +3,7 @@
       <p class ="col-span-8">{{ props.grocery.grocery.description }}</p>
       <div class="align-middle col-span-3 flex rounded-lg align-middle">
         <img v-if="needsConfirmation" src="../../assets\icons\done.png" alt="Menu" class="w-5 h-5 m-1 align-middle bg-green-500 hover:bg-green-600 rounded-xl" @click="setDate()">
-        <input type="date" id="expiry-date" name="expiry-date" class="hover:bg-zinc-500 bg-inherit rounded-lg" :class="{'text-red-500' : isNearExpiry() }">
+        <input type="date" :id="'expiry-date-' + props.grocery.id" name="expiry-date" class="hover:bg-zinc-500 bg-inherit rounded-lg" :class="{'text-red-500' : isNearExpiry() }">
       </div>
       <button class="justify-self-end align-middle hover:bg-zinc-500 rounded-3xl" @click="clicked()">
         <img src="../../assets\icons\menu.png" alt="Menu" class="h-5 w-5">
@@ -56,7 +56,7 @@
   }
 
   async function setDate(){
-    const expiryDateInput = document.getElementById('expiry-date') as HTMLInputElement | null;
+    const expiryDateInput = document.getElementById(`expiry-date-${props.grocery.id}`) as HTMLInputElement | null;
     if(expiryDateInput){
       const newGrocery = props.grocery;
       if(expiryDateInput.valueAsDate !== null){
@@ -87,7 +87,9 @@
 
   onMounted(() => {
     // get the expiry date input element
-    const expiryDateInput = document.getElementById('expiry-date') as HTMLInputElement | null;
+    const expiryDateInput = document.getElementById(`expiry-date-${props.grocery.id}`) as HTMLInputElement | null;
+    console.log("mounting - " + expiryDateInput!.value);
+    console.log(props.grocery.physicalExpireDate);
     if (expiryDateInput && props.grocery.physicalExpireDate instanceof Date) {
       // set the value of the input to the grocery's physicalExpireDate
       expiryDateInput.valueAsDate = props.grocery.physicalExpireDate;

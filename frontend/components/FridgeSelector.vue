@@ -2,10 +2,10 @@
   <div style="min-width:150px;">
     <HeadlessListbox as="div" v-model="selected">
       <HeadlessListboxLabel></HeadlessListboxLabel>
-      <div class="relative">
-        <HeadlessListboxButton class="relative w-full h-full cursor-default rounded-md bg-white dark:bg-zinc-600 py-1.5 pr-10 text-left text-gray-900 shadow-sm sm:leading-6 hover:cursor-pointer">
-          <span class="flex items-center">
-            <span v-if="selected.id === -1" class="ml-3 block truncate opacity-70">{{ $t('select_fridge') }}</span>
+      <div class="relative flex-row justify-center">
+        <HeadlessListboxButton class=" relative w-full h-full cursor-default rounded-md bg-white dark:bg-zinc-600 py-1.5 pr-10 text-left text-gray-900 shadow-sm sm:leading-6 hover:cursor-pointer">
+          <span class="flex item-center">
+            <span v-if="selected.name === ''" class="ml-3 block truncate opacity-70">{{ $t('select_fridge') }}</span>
             <span v-else class="ml-3 block truncate">{{ selected.name }}</span>
           </span>
           <span class="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
@@ -77,7 +77,7 @@ export default {
   }, 
   computed:{
     selected(){
-      if(refrigeratorStore.getSelectedRefrigerator){
+      if(refrigeratorStore.getSelectedRefrigerator != null){
         return refrigeratorStore.getSelectedRefrigerator;
       }
       else{

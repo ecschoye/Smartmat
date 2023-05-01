@@ -8,19 +8,21 @@
     <div class="hidden lg:flex flex-1 space-x-5 items-center lg:justify-start">
       <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('home')}}</NuxtLink>
       <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('weekly_menu')}}</NuxtLink>
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('recipes')}}</NuxtLink>
+      <NuxtLink :to="localePath('/recipe-list')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('recipes')}}</NuxtLink>
       <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('statistics')}}</NuxtLink>
     </div>
     <div class="flex flex-1 space-x-2 items-center justify-end">
       <div class="p-0.5 rounded-md ring-1 min-w-fit ring-inset ring-gray-300 dark:ring-zinc-600 inline-flex items-center">
         <FridgeSelector @selected-fridge-event="handleFridgeEvent" />
-        <button type="button"
+        <NuxtLink to="administrate-fridge">
+          <button type="button"
           class="inline-flex items-center hover:cursor-pointer
               dark:button-dark-color sm:text-md outline:none hover:opacity-70
               transition duration-150 p-2 border-l border-gray-300">
           <img class="h-5 w-auto mr-2 pt-0.5" src="../assets/icons/refrigerator.png" alt="">
           {{t('manage')}}
         </button>
+        </NuxtLink>
       </div>
       <div class=" w-8"></div>
       <div class="flex lg:hidden">
@@ -110,7 +112,7 @@ export default defineComponent({
   setup() {
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
-    const refrigeratorStore = useRefrigeratorStore();
+    const refridgeratorStore = useRefrigeratorStore();
     const {locale, locales, t} = useI18n()
     const loggedIn = computed(() => userStore.isLoggedIn);
     return {
@@ -121,7 +123,7 @@ export default defineComponent({
       notificationStore,
       t,
       loggedIn,
-      refrigeratorStore
+      refridgeratorStore
     }
   },
   data() {
@@ -134,10 +136,7 @@ export default defineComponent({
   methods: {
     handleFridgeEvent(value: any) {
       this.selected = value;
-      if(this.refrigeratorStore.getRefrigeratorById(value.id) !== undefined)
-      {
-        this.refrigeratorStore.setSelectedRefrigerator(this.refrigeratorStore.getRefrigeratorById(value.id)!);
-      }
+      this.refridgeratorStore.setSelectedRefrigerator(value);
     },
     async handleLogOut() {
         try{
@@ -155,7 +154,7 @@ export default defineComponent({
     closeMobileMenu() {
       this.mobileMenuOpen = false;
     }
-  },
+  }
 
 })
 

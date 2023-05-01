@@ -4,7 +4,7 @@
         <FormBaseInput id="name" class="input-container" type="name" :label="$t('name')" :initiated-value="refrigerator?.name" v-model="form.name" />
         <FormBaseInput id="address" class="input-container" type="address" :label="$t('address')" :initiated-value="refrigerator?.address" v-model="form.address" />
         <div class="button-wrapper">
-          <ButtonGreenButton label="Oppdater Informasjon" width="100%" height="50px" />
+          <ButtonGreenButton :label="$t('update_information')" width="100%" height="50px" />
         </div>
       </form>
     </div>

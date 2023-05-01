@@ -29,5 +29,18 @@
   "update": "अपडेट करें",
   "new_fridge": "नया फ्रिज",
   "select_fridge" : "रेफ्रिजरेटर का चयन करें",
-  "address" : "पता"
+  "address" : "पता",
+  "edit_refrigerator_success" : "रेफ्रिजरेटर सेव हुआ",
+  "edit_refrigerator_failure" : "रेफ्रिजरेटर सेव नहीं हो सका",
+  "member_add_success" : "सदस्य जोड़ा गया",
+  "last_superuser_alert" : "ध्यान दें! रेफ्रिजरेटर में हमेशा सुपरयूजर होना आवश्यक है",
+  "create_refrigerator" : "नया रेफ्रिजरेटर",
+  "administrate_refrigerator" : "रेफ्रिजरेटर प्रशासन करें",
+  "add_member" : "सदस्य जोड़ें",
+  "edit_members" : "उपयोगकर्ता संपादित करें",
+  "update_information" : "जानकारी अपडेट करें",
+  "save_userroles" : "उपयोगकर्ता सहेजें",
+  "invite_user" : "उपयोगकर्ता को आमंत्रित करें",
+  "leave_refrigerator" : "रेफ्रिजरेटर छोड़ें",
+  "remove_member" : "रेफ्रिजरेटर से हटाएं"
 }

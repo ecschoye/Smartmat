@@ -3,7 +3,7 @@
       <form @submit.prevent="sendForm" class="form">
         <FormBaseInput id="email" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
         <div class="button-wrapper">
-          <ButtonGreenButton label="Inviter Bruker" width="100%" height="50px" />
+          <ButtonGreenButton :label="$t('invite_user')" width="100%" height="50px" />
         </div>
       </form>
     </div>

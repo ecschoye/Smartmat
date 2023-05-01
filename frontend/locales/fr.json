@@ -58,5 +58,18 @@
   "use": "Utiliser",
   "throw_away": "Jeter",
   "select_fridge" : "Sélectionnez Réfrigérateur",
-  "address" : "Adresse" 
+  "address" : "Adresse",
+  "edit_refrigerator_success" : "Réfrigérateur enregistré",
+  "edit_refrigerator_failure" : "Impossible d'enregistrer le réfrigérateur",
+  "member_add_success" : "Membre ajouté",
+  "last_superuser_alert" : "Attention! Le réfrigérateur a besoin d'un superutilisateur en tout temps",
+  "create_refrigerator" : "Nouveau réfrigérateur",
+  "administrate_refrigerator" : "Administrer le réfrigérateur",
+  "add_member" : "Ajouter un membre",
+  "edit_members" : "Modifier les utilisateurs",
+  "update_information" : "Mettre à jour les informations",
+  "save_userroles" : "Enregistrer les utilisateurs",
+  "invite_user" : "Inviter un utilisateur",
+  "leave_refrigerator" : "Quitter le réfrigérateur",
+  "remove_member" : "Supprimer du réfrigérateur" 
 }

@@ -75,41 +75,16 @@ public class ShoppingListService {
     /**
      * Getter for all groceries in the shopping list specified in the parameter
      * @param shoppingListId ID to the shopping list to retrieve groceries from
+     * @param isRequested True if suggested groceries to the shopping list is wanted and false if not
      * @return All groceries from the shopping list with the shopping list id specified in the parameter
      * @exception NoGroceriesFound Could not find any groceries
      */
-    public List<ShoppingListElementDTO> getGroceries(long shoppingListId) throws NoGroceriesFound {
-        List<GroceryShoppingList> groceries = groceryShoppingListRepository.findByShoppingListId(shoppingListId);
+    public List<ShoppingListElementDTO> getGroceries(long shoppingListId, boolean isRequested) throws NoGroceriesFound {
+        List<GroceryShoppingList> groceries = groceryShoppingListRepository.findByShoppingListId(shoppingListId, isRequested);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries from the database");
             throw new NoGroceriesFound("Could not find any groceries for shopping list id " + shoppingListId);
 
-        }
-        List<ShoppingListElementDTO> dtos = groceries.stream().map(ShoppingListElementDTO::new).collect(Collectors.toList());
-        return dtos;
-    }
-
-    /**
-     * Getter for all suggested groceries
-     * @param shoppingListId ID to the shopping list to retrieve suggested groceries from
-     * @return All suggested groceries for the shopping list id specified in tha parameter
-     * @exception NoGroceriesFound Could not find any groceries
-     */
-    public List<ShoppingListElementDTO> getRequestedGroceries(long shoppingListId) throws NoGroceriesFound {
-        List<GroceryShoppingList> groceries = groceryShoppingListRepository.findRequestedGroceriesByShoppingListId(shoppingListId);
-        if (groceries.isEmpty()) {
-            logger.info("Received no groceries from the database");
-            throw new NoGroceriesFound("Could not find any groceries for shopping list id " + shoppingListId);
-        }
-        List<ShoppingListElementDTO> dtos = groceries.stream().map(ShoppingListElementDTO::new).collect(Collectors.toList());
-        return dtos;
-    }
-
-    public List<ShoppingListElementDTO> getRequestedGroceries(long shoppingListId, long categoryId) throws NoGroceriesFound {
-        List<GroceryShoppingList> groceries = groceryShoppingListRepository.findRequestedByShoppingListIdAndCategoryId(shoppingListId, categoryId);
-        if (groceries.isEmpty()) {
-            logger.info("Received no groceries from the database");
-            throw new NoGroceriesFound("Found no suggested groceries");
         }
         List<ShoppingListElementDTO> dtos = groceries.stream().map(ShoppingListElementDTO::new).collect(Collectors.toList());
         return dtos;
@@ -119,11 +94,12 @@ public class ShoppingListService {
      * Getter for all groceries in the shopping list and the category specified in the parameter
      * @param shoppingListId ID to the shopping list to retrieve groceries from
      * @param categoryId ID to the category to retrieve groceries from
+     * @param isRequested True if suggested groceries to the shopping list is wanted and false if not
      * @return All groceries from the shopping list with the shopping list id and category id specified in the parameter
      * @exception NoGroceriesFound Could not find any groceries
      */
-    public List<ShoppingListElementDTO> getGroceries(long shoppingListId, long categoryId) throws NoGroceriesFound {
-        List<GroceryShoppingList> groceries = groceryShoppingListRepository.findByShoppingListIdAndCategoryId(shoppingListId, categoryId);
+    public List<ShoppingListElementDTO> getGroceries(long shoppingListId, long categoryId, boolean isRequested) throws NoGroceriesFound {
+        List<GroceryShoppingList> groceries = groceryShoppingListRepository.findByShoppingListIdAndCategoryId(shoppingListId, categoryId, isRequested);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries from the database");
             throw new NoGroceriesFound("Could not find any groceries for shopping list id " + shoppingListId);

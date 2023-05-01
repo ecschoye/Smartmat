@@ -104,7 +104,7 @@
 import {computed, defineComponent} from 'vue'
 import {useUserStore} from "~/store/userStore";
 import { useNotificationStore } from "~/store/notificationStore";
-import { useRefridgeratorStore } from "~/store/refrigeratorStore";
+import { useRefrigeratorStore } from "~/store/refrigeratorStore";
 import {postLogOut} from "~/service/httputils/authentication/AuthenticationService";
 
 export default defineComponent({
@@ -112,7 +112,7 @@ export default defineComponent({
   setup() {
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
-    const refridgeratorStore = useRefridgeratorStore();
+    const refridgeratorStore = useRefrigeratorStore();
     const {locale, locales, t} = useI18n()
     const loggedIn = computed(() => userStore.isLoggedIn);
     return {

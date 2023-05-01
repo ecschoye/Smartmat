@@ -2,8 +2,8 @@ package ntnu.idatt2106.backend.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import ntnu.idatt2106.backend.model.Category;
-import ntnu.idatt2106.backend.model.Grocery;
+import ntnu.idatt2106.backend.model.category.Category;
+import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.SubCategory;
 import ntnu.idatt2106.backend.model.recipe.Recipe;
 import ntnu.idatt2106.backend.model.recipe.RecipeCategory;

@@ -1,8 +1,7 @@
 package ntnu.idatt2106.backend.repository;
 
-import ntnu.idatt2106.backend.model.Category;
-import ntnu.idatt2106.backend.model.Grocery;
-import ntnu.idatt2106.backend.model.GroceryShoppingList;
+import ntnu.idatt2106.backend.model.category.Category;
+import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,22 +13,21 @@ import java.util.List;
 public interface GroceryShoppingListRepository extends JpaRepository<GroceryShoppingList, Long> {
     @Query(value = "SELECT gsl" +
             " FROM GroceryShoppingList gsl, Grocery g" +
-            " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId AND gsl.isRequest = false")
-    List<GroceryShoppingList> findByShoppingListId(@Param("shoppingListId")Long shoppingListId);
+            " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId AND gsl.isRequest = :isRequested")
+    List<GroceryShoppingList> findByShoppingListId(@Param("shoppingListId")Long shoppingListId,
+                                                   @Param("isRequested")boolean isRequested);
+
 
     @Query(value = "SELECT gsl" +
             " FROM GroceryShoppingList gsl, Grocery g" +
-            " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId AND gsl.isRequest=true")
-    List<GroceryShoppingList> findRequestedGroceriesByShoppingListId(@Param("shoppingListId")Long shoppingListId);
-
-    @Query(value = "SELECT gsl" +
-            " FROM GroceryShoppingList gsl, Grocery g" +
-            " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId AND g.subCategory.category.id = :categoryId AND gsl.isRequest = false")
-    List<GroceryShoppingList> findByShoppingListIdAndCategoryId(@Param("shoppingListId")Long shoppingListId, @Param("categoryId")Long categoryId);
+            " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId AND g.subCategory.category.id = :categoryId AND gsl.isRequest = :isRequested")
+    List<GroceryShoppingList> findByShoppingListIdAndCategoryId(@Param("shoppingListId")Long shoppingListId,
+                                                                @Param("categoryId")Long categoryId,
+                                                                @Param("isRequested")boolean isRequested);
 
     @Query(value = "SELECT DISTINCT sc.category" +
             " FROM GroceryShoppingList gsl, Grocery g, SubCategory sc" +
-            " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId AND sc.id = g.subCategory.id AND gsl.isRequest = false")
+            " WHERE gsl.grocery.id = g.id AND gsl.shoppingList.id = :shoppingListId AND sc.id = g.subCategory.id")
     List<Category> findCategoryByShoppingListId(@Param("shoppingListId")Long shoppingListId);
 }
 

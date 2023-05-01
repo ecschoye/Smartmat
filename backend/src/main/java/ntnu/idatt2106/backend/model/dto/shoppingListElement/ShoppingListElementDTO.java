@@ -1,7 +1,7 @@
-package ntnu.idatt2106.backend.model.dto;
+package ntnu.idatt2106.backend.model.dto.shoppingListElement;
 
-import ntnu.idatt2106.backend.model.GroceryShoppingCart;
-import ntnu.idatt2106.backend.model.GroceryShoppingList;
+import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
+import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 
 public class ShoppingListElementDTO {
     private long id;

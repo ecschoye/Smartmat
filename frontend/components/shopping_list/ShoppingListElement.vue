@@ -1,10 +1,15 @@
 <template>
     <div class="items stretch text-sm">
-        <div class="ml-4 p-2 flex justify-end absolute left-0">
+        <div :class="{'text-blue-800 font-bold': isElementSuggested}" class="ml-4 p-2 flex justify-end absolute left-0">
             <h3 class="mr-2"> {{ ElementDetails.name }} </h3>
             <h5> ({{ ElementDetails.quantity }})</h5>
         </div>
         <div class="p-2 flex justify-end absolute right-0">
+            <div v-if="isElementSuggested">
+                <button @click.stop="updateGrocery(ElementDetails.quantity)" class="h-5 w-5 mr-1">
+                    <img src="../../assets/icons/done.png" alt="Accept">
+                </button>
+            </div>
             <div v-if="!editElement">
                <div v-if="isElementAddedToCart">
                     <button @click.stop="removeElementFromCart" class="h-5 w-5 mr-4">
@@ -43,7 +48,7 @@
                     <button @click.stop="newQuantity++" class="h-5 w-5 mr-8">
                         <img src="../../assets/icons/expandLess.png" alt="increment">
                     </button> 
-                    <button @click.stop="updateQuantity(ElementDetails.id, newQuantity)" class="h-5 w-5 mr-3">
+                    <button @click.stop="updateGrocery(newQuantity)" class="h-5 w-5 mr-3">
                         <img src="../../assets/icons/done.png" alt="Done">
                     </button>
                     <button @click.stop="editElement = false" class="h-5 w-5"> 
@@ -68,12 +73,14 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
         data() {
             return {
                 isElementAddedToCart:false,
+                isElementSuggested:false,
                 editElement:false,
-                newQuantity:1      
+                newQuantity:1
             }
         },
         mounted() {        
             this.isElementAddedToCart = this.ElementDetails.isAddedToCart
+            this.isElementSuggested = this.ElementDetails.isSuggested
             this.newQuantity = this.ElementDetails.quantity
         },
         methods: {
@@ -117,11 +124,12 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                     alert("Det oppstod en feil ved overføring av varen")
                 }
             },
-            updateQuantity(groceryId: number, newQuantity: number) {
+            updateGrocery(newQuantity: number) {
+                this.editElement = false
                 this.ElementDetails.quantity = newQuantity
                 let quantity = newQuantity
-                ShoppingListService.updateQuantity(groceryId, quantity)
-            }        
+                ShoppingListService.updateGrocery(this.ElementDetails.id, quantity)
+            }
         }
     })
 </script>

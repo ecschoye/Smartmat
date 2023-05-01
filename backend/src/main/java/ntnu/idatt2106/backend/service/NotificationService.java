@@ -5,13 +5,13 @@ import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.NotificationException;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.GroceryNotificationDTO;
+import ntnu.idatt2106.backend.model.grocery.GroceryNotification;
+import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.repository.GroceryNotificationRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
-import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
 import org.springframework.stereotype.Service;
 
-import javax.management.Notification;
 import java.util.*;
 import java.util.stream.Collectors;
 

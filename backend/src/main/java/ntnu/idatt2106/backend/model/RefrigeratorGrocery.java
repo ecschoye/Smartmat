@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -40,4 +42,7 @@ public class RefrigeratorGrocery {
     @JoinColumn(name = "groceryId")
     @Schema(description = "Grocery in the refrigerator")
     private Grocery grocery;
+
+    @OneToMany(mappedBy = "groceryEntity", cascade = CascadeType.REMOVE)
+    private Set<GroceryNotification> groceryNotifications = new HashSet<>();
 }

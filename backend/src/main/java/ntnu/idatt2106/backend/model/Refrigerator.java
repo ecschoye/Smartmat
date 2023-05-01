@@ -8,6 +8,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -30,4 +33,13 @@ public class Refrigerator {
     @Column(name = "address")
     @Schema(description = "The address to the refrigerator")
     private String address;
+
+    @OneToOne(mappedBy = "refrigerator", cascade = CascadeType.REMOVE)
+    private ShoppingList shoppingList;
+
+    @OneToMany(mappedBy = "refrigerator", cascade = CascadeType.REMOVE)
+    private Set<RefrigeratorGrocery> refrigeratorGroceries = new HashSet<>();
+
+    @OneToMany(mappedBy = "refrigerator", cascade = CascadeType.REMOVE)
+    private Set<RefrigeratorUser> refrigeratorUsers = new HashSet<>();
 }

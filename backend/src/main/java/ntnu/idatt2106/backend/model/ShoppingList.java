@@ -23,10 +23,12 @@ public class ShoppingList {
     @Schema(description = "The id to the refrigerator, automatically generated")
     private long id;
 
-    @OneToOne
+    @OneToOne()
     @JoinColumn(name = "refrigeratorId")
     @Schema(description = "The refrigerator connected to the shopping list")
     private Refrigerator refrigerator;
 
+    @OneToMany(mappedBy = "shoppingList", cascade = CascadeType.REMOVE)
+    private Set<GroceryShoppingList> groceryShoppingLists;
 }
 

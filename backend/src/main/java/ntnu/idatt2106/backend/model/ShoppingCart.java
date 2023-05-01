@@ -26,4 +26,7 @@ public class ShoppingCart {
     @JoinColumn(name = "shoppingListId")
     @Schema(description = "The shopping list connected to the shopping cart")
     private ShoppingList shoppingList;
+
+    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.REMOVE)
+    private Set<GroceryShoppingCart> groceryShoppingCarts;
 }

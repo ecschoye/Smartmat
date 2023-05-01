@@ -38,7 +38,7 @@ const sendForm = async () => {
     const response = await postLogin(form);
     if (response.status === 200) {
       userStore.logIn(response.data);
-      userStore.checkAuthStatus();
+      await userStore.checkAuthStatus();
       form.email = '';
       form.password = '';
       await router.push('/');

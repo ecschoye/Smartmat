@@ -19,6 +19,10 @@
 import RegisterForm from "~/components/Form/RegisterForm.vue";
 
 const { t } = useI18n();
+
+definePageMeta({
+  layout: "custom",
+});
 </script>
 
 <style scoped>

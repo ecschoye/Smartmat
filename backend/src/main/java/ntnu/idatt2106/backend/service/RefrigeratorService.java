@@ -41,7 +41,9 @@ public class RefrigeratorService {
     private final JwtService jwtService;
     private final RefrigeratorRepository refrigeratorRepository;
     private final RefrigeratorUserRepository refrigeratorUserRepository;
+    private final RefrigeratorGroceryRepository refrigeratorGroceryRepository;
     private final ShoppingListRepository shoppingListRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
     private final UserRepository userRepository;
 
     private final Logger logger = LoggerFactory.getLogger(RefrigeratorService.class);
@@ -180,6 +182,7 @@ public class RefrigeratorService {
     public void removeUserFromRefrigerator(RemoveMemberRequest request, HttpServletRequest httpRequest) throws Exception {
         if(request.isForceDelete()) {
             forceDeleteRefrigerator(request.getRefrigeratorId(), httpRequest);
+            return;
         }
 
         Refrigerator refrigerator = getRefrigerator(request.getRefrigeratorId());
@@ -228,7 +231,6 @@ public class RefrigeratorService {
     public Refrigerator save(RefrigeratorDTO refrigeratorDTO, HttpServletRequest httpRequest) throws Exception {
         logger.info("Converting to refrigeretor object");
         Refrigerator refrigerator = convertToEntity(refrigeratorDTO);
-
         //Check user exists
         logger.info("Checking user");
         User user = getUser(extractEmail(httpRequest));
@@ -236,8 +238,14 @@ public class RefrigeratorService {
         try {
             logger.info("Saving refrigerator");
             refrigeratorResult = refrigeratorRepository.save(refrigerator);
+            ShoppingList shoppingList = new ShoppingList();
+            shoppingList.setRefrigerator(refrigeratorResult);
+            ShoppingList shoppingListResult = shoppingListRepository.save(shoppingList);
+            ShoppingCart shoppingCart = new ShoppingCart();
+            shoppingCart.setShoppingList(shoppingListResult);
+            shoppingCartRepository.save(shoppingCart);
         } catch (Exception e) {
-            logger.warn("Refrigerator could not be added: refrigerator could not be added");
+            logger.warn("Refrigerator could not be added: " + e.getMessage());
             throw new Exception("Refrigerator could not be added: refrigerator could not be added");
         }
 
@@ -248,7 +256,9 @@ public class RefrigeratorService {
         refrigeratorUser.setUser(user);
         refrigeratorUser.setFridgeRole(FridgeRole.SUPERUSER);
         try {
-            refrigeratorUserRepository.save(refrigeratorUser);
+            logger.info("Saving member");
+            RefrigeratorUser refrigeratorUser1 = refrigeratorUserRepository.save(refrigeratorUser);
+            System.out.println(refrigeratorUser1);
         } catch (Exception e) {
             logger.warn("Refrigerator could not be added: User could not be connected to refrigerator");
             throw new Exception("User could not be connected to refrigerator");
@@ -321,12 +331,26 @@ public class RefrigeratorService {
             throw new AccessDeniedException("Failed to delete refrigerator: User not superuser");
         }
         if (refrigeratorRepository.existsById(refrigeratorId)) {
+            try {
+                // Remove all groceries
+                refrigeratorGroceryRepository.removeByRefrigeratorId(refrigeratorId);
 
-            // Remove Shopping List
-            shoppingListRepository.removeByRefrigerator_Id(refrigeratorId);
+                // Remove Shopping Cart Groceries
+                Optional<ShoppingList> shoppingList = shoppingListRepository.findByRefrigeratorId(refrigeratorId);
+                if(shoppingList.isPresent()) {
+                    shoppingCartRepository.removeByShoppingList(shoppingList.get());
+                    shoppingListRepository.removeByRefrigerator_Id(refrigeratorId);
+                }
 
-            // Remove Refrigerator entity
-            refrigeratorRepository.deleteById(refrigeratorId);
+                // Remove RefrigeratorUser entities, //NOT USER ENTITIES
+                refrigeratorUserRepository.removeByRefrigeratorId(refrigeratorId);
+
+                // Remove Refrigerator entity
+                refrigeratorRepository.deleteById(refrigeratorId);
+            } catch (Exception e) {
+                logger.error("Failed to delete refrigerator: " + e.getMessage());
+                throw e;
+            }
         }
         else{
             logger.error("Failed to delete refrigerator: Refrigerator with id {} does not exist", refrigeratorId);

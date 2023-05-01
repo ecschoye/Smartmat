@@ -45,6 +45,9 @@ public class RefrigeratorServiceTest {
     private RefrigeratorGroceryRepository refrigeratorGroceryRepository;
 
     @Mock
+    private ShoppingCartRepository shoppingCartRepository;
+
+    @Mock
     private ShoppingListRepository shoppingListRepository;
 
     @Mock

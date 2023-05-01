@@ -29,6 +29,8 @@ async function onToggleCreate(payload : boolean){
 
 
 
+
+
 const toggleCreate = ref(false);
 
 function togglePos(inp : boolean){
@@ -41,6 +43,10 @@ function setPos(payload: number) {
     }
   position.value = payload;
 }
+
+watch(() => refrigeratorStore.getSelectedRefrigerator, () => {
+  loadGroceries();
+});
 
 async function loadGroceries(){
     try {

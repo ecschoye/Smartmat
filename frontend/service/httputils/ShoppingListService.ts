@@ -1,9 +1,6 @@
 import type { AxiosResponse } from 'axios';
 import axiosInstance from "~/service/AxiosInstance";
-import type {SaveGrocery} from "~/types/SaveGrocery";
 import type {EditGrocery} from "~/types/EditGrocery";
-import type {GroceryEntity} from "~/types/GroceryEntityType";
-import { ShoppingListElement } from '~/.nuxt/components';
 
 
 const createShoppingList = (refrigeratorId: Number): Promise<AxiosResponse> => {

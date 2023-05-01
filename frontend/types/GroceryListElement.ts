@@ -1,6 +1,6 @@
 interface GroceryListElement {
     id: number;
-    name: string;
+    description: string;
     subCategoryName: string;
     quantity: number;
 }

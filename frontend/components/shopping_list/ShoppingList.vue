@@ -112,7 +112,7 @@ import { data } from "cypress/types/jquery";
                 let responseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);
                 if (responseCart.data.length > 0) {
                     responseCart.data.forEach((element: ResponseGrocery) => {
-                        let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true, isSuggested: false };
+                        let object: ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true, isSuggested: false };
                         this.shoppingCart.push(object);
                     }); 
                 }

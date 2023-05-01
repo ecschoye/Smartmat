@@ -6,14 +6,14 @@ import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 public class ShoppingListElementDTO {
     private long id;
     private long groceryId;
-    private String name;
+    private String description;
     private int quantity;
     private String categoryName;
     private boolean requested;
     public ShoppingListElementDTO(GroceryShoppingList element) {
         this.id = element.getId();
         this.groceryId = element.getGrocery().getId();
-        this.name = element.getGrocery().getName();
+        this.description = element.getGrocery().getDescription();
         this.quantity = element.getQuantity();
         this.categoryName = element.getGrocery().getSubCategory().getCategory().getName();
         this.requested = element.isRequest();
@@ -21,7 +21,7 @@ public class ShoppingListElementDTO {
     public ShoppingListElementDTO(GroceryShoppingCart element) {
         this.id = element.getId();
         this.groceryId = element.getGrocery().getId();
-        this.name = element.getGrocery().getName();
+        this.description = element.getGrocery().getDescription();
         this.quantity = element.getQuantity();
         this.categoryName = element.getGrocery().getSubCategory().getCategory().getName();
         this.requested = false; //TODO: Must either create an own dto or implement requested for groceries in cart
@@ -34,8 +34,8 @@ public class ShoppingListElementDTO {
         return groceryId;
     }
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
     public int getQuantity() {

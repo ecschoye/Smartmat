@@ -4,14 +4,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.*;
-import ntnu.idatt2106.backend.model.dto.ShoppingListElementDTO;
+import ntnu.idatt2106.backend.model.category.Category;
+import ntnu.idatt2106.backend.model.category.CategoryComparator;
+import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
+import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTOComparator;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
+import ntnu.idatt2106.backend.model.grocery.Grocery;
+import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,62 +81,38 @@ public class ShoppingListService {
     /**
      * Getter for all groceries in the shopping list specified in the parameter
      * @param shoppingListId ID to the shopping list to retrieve groceries from
+     * @param isRequested True if suggested groceries to the shopping list is wanted and false if not
      * @return All groceries from the shopping list with the shopping list id specified in the parameter
      * @exception NoGroceriesFound Could not find any groceries
      */
-    public List<ShoppingListElementDTO> getGroceries(long shoppingListId) throws NoGroceriesFound {
-        List<GroceryShoppingList> groceries = groceryShoppingListRepository.findByShoppingListId(shoppingListId);
+    public List<ShoppingListElementDTO> getGroceries(long shoppingListId, boolean isRequested) throws NoGroceriesFound {
+        List<GroceryShoppingList> groceries = groceryShoppingListRepository.findByShoppingListId(shoppingListId, isRequested);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries from the database");
             throw new NoGroceriesFound("Could not find any groceries for shopping list id " + shoppingListId);
 
         }
-        List<ShoppingListElementDTO> dtos = groceries.stream().map(ShoppingListElementDTO::new).collect(Collectors.toList());
-        return dtos;
-    }
-
-    /**
-     * Getter for all suggested groceries
-     * @param shoppingListId ID to the shopping list to retrieve suggested groceries from
-     * @return All suggested groceries for the shopping list id specified in tha parameter
-     * @exception NoGroceriesFound Could not find any groceries
-     */
-    public List<ShoppingListElementDTO> getRequestedGroceries(long shoppingListId) throws NoGroceriesFound {
-        List<GroceryShoppingList> groceries = groceryShoppingListRepository.findRequestedGroceriesByShoppingListId(shoppingListId);
-        if (groceries.isEmpty()) {
-            logger.info("Received no groceries from the database");
-            throw new NoGroceriesFound("Could not find any groceries for shopping list id " + shoppingListId);
-        }
-        List<ShoppingListElementDTO> dtos = groceries.stream().map(ShoppingListElementDTO::new).collect(Collectors.toList());
-        return dtos;
-    }
-
-    public List<ShoppingListElementDTO> getRequestedGroceries(long shoppingListId, long categoryId) throws NoGroceriesFound {
-        List<GroceryShoppingList> groceries = groceryShoppingListRepository.findRequestedByShoppingListIdAndCategoryId(shoppingListId, categoryId);
-        if (groceries.isEmpty()) {
-            logger.info("Received no groceries from the database");
-            throw new NoGroceriesFound("Found no suggested groceries");
-        }
-        List<ShoppingListElementDTO> dtos = groceries.stream().map(ShoppingListElementDTO::new).collect(Collectors.toList());
-        return dtos;
+        return groceries.stream().map(ShoppingListElementDTO::new)
+                .sorted(new ShoppingListElementDTOComparator()).collect(Collectors.toList());
     }
 
     /**
      * Getter for all groceries in the shopping list and the category specified in the parameter
      * @param shoppingListId ID to the shopping list to retrieve groceries from
      * @param categoryId ID to the category to retrieve groceries from
+     * @param isRequested True if suggested groceries to the shopping list is wanted and false if not
      * @return All groceries from the shopping list with the shopping list id and category id specified in the parameter
      * @exception NoGroceriesFound Could not find any groceries
      */
-    public List<ShoppingListElementDTO> getGroceries(long shoppingListId, long categoryId) throws NoGroceriesFound {
-        List<GroceryShoppingList> groceries = groceryShoppingListRepository.findByShoppingListIdAndCategoryId(shoppingListId, categoryId);
+    public List<ShoppingListElementDTO> getGroceries(long shoppingListId, long categoryId, boolean isRequested) throws NoGroceriesFound {
+        List<GroceryShoppingList> groceries = groceryShoppingListRepository.findByShoppingListIdAndCategoryId(shoppingListId, categoryId, isRequested);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries from the database");
             throw new NoGroceriesFound("Could not find any groceries for shopping list id " + shoppingListId);
         }
 
-        List<ShoppingListElementDTO> dtos = groceries.stream().map(ShoppingListElementDTO::new).collect(Collectors.toList());
-        return dtos;
+        return groceries.stream().map(ShoppingListElementDTO::new)
+                .sorted(new ShoppingListElementDTOComparator()).collect(Collectors.toList());
     }
 
     /**
@@ -145,6 +127,7 @@ public class ShoppingListService {
             logger.info("Received no categories from shopping list with id {}", shoppingListId);
             throw new CategoryNotFound("Could not find any categories from shopping list with id " + shoppingListId);
         }
+        categories.sort(new CategoryComparator());
         return categories;
     }
 

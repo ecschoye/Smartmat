@@ -3,16 +3,13 @@ package ntnu.idatt2106.backend.service.recipe;
 
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.NoSuchElementException;
-import ntnu.idatt2106.backend.model.Grocery;
-import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
+import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.recipe.Recipe;
 import ntnu.idatt2106.backend.model.recipe.RecipeGrocery;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
-import ntnu.idatt2106.backend.service.GroceryService;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

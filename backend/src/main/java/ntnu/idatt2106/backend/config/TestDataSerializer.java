@@ -2,15 +2,14 @@ package ntnu.idatt2106.backend.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import ntnu.idatt2106.backend.model.Category;
-import ntnu.idatt2106.backend.model.Grocery;
+import ntnu.idatt2106.backend.model.category.Category;
+import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.SubCategory;
 import ntnu.idatt2106.backend.model.recipe.RecipeCategory;
 import ntnu.idatt2106.backend.repository.CategoryRepository;
 import ntnu.idatt2106.backend.repository.GroceryRepository;
 import ntnu.idatt2106.backend.repository.SubCategoryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeCategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;

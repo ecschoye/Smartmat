@@ -1,6 +1,5 @@
 package ntnu.idatt2106.backend.service;
 
-import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -8,9 +7,9 @@ import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.SaveException;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
-import ntnu.idatt2106.backend.model.Grocery;
+import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.Refrigerator;
-import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
+import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.SubCategory;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;

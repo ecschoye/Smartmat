@@ -6,7 +6,7 @@ import ntnu.idatt2106.backend.exceptions.NotificationException;
 import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
-import ntnu.idatt2106.backend.model.Grocery;
+import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.response.ErrorResponse;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
@@ -25,7 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.net.CookieHandler;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
-import ntnu.idatt2106.backend.model.Category;
-import ntnu.idatt2106.backend.model.GroceryShoppingList;
-import ntnu.idatt2106.backend.model.dto.ShoppingListElementDTO;
+import ntnu.idatt2106.backend.model.category.Category;
+import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
+import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.service.ShoppingListService;
 import org.slf4j.Logger;
@@ -42,7 +42,7 @@ public class ShoppingListController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ShoppingListElementDTO>> getGroceriesFromShoppingList(@PathVariable(name="shoppingListId") long shoppingListId) throws NoGroceriesFound {
         logger.info("Received request to get groceries from shopping list with id {}", shoppingListId);
-        List<ShoppingListElementDTO> groceries = shoppingListService.getGroceries(shoppingListId);
+        List<ShoppingListElementDTO> groceries = shoppingListService.getGroceries(shoppingListId, false);
 
         logger.info("Returns groceries and status OK");
         return new ResponseEntity<>(groceries, HttpStatus.OK);
@@ -53,7 +53,7 @@ public class ShoppingListController {
     public ResponseEntity<List<ShoppingListElementDTO>> getGroceriesFromCategorizedShoppingList(@PathVariable(name="shoppingListId") long shoppingListId,
                                                                                                 @PathVariable(name="categoryId") long categoryId) throws NoGroceriesFound {
         logger.info("Received request to get groceries with category id {} from shopping list with id {}", categoryId, shoppingListId);
-        List<ShoppingListElementDTO> groceries = shoppingListService.getGroceries(shoppingListId, categoryId);
+        List<ShoppingListElementDTO> groceries = shoppingListService.getGroceries(shoppingListId, categoryId, false);
 
         logger.info("Returns groceries with category id {} and status OK", categoryId);
         return new ResponseEntity<>(groceries, HttpStatus.OK);
@@ -130,7 +130,7 @@ public class ShoppingListController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ShoppingListElementDTO>> getRequestedGroceries(@PathVariable("shoppingListId") long shoppingListId) throws NoGroceriesFound {
         logger.info("Received request to get groceries requested to the shopping list with id {}", shoppingListId);
-        List<ShoppingListElementDTO> groceries = shoppingListService.getRequestedGroceries(shoppingListId);
+        List<ShoppingListElementDTO> groceries = shoppingListService.getGroceries(shoppingListId, true);
 
         logger.info("Returns groceries and status OK");
         return new ResponseEntity<>(groceries, HttpStatus.OK);
@@ -141,7 +141,7 @@ public class ShoppingListController {
     public ResponseEntity<List<ShoppingListElementDTO>> getRequestedGroceriesFromCategorizedShoppingList(@PathVariable("shoppingListId") long shoppingListId,
                                                                                                          @PathVariable("categoryId") long categoryId) throws NoGroceriesFound {
         logger.info("Received request to get groceries requested to the shopping list with id {}", shoppingListId);
-        List<ShoppingListElementDTO> groceries = shoppingListService.getRequestedGroceries(shoppingListId, categoryId);
+        List<ShoppingListElementDTO> groceries = shoppingListService.getGroceries(shoppingListId, categoryId, true);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries. Return status NO_CONTENT");
             throw new NullPointerException("Received no groceries");

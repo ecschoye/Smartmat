@@ -4,8 +4,8 @@ package ntnu.idatt2106.backend.model.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ntnu.idatt2106.backend.model.GroceryNotification;
-import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
+import ntnu.idatt2106.backend.model.grocery.GroceryNotification;
+import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 
 
 /**

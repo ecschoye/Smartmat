@@ -45,6 +45,8 @@ import { Refrigerator } from '~/types/RefrigeratorType';
       type : Object as () => Refrigerator | null
     }
   })
+
+
   
   const emitHeight = (payload: number) => {
     emit('popup-height', payload);

@@ -2,14 +2,20 @@
   <div>
     <ul v-if="groceries.length > 0" class="space-y-1 list-none list-inside px-3">
       <li v-for="(category, index) in categorizedGroups" :key="index">
-        <div @click="toggleCategory(index)">
-          {{ category.name }} ({{ categorySum (category) }}) - {{ getClosestExpiryDateForCategory(category)?.toLocaleDateString() }}
+        <div @click="toggleCategory(index)" class="flex">
+          {{ category.name }} ({{ categorySum (category) }})
+          <div class="px-5" :class="{'text-red-500' : isNearExpiry(getClosestExpiryDateForCategory(category)!) }">
+            {{ getClosestExpiryDateForCategory(category)?.toLocaleDateString() }}
+          </div>
           <i :class="['fa', isCategoryOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
         </div>
         <ul v-if="isCategoryOpen(index)" class="py-2 px-3 w-12/12 list-none list-inside bg-gray-200 dark:bg-zinc-300 rounded-xl">
           <li v-for="(group, index2) in Array.from(category.groups.values())" :key="index2">
-            <div @click="toggleCategoryGroup(index, index2)">
-              - {{ group.name }} ({{ group.groceries.length }}) - {{ getClosestExpiryDateForGroup(group)?.toLocaleDateString() }}
+            <div @click="toggleCategoryGroup(index, index2)" class="flex">
+              - {{ group.name }} ({{ group.groceries.length }}) 
+              <div class="px-5" :class="{'text-red-500' : isNearExpiry(getClosestExpiryDateForCategory(category)!) }">
+                {{ getClosestExpiryDateForGroup(group)?.toLocaleDateString() }}
+              </div>
               <i :class="['fa', isCategoryGroupOpen(index,index2) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
             </div>
             <ul v-if="isCategoryGroupOpen(index,index2)" class="space-y-1 list-none list-inside">
@@ -69,6 +75,11 @@ const { t } = useI18n();
       return closestDate;
     }
 
+  function isNearExpiry(date : Date): boolean {
+    const dateDifferenceInMilliseconds = Date.parse(date.toString()) - Date.now();
+    const daysUntilExpiry = Math.ceil(dateDifferenceInMilliseconds / (1000 * 60 * 60 * 24));
+    return daysUntilExpiry <= 3;
+  }
 function getClosestExpiryDateForGroup(group: Group): Date | null {
   const closestDate = getClosestExpiryDate(group.groceries);
   return closestDate;

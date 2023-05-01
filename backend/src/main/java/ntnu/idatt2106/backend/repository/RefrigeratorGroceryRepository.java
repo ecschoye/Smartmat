@@ -1,6 +1,9 @@
 package ntnu.idatt2106.backend.repository;
 
 
+import ntnu.idatt2106.backend.model.Grocery;
+import ntnu.idatt2106.backend.model.Refrigerator;
+import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;

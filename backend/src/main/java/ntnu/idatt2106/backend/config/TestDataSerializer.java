@@ -2,6 +2,9 @@ package ntnu.idatt2106.backend.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import ntnu.idatt2106.backend.model.*;
+import ntnu.idatt2106.backend.model.enums.FridgeRole;
+import ntnu.idatt2106.backend.model.enums.UserRole;
 import ntnu.idatt2106.backend.model.category.Category;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.SubCategory;
@@ -23,6 +26,10 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.Arrays;
 import java.util.Optional;
 import java.time.LocalDate;
@@ -68,6 +75,14 @@ public class TestDataSerializer {
 
     private final RefrigeratorGroceryRepository refrigeratorGroceryRepository;
 
+    private final UserRepository userRepository;
+
+    private final RefrigeratorRepository refrigeratorRepository;
+
+    private final RefrigeratorUserRepository refrigeratorUserRepository;
+
+    private final RefrigeratorGroceryRepository refrigeratorGroceryRepository;
+
     private final BCryptPasswordEncoder passwordEncoder;
 
     @PostConstruct
@@ -81,10 +96,83 @@ public class TestDataSerializer {
         //add groceries to refrigerator
         addGroceriesToRefrigerator();
 
+
+
+        createUser();
+        createRefrigerator();
+
+        //add groceries to refrigerator
+        addGroceriesToRefrigerator();
+
         createRecipeCategories();
         createRecipes();
         createRecipeGroceries();
     }
+
+    private void addGroceriesToRefrigerator() {
+        List<Long> groceryIds = List.of(10L, 63L, 96L, 119L, 126L, 147L, 153L, 182L, 329L, 364L, 464L, 597L, 692L, 718L, 756L, 798L, 890L, 908L);
+        Refrigerator refrigerator = refrigeratorRepository.findByName("Test Refrigerator")
+                .orElseThrow(() -> new RuntimeException("Refrigerator not found: Test Refrigerator"));
+
+        for (Long groceryId : groceryIds) {
+            Grocery grocery = groceryRepository.findById(groceryId)
+                    .orElseThrow(() -> new RuntimeException("Grocery not found: " + groceryId));
+
+            LocalDate localDate = LocalDate.now().plusDays(grocery.getGroceryExpiryDays());
+            Date physicalExpireDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+            // Check if the grocery already exists in the refrigerator
+            if (!refrigeratorGroceryRepository.existsByRefrigeratorAndGrocery(refrigerator, grocery)) {
+                RefrigeratorGrocery refrigeratorGrocery = RefrigeratorGrocery.builder()
+                        .grocery(grocery)
+                        .refrigerator(refrigerator)
+                        .physicalExpireDate(physicalExpireDate)
+                        .build();
+
+                refrigeratorGroceryRepository.save(refrigeratorGrocery);
+            }
+        }
+    }
+
+
+
+
+    private void createRefrigerator() {
+        String name = "Test Refrigerator";
+        String address = "Test Address";
+
+        if (!refrigeratorRepository.existsByName(name)) {
+            Refrigerator refrigerator = refrigeratorRepository.save(Refrigerator.builder()
+                    .name(name)
+                    .address(address)
+                    .build());
+
+            User user = userRepository.findByEmail("test@test.com")
+                    .orElseThrow(() -> new RuntimeException("User not found: test@test.com"));
+
+            RefrigeratorUser refrigeratorUser = refrigeratorUserRepository.save(RefrigeratorUser.builder()
+                    .refrigerator(refrigerator)
+                    .user(user)
+                    .fridgeRole(FridgeRole.SUPERUSER)
+                    .build());
+        }
+    }
+
+    private void createUser() {
+        String name = "test";
+        String email = "test@test.com";
+        String password = "test";
+
+        if (!userRepository.existsByEmail(email)) {
+            userRepository.save(User.builder()
+                    .name(name)
+                    .email(email)
+                    .password(password)
+                    .userRole(UserRole.USER)
+                    .build());
+        }
+    }
+
 
     private void addGroceriesToRefrigerator() {
         List<Long> groceryIds = List.of(10L, 63L, 96L, 119L, 126L, 147L, 153L, 182L, 329L, 364L, 464L, 597L, 692L, 718L, 756L, 798L, 890L, 908L);

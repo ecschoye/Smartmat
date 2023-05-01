@@ -62,6 +62,11 @@ export const useRefrigeratorStore = defineStore('refrigerator', {
             return false;
         },
         setGroceries(newGroceries : GroceryEntity[]){
+            newGroceries.forEach((grocery) => {
+                if(!(grocery.physicalExpireDate instanceof Date)){
+                    grocery.physicalExpireDate = new Date(grocery.physicalExpireDate);
+                }
+            })
             this.groceries = newGroceries;
         },
         setSelectedRefrigerator(refrigeratorSearch : Refrigerator) : boolean {
@@ -74,6 +79,12 @@ export const useRefrigeratorStore = defineStore('refrigerator', {
         },
         setRefrigerators(newFridges : Refrigerator[]){
             this.refrigerators = newFridges;
+        },
+        updateGrocery(groceryToUpdate: GroceryEntity): void {
+            const index = this.groceries.findIndex(grocery => grocery.id === groceryToUpdate.id);
+            if (index !== -1) {
+              this.groceries.splice(index, 1, groceryToUpdate);
+            }
         }
     }
 

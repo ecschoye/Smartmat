@@ -88,8 +88,6 @@
   onMounted(() => {
     // get the expiry date input element
     const expiryDateInput = document.getElementById(`expiry-date-${props.grocery.id}`) as HTMLInputElement | null;
-    console.log("mounting - " + expiryDateInput!.value);
-    console.log(props.grocery.physicalExpireDate);
     if (expiryDateInput && props.grocery.physicalExpireDate instanceof Date) {
       // set the value of the input to the grocery's physicalExpireDate
       expiryDateInput.valueAsDate = props.grocery.physicalExpireDate;

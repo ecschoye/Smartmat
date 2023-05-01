@@ -25,7 +25,7 @@ public class GroceryNotification {
     @Schema(description = "User which owns the notification")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "RefrigeratorGrocery")
     @Schema(description = "The grocery entity which the notification regards")
     private RefrigeratorGrocery groceryEntity;

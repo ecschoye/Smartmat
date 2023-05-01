@@ -11,6 +11,8 @@ import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -32,7 +34,7 @@ public class RefrigeratorGrocery {
     private Date physicalExpireDate;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "refrigeratorId")
     @Schema(description = "The refrigerator the grocery is in")
     private Refrigerator refrigerator;
@@ -42,4 +44,7 @@ public class RefrigeratorGrocery {
     @JoinColumn(name = "groceryId")
     @Schema(description = "Grocery in the refrigerator")
     private Grocery grocery;
+
+    @OneToMany(mappedBy = "groceryEntity", cascade = CascadeType.REMOVE)
+    private Set<GroceryNotification> groceryNotifications = new HashSet<>();
 }

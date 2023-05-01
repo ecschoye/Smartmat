@@ -2,10 +2,7 @@ package ntnu.idatt2106.backend.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
-import ntnu.idatt2106.backend.exceptions.SaveException;
-import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
-import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
+import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
@@ -272,7 +269,7 @@ public class RefrigeratorControllerTest {
 
     @Test
     @DisplayName("Test editRole with null response from service")
-    public void testEditRoleWithNullResponse() throws SaveException, UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
+    public void testEditRoleWithNullResponse() throws SaveException, UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException, LastSuperuserException {
         MemberRequest memberRequest = new MemberRequest();
         memberRequest.setFridgeRole(FridgeRole.SUPERUSER);
         memberRequest.setRefrigeratorId(1L);
@@ -287,7 +284,7 @@ public class RefrigeratorControllerTest {
 
     @Test
     @DisplayName("Test editRole with valid input")
-    public void testEditRoleWithValidInput() throws SaveException, UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
+    public void testEditRoleWithValidInput() throws SaveException, UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException, LastSuperuserException {
         MemberRequest memberRequest = new MemberRequest();
         memberRequest.setFridgeRole(FridgeRole.SUPERUSER);
         memberRequest.setRefrigeratorId(1L);

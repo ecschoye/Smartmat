@@ -25,3 +25,7 @@ export const deleteGrocery = async (grocery : GroceryEntity) : Promise<AxiosResp
     const refrigeratorId = grocery.id;
     return axiosInstance.delete(`/api/refrigerator/grocery/remove/${refrigeratorId}`);
 } 
+
+export const updateGrocery = async (grocery : GroceryEntity) : Promise<AxiosResponse> => {
+    return axiosInstance.post("api/refrigerator/grocery/updateGrocery", grocery);
+}

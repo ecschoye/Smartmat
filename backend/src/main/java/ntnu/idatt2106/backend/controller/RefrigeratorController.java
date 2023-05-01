@@ -9,6 +9,7 @@ import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.dto.MemberDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
+import ntnu.idatt2106.backend.model.refrigerator.NewRefrigeratorDTO;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.service.CookieService;
@@ -146,7 +147,7 @@ public class RefrigeratorController {
     })
     @PostMapping("/new")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Refrigerator> newRefrigerator(@Valid @RequestBody RefrigeratorDTO refrigerator, HttpServletRequest httpRequest) throws SaveException {
+    public ResponseEntity<Refrigerator> newRefrigerator(@Valid @RequestBody NewRefrigeratorDTO refrigerator, HttpServletRequest httpRequest) throws SaveException {
         logger.info("Received request to create refrigerator for refrigerator");
         Refrigerator result;
 

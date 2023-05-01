@@ -4,12 +4,13 @@ package ntnu.idatt2106.backend.service;
 import ntnu.idatt2106.backend.exceptions.NotificationException;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.GroceryNotificationDTO;
-import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.enums.UserRole;
+import ntnu.idatt2106.backend.model.grocery.Grocery;
+import ntnu.idatt2106.backend.model.grocery.GroceryNotification;
+import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.repository.GroceryNotificationRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -210,7 +211,13 @@ public class NotificationServiceTest {
     @Test
     void deleteNotification_Unauthorized() {
         long notifId = 1L;
-        User otherUser = new User("123", "otherUser", "123@123.no", "123", UserRole.USER);
+        User otherUser = User.builder()
+                .id("123")
+                .name("otherUser")
+                .email("123@123.no")
+                .password("123")
+                .userRole(UserRole.USER)
+                .build();
         GroceryNotification groceryNotification = new GroceryNotification(1, otherUser, refrigeratorGrocery, (long)3, false);
         Mockito.when(groceryNotificationRepository.findById(notifId))
                 .thenReturn(Optional.of(groceryNotification));

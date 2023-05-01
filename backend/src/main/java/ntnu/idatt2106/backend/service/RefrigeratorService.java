@@ -6,8 +6,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.*;
+import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
+import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
+import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
+import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
+import ntnu.idatt2106.backend.model.Refrigerator;
+import ntnu.idatt2106.backend.model.RefrigeratorUser;
+import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
+import ntnu.idatt2106.backend.model.refrigerator.NewRefrigeratorDTO;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.dto.MemberDTO;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
@@ -139,12 +147,11 @@ public class RefrigeratorService {
         return refrigerators;
     }
 
-    public Refrigerator convertToEntity(RefrigeratorDTO refrigeratorDTO){
+    public Refrigerator convertToEntity(NewRefrigeratorDTO refrigeratorDTO){
         if (refrigeratorDTO == null) return null;
 
 
         Refrigerator refrigerator = Refrigerator.builder()
-                .id(refrigeratorDTO.getId())
                 .name(refrigeratorDTO.getName())
                 .address(refrigeratorDTO.getAddress())
                 .build();
@@ -228,8 +235,8 @@ public class RefrigeratorService {
      * @return The saved refrigerator.
      */
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
-    public Refrigerator save(RefrigeratorDTO refrigeratorDTO, HttpServletRequest httpRequest) throws Exception {
-        logger.info("Converting to refrigeretor object");
+    public Refrigerator save(NewRefrigeratorDTO refrigeratorDTO, HttpServletRequest httpRequest) throws Exception {
+        logger.info("Converting to refrigerator object");
         Refrigerator refrigerator = convertToEntity(refrigeratorDTO);
         //Check user exists
         logger.info("Checking user");
@@ -258,7 +265,6 @@ public class RefrigeratorService {
         try {
             logger.info("Saving member");
             RefrigeratorUser refrigeratorUser1 = refrigeratorUserRepository.save(refrigeratorUser);
-            System.out.println(refrigeratorUser1);
         } catch (Exception e) {
             logger.warn("Refrigerator could not be added: User could not be connected to refrigerator");
             throw new Exception("User could not be connected to refrigerator");

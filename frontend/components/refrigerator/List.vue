@@ -1,12 +1,12 @@
 <template>
   <div>
-    <ul v-if="listingType === 'category'" class="space-y-1 list-none list-inside">
+    <ul v-if="groceries.length > 0" class="space-y-1 list-none list-inside px-3">
       <li v-for="(category, index) in categorizedGroups" :key="index">
         <div @click="toggleCategory(index)">
           {{ category.name }} ({{ categorySum (category) }})
           <i :class="['fa', isCategoryOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
         </div>
-        <ul v-if="isCategoryOpen(index)" class="space-y-1 pl-2 w-11/12 list-none list-inside bg-gray-200 dark:bg-zinc-300 rounded-xl">
+        <ul v-if="isCategoryOpen(index)" class="py-2 px-3 w-12/12 list-none list-inside bg-gray-200 dark:bg-zinc-300 rounded-xl">
           <li v-for="(group, index2) in Array.from(category.groups.values())" :key="index2">
             <div @click="toggleCategoryGroup(index, index2)">
               - {{ group.name }} ({{ group.groceries.length }})
@@ -21,19 +21,9 @@
         </ul>
       </li>
     </ul>
-    <ul v-else class="space-y-1 list-none list-inside">
-      <li v-for="(group, index) in groups" :key="index">
-        <div @click="toggleGroup(index)" class="pl-2 hover:bg-gray-300 dark:hover:bg-zinc-500 rounded-xl">
-          {{ group.name }} ({{ group.groceries.length }})
-          <i :class="['fa', isOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
-        </div>
-        <ul v-if="isOpen(index)" class="space-y-1 list-none list-inside">
-          <li>
-            <RefrigeratorElement @element-height="(payload) => emitHeight(payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.grocery.id />
-          </li>
-        </ul>
-      </li>
-    </ul>
+    <div v-else>
+      {{ t("no_items_in_refrigerator") }}
+    </div>
   </div>
 </template>
 
@@ -41,6 +31,7 @@
 
 <script setup lang="ts">
 import type { GroceryEntity } from '~/types/GroceryEntityType';
+const { t } = useI18n();
 
     const emit = defineEmits(['popup-height', 'group-closed']);
 
@@ -53,10 +44,6 @@ import type { GroceryEntity } from '~/types/GroceryEntityType';
         type: Array as () => GroceryEntity[],
         required:true
     },
-    listingType:{
-      type: String,
-      required: true
-    }
     });
 
     interface Group {
@@ -65,7 +52,7 @@ import type { GroceryEntity } from '~/types/GroceryEntityType';
     }
     interface Category {
       name: string,
-      groups: Map<number, Group>
+      groups: Map<string, Group>
     }
 
 
@@ -76,20 +63,6 @@ import type { GroceryEntity } from '~/types/GroceryEntityType';
       })
       return sum;
     }
-
-    const groups = computed<Group[]>(() => {
-      const groupsMap = new Map<number, Group>();
-      for (const grocery of props.groceries) {
-        const group = grocery.grocery;
-        if (!groupsMap.has(group.id)) {
-          groupsMap.set(group.id, { name: group.name, groceries: [] });
-        }
-        groupsMap.get(group.id)?.groceries.push(grocery);
-      }
-      return Array.from(groupsMap.values());
-    });
-
-    const openGroups = ref(new Set<number>());
 
    const openCategories = ref(new Map<number, {groups : Map<number, boolean>}>());
 
@@ -122,33 +95,24 @@ import type { GroceryEntity } from '~/types/GroceryEntityType';
   emit('group-closed');
 }
 
-
-    const isOpen = (index: number) => openGroups.value.has(index);
-
-    const toggleGroup = (index: number) => {
-      if (isOpen(index)) {
-        openGroups.value.delete(index);
-      } else {
-        openGroups.value.add(index);
-      }
-      emit('group-closed');
-    };
-
-   const categorizedGroups = computed<Category[]>(() => {
-      const categoryMap = new Map<number, Category>();
-      for(const grocery of props.groceries){
-         const category = grocery.grocery.subCategory.category;
-         if(!categoryMap.has(category.id)){
-            categoryMap.set(category.id, {name:category.name, groups : new Map<number, Group>()});
-         }
-         const group = grocery.grocery
-         const groupMap = categoryMap.get(category.id)?.groups!
-         if(!groupMap.has(group.id)){
-            groupMap.set(group.id, {name : group.name, groceries : []})
-         }
-         groupMap.get(group.id)?.groceries.push(grocery);
-      }
-      return Array.from(categoryMap.values());
-      
-   })
+const categorizedGroups = computed<Category[]>(() => {
+  const categoryMap = new Map<number, Category>();
+  for (const grocery of props.groceries) {
+    const category = grocery.grocery.subCategory.category;
+    if (!categoryMap.has(category.id)) {
+      categoryMap.set(category.id, { name: category.name, groups: new Map<string, Group>() });
+    }
+    const group = grocery.grocery;
+    const groupMap = categoryMap.get(category.id)?.groups!;
+    if (!groupMap.has(group.name)) {
+      groupMap.set(group.name, { name: group.name, groceries: [] });
+    }
+    groupMap.get(group.name)?.groceries.push(grocery);
+  }
+  const sortedCategories = Array.from(categoryMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+  sortedCategories.forEach((category) => {
+    category.groups = new Map([...category.groups.entries()].sort((a, b) => a[1].name.localeCompare(b[1].name)));
+  });
+  return sortedCategories;
+});
 </script>

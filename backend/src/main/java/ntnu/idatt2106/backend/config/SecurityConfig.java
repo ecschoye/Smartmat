@@ -46,7 +46,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         if (Arrays.asList(env.getActiveProfiles()).contains("dev")){
-            logger.info("Dev profile is active");
             http
                     .headers().frameOptions().disable().and()
                     .cors().and()
@@ -67,7 +66,6 @@ public class SecurityConfig {
                     .addFilterBefore(jwTAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         }
         else{
-            logger.info("Production profile is active");
             http
                     .headers().frameOptions().disable().and()
                     .cors().and()
@@ -98,8 +96,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.addAllowedOrigin("https://mymarketplace-xt5ws57jza-lz.a.run.app");
-        configuration.addAllowedOrigin("https://myserverprojects.store");
+        configuration.addAllowedOrigin("https://smartmat-oaa9.onrender.com");
+        configuration.addAllowedOrigin("https://www.smartmat.online");
+        configuration.addAllowedOrigin("https://smartmat.online");
         configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type")); // Add this line

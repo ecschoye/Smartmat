@@ -2,7 +2,13 @@ import axios from "axios";
 import type { AxiosInstance } from "axios";
 import { useUserStore } from "~/store/userStore";
 import {Session} from "inspector";
-const baseURL = "http://localhost:8080";
+
+//check if we're in development mode or in production mode
+//if we're in development mode, use localhost:8080 as baseURL
+//if we're in production mode, use the domain name as baseURL
+//const baseURL = "http://localhost:8080";
+
+const baseURL = process.env.NODE_ENV === 'production' ? "https://api.smartmat.online" : "http://localhost:8080";
 
 const axiosInstance: AxiosInstance = axios.create({
     baseURL,

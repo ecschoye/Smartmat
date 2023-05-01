@@ -23,9 +23,9 @@
           <div class="text-center">{{notification.refrigeratorGrocery.refrigerator.name }}</div>
         </div>
         <div>
-          <button class="border border-black mx-2 p-1 rounded">Finn oppskrift</button>
-          <button class="border border-black mx-2 p-1 rounded">Gå til ukesmeny</button>
-          <button class="border border-black mx-2 p-1 rounded">Til kjøleskap</button>
+          <button :disabled="true" class="border border-black mx-2 p-1 rounded disabled:bg-slate-300 disabled:text-slate-500">Finn oppskrift</button>
+          <button :disabled="true" class="border border-black mx-2 p-1 rounded disabled:bg-slate-300 disabled:text-slate-500">Gå til ukesmeny</button>
+          <button @click="goToFridge()" class="border border-black mx-2 p-1 rounded hover:bg-slate-400 cursor-pointer">Til kjøleskap</button>
         </div>
       </div>
     </div>
@@ -35,13 +35,21 @@
 
 <script setup lang="ts">
 import { GroceryNotification } from '~/types/GroceryNotificationType';
+import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 const { t } = useI18n();
+const router = useRouter();
+const refrigeratorStore = useRefrigeratorStore();
 const props = defineProps({
     notification :{
         type: Object as () => GroceryNotification,
         required:true
     }
 });
+
+function goToFridge(){
+  refrigeratorStore.setSelectedRefrigerator(props.notification.refrigeratorGrocery.refrigerator);
+  router.push('/home');
+}
 
 const emit = defineEmits(['delete-notif'])
 

@@ -78,6 +78,12 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException ex) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(ex.getMessage());
+    }
+
     @ExceptionHandler(RefrigeratorNotFoundException.class)
     public ResponseEntity<String> handleRefrigeratorNotFoundException(RefrigeratorNotFoundException ex) {
         logger.warn("RefrigeratorNotFoundException thrown: " + ex.getMessage());

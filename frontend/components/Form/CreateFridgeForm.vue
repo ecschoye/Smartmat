@@ -1,8 +1,8 @@
 <template>
   <div class="wrapper">
     <form @submit.prevent="sendForm" class="form">
-      <BaseInput id="name" class="input-container" type="name" :label="$t('name')" v-model="form.name" />
-      <BaseInput id="address" class="input-container" type="address" :label="$t('address')" v-model="form.address" />
+      <BaseInput :cutWidth="'118px'" id="name" class="input-container" type="name" :label="$t('name')" v-model="form.name" />
+      <BaseInput :cutWidth="'65px'" id="address" class="input-container" type="address" :label="$t('address')" v-model="form.address" />
       <div class="button-wrapper">
         <GreenButton :label="$t('create_refrigerator')" width="100%" height="50px" />
       </div>
@@ -22,10 +22,10 @@ import {RefrigeratorRegisterData} from "~/types/RefrigeratorRegisterData";
 import {AxiosResponse} from "axios";
 import axiosInstance from "~/service/AxiosInstance";
 import { postRegisterFridge } from "~/service/httputils/RefrigeratorService";
-import { useRefridgeratorStore} from "~/store/refrigeratorStore";
+import { useRefrigeratorStore} from "~/store/refrigeratorStore";
 import ErrorAlert from "~/components/AlertBox/ErrorAlert.vue";
 
-const refrigeratorStore = useRefridgeratorStore();
+const refrigeratorStore = useRefrigeratorStore();
 
 const catchError = ref(false);
 const errorMessage = ref("");

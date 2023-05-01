@@ -5,6 +5,7 @@ interface UserState {
     userId: string;
     authenticated: boolean;
     role: string;
+    favoriteRefrigeratorId : number | null
 }
 
 export const useUserStore = defineStore({
@@ -13,6 +14,7 @@ export const useUserStore = defineStore({
         userId: "",
         authenticated: false,
         role: '',
+        favoriteRefrigeratorId : null,
     }),
     getters: {
         isLoggedIn: (state: UserState) => state.authenticated,
@@ -33,21 +35,23 @@ export const useUserStore = defineStore({
             this.authenticated = false;
             this.role = "";
             this.userId = "";
+            this.favoriteRefrigeratorId = null;
         },
         logIn(data: any) {
             this.authenticated = true;
             this.role = data.userRole;
             this.userId = data.userId;
+            this.favoriteRefrigeratorId = data.favoriteRefrigeratorId;
         },
         async checkAuthStatus() {
             try {
                 const response = await axiosInstance.get('/api/user-status');
                 if (response.status === 200){
-                    console.log("User status fetched successfully");
                     if (response.data.state === "AUTHENTICATED"){
                         this.authenticated = true;
                         this.role = response.data.role;
                         this.userId = response.data.userId;
+                        this.favoriteRefrigeratorId = response.data.favoriteRefrigeratorId;
                     }
                 }
                 else if (response.status === 401){

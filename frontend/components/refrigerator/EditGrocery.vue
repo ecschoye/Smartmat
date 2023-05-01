@@ -17,11 +17,11 @@
 
 
 <script setup lang="ts">
-import { useRefridgeratorStore } from '~/store/refrigeratorStore';
+import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 import { deleteGrocery } from '~/service/httputils/GroceryService';
 
 const { t } = useI18n();
-const refridgeratorStore = useRefridgeratorStore();
+const refrigeratorStore = useRefrigeratorStore();
 
 const props = defineProps({
     pos:{
@@ -42,9 +42,9 @@ onMounted(() => {
 async function removeGrocery() {
 
     try{
-        const response = await deleteGrocery(refridgeratorStore.selectedGrocery);
+        const response = await deleteGrocery(refrigeratorStore.selectedGrocery);
         if(response.status == 200){
-            refridgeratorStore.removeGrocery(refridgeratorStore.selectedGrocery);
+            refrigeratorStore.removeGrocery(refrigeratorStore.selectedGrocery);
             emit('toggleOptions');
         }
     }
@@ -55,9 +55,9 @@ async function removeGrocery() {
 
 async function eatGrocery() {
     try{
-        const response = await deleteGrocery(refridgeratorStore.selectedGrocery);
+        const response = await deleteGrocery(refrigeratorStore.selectedGrocery);
         if(response.status == 200){
-            refridgeratorStore.removeGrocery(refridgeratorStore.selectedGrocery);
+            refrigeratorStore.removeGrocery(refrigeratorStore.selectedGrocery);
             emit('toggleOptions');
         }
     }
@@ -68,9 +68,9 @@ async function eatGrocery() {
 
 async function trashGrocery() {
     try{
-        const response = await deleteGrocery(refridgeratorStore.selectedGrocery);
+        const response = await deleteGrocery(refrigeratorStore.selectedGrocery);
         if(response.status == 200){
-            refridgeratorStore.removeGrocery(refridgeratorStore.selectedGrocery);
+            refrigeratorStore.removeGrocery(refrigeratorStore.selectedGrocery);
             emit('toggleOptions');
         }
     }

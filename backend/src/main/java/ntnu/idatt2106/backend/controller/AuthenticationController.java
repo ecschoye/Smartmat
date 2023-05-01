@@ -16,11 +16,15 @@ import ntnu.idatt2106.backend.model.dto.response.RegisterResponse;
 import ntnu.idatt2106.backend.service.AuthenticationService;
 import ntnu.idatt2106.backend.service.UserService;
 import org.apache.http.auth.InvalidCredentialsException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 
+import java.util.Arrays;
 import java.util.logging.Logger;
 
 @RestController
@@ -32,7 +36,10 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
     private final UserService userService;
 
+
+
     Logger logger = Logger.getLogger(AuthenticationController.class.getName());
+
 
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) throws UserAlreadyExistsException {
@@ -48,13 +55,16 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response) throws InvalidCredentialsException {
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse response, HttpServletRequest request) throws InvalidCredentialsException {
         try {
             AuthenticationResponse authResponse = authenticationService.authenticate(authenticationRequest);
 
-            Cookie accessTokenCookie = getCookie(authResponse);
-            accessTokenCookie.setDomain("localhost");
-            response.addCookie(accessTokenCookie);
+            if (!request.getServerName().equals("localhost")){
+                setCookie(authResponse, response, true);
+            }
+            else{
+                setCookie(authResponse, response, false);
+            }
 
             User user = userService.findByEmail(authenticationRequest.getEmail());
             authResponse.setUserId(user.getId());
@@ -68,35 +78,46 @@ public class AuthenticationController {
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response){
-        logger.info("Logging out user");
         Cookie[] cookies = request.getCookies();
         if(cookies != null){
             for(Cookie cookie : cookies){
                 if(cookie.getName().equals("SmartMatAccessToken")){
                     logger.info("Deleting cookie");
-                    cookie.setValue("");
-                    cookie.setPath("/");
-                    cookie.setMaxAge(0);
-                    response.addCookie(cookie);
+
+                    String cookieValue = "SmartMatAccessToken=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax";
+
+                    if (!request.getServerName().equals("localhost")){
+                        cookieValue += "; Domain=smartmat.online; Secure";
+                    } else {
+                        cookieValue += "; Domain=localhost";
+                    }
+
+                    response.addHeader("Set-Cookie", cookieValue);
                 }
             }
         }
         return ResponseEntity.ok("Logged out");
     }
 
+
+
     /**
-     * Creates an access token as an HttpOnly cookie.
+     * Sets an access token as an HttpOnly cookie with SameSite=Lax.
      *
      * @param authResponse AuthenticationResponse object containing the access token.
-     * @return Cookie object containing the access token as an HttpOnly cookie.
+     * @param response HttpServletResponse object used to set the cookie.
+     * @param production Boolean indicating if the environment is production or not.
      */
-    public Cookie getCookie(AuthenticationResponse authResponse){
-        // Set access token as an HttpOnly cookie
-        Cookie accessTokenCookie = new Cookie("SmartMatAccessToken", authResponse.getToken());
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(20 * 60); // 5 minutes
+    public void setCookie(AuthenticationResponse authResponse, HttpServletResponse response, boolean production) {
+        String cookieValue = String.format("SmartMatAccessToken=%s; Path=/; Max-Age=%d; HttpOnly; SameSite=Lax", authResponse.getToken(), 20 * 60);
 
-        return accessTokenCookie;
+        if (production) {
+            cookieValue += "; Domain=smartmat.online; Secure";
+        } else {
+            cookieValue += "; Domain=localhost";
+        }
+
+        response.addHeader("Set-Cookie", cookieValue);
     }
+
 }

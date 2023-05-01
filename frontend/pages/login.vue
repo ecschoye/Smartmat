@@ -30,8 +30,4 @@ import LogInForm from "~/components/Form/LogInForm.vue";
 h1{
   margin-top: 30px;
 }
-
-template{
-  max-height: calc(100vh - 96px);
-}
 </style>

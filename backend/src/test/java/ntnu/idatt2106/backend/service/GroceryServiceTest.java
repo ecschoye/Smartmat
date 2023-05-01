@@ -3,14 +3,14 @@ package ntnu.idatt2106.backend.service;
 import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
-import ntnu.idatt2106.backend.exceptions.SaveException;
-import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
-import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
+import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.*;
+import ntnu.idatt2106.backend.model.category.Category;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
+import ntnu.idatt2106.backend.model.grocery.Grocery;
+import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.repository.GroceryRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
@@ -25,7 +25,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,6 +62,9 @@ public class GroceryServiceTest {
 
     @InjectMocks
     private GroceryService groceryService;
+
+    @Mock
+    private NotificationService notificationService;
 
     //Testdata
     private Grocery grocery;
@@ -100,6 +107,7 @@ public class GroceryServiceTest {
         grocery.setSubCategory(subCategory);
         refrigeratorGrocery = new RefrigeratorGrocery();
         refrigeratorGrocery.setGrocery(grocery);
+        refrigeratorGrocery.setRefrigerator(refrigerator);
 
         customGroceryDTO = new GroceryDTO();
         customGroceryDTO.setName("Name");
@@ -115,6 +123,119 @@ public class GroceryServiceTest {
 
         HttpRequest = mock(HttpServletRequest.class);
     }
+
+    @Test
+    @DisplayName("Test updateRefrigeratorGrocery succeeds")
+    public void testUpdateRefrigeratorGrocerySucceeds() throws UserNotFoundException, UnauthorizedException, NotificationException, EntityNotFoundException, ParseException {
+        // Setup
+
+
+        refrigeratorGrocery.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("10/05/2023"));
+
+        RefrigeratorGroceryDTO refrigeratorGroceryDTO = new RefrigeratorGroceryDTO();
+        refrigeratorGroceryDTO.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("20/05/2023"));
+        refrigeratorGroceryDTO.setId(1L);
+
+        String expectedEmail = "testuser@test.com";
+        String token = "valid_token";
+
+        Mockito.when(refrigeratorGroceryRepository.findById(refrigeratorGroceryDTO.getId())).thenReturn(Optional.of(refrigeratorGrocery));
+        Mockito.when(jwtService.extractClaim(token, Claims::getSubject)).thenReturn(expectedEmail);
+        Mockito.when(cookieService.extractTokenFromCookie(HttpRequest)).thenReturn(token);
+        Mockito.when(groceryService.getFridgeRole(refrigerator, HttpRequest)).thenReturn(FridgeRole.SUPERUSER);
+
+        // Execute
+        groceryService.updateRefrigeratorGrocery(mock(User.class), refrigeratorGroceryDTO, HttpRequest);
+
+        // Verify
+        verify(notificationService, times(1)).deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);
+        verify(refrigeratorGroceryRepository, times(1)).save(any(RefrigeratorGrocery.class));
+    }
+
+    @Test
+    @DisplayName("Test updateRefrigeratorGrocery throws EntityNotFoundException when object not in repo")
+    public void testUpdateRefrigeratorGroceryThrowsEntityNotFound() throws UserNotFoundException, UnauthorizedException, NotificationException, EntityNotFoundException, ParseException {
+        // Setup
+
+        refrigeratorGrocery.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("10/05/2023"));
+
+        RefrigeratorGroceryDTO refrigeratorGroceryDTO = new RefrigeratorGroceryDTO();
+        refrigeratorGroceryDTO.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("20/05/2023"));
+        refrigeratorGroceryDTO.setId(3L);
+
+
+        String expectedEmail = "testuser@test.com";
+        String token = "valid_token";
+
+        Mockito.when(refrigeratorGroceryRepository.findById(refrigeratorGroceryDTO.getId())).thenReturn(Optional.empty());
+        Mockito.when(jwtService.extractClaim(token, Claims::getSubject)).thenReturn(expectedEmail);
+        Mockito.when(cookieService.extractTokenFromCookie(HttpRequest)).thenReturn(token);
+        Mockito.when(groceryService.getFridgeRole(refrigerator, HttpRequest)).thenReturn(FridgeRole.SUPERUSER);
+
+        // Execute and Verify
+        assertThrows(EntityNotFoundException.class, () -> {
+            groceryService.updateRefrigeratorGrocery(mock(User.class), refrigeratorGroceryDTO, HttpRequest);
+        });
+
+        verify(notificationService, times(0)).deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);
+        verify(refrigeratorGroceryRepository, times(0)).save(any(RefrigeratorGrocery.class));
+    }
+
+    @Test
+    @DisplayName("Test updateRefrigeratorGrocery throws UnauthorizedException if user is normal user")
+    public void testUpdateRefrigeratorGroceryThrowsUnathorized() throws UserNotFoundException, UnauthorizedException, NotificationException, EntityNotFoundException, ParseException {
+        // Setup
+
+        refrigeratorGrocery.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("10/05/2023"));
+
+        RefrigeratorGroceryDTO refrigeratorGroceryDTO = new RefrigeratorGroceryDTO();
+        refrigeratorGroceryDTO.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("20/05/2023"));
+        refrigeratorGroceryDTO.setId(1L);
+
+        String expectedEmail = "testuser@test.com";
+        String token = "valid_token";
+
+        Mockito.when(refrigeratorGroceryRepository.findById(refrigeratorGroceryDTO.getId())).thenReturn(Optional.of(refrigeratorGrocery));
+        Mockito.when(jwtService.extractClaim(token, Claims::getSubject)).thenReturn(expectedEmail);
+        Mockito.when(cookieService.extractTokenFromCookie(HttpRequest)).thenReturn(token);
+        Mockito.when(groceryService.getFridgeRole(refrigerator, HttpRequest)).thenReturn(FridgeRole.USER);
+
+        // Execute and Verify
+        assertThrows(UnauthorizedException.class, () -> {
+            groceryService.updateRefrigeratorGrocery(mock(User.class), refrigeratorGroceryDTO, HttpRequest);
+        });
+
+        verify(notificationService, times(0)).deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);
+        verify(refrigeratorGroceryRepository, times(0)).save(any(RefrigeratorGrocery.class));
+    }
+
+    @Test
+    @DisplayName("Test updateRefrigeratorGrocery does not call notificationService if date is same")
+    public void testUpdateRefrigeratorGroceryDoesNotCallNotificationService() throws UserNotFoundException, UnauthorizedException, NotificationException, EntityNotFoundException, ParseException {
+        // Setup
+        refrigeratorGrocery.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("10/05/2023"));
+
+        RefrigeratorGroceryDTO refrigeratorGroceryDTO = new RefrigeratorGroceryDTO();
+        refrigeratorGroceryDTO.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("10/05/2023"));
+        refrigeratorGroceryDTO.setId(1L);
+
+        String expectedEmail = "testuser@test.com";
+        String token = "valid_token";
+
+        Mockito.when(refrigeratorGroceryRepository.findById(refrigeratorGroceryDTO.getId())).thenReturn(Optional.of(refrigeratorGrocery));
+        Mockito.when(jwtService.extractClaim(token, Claims::getSubject)).thenReturn(expectedEmail);
+        Mockito.when(cookieService.extractTokenFromCookie(HttpRequest)).thenReturn(token);
+        Mockito.when(groceryService.getFridgeRole(refrigerator, HttpRequest)).thenReturn(FridgeRole.SUPERUSER);
+
+        // Execute
+        groceryService.updateRefrigeratorGrocery(mock(User.class), refrigeratorGroceryDTO, HttpRequest);
+
+        // Verify
+
+        verify(notificationService, times(0)).deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);
+        verify(refrigeratorGroceryRepository, times(1)).save(any(RefrigeratorGrocery.class));
+    }
+
 
     @Test
     @DisplayName("Test getGroceriesByRefrigerator succeeds")

@@ -1,7 +1,7 @@
 <template>
     <div class = "flex h-4/5 w-full">
         <RefrigeratorNew v-if="toggleCreate" @toggle="(payload) => onToggleCreate(payload)" />
-        <RefrigeratorDisplay v-else @toggle-create="(payload) => onToggleCreate(payload)" class="font-mono" @group-closed="togglePos(false)" :groceries="refridgeratorStore.getGroceries" @popup-height="(payload) => setPos(payload)" />
+        <RefrigeratorDisplay v-else @toggle-create="(payload) => onToggleCreate(payload)" :refrigerator="refrigeratorStore.getSelectedRefrigerator" class="font-mono" @group-closed="togglePos(false)" :groceries="refrigeratorStore.getGroceries" @popup-height="(payload) => setPos(payload)" />
             <div>
             <Transition>
                 <RefrigeratorEditGrocery :pos="position" v-if="toggle" @toggle-options="togglePos(false)"/>
@@ -11,12 +11,12 @@
 </template>
 
 <script setup lang="ts">
-import { useRefridgeratorStore } from '~/store/refrigeratorStore';
+import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 import { getGroceriesByFridge } from '~/service/httputils/GroceryService';
 import { Refrigerator } from '~/types/RefrigeratorType';
 import { GroceryEntity } from '~/types/GroceryEntityType';
 
-const refridgeratorStore = useRefridgeratorStore();
+const refrigeratorStore = useRefrigeratorStore();
 
 const position = ref(0);
 
@@ -44,8 +44,8 @@ function setPos(payload: number) {
 
 async function loadGroceries(){
     try {
-        const fridge : Refrigerator = refridgeratorStore.getSelectedRefrigerator;
-        if(fridge !== undefined){
+        const fridge : Refrigerator | null = refrigeratorStore.getSelectedRefrigerator;
+        if(fridge !== null){
             const response = await getGroceriesByFridge(fridge.id);
 
             const groceries : GroceryEntity[] = response.data;
@@ -57,7 +57,7 @@ async function loadGroceries(){
                 }
             })
 
-            refridgeratorStore.setGroceries(response.data);
+            refrigeratorStore.setGroceries(response.data);
         }
     }
     catch(error){

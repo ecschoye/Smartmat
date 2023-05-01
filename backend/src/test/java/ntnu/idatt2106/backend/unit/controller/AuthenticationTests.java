@@ -85,11 +85,13 @@ public class AuthenticationTests {
         // Set up the mock to return a non-null User object
         when(userService.findByEmail(authenticationRequest.getEmail())).thenReturn(user);
         when(user.getId()).thenReturn(String.valueOf(UUID.randomUUID()));
+        when(httpServletRequest.getServerName()).thenReturn("localhost");
+
 
         // Set up the mock to return a non-null Role object
         when(user.getUserRole()).thenReturn(UserRole.USER); // Replace Role.USER with the appropriate enum constant
 
-        ResponseEntity<AuthenticationResponse> response = loginController.authenticate(authenticationRequest, httpServletResponse);
+        ResponseEntity<AuthenticationResponse> response = loginController.authenticate(authenticationRequest, httpServletResponse, httpServletRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(authenticationResponse, response.getBody());
@@ -104,7 +106,7 @@ public class AuthenticationTests {
         when(authenticationService.authenticate(authenticationRequest)).thenThrow(InvalidCredentialsException.class);
 
         assertThrows(InvalidCredentialsException.class, () -> {
-            loginController.authenticate(authenticationRequest, null);
+            loginController.authenticate(authenticationRequest, null, httpServletRequest);
         });
     }
 

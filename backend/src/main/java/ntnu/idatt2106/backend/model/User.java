@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.enums.UserRole;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +26,9 @@ import java.util.List;
 public class User implements UserDetails {
 
     @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(columnDefinition = "VARCHAR(255)")
     @Schema(description = "The id of the user, automatically generated")
     private String id;
 
@@ -39,10 +43,15 @@ public class User implements UserDetails {
     @Column(name = "password")
     @Schema(description = "The password of the user")
     private String password;
+
     @Column(name = "user_role")
     @Schema(description = "The role of the user")
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+
+    @Column(name = "favorite_refrigeratorId")
+    @Schema(description = "The id of a optional favorite refrigerator")
+    private Long favoriteRefrigeratorId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

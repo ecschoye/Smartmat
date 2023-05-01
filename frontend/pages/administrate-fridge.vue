@@ -38,7 +38,7 @@
                               <h4>{{ $t("leave_refrigerator")}}</h4>
                           </div>
                       </div>
-                      <div class="choice-wrapper" v-else @click="deleteMember(member)">
+                      <div class="choice-wrapper" v-else @click="deleteMember(member.username)">
                           <div class="action-choice">
                               <img class="choice-image" src="@/assets/icons/trash.png">
                               <h4>{{ $t("remove_member")}}</h4>
@@ -63,6 +63,7 @@ import type { Refrigerator } from '~/types/RefrigeratorType'
 import { getRefrigeratorById, postEditMembers, postRemoveMember } from '~/service/httputils/RefrigeratorService';
 import type {Member} from "~/types/MemberType"
 import { getUserData } from "~/service/httputils/authentication/AuthenticationService";
+import { RemoveMemberRequest } from "~/types/RemoveMemberRequest";
 import { MemberRequest } from "~/types/MemberRequest";
 import { ErrorCodes } from "nuxt/dist/app/compat/capi";
 
@@ -72,7 +73,7 @@ export default {
       changes: [] as string[],
       fridge: null as Refrigerator | null,
       currentUser : null as String | null,
-      editedMembers : new Map<String, Member>() 
+      editedMembers : new Map<String, Member>()
   };
   },
   setup() {
@@ -92,10 +93,10 @@ export default {
       adress: '',
       name: '',
     });
-  
+
     return {
       refrigeratorStore,
-      sendForm, 
+      sendForm,
       errorMessage,
       form,
       locale,
@@ -121,7 +122,6 @@ export default {
 
         try{
             let response = await postEditMembers(memberRequests); 
-            console.log(response)
             if(response !== null && response.status == 200){
               if(response.data == ""){
                 alert(this.t("last_superuser_alert"))
@@ -141,18 +141,35 @@ export default {
           console.log(error)
           location.reload(); 
         }
-        //
       },
+
 
       leaveFridge(member : Member) {
         return
       },
 
-      deleteMember(member : Member) {
-        return
-      },
+
+      async deleteMember(username : String) {
+        console.log(this.refrigeratorStore.getSelectedRefrigerator.id)
+        console.log(username)
+        const removeMemberRequest: RemoveMemberRequest = {
+        refrigeratorId: this.refrigeratorStore.getSelectedRefrigerator.id,
+        userName: username,
+        forceDelete: false,
+      };
+      try {
+        const response = await postRemoveMember(removeMemberRequest);
+        if(response !== null && response.status == 200) {
+          alert(this.t("remove_member_succsess"))
+          location.reload();
+        }
+      } catch (error) {
+        alert(this.t("remove_member_failed"))
+        console.error(error);
+      }
+    },
       async getRefrigerator() {
-      let refrigerator = null as Refrigerator | null; 
+      let refrigerator = null as Refrigerator | null;
       let response = await getRefrigeratorById(this.refrigeratorStore.getSelectedRefrigerator.id);
       if(response !== null){
           let element : Refrigerator = response.data; 
@@ -183,6 +200,7 @@ export default {
     
   }
 }
+
 </script>
 
 
@@ -212,9 +230,9 @@ export default {
 }
 
 .title {
-  text-align:center; 
+  text-align:center;
   margin-bottom: 20px;
-  margin-top:10px; 
+  margin-top:10px;
 }
 
 .divider{

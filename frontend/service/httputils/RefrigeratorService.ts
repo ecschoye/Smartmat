@@ -2,7 +2,9 @@ import axiosInstance from "~/service/AxiosInstance";
 import {AxiosResponse} from "axios";
 import {RefrigeratorRegisterData} from "~/types/RefrigeratorRegisterData";
 import type {Refrigerator} from "~/types/RefrigeratorType"; 
+import type {Member} from "~/types/MemberType"
 import type { MemberRequest } from "~/types/MemberRequest";
+import { RemoveMemberRequest } from "~/types/RemoveMemberRequest";
 
 export const getRefrigerators = async () : Promise<AxiosResponse> => {
     return axiosInstance.get('/api/refrigerator/user');
@@ -28,12 +30,11 @@ export const postEditMember = async (memberRequest : MemberRequest) : Promise<Ax
     return axiosInstance.post('/api/refrigerator/members/edit-role', memberRequest); 
 }
 
+export const postRemoveMember = async (removeMemberRequest : RemoveMemberRequest) : Promise<AxiosResponse> => {
+    return axiosInstance.post('/api/refrigerator/members/remove', removeMemberRequest);
+}
+
 export const postEditMembers = async (memberRequests : MemberRequest[]) : Promise<AxiosResponse> => {
-    return axiosInstance.post('/api/refrigerator/members/edit-roles', memberRequests); 
+    return axiosInstance.post('/api/refrigerator/members/edit-roles', memberRequests);
 }
-
-export const postRemoveMember = async (memberRequest : MemberRequest) : Promise<AxiosResponse> => {
-    return axiosInstance.post('/api/refrigerator/members/remove', memberRequest); 
-}
-
 

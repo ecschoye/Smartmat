@@ -64,7 +64,6 @@ import { getRefrigeratorById, postEditMembers, postRemoveMember } from '~/servic
 import type {Member} from "~/types/MemberType"
 import { getUserData } from "~/service/httputils/authentication/AuthenticationService";
 import { RemoveMemberRequest } from "~/types/RemoveMemberRequest";
-import { postRemoveMember } from "~/service/httputils/RefrigeratorService";
 import { MemberRequest } from "~/types/MemberRequest";
 import { ErrorCodes } from "nuxt/dist/app/compat/capi";
 
@@ -116,14 +115,34 @@ export default {
             const memberRequest : MemberRequest = {
             refrigeratorId : member.refrigeratorId,
             userName : member.username,
-            fridgeRole : member.fridgeRole
+            fridgeRole : member.fridgeRole 
           }
-          memberRequests.push(memberRequest);
+          memberRequests.push(memberRequest); 
         })
 
-      handleOptionChange(member: { id: number; name: string; username: string; role: string }) {
-        return 
+        try{
+            let response = await postEditMembers(memberRequests); 
+            if(response !== null && response.status == 200){
+              if(response.data == ""){
+                alert(this.t("last_superuser_alert"))
+              }
+              else {
+                alert(this.t("edit_refrigerator_success"))
+                location.reload(); 
+              }
+            }
+            else {
+              alert(this.t("edit_refrigerator_failure"))
+              location.reload(); 
+            }
+        }
+        catch(error){
+          alert(this.t("edit_refrigerator_failure"))
+          console.log(error)
+          location.reload(); 
+        }
       },
+
 
       leaveFridge(member : Member) {
         return
@@ -178,6 +197,7 @@ export default {
     this.getRefrigerator();
     
   }
+}
 }
 </script>
 

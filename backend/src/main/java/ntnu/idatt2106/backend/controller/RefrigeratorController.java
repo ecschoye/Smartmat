@@ -154,6 +154,7 @@ public class RefrigeratorController {
             result = refrigeratorService.save(refrigerator, httpRequest);
             if (result == null) throw new Exception();
         } catch (Exception e) {
+            logger.error("Failed to create refrigerator: " + e.getMessage());
             throw new SaveException("Failed to create refrigerator");
         }
         logger.info("Returning refrigerator with id {}", result.getId());

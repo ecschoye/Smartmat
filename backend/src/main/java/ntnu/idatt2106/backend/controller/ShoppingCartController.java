@@ -40,13 +40,10 @@ public class ShoppingCartController {
     }
 
     @GetMapping("/groceries/{shoppingCartId}")
-    public ResponseEntity<List<ShoppingCartElementDTO>> getGroceriesFromShoppingCart(@PathVariable(name="shoppingCartId") long shoppingCartId) throws NullPointerException {
+    public ResponseEntity<List<ShoppingCartElementDTO>> getGroceriesFromShoppingCart(@PathVariable(name="shoppingCartId") long shoppingCartId) throws NullPointerException, NoGroceriesFound {
         logger.info("Received request to get groceries from shopping cart with id {}", shoppingCartId);
         List<ShoppingCartElementDTO> groceries = shoppingCartService.getGroceries(shoppingCartId);
-        if (groceries.isEmpty()) {
-            logger.info("Received no groceries. Return status NO_CONTENT");
-            throw new NullPointerException("Received no groceries");
-        }
+
         logger.info("Returns groceries and status OK");
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }

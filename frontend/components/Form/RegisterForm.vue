@@ -20,10 +20,11 @@
 import GreenButton from "~/components/Button/GreenButton.vue";
 import GrayButton from "~/components/Button/GrayButton.vue";
 import BaseInput from "~/components/Form/BaseInput.vue";
-import { postRegister } from "~/service/httputils/authentication/AuthenticationService";
+import {postLogin, postRegister} from "~/service/httputils/authentication/AuthenticationService";
 import ErrorAlert from "~/components/AlertBox/ErrorAlert.vue";
+import {useUserStore} from "~/store/userStore";
 
-
+const userStore = useUserStore();
 const router = useRouter();
 
 const { t } = useI18n();
@@ -44,9 +45,23 @@ const sendForm = async () => {
   try {
     const response = await postRegister(form);
     if (response.status === 200) {
-      form.name = '';
-      form.email = '';
-      form.password = '';
+      await sendLogin();
+    }
+  } catch (error: any) {
+    errorMessage.value = error.response.data || 'An error occurred.';
+    catchError.value = true;
+  }
+};
+const sendLogin = async () => {
+  try {
+    const loginForm = {
+      email: form.email,
+      password: form.password,
+    };
+    const response = await postLogin(loginForm);
+    if (response.status === 200) {
+      userStore.logIn(response.data);
+      await userStore.checkAuthStatus();
       await router.push('/');
     }
   } catch (error: any) {

@@ -1,7 +1,7 @@
 <template>
-  <div class="flex items-center">
-    <div class="administrate-fridge m-auto mt-10">
-      <h1>Administrer Kjøleskap</h1>
+  <div class="flex items-center mt-10">
+    <div class="administrate-fridge m-auto">
+      <h1 class="mt-10" >{{$t("administrate_refrigerator")}}</h1>
       <div>
         <div class="wrapper">
           <FormEditFridgeForm :refrigerator="fridge"/>
@@ -9,12 +9,12 @@
       </div>
       <div class="divider"></div>
       <div>
-          <h1 class="title">Inviter Bruker</h1>
+          <h1 class="title">{{ $t("add_member") }}</h1>
           <div class="invite-wrapper">
               <FormInviteUserForm :refrigerator="fridge" />
           </div>
           <div v-if="fridge !== null">
-              <h1 class="title">Rediger Brukere</h1>
+              <h1 class="title">{{ $t("edit_members") }}</h1>
               <div class="userlist-wrapper" v-for="member in fridge.members" :key="member.username">
                   <div class="userinfo-divider">
                       <div class="userinfo">
@@ -26,22 +26,22 @@
                            <h4>{{ member.username }}</h4>  
                           </div>
                       </div>
-                      <div class="member-role">
-                          <select v-model="member.fridgeRole" @change="handleOptionChange({ id: member.id, name: member.name, username: member.email, role: member.refrigeratorRole })">
-                              <option value="USER">User</option>
-                              <option value="SUPERUSER">Superuser</option>
+                      <div class="member-role ">
+                          <select class="hover:cursor-pointer" v-model="member.fridgeRole" @change="handleOptionChange(member)">
+                              <option class="hover:cursor-pointer" value="USER">User</option>
+                              <option class="hover:cursor-pointer" value="SUPERUSER">Superuser</option>
                           </select>
                       </div>
-                      <div class="choice-wrapper" v-if="isUser(member.username)" @click="leaveFridge({ id: member.id, name: member.name, username: member.email, role: member.refrigeratorRole })">
+                      <div class="choice-wrapper" v-if="isUser(member.username)" @click="leaveFridge(member)">
                           <div class="action-choice">
                               <img class="choice-image" src="@/assets/icons/openDoor.png">
-                              <h4>Forlat Kjøleskap</h4>
+                              <h4>{{ $t("leave_refrigerator")}}</h4>
                           </div>
                       </div>
-                      <div class="choice-wrapper" v-else @click="deleteMember({ id: member.id, name: member.name, username: member.email, role: member.refrigeratorRole })">
+                      <div class="choice-wrapper" v-else @click="deleteMember(member)">
                           <div class="action-choice">
                               <img class="choice-image" src="@/assets/icons/trash.png">
-                              <h4>Fjern fra Kjøleskap</h4>
+                              <h4>{{ $t("remove_member")}}</h4>
                           </div>
                       </div>
                   </div> 
@@ -49,7 +49,7 @@
               </div>
           </div>
       </div>
-      <ButtonGreenButton label="Lagre Brukerroller" width="67%" height="50px" @click="saveUserRoles"/>
+      <ButtonGreenButton :label="$t('save_userroles')" width="67%" height="50px" @click="handleSaveUserRoles"/>
   </div>
   </div>
 </template>
@@ -60,76 +60,108 @@ import GrayButton from "~/components/Button/GrayButton.vue";
 import BaseInput from "~/components/Form/BaseInput.vue";
 import { useRefridgeratorStore } from '~/store/refrigeratorStore';
 import type { Refrigerator } from '~/types/RefrigeratorType'
-import { getRefrigeratorById } from '~/service/httputils/RefrigeratorService';
+import { getRefrigeratorById, postEditMembers, postRemoveMember } from '~/service/httputils/RefrigeratorService';
 import type {Member} from "~/types/MemberType"
 import { getUserData } from "~/service/httputils/authentication/AuthenticationService";
+import { MemberRequest } from "~/types/MemberRequest";
+import { ErrorCodes } from "nuxt/dist/app/compat/capi";
 
 export default {
   data() {
-      return {
-          changes: [] as string[],
-          fridge: null as Refrigerator | null,
-          currentUser : null as String | null
-      };
+    return {
+      changes: [] as string[],
+      fridge: null as Refrigerator | null,
+      currentUser : null as String | null,
+      editedMembers : new Map<String, Member>() 
+  };
   },
   setup() {
-      const errorMessage = ref("");
-      const refrigeratorStore = useRefridgeratorStore();
-      const {locale, locales, t} = useI18n()
+    const errorMessage = ref("");
+    const refrigeratorStore = useRefridgeratorStore();
+    const {locale, locales, t} = useI18n()
 
 
-      const sendForm = async () => {
-            try {
-                console.log("hei")
-                console.log(`code to change to ${form.name} and ${form.adress}`)
-            } catch (error: any) {
-            errorMessage.value = error.response;
-            }
-        };
-
-      const form = reactive({
-          adress: '',
-          name: '',
-      });
-    
-      return {
-          refrigeratorStore,
-          sendForm, 
-          errorMessage,
-          form,
+    const sendForm = async () => {
+      try {
+      } catch (error: any) {
+      errorMessage.value = error.response;
       }
+    };
+
+    const form = reactive({
+      adress: '',
+      name: '',
+    });
+  
+    return {
+      refrigeratorStore,
+      sendForm, 
+      errorMessage,
+      form,
+      locale,
+      locales,
+      t
+    }
   },
   methods: {
-    
+      handleOptionChange(member : Member) {
+        this.editedMembers.set(member.username, member)
+        console.log(this.editedMembers)
+      },
+      async handleSaveUserRoles(){
+        let memberRequests : MemberRequest[] = [];
+        this.editedMembers.forEach((member : Member) =>{
+            const memberRequest : MemberRequest = {
+            refrigeratorId : member.refrigeratorId,
+            userName : member.username,
+            fridgeRole : member.fridgeRole 
+          }
+          memberRequests.push(memberRequest); 
+        })
 
-      handleOptionChange(member: { id: number; name: string; username: string; role: string }) {
-        return 
+        try{
+            let response = await postEditMembers(memberRequests); 
+            console.log(response)
+            if(response !== null && response.status == 200){
+              if(response.data == ""){
+                alert(this.t("last_superuser_alert"))
+              }
+              else {
+                alert(this.t("edit_refrigerator_success"))
+                location.reload(); 
+              }
+            }
+            else {
+              alert(this.t("edit_refrigerator_failure"))
+              location.reload(); 
+            }
+        }
+        catch(error){
+          alert(this.t("edit_refrigerator_failure"))
+          console.log(error)
+          location.reload(); 
+        }
+        //
       },
 
-      saveUserRoles() {
+      leaveFridge(member : Member) {
         return
       },
 
-      leaveFridge(member: { id: number; name: string; username: string; role: string }) {
-        return
-      },
-
-      deleteMember(member: { id: number; name: string; username: string; role: string }) {
+      deleteMember(member : Member) {
         return
       },
       async getRefrigerator() {
       let refrigerator = null as Refrigerator | null; 
-      console.log(this.refrigeratorStore.getSelectedRefrigerator)
       let response = await getRefrigeratorById(this.refrigeratorStore.getSelectedRefrigerator.id);
       if(response !== null){
           let element : Refrigerator = response.data; 
           let membersResponse = [] as Member[]; 
           element.members?.forEach((element : Member) => {
-              const object : Member = {refrigeratorid : element.refrigeratorid, name : element.name, username : element.username, fridgeRole : element.fridgeRole}
+              const object : Member = {refrigeratorId : element.refrigeratorId, name : element.name, username : element.username, fridgeRole : element.fridgeRole}
               membersResponse.push(object); 
           })
           refrigerator = {id: element.id, name: element.name, address: element.address, members: membersResponse}
-          console.log(membersResponse)
           this.fridge = refrigerator
 
       }
@@ -180,9 +212,9 @@ export default {
 }
 
 .title {
-  display: flex;
-  align-items: center;
+  text-align:center; 
   margin-bottom: 20px;
+  margin-top:10px; 
 }
 
 .divider{

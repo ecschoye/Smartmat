@@ -10,4 +10,8 @@ import java.util.Optional;
 @Repository
 public interface RefrigeratorRepository extends JpaRepository<Refrigerator, Long> {
     Optional<Refrigerator> findById(Long id);
+
+    boolean existsByName(String name);
+
+    Optional<Refrigerator> findByName(String test_refrigerator);
 }

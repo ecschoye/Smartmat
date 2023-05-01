@@ -1,6 +1,6 @@
 export interface Member {
-  id: number;
+  refrigeratorId: number;
   name: string;
-  email: string;
-  refrigeratorRole: string;
+  username: string;
+  fridgeRole: string;
 }

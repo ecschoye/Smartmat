@@ -46,7 +46,6 @@ public class AuthenticationService {
      */
     public RegisterResponse register(RegisterRequest request) throws UserAlreadyExistsException {
         var user = User.builder()
-                .id(String.valueOf(java.util.UUID.randomUUID()))
                 .email(request.getEmail())
                 .name(request.getName())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -58,6 +57,7 @@ public class AuthenticationService {
         repository.save(user);
         return RegisterResponse.builder().userId(user.getId()).userRole(String.valueOf(user.getUserRole())).message("User registered successfully!").build();
     }
+
 
 
     /**

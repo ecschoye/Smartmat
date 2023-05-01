@@ -3,17 +3,13 @@ package ntnu.idatt2106.backend.service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
-import ntnu.idatt2106.backend.exceptions.SaveException;
-import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
-import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
-import ntnu.idatt2106.backend.model.grocery.Grocery;
-import ntnu.idatt2106.backend.model.Refrigerator;
-import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
-import ntnu.idatt2106.backend.model.SubCategory;
+import ntnu.idatt2106.backend.exceptions.*;
+import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
+import ntnu.idatt2106.backend.model.grocery.Grocery;
+import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.repository.GroceryRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
@@ -24,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +41,7 @@ public class GroceryService {
     private final GroceryRepository groceryRepository;
     private final SubCategoryRepository subCategoryRepository;
     private final RefrigeratorService refrigeratorService;
+    private final NotificationService notificationService;
 
     /**
      * Saves a grocery to a refrigerator. If it is a custom
@@ -241,5 +235,27 @@ public class GroceryService {
     public List<GroceryDTO> getAllGroceriesDTO() {
         List<Grocery> groceries = groceryRepository.findAll();
         return groceries.stream().map(GroceryDTO::new).collect(Collectors.toList());
+    }
+
+    public void updateRefrigeratorGrocery(User user, RefrigeratorGroceryDTO refrigeratorGroceryDTO, HttpServletRequest request) throws UserNotFoundException, UnauthorizedException, NotificationException {
+        Optional<RefrigeratorGrocery> oldGrocery = refrigeratorGroceryRepository.findById(refrigeratorGroceryDTO.getId());
+        if(oldGrocery.isEmpty()){
+            throw new EntityNotFoundException("Could not find grocery with id: " + refrigeratorGroceryDTO.getId());
+        }
+        FridgeRole userRole = getFridgeRole(oldGrocery.get().getRefrigerator(), request);
+        if(userRole.equals(FridgeRole.USER)){
+            throw new UnauthorizedException("User does not have permission to do updates in this refrigerator");
+        }
+
+        if(!refrigeratorGroceryDTO.getPhysicalExpireDate().equals(oldGrocery.get().getPhysicalExpireDate())){
+            notificationService.deleteNotificationsByRefrigeratorGrocery(oldGrocery.get());
+        }
+        RefrigeratorGrocery newGrocery = RefrigeratorGrocery.builder()
+                .physicalExpireDate(refrigeratorGroceryDTO.getPhysicalExpireDate())
+                .grocery(oldGrocery.get().getGrocery())
+                .refrigerator(oldGrocery.get().getRefrigerator())
+                .id(refrigeratorGroceryDTO.getId())
+        .build();
+        refrigeratorGroceryRepository.save(newGrocery);
     }
 }

@@ -103,6 +103,12 @@ public class GlobalExceptionHandler {
                 .body("An unexpected error occurred: " + ex.getMessage());
     }
 
+    @ExceptionHandler(LastSuperuserException.class)
+    public ResponseEntity<String> handleLastSuperUserexception(LastSuperuserException e){
+        logger.warn("Could not complete operation: Is last superuser in refrigerator");
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
     @ExceptionHandler(NotificationException.class)
     public ResponseEntity<String> handleNotificationException(NotificationException ex){
         logger.info("An error uccured when retrieving notifications" + ex.getMessage());

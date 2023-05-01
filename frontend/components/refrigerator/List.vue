@@ -8,8 +8,8 @@
           </div>
           <div class="pr-6 md:pl-1">
             {{ category.name }} ({{ categorySum (category) }})
-              <div class="px-5" :class="{'text-red-500' : isNearExpiry(getClosestExpiryDateForCategory(category)!) }">
-            {{ getClosestExpiryDateForCategory(category)?.toLocaleDateString() }}
+              <div v-if="getClosestExpiryDateForCategory(category) !== null" class="px-5" :class="{'text-red-500' : isNearExpiry(getClosestExpiryDateForCategory(category)!) }">
+            {{ getClosestExpiryDateForCategory(category)!.toLocaleDateString() }}
           </div>
           <i :class="['fa', isCategoryOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
             <i :class="['fa', isCategoryOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
@@ -19,8 +19,8 @@
           <li v-for="(group, index2) in Array.from(category.groups.values())" :key="index2">
             <div @click="toggleCategoryGroup(index, index2)" class="flex">
               - {{ group.name }} ({{ group.groceries.length }}) 
-              <div class="px-5" :class="{'text-red-500' : isNearExpiry(getClosestExpiryDateForCategory(category)!) }">
-                {{ getClosestExpiryDateForGroup(group)?.toLocaleDateString() }}
+              <div v-if="getClosestExpiryDateForGroup(group) !== null" class="px-5" :class="{'text-red-500' : isNearExpiry(getClosestExpiryDateForCategory(category)!) }">
+                {{ getClosestExpiryDateForGroup(group)!.toLocaleDateString() }}
               </div>
               <i :class="['fa', isCategoryGroupOpen(index,index2) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
             </div>

@@ -4,7 +4,7 @@ package ntnu.idatt2106.backend.model.recipe;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import jakarta.persistence.*;
-import ntnu.idatt2106.backend.model.Grocery;
+import ntnu.idatt2106.backend.model.grocery.Grocery;
 
 @Data
 @Builder

@@ -1,8 +1,7 @@
 package ntnu.idatt2106.backend.repository;
 
-import ntnu.idatt2106.backend.model.Category;
-import ntnu.idatt2106.backend.model.Grocery;
-import ntnu.idatt2106.backend.model.GroceryShoppingList;
+import ntnu.idatt2106.backend.model.category.Category;
+import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

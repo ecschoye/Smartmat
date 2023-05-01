@@ -4,14 +4,20 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.*;
-import ntnu.idatt2106.backend.model.dto.ShoppingListElementDTO;
+import ntnu.idatt2106.backend.model.category.Category;
+import ntnu.idatt2106.backend.model.category.CategoryComparator;
+import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
+import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTOComparator;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
+import ntnu.idatt2106.backend.model.grocery.Grocery;
+import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,8 +92,8 @@ public class ShoppingListService {
             throw new NoGroceriesFound("Could not find any groceries for shopping list id " + shoppingListId);
 
         }
-        List<ShoppingListElementDTO> dtos = groceries.stream().map(ShoppingListElementDTO::new).collect(Collectors.toList());
-        return dtos;
+        return groceries.stream().map(ShoppingListElementDTO::new)
+                .sorted(new ShoppingListElementDTOComparator()).collect(Collectors.toList());
     }
 
     /**
@@ -105,8 +111,8 @@ public class ShoppingListService {
             throw new NoGroceriesFound("Could not find any groceries for shopping list id " + shoppingListId);
         }
 
-        List<ShoppingListElementDTO> dtos = groceries.stream().map(ShoppingListElementDTO::new).collect(Collectors.toList());
-        return dtos;
+        return groceries.stream().map(ShoppingListElementDTO::new)
+                .sorted(new ShoppingListElementDTOComparator()).collect(Collectors.toList());
     }
 
     /**
@@ -121,6 +127,7 @@ public class ShoppingListService {
             logger.info("Received no categories from shopping list with id {}", shoppingListId);
             throw new CategoryNotFound("Could not find any categories from shopping list with id " + shoppingListId);
         }
+        categories.sort(new CategoryComparator());
         return categories;
     }
 

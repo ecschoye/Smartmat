@@ -159,10 +159,12 @@ export default {
       };
       try {
         const response = await postRemoveMember(removeMemberRequest);
-        // Handle success case
-        console.log(response);
+        if(response !== null && response.status == 200) {
+          alert(this.t("remove_member_succsess"))
+          location.reload();
+        }
       } catch (error) {
-        // Handle error case
+        alert(this.t("remove_member_failed"))
         console.error(error);
       }
     },
@@ -198,7 +200,7 @@ export default {
     
   }
 }
-}
+
 </script>
 
 

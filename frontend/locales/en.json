@@ -71,5 +71,7 @@
   "save_userroles" : "Save Users",
   "invite_user" : "Invite User",
   "leave_refrigerator" : "Leave Refrigerator",
-  "remove_member" : "Remove From Refrigerator"
+  "remove_member" : "Remove From Refrigerator",
+  "remove_member_succsess" : "Member successfully removed",
+  "remove_member_failed" : "Member could not be removed"
 }

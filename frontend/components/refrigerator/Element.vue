@@ -14,10 +14,23 @@
   import { useRefrigeratorStore } from '~/store/refrigeratorStore';
   import type { GroceryEntity } from '~/types/GroceryEntityType';
   import { updateGrocery } from '~/service/httputils/GroceryService';
-import exp from 'constants';
-import { update } from 'cypress/types/lodash';
-  
+  import { getNotifications } from '~/service/httputils/NotificationService';
+  import { useNotificationStore } from '~/store/notificationStore';  
+
   const refrigeratorStore = useRefrigeratorStore();
+  const notificationStore = useNotificationStore();
+
+  async function loadNotifications(){
+    try{
+      const response = await getNotifications();
+      if(response.status == 200){
+        notificationStore.setNotification(response.data);
+      }
+    }catch(error : any){
+      console.log(error);
+    }
+  }
+
   const props = defineProps({
     grocery: {
       type: Object as () => GroceryEntity,
@@ -53,6 +66,7 @@ import { update } from 'cypress/types/lodash';
           if(response.status == 200){
             refrigeratorStore.updateGrocery(newGrocery);
             needsConfirmation.value = false;
+            loadNotifications();
           }
         }
         catch(error){

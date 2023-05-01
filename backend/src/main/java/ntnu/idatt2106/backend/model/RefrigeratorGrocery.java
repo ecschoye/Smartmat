@@ -32,7 +32,7 @@ public class RefrigeratorGrocery {
     private Date physicalExpireDate;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "refrigeratorId")
     @Schema(description = "The refrigerator the grocery is in")
     private Refrigerator refrigerator;

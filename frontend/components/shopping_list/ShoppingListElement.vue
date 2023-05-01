@@ -125,6 +125,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 }
             },
             updateGrocery(newQuantity: number) {
+                this.editElement = false
                 this.ElementDetails.quantity = newQuantity
                 let quantity = newQuantity
                 ShoppingListService.updateGrocery(this.ElementDetails.id, quantity)

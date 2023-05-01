@@ -14,7 +14,7 @@
   import { useUserStore } from "~/store/userStore";
   import { postRegister } from "~/service/httputils/authentication/AuthenticationService";
   import { Refrigerator } from '~/types/RefrigeratorType'
-  import { useRefridgeratorStore } from '~/store/refrigeratorStore';
+  import { useRefrigeratorStore } from '~/store/refrigeratorStore';
   import { postEditFridge } from "~/service/httputils/RefrigeratorService";
 
   export default {
@@ -26,7 +26,7 @@
         const {locale, locales, t} = useI18n()
         const errorMessage = ref("");
         const router = useRouter();
-        const refrigeratorStore = useRefridgeratorStore();
+        const refrigeratorStore = useRefrigeratorStore();
 
         const form = reactive({
             address: '',

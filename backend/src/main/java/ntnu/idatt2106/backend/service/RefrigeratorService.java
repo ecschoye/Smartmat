@@ -5,10 +5,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
-import ntnu.idatt2106.backend.model.Refrigerator;
-import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
-import ntnu.idatt2106.backend.model.RefrigeratorUser;
-import ntnu.idatt2106.backend.model.User;
+import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
@@ -17,13 +14,11 @@ import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
-import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +41,7 @@ public class RefrigeratorService {
     private final JwtService jwtService;
     private final RefrigeratorRepository refrigeratorRepository;
     private final RefrigeratorUserRepository refrigeratorUserRepository;
-    private final RefrigeratorGroceryRepository refrigeratorGroceryRepository;
+    private final ShoppingListRepository shoppingListRepository;
     private final UserRepository userRepository;
 
     private final Logger logger = LoggerFactory.getLogger(RefrigeratorService.class);
@@ -326,36 +321,17 @@ public class RefrigeratorService {
             throw new AccessDeniedException("Failed to delete refrigerator: User not superuser");
         }
         if (refrigeratorRepository.existsById(refrigeratorId)) {
-            long members = refrigeratorUserRepository.findByRefrigeratorId(refrigeratorId).size();
-            if(members > 0){
-                try {
-                    refrigeratorUserRepository.removeByRefrigeratorId(refrigeratorId);
-                } catch (Exception e) {
-                    logger.error("Failed to delete refrigerator: failed to remove refrigerator members, {}",e.getMessage());
-                    throw e;
-                }
-            }
-            long groceries = refrigeratorGroceryRepository.findAllByRefrigeratorId(refrigeratorId).size();
-            if(groceries > 0){
-                try {
-                    refrigeratorGroceryRepository.removeByRefrigeratorId(refrigeratorId);
-                } catch (Exception e) {
-                    logger.error("Failed to delete refrigerator: failed to remove refrigerator groceries, {}",e.getMessage());
-                    throw e;
-                }
-            }
-            try {
-                refrigeratorRepository.deleteById(refrigeratorId);
-                return;
-            } catch (EmptyResultDataAccessException e) {
-                logger.error("Failed to delete refrigerator: Id {}: {},", refrigeratorId, e.getMessage());
-            }
+
+            // Remove Shopping List
+            shoppingListRepository.removeByRefrigerator_Id(refrigeratorId);
+
+            // Remove Refrigerator entity
+            refrigeratorRepository.deleteById(refrigeratorId);
         }
         else{
             logger.error("Failed to delete refrigerator: Refrigerator with id {} does not exist", refrigeratorId);
             throw new EntityNotFoundException("Failed to delete refrigerator: Refrigerator does not exist");
         }
-        throw new Exception("Failed to delete refrigerator");
     }
 
 

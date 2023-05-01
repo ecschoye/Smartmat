@@ -14,10 +14,7 @@ import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
-import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
-import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
-import ntnu.idatt2106.backend.repository.RefrigeratorUserRepository;
-import ntnu.idatt2106.backend.repository.UserRepository;
+import ntnu.idatt2106.backend.repository.*;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,6 +43,9 @@ public class RefrigeratorServiceTest {
 
     @Mock
     private RefrigeratorGroceryRepository refrigeratorGroceryRepository;
+
+    @Mock
+    private ShoppingListRepository shoppingListRepository;
 
     @Mock
     private UserRepository userRepository;

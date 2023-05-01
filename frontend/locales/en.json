@@ -58,5 +58,18 @@
   "use": "Use",
   "throw_away": "Throw away",
   "select_fridge" : "Select Fridge",
-  "address" : "Address"
+  "address" : "Address",
+  "edit_refrigerator_success" : "Refrigerator Saved",
+  "edit_refrigerator_failure" : "Refrigerator Could Not Be Saved",
+  "member_add_success" : "Member Added",
+  "last_superuser_alert" : "Warning! Refrigerator needs a superuser at all times",
+  "create_refrigerator" : "New Refrigerator",
+  "administrate_refrigerator" : "Administrate Refrigerator",
+  "add_member" : "Add Member",
+  "edit_members" : "Edit Users",
+  "update_information" : "Update Information",
+  "save_userroles" : "Save Users",
+  "invite_user" : "Invite User",
+  "leave_refrigerator" : "Leave Refrigerator",
+  "remove_member" : "Remove From Refrigerator"
 }

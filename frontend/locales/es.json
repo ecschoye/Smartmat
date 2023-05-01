@@ -58,5 +58,18 @@
   "use": "Usar",
   "throw_away": "Tirar",
   "select_fridge" : "Seleccione Frigorífico",
-  "address" : "Dirección"
+  "address" : "Dirección",
+  "edit_refrigerator_success" : "Refrigerador guardado",
+  "edit_refrigerator_failure" : "No se pudo guardar el refrigerador",
+  "member_add_success" : "Miembro agregado",
+  "last_superuser_alert" : "¡Advertencia! El refrigerador necesita un superusuario en todo momento",
+  "create_refrigerator" : "Nuevo refrigerador",
+  "administrate_refrigerator" : "Administrar refrigerador",
+  "add_member" : "Agregar miembro",
+  "edit_members" : "Editar usuarios",
+  "update_information" : "Actualizar información",
+  "save_userroles" : "Guardar usuarios",
+  "invite_user" : "Invitar usuario",
+  "leave_refrigerator" : "Salir del refrigerador",
+  "remove_member" : "Eliminar del refrigerador"
 }

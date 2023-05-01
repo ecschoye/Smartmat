@@ -4,7 +4,7 @@
       <BaseInput id="name" class="input-container" type="name" :label="$t('name')" v-model="form.name" />
       <BaseInput id="address" class="input-container" type="address" :label="$t('address')" v-model="form.address" />
       <div class="button-wrapper">
-        <GreenButton label="Lag kjølskap" width="100%" height="50px" />
+        <GreenButton :label="$t('create_refrigerator')" width="100%" height="50px" />
       </div>
       <ErrorAlert class="mt-4" v-if="catchError" :errorMessage="errorMessage" />
     </form>

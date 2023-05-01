@@ -205,7 +205,7 @@ public class RefrigeratorServiceTest {
 
     @Test
     @DisplayName("Test setFridgeRole with valid input")
-    public void testSetRoleWithValidInput() throws UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
+    public void testSetRoleWithValidInput() throws UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException, LastSuperuserException {
         User user = new User();
         user.setId("test_user_id");
         user.setEmail("test_user@test.com");

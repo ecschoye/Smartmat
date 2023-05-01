@@ -59,6 +59,17 @@
   "throw_away": "Kast",
   "select_fridge" : "Velg Kjøleskap",
   "address" : "Addresse",
-  "edit_success" : "Kjøleskap endret.",
-  "member_add_success" : "Medlem lagt til."
+  "edit_refrigerator_success" : "Kjøleskap endret.",
+  "edit_refrigerator_failure" : "Kjøleskap kunne ikke endres",
+  "member_add_success" : "Medlem lagt til.",
+  "last_superuser_alert" : "Advarsel! Kjøleskap må til enhver tid ha en superbruker",
+  "create_refrigerator" : "Nytt Kjøleskap",
+  "administrate_refrigerator" : "Administrer Kjøleskapet",
+  "add_member" : "Legg Til Medlem",
+  "edit_members" : "Rediger Brukere",
+  "update_information" : "Oppdater Informasjon",
+  "save_userroles" : "Lagre Brukerroller",
+  "invite_user" : "Inviter Bruker",
+  "leave_refrigerator" : "Forlat Kjøleskap",
+  "remove_member" : "Fjern Fra Kjøleskap"
 }

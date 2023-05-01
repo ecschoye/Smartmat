@@ -4,10 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
-import ntnu.idatt2106.backend.exceptions.SaveException;
-import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
-import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
+import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.dto.MemberDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
@@ -23,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -67,9 +66,35 @@ public class RefrigeratorController {
         try {
             result = refrigeratorService.setFridgeRole(memberRequest, httpRequest);
             if (result == null) throw new Exception();
+        } catch(LastSuperuserException e){
+          logger.warn("Could not edit role: Is last superuser in refrigerator");
+          return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("Could not edit role");
+            logger.error("Could not edit role: " + e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        logger.info("Returning response");
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Edit role of a number of refrigerator members")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Roles edited successfully", content = @Content(schema = @Schema(implementation = MemberDTO.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PostMapping("/members/edit-roles")
+    @PreAuthorize("isAuthenticated()")
+    @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
+    public ResponseEntity<MemberDTO[]> editRoles(@Valid @RequestBody MemberRequest[] memberRequests, HttpServletRequest httpRequest) throws Exception {
+        logger.info("Received request to edit member role in refrigerator");
+        MemberDTO[] result = new MemberDTO[memberRequests.length];
+        try {
+            for (int i = result.length-1; i >= 0; i--) {
+                result[i] = refrigeratorService.setFridgeRole(memberRequests[i], httpRequest);
+            }
+        } catch (Exception e) {
+            logger.error("Could not edit role: " + e.getMessage());
+            throw e;
         }
         logger.info("Returning response");
         return new ResponseEntity<>(result, HttpStatus.OK);

@@ -26,12 +26,15 @@ export const postEditFridge = async (refrigerator : Refrigerator): Promise<Axios
     return axiosInstance.post('/api/refrigerator/edit', refrigerator);
 }
 
-export const postEditMember = async (memberRequest : Member) : Promise<AxiosResponse> => {
+export const postEditMember = async (memberRequest : MemberRequest) : Promise<AxiosResponse> => {
     return axiosInstance.post('/api/refrigerator/members/edit-role', memberRequest); 
 }
 
 export const postRemoveMember = async (removeMemberRequest : RemoveMemberRequest) : Promise<AxiosResponse> => {
-    return axiosInstance.post('/api/refrigerator/members/remove', removeMemberRequest); 
+    return axiosInstance.post('/api/refrigerator/members/remove', removeMemberRequest);
 }
 
+export const postEditMembers = async (memberRequests : MemberRequest[]) : Promise<AxiosResponse> => {
+    return axiosInstance.post('/api/refrigerator/members/edit-roles', memberRequests);
+}
 

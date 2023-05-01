@@ -18,6 +18,7 @@ import { GroceryEntity } from '~/types/GroceryEntityType';
 
 const refrigeratorStore = useRefrigeratorStore();
 
+
 const position = ref(0);
 
 const toggle = ref(false);
@@ -26,9 +27,6 @@ async function onToggleCreate(payload : boolean){
     toggleCreate.value = payload;
     loadGroceries();
 }
-
-
-
 
 
 const toggleCreate = ref(false);

@@ -58,7 +58,7 @@
 import GreenButton from "~/components/Button/GreenButton.vue";
 import GrayButton from "~/components/Button/GrayButton.vue";
 import BaseInput from "~/components/Form/BaseInput.vue";
-import { useRefridgeratorStore } from '~/store/refrigeratorStore';
+import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 import type { Refrigerator } from '~/types/RefrigeratorType'
 import { getRefrigeratorById, postEditMembers, postRemoveMember } from '~/service/httputils/RefrigeratorService';
 import type {Member} from "~/types/MemberType"
@@ -78,7 +78,7 @@ export default {
   },
   setup() {
     const errorMessage = ref("");
-    const refrigeratorStore = useRefridgeratorStore();
+    const refrigeratorStore = useRefrigeratorStore();
     const {locale, locales, t} = useI18n()
 
 

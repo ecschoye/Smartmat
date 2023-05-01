@@ -53,11 +53,11 @@
                   let refrigeratorDTO : Refrigerator = {id : this.refrigerator.id, name : this.form.name, address : this.form.address, members : null}
                   postEditFridge(refrigeratorDTO).then((response) => {
                     if(response){
-                      alert(this.t("edit_success"))
+                      alert(this.t("edit_refrigerator_success"))
                       location.reload();
                     }
                     else{
-                      this.errorMessage = "Refrigerator could not be updated"
+                      this.errorMessage = this.t("edit_refrigerator_failure"); 
                     }
                   })
 

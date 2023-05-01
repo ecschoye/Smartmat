@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class NewRefrigeratorDTO {
 
-    private String useEmail;
+    private String userEmail;
     private String name;
     private String address;
 }

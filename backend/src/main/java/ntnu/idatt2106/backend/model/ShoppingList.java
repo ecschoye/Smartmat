@@ -28,7 +28,9 @@ public class ShoppingList {
     @Schema(description = "The refrigerator connected to the shopping list")
     private Refrigerator refrigerator;
 
+    /**TODO Test if this causes groceries to be deleted when deleting ShoppingList
     @OneToMany(mappedBy = "shoppingList", cascade = CascadeType.REMOVE)
-    private Set<GroceryShoppingList> groceryShoppingLists;
+    @Schema(description = "The grocery items on the shopping list")
+    private Set<GroceryShoppingList> groceryItems;*/
 }
 

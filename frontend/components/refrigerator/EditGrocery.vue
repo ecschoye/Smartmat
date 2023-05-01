@@ -51,6 +51,8 @@ async function removeGrocery() {
     catch(error){
         console.log(error)
     } 
+
+    //TODO: add enpoint for this in shopping list
 }
 
 async function eatGrocery() {

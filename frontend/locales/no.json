@@ -71,5 +71,10 @@
   "save_userroles" : "Lagre Brukerroller",
   "invite_user" : "Inviter Bruker",
   "leave_refrigerator" : "Forlat Kjøleskap",
-  "remove_member" : "Fjern Fra Kjøleskap"
+  "remove_member" : "Fjern Fra Kjøleskap",
+  "remove_member_succsess" : "Medlem fjernet",
+  "remove_member_failed" : "Medlem kunne ikke fjernes",
+  "force_delete_alert" : "Advarsel! Å forlate et kjøleskap som siste superbruker vil slette kjøleskapet og alt innhold. Er du sikker på at du ønsker å gjøre dette?",
+  "user_removed_success" : "Fjernet som bruker",
+  "user_removed_failure" : "Bruker kunne ikke fjernes, vennligst prøv igjen"
 }

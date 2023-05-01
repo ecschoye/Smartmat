@@ -32,7 +32,7 @@
                               <option class="hover:cursor-pointer" value="SUPERUSER">Superuser</option>
                           </select>
                       </div>
-                      <div class="choice-wrapper" v-if="isUser(member.username)" @click="leaveFridge(member)">
+                      <div class="choice-wrapper" v-if="isUser(member.username)" @click="handleLeaveFridge(member)">
                           <div class="action-choice">
                               <img class="choice-image" src="@/assets/icons/openDoor.png">
                               <h4>{{ $t("leave_refrigerator")}}</h4>
@@ -142,16 +142,41 @@ export default {
           location.reload(); 
         }
       },
-
-
-      leaveFridge(member : Member) {
-        return
+      async leaveFridge(removeMemberRequest : RemoveMemberRequest) {
+        try {
+          let response = await postRemoveMember(removeMemberRequest); 
+          if(response !== null && response.status == 200){
+            if(response.data == "" && removeMemberRequest.forceDelete == false){
+              if(window.confirm(this.t("force_delete_alert"))) {
+                removeMemberRequest.forceDelete = true; 
+                await this.leaveFridge(removeMemberRequest); 
+              }
+            }
+            else {
+              alert(this.t("user_removed_success"))
+              this.$router.push("/")
+            }
+          }
+          else {
+            alert(this.t("user_removed_failure"))
+            location.reload(); 
+          }
+        }
+        catch(error) {
+          alert(this.t("user_removed_failure"))
+          console.log(error)
+          location.reload();
+        }
       },
-
-
+      async handleLeaveFridge(member : Member) {
+        const removeMemberRequest : RemoveMemberRequest = {
+          refrigeratorId : this.refrigeratorStore.getSelectedRefrigerator.id,
+          userName : member.username,
+          forceDelete : false
+        }
+        await this.leaveFridge(removeMemberRequest); 
+      },
       async deleteMember(username : String) {
-        console.log(this.refrigeratorStore.getSelectedRefrigerator.id)
-        console.log(username)
         const removeMemberRequest: RemoveMemberRequest = {
         refrigeratorId: this.refrigeratorStore.getSelectedRefrigerator.id,
         userName: username,

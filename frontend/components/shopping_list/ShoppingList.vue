@@ -3,8 +3,8 @@
         <div class="w-2/5 h-96 p-1 overflow-auto bg-white border-2 rounded-lg border-black relative">
             <div>
                 <div class="m-1 pl-2 pr-2 flex justify-center text-lg font-sans font-medium">
-                    <button @click.stop="selectTab('isShoppingListSelected')" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingListSelected}" class="pl-4 pr-4 bg-white border-2 rounded-l-lg border-black cursor-pointer hover:bg-slate-200"> Handleliste </button>
-                    <button @click.stop="selectTab('isShoppingCartSelected')" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingCartSelected}" class="pl-4 pr-4 bg-white border-2 rounded-r-lg border-black cursor-pointer hover:bg-slate-200"> Handlevogn </button>
+                    <button @click.stop="selectListTab" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingListSelected}" class="pl-4 pr-4 bg-white border-2 rounded-l-lg border-black cursor-pointer hover:bg-slate-200"> Handleliste </button>
+                    <button @click.stop="selectCartTab" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingCartSelected}" class="pl-4 pr-4 bg-white border-2 rounded-r-lg border-black cursor-pointer hover:bg-slate-200"> Handlevogn </button>
                 </div>
             </div>
             <div class="flex justify-center">
@@ -17,7 +17,8 @@
                             v-for="category in categoryList"
                             :key="category.id"
                             :CategoryDetails="category"
-                            :ShoppingListId="shoppingListId">
+                            :ShoppingListId="shoppingListId"
+                            @updateList="loadCategories">
                         </ShoppingListCategory>
                     </div>
                     <div class="p-2 flex justify-end absolute bottom-0 right-0">
@@ -32,7 +33,8 @@
                         <ShoppingListElement
                             v-for="element in shoppingCart"
                             :key="element.id"
-                            :ElementDetails=element>
+                            :ElementDetails=element
+                            @updateList="loadShoppingCart">
                         </ShoppingListElement>
                         <div class="p-2 flex justify-end absolute bottom-0 right-0">
                             <button @click.stop="addAllElementsToRefrigerator" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-300 bg-sky-400"> Legg alt i Kjøleskapet </button>
@@ -46,7 +48,7 @@
                 :shoppingListId="shoppingListId"
             />
             <div class="p-2 flex justify-end absolute bottom-0 right-0">
-                <button @click.stop="addNewElementSelected = false" class="hover:bg-sky-200 bg-sky-300 border-2 rounded-full border-black h-8 w-8">
+                <button @click.stop="closeAddGrocery" class="hover:bg-sky-200 bg-sky-300 border-2 rounded-full border-black h-8 w-8">
                     <img src="../../assets/icons/close.png" alt="Close">
                 </button>
             </div>
@@ -96,7 +98,13 @@ import { data } from "cypress/types/jquery";
             //TODO: END
 
             //loads categories
+            this.loadCategories()
+            //loads shopping cart
+            this.loadShoppingCart()
+        },
+        async loadCategories() {
             try {
+                this.categoryList = []
                 let responseCategories = await ShoppingListService.getCategoriesFromShoppingList(this.shoppingListId);
                 if (responseCategories.data.length > 0) {
                     responseCategories.data.forEach((element: ShoppingListCategory) => {
@@ -107,8 +115,10 @@ import { data } from "cypress/types/jquery";
                 console.error(error);
                 this.categoryList = [];
             }
-            //loads shopping cart
+        },
+        async loadShoppingCart() {
             try {
+                this.shoppingCart = []
                 let responseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);
                 if (responseCart.data.length > 0) {
                     responseCart.data.forEach((element: ResponseGrocery) => {
@@ -121,15 +131,15 @@ import { data } from "cypress/types/jquery";
                 this.shoppingCart = [];
             }
         },
-        selectTab(tab: string) {
-            Object.keys(this.$data.menuOptions).forEach((key) => {
-                if (key !== tab) {
-                    (this as any).$data.menuOptions[key] = false;
-                }
-                else if (key === tab) {
-                    (this as any).$data.menuOptions[key] = true;
-                }
-            });
+        selectListTab() {
+            this.menuOptions.isShoppingListSelected = true
+            this.menuOptions.isShoppingCartSelected = false
+            this.loadCategories()
+        },
+        selectCartTab() {
+            this.menuOptions.isShoppingListSelected = false
+            this.menuOptions.isShoppingCartSelected = true
+            this.loadShoppingCart()
         },
         async addAllElementsToRefrigerator() {
             // Add an element from the shoppingCart to the Refrigerator
@@ -138,12 +148,17 @@ import { data } from "cypress/types/jquery";
                 groceryIds.push(element.id);
             })
             
-            let transferStatus = await ShoppingCartService.tranferAllToRefrigerator(groceryIds);            
+            let transferStatus = await ShoppingCartService.tranferAllToRefrigerator(groceryIds);
+            this.loadShoppingCart()            
             if (transferStatus.status == 200) {
                 alert("Varen ble vellykket overført")
             } else {
                 alert("Det oppstod en feil ved overføring av varen")
             }
+        },
+        closeAddGrocery() {
+            this.addNewElementSelected = false
+            this.loadCategories()
         }
     },
     components: { AddNewElement }

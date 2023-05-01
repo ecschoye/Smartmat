@@ -99,6 +99,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
             async removeElementFromList() {
                 // Remove the element from the list
                 let deleteResponse = await ShoppingListService.removeGroceryFromShoppingList(this.ElementDetails.id);
+                this.$emit('updateList')
                 console.log(deleteResponse);
                 if (deleteResponse.data) {
                     alert("Varen ble vellykket slettet")
@@ -107,7 +108,8 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 }
             },
             async addElementToRefrigerator() {
-                let transferStatus = await ShoppingCartService.transferToRefrigerator(this.ElementDetails.id);                
+                let transferStatus = await ShoppingCartService.transferToRefrigerator(this.ElementDetails.id);    
+                this.$emit('updateList')            
                 if (transferStatus.status == 200) {
                     alert("Varen ble vellykket overført")
                 } else {
@@ -118,6 +120,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 console.log("Inside addElementToShoppingCart")
                 // Add the element to the shoppingCart
                 let transferStatus = await ShoppingListService.transferGroceryToShoppingCart(this.ElementDetails.id);
+                this.$emit('updateList')
                 if (transferStatus.data) {
                     alert("Varen ble vellykket overført")
                 } else {
@@ -129,6 +132,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 this.ElementDetails.quantity = newQuantity
                 let quantity = newQuantity
                 ShoppingListService.updateGrocery(this.ElementDetails.id, quantity)
+                this.$emit('updateList')
             }
         }
     })

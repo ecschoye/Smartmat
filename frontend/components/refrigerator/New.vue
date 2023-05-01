@@ -1,11 +1,13 @@
 <template>
-    <div class ="w-full border mt-4 ml-2 border-black rounded-xl bg-white dark:bg-zinc-400 ">
+    <div class="w-full flex justify-center h-96 overflow-y-scroll">
+      <div class ="w-11/12 border-2 mt-4 ml-2 border-black rounded-xl bg-white dark:bg-zinc-400 ">
         <form @submit.prevent="onSubmit" class ="form bg-white mt-3 ml-2 dark:bg-zinc-400 w-11/12 flex flex-col">
-            <div>
-                <RefrigeratorDropdown @update-value="(payload) => {grocery = payload}"  />
-            </div>
+          <div>
+            <RefrigeratorDropdown @update-value="(payload) => {grocery = payload}"  />
+          </div>
           <ButtonGrayButton class ="self-center text-xs sm:text-base" id="submit" :label="$t('create_grocery')" width="70%" height="50px"/>
         </form>
+      </div>
     </div>
 </template>
 

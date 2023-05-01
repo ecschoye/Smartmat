@@ -3,13 +3,13 @@
     <ul v-if="groceries.length > 0" class="space-y-1 list-none list-inside px-3">
       <li v-for="(category, index) in categorizedGroups" :key="index">
         <div @click="toggleCategory(index)">
-          {{ category.name }} ({{ categorySum (category) }})
+          {{ category.name }} ({{ categorySum (category) }}) - {{ getClosestExpiryDateForCategory(category)?.toLocaleDateString() }}
           <i :class="['fa', isCategoryOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
         </div>
         <ul v-if="isCategoryOpen(index)" class="py-2 px-3 w-12/12 list-none list-inside bg-gray-200 dark:bg-zinc-300 rounded-xl">
           <li v-for="(group, index2) in Array.from(category.groups.values())" :key="index2">
             <div @click="toggleCategoryGroup(index, index2)">
-              - {{ group.name }} ({{ group.groceries.length }})
+              - {{ group.name }} ({{ group.groceries.length }}) - {{ getClosestExpiryDateForGroup(group)?.toLocaleDateString() }}
               <i :class="['fa', isCategoryGroupOpen(index,index2) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
             </div>
             <ul v-if="isCategoryGroupOpen(index,index2)" class="space-y-1 list-none list-inside">
@@ -54,6 +54,36 @@ const { t } = useI18n();
       name: string,
       groups: Map<string, Group>
     }
+
+    function getClosestExpiryDate(groceries: GroceryEntity[]): Date | null {
+      if (groceries.length === 0) {
+        return null;
+      }
+      let closestDate: Date | null = null;
+      for (const grocery of groceries) {
+        const expiryDate = grocery.physicalExpireDate;
+        if (!closestDate || expiryDate < closestDate) {
+          closestDate = expiryDate;
+        }
+      }
+      return closestDate;
+    }
+
+function getClosestExpiryDateForGroup(group: Group): Date | null {
+  const closestDate = getClosestExpiryDate(group.groceries);
+  return closestDate;
+}
+
+function getClosestExpiryDateForCategory(category: Category): Date | null {
+  let closestDate: Date | null = null;
+  for (const group of category.groups.values()) {
+    const groupClosestDate = getClosestExpiryDate(group.groceries);
+    if (groupClosestDate && (!closestDate || groupClosestDate < closestDate)) {
+      closestDate = groupClosestDate;
+    }
+  }
+  return closestDate;
+}
 
 
     function categorySum(category : Category){

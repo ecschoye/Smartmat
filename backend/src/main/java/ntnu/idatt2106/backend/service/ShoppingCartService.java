@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
+import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
@@ -62,13 +63,13 @@ public class ShoppingCartService {
         logger.info("Created shopping cart with id {}", shoppingCart.getId());
         return shoppingCart.getId();
     }
-    public List<ShoppingListElementDTO> getGroceries(long shoppingCartId) {
+    public List<ShoppingCartElementDTO> getGroceries(long shoppingCartId) {
         logger.info("Retrieving groceries from the database");
         List<GroceryShoppingCart> groceries = shoppingCartRepository.findByShoppingCartId(shoppingCartId);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries from the database");
         }
-        List<ShoppingListElementDTO> dtos = groceries.stream().map(ShoppingListElementDTO::new).collect(Collectors.toList());
+        List<ShoppingCartElementDTO> dtos = groceries.stream().map(ShoppingCartElementDTO::new).collect(Collectors.toList());
         logger.info("Received groceries from the database");
         return dtos;
     }
@@ -131,7 +132,7 @@ public class ShoppingCartService {
                 .description(groceryRequest.getDescription())
                 .subCategory(subCategory.get())
                 .build();
-        groceryRepository.save(grocery); //todo: what happens if i try to save the same grocery multiple times?
+        groceryRepository.save(grocery);
         logger.info("Created grocery with name {}", grocery.getName());
 
         GroceryShoppingCart groceryShoppingCart = new GroceryShoppingCart();

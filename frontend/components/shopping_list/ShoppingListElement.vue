@@ -1,8 +1,8 @@
 <template>
     <div class="items stretch text-sm">
-        <div :class="{'text-blue-800 font-bold': isElementSuggested}" class="ml-4 p-2 flex justify-end absolute left-0">
-            <h3 class="mr-2"> {{ ElementDetails.description }} </h3>
-            <h5> ({{ ElementDetails.quantity }})</h5>
+        <div :class="{'text-blue-800 font-bold': isElementSuggested}" class="ml-4 p-2 w-3/5 flex justify-end absolute left-0">
+            <h3 class="mr-16 truncate break-words"> {{ ElementDetails.description }} </h3>
+            <h5 class="mr-2"> ({{ ElementDetails.quantity }})</h5>
         </div>
         <div class="p-2 flex justify-end absolute right-0">
             <div v-if="isElementSuggested">

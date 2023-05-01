@@ -3,9 +3,8 @@
     <h1 class="pl-2 text-lg text-slate-600 font-sans"> Legg til en vare fra listen: </h1>
     <ul class="grid grid-cols-1 gap-8">
         <li v-for="element in groceryList" :key="element.id"> 
-            <div class="ml-4 p-2 flex justify-end absolute left-0">
-                <h3 class="mr-2 font-extrabold"> {{ element.description }} </h3>
-                <h5> ({{ element.subCategoryName }}) </h5>
+            <div class="ml-4 p-2 w-3/5 flex justify-end absolute left-0">
+                <h3 class="mr-16 truncate break-words"> {{ element.description }} </h3>
             </div>
             <div class="p-2 flex justify-end absolute right-0">
                 <div class="flex flex-row">

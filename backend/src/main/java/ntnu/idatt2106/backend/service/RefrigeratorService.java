@@ -268,7 +268,7 @@ public class RefrigeratorService {
      * @param httpRequest
      * @return Response containing user affected, and given role.
      */
-    public MemberDTO setFridgeRole(MemberRequest request, HttpServletRequest httpRequest) throws UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
+    public MemberDTO setFridgeRole(MemberRequest request, HttpServletRequest httpRequest) throws UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException, LastSuperuserException {
         //Get User
         logger.debug("Getting new member user");
         User user = getUser(request.getUserName());
@@ -283,14 +283,16 @@ public class RefrigeratorService {
             throw new UnauthorizedException("User does not have super-privileges");
         }
 
-        RefrigeratorUser ru = new RefrigeratorUser();
-        ru.setFridgeRole(FridgeRole.USER);
-        ru.setRefrigerator(refrigerator);
-        ru.setUser(user);
-
         //Check if we have an instance from before
         Optional<RefrigeratorUser> existingRu = refrigeratorUserRepository.findByUserAndRefrigerator(user,refrigerator);
         if(existingRu.isPresent()){
+
+            if(request.getFridgeRole() == FridgeRole.USER){ // Check that we have extra superusers
+                List<RefrigeratorUser> superUsers = refrigeratorUserRepository.findByRefrigeratorIdAndFridgeRole(refrigerator.getId(), FridgeRole.SUPERUSER);
+                if(superUsers.size() <= 1) {
+                    throw new LastSuperuserException("Last superuser in refrigerator");
+                }
+            }
             existingRu.get().setFridgeRole(request.getFridgeRole());
             try {
                 logger.info("Checks validated, updating refrigeratorUser");
@@ -298,11 +300,11 @@ public class RefrigeratorService {
                 return new MemberDTO(result);
             } catch (Exception e) {
                 logger.warn("Member could not be updated: Failed to update refrigeratoruser");
-                return null;
+                throw new UnauthorizedException("Member could not be updated: Failed to update refrigeratoruser");
             }
         }
         else logger.warn("Updating role failed: user is not a member");
-        return null;
+        throw new UserNotFoundException("Updating role failed: user is not a member");
     }
 
     /**

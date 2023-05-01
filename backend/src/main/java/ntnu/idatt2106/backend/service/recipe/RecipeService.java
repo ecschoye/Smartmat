@@ -4,6 +4,7 @@ package ntnu.idatt2106.backend.service.recipe;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.NoSuchElementException;
 import ntnu.idatt2106.backend.model.dto.RecipeDTO;
+import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.recipe.Recipe;
 import ntnu.idatt2106.backend.model.recipe.RecipeGrocery;
@@ -11,9 +12,11 @@ import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.AbstractMap;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -33,9 +36,8 @@ public class RecipeService {
      */
     public List<RecipeDTO> getRecipesByGroceriesAndExpirationDates(long refrigeratorId) throws NoSuchElementException {
 
-        //first fetch all groceries the user has in fridge
+        // First fetch all groceries the user has in fridge
         List<RefrigeratorGrocery> allGroceries = refrigeratorGroceryRepository.findAllByRefrigeratorId(refrigeratorId);
-        logger.info("Found " + allGroceries.size() + " groceries for the given refrigerator ID.");
 
         if (allGroceries.isEmpty()) {
             throw new NoSuchElementException("No groceries found for the given refrigerator ID.");
@@ -49,7 +51,17 @@ public class RecipeService {
             throw new NoSuchElementException("No valid groceries found. All groceries have expired.");
         }
 
-        // retrieve all RecipeGrocery records that match the groceries in the validGroceries
+        // Count the number of each grocery in the RefrigeratorGrocery table
+        Map<Grocery, Integer> groceryCount = validGroceries.stream()
+                .filter(item -> item.getRefrigerator().getId() == refrigeratorId)
+                .collect(Collectors.groupingBy(RefrigeratorGrocery::getGrocery, Collectors.summingInt(item -> 1)));
+
+        // Output the count for each grocery
+        for (Map.Entry<Grocery, Integer> entry : groceryCount.entrySet()) {
+            System.out.println(entry.getKey().getName() + entry.getKey().getId() + ": " + entry.getValue());
+        }
+
+        // Retrieve all RecipeGrocery records that match the groceries in the validGroceries
         List<RecipeGrocery> matchingRecipeGroceries = recipeGroceryRepository.findAllByGroceryIn(
                 validGroceries.stream().map(RefrigeratorGrocery::getGrocery).collect(Collectors.toList()));
 
@@ -59,18 +71,23 @@ public class RecipeService {
 
         // Group the RecipeGrocery records by recipe and count the number of matched groceries for each recipe
         Map<Recipe, Long> recipeMatchCount = matchingRecipeGroceries.stream()
+                .filter(rg -> groceryCount.getOrDefault(rg.getGrocery(), 0) >= rg.getQuantity())
                 .collect(Collectors.groupingBy(RecipeGrocery::getRecipe, Collectors.counting()));
 
         // Sort the recipes based on the number of matched groceries
         List<Recipe> sortedRecipes = recipeMatchCount.entrySet().stream()
-                .sorted(Map.Entry.<Recipe, Long>comparingByValue().reversed())
-                .map(Map.Entry::getKey).toList();
+                .map(entry -> new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()))
+                .sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()))
+                .map(Map.Entry::getKey)
+                .toList();
 
-        logger.info("Found " + sortedRecipes.size() + " recipes that match the available groceries.");
-        logger.info("Recipes: " + sortedRecipes);
+
+
 
         return convertToDTOs(sortedRecipes);
     }
+
+
 
 
     public List<RecipeDTO> convertToDTOs(List<Recipe> recipes) {

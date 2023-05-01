@@ -38,7 +38,7 @@
                               <h4>Forlat Kjøleskap</h4>
                           </div>
                       </div>
-                      <div class="choice-wrapper" v-else @click="deleteMember({ id: member.id, name: member.name, username: member.email, role: member.refrigeratorRole })">
+                      <div class="choice-wrapper" v-else @click="deleteMember(member.username)">
                           <div class="action-choice">
                               <img class="choice-image" src="@/assets/icons/trash.png">
                               <h4>Fjern fra Kjøleskap</h4>
@@ -63,6 +63,8 @@ import type { Refrigerator } from '~/types/RefrigeratorType'
 import { getRefrigeratorById } from '~/service/httputils/RefrigeratorService';
 import type {Member} from "~/types/MemberType"
 import { getUserData } from "~/service/httputils/authentication/AuthenticationService";
+import { RemoveMemberRequest } from "~/types/RemoveMemberRequest";
+import { postRemoveMember } from "~/service/httputils/RefrigeratorService";
 
 export default {
   data() {
@@ -114,9 +116,23 @@ export default {
         return
       },
 
-      deleteMember(member: { id: number; name: string; username: string; role: string }) {
-        return
-      },
+      async deleteMember(username : String) {
+        console.log(this.refrigeratorStore.getSelectedRefrigerator.id)
+        console.log(username)
+        const removeMemberRequest: RemoveMemberRequest = {
+        refrigeratorId: this.refrigeratorStore.getSelectedRefrigerator.id,
+        userName: username,
+        forceDelete: false,
+      };
+      try {
+        const response = await postRemoveMember(removeMemberRequest);
+        // Handle success case
+        console.log(response);
+      } catch (error) {
+        // Handle error case
+        console.error(error);
+      }
+    },
       async getRefrigerator() {
       let refrigerator = null as Refrigerator | null; 
       console.log(this.refrigeratorStore.getSelectedRefrigerator)

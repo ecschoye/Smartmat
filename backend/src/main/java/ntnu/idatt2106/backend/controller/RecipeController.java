@@ -36,7 +36,7 @@ public class RecipeController {
 
     @Operation(summary = "Fetch recipes based on available groceries and their expiration dates")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Recipes fetched successfully", content = @Content(schema = @Schema(implementation = Recipe.class))),
+            @ApiResponse(responseCode = "200", description = "Recipes fetched successfully", content = @Content(schema = @Schema(implementation = RecipeDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/{refrigeratorId}")

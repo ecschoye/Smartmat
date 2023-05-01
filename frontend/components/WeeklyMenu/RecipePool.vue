@@ -219,7 +219,8 @@ export default {
         },
 
         randomRecipesEvent() {
-            //TODO: fetch list of random recipes from backend and insert into methods
+            //TODO: fetch list of random recipes from backend and insert into methods.
+            //can calculate the amount of recipes needed from amount of locked recipes.
             if(this.weeklyMenuStore.$state.chosenWeek === 1) {
                 this.weeklyMenuStore.setCurrentWeekRandomly(this.randomRecipes)
             } else {

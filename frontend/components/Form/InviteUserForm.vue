@@ -10,7 +10,7 @@
   </template>
   
   <script lang="ts">
-  import { useRefridgeratorStore } from '~/store/refrigeratorStore';
+  import { useRefrigeratorStore } from '~/store/refrigeratorStore';
   import { useUserStore } from "~/store/userStore";
   import { postRegister } from "~/service/httputils/authentication/AuthenticationService";
   import { Refrigerator } from '~/types/RefrigeratorType'
@@ -25,7 +25,7 @@
     },
     setup() {
         const {locale, locales, t} = useI18n()
-        const refrigeratorStore = useRefridgeratorStore();
+        const refrigeratorStore = useRefrigeratorStore();
         const errorMessage = ref("");
         const form = reactive({
           email: '',

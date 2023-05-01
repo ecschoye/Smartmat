@@ -1,6 +1,5 @@
 package ntnu.idatt2106.backend.service;
 
-import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

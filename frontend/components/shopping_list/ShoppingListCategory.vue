@@ -38,17 +38,31 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
         data() {
             return {
                 isCategoryExpanded: false,
-                categoryListItems: [] as ShoppingListElement[]
+                categoryListItems: [] as ShoppingListElement[],
             }
         },
-        async mounted() {            
-            let response = await ShoppingListService.getGroceriesFromCategorizedShoppingList(this.ShoppingListId, this.CategoryDetails.id)                                                             
-
-            response.data.forEach((element: ResponseGrocery) => {
-                    let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false };
+        async mounted() {   
+            //loads shopping list    
+            try {
+                let response = await ShoppingListService.getGroceriesFromCategorizedShoppingList(this.ShoppingListId, this.CategoryDetails.id)                                                             
+                response.data.forEach((element: ResponseGrocery) => {
+                    let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: false };
                     this.categoryListItems.push(object);
-                });    
+                }); 
+            } catch (error) {
+                console.error(error)
+            }
+            
+            //loads suggestions
+            try {
+                let responseSuggestions = await ShoppingListService.getRequestedGroceriesInCategories(this.ShoppingListId, this.CategoryDetails.id);
+                responseSuggestions.data.forEach((element: ResponseGrocery) => {
+                    let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true };
+                    this.categoryListItems.push(object);
+                }); 
+            } catch (error) {
+                console.error(error)                
+            }
         }
-
     })
 </script>

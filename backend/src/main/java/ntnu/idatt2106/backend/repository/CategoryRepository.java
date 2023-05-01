@@ -1,6 +1,6 @@
 package ntnu.idatt2106.backend.repository;
 
-import ntnu.idatt2106.backend.model.Category;
+import ntnu.idatt2106.backend.model.category.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -4,5 +4,6 @@ interface ShoppingListElement {
     quantity: number;
     subCategoryName: string;
     isAddedToCart: boolean;
+    isSuggested: boolean;
   }
   

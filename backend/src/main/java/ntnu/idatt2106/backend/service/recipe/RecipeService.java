@@ -4,6 +4,7 @@ package ntnu.idatt2106.backend.service.recipe;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.NoSuchElementException;
 import ntnu.idatt2106.backend.model.dto.RecipeDTO;
+import ntnu.idatt2106.backend.model.dto.recipe.FetchRecipesDTO;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.recipe.Recipe;
@@ -12,10 +13,7 @@ import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.AbstractMap;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -34,7 +32,11 @@ public class RecipeService {
      * Method to fetch recipes based on what the user has stored in their fridge
      * Also finds the recipes that uses groceries that are about to expire
      */
-    public List<RecipeDTO> getRecipesByGroceriesAndExpirationDates(long refrigeratorId) throws NoSuchElementException {
+    public List<RecipeDTO> getRecipesByGroceriesAndExpirationDates(FetchRecipesDTO fetchRecipesDTO, boolean allRecipes) throws NoSuchElementException {
+
+        long refrigeratorId = fetchRecipesDTO.getRefrigeratorId();
+        int numRecipes = fetchRecipesDTO.getNumRecipes();
+        List<Long> fetchedRecipeIds = fetchRecipesDTO.getFetchedRecipeIds();
 
         // First fetch all groceries the user has in fridge
         List<RefrigeratorGrocery> allGroceries = refrigeratorGroceryRepository.findAllByRefrigeratorId(refrigeratorId);
@@ -81,10 +83,25 @@ public class RecipeService {
                 .map(Map.Entry::getKey)
                 .toList();
 
+        if (allRecipes) {
+            return convertToDTOs(sortedRecipes);
+        }
 
+        // Exclude already fetched recipes from the sortedRecipes list
+        List<Recipe> newRecipes = sortedRecipes.stream()
+                .filter(recipe -> !fetchedRecipeIds.contains(recipe.getId()))
+                .collect(Collectors.toList());
 
-
-        return convertToDTOs(sortedRecipes);
+        // If there are not enough new recipes, fill the list with already fetched recipes
+        if (newRecipes.size() < numRecipes) {
+            List<Recipe> remainingRecipes = sortedRecipes.stream()
+                    .filter(recipe -> fetchedRecipeIds.contains(recipe.getId()))
+                    .collect(Collectors.toList());
+            newRecipes.addAll(remainingRecipes.subList(0, numRecipes - newRecipes.size()));
+        } else {
+            newRecipes = newRecipes.subList(0, numRecipes);
+        }
+        return convertToDTOs(newRecipes);
     }
 
 

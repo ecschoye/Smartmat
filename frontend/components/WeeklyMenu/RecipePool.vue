@@ -56,6 +56,9 @@ import { Recipe } from '~/types/RecipeType';
 import GrayButton from '../Button/GrayButton.vue';
 import UnknownRecipe from './UnknownRecipe.vue';
 import UnknownRecepe from './UnknownRecipe.vue';
+import { fetchRecipes } from '~/service/httputils/RecipeService';
+import { useRefrigeratorStore } from '~/store/refrigeratorStore';
+import { number } from '@intlify/core-base';
 
 export default {
     data() {
@@ -133,6 +136,19 @@ export default {
 
     setup() {
     const weeklyMenuStore = useWeeklyMenuStore();
+    const refrigeratorStore = useRefrigeratorStore();
+
+    interface FetchRecipeDTO {
+        refrigeratorId: number;
+        numRecipes: number;
+        recipesFetched: number[];
+    }
+
+    const fetchRecipeDTO: FetchRecipeDTO = reactive({
+        refrigeratorId: -1,
+        numRecipes: -1,
+        recipesFetched: []
+        });
 
     const addRecepe = (index: number, recipe : Recipe) => {
       // Logic to add a recipe to the current or next week
@@ -189,6 +205,8 @@ export default {
       removeRecepe,
       goToPreviousWeek,
       goToNextWeek,
+      refrigeratorStore,
+      fetchRecipeDTO
     };
   },
 
@@ -213,14 +231,34 @@ export default {
                 this.removeRecepe(dayIndex)
         },
 
-        addRecepe(dayIndex: number) {
-            //TODO: fetch a recipe from backend and pass it in the addRecepe method where this.randomRecipes[1] is
-            this.addRecepe(dayIndex, this.randomRecipes[1]);
+        async addRecepe(dayIndex: number) {
+            try {
+                this.fetchRecipeDTO.refrigeratorId = this.refrigeratorStore.getSelectedRefrigerator.id;
+                this.fetchRecipeDTO.numRecipes = 1;
+                const response = await fetchRecipes(this.fetchRecipeDTO.refrigeratorId);
+                if (response.status === 200) {
+                    const recipe = await response.data[0];
+                    const newRecipe: Recipe = {
+                        id: recipe.id,
+                        name: recipe.name,
+                        url: recipe.url,
+                        ingredients: recipe.ingredients,
+                    };
+                this.addRecepe(dayIndex, newRecipe);
+                this.fetchRecipeDTO.recipesFetched.push(newRecipe.id)
+                }
+            } catch (error: any) {
+                console.log(error);
+            }
         },
 
         randomRecipesEvent() {
-            //TODO: fetch list of random recipes from backend and insert into methods.
-            //can calculate the amount of recipes needed from amount of locked recipes.
+            try {
+                this.fetchRecipeDTO.numRecipes = this.getAmountOfRecipesNeeded();
+                this.fetchRecipeDTO.refrigeratorId = this.refrigeratorStore.getSelectedRefrigerator.id;
+            } catch(error: any) {
+                console.log(error);
+            }
             if(this.weeklyMenuStore.$state.chosenWeek === 1) {
                 this.weeklyMenuStore.setCurrentWeekRandomly(this.randomRecipes)
             } else {
@@ -240,6 +278,25 @@ export default {
             const index = this.Weekdays.indexOf(weekday)
             return index
         },
+
+        getAmountOfRecipesNeeded() {
+            let recipesNeeded = 0;
+            if(this.weeklyMenuStore.$state.chosenWeek === 1) {
+                for(let i = 0; i < this.activeWeekdays.length; i++) {
+                    if(!this.weeklyMenuStore.$state.currentWeekLocks[i]) {
+                        recipesNeeded++;
+                    }
+                }       
+            } else {
+                for(let i = 0; i < this.Weekdays.length; i++) {
+                    if(!this.weeklyMenuStore.$state.nextWeekLocks[i]) {
+                        recipesNeeded++;
+                    }
+                }  
+
+            }
+            return recipesNeeded;
+        }
     },
     components: { GrayButton, UnknownRecepe, UnknownRecipe }
 }

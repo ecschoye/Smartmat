@@ -6,20 +6,20 @@ import { Refrigerator } from '~/types/RefrigeratorType';
 export interface RefrigeratorState{
     refrigerators : Refrigerator[],
     selectedRefrigerator : Refrigerator | null,
-    selectedGrocery : GroceryEntity
+    selectedGrocery : GroceryEntity | null
 }
 
 export const useRefrigeratorStore = defineStore('refrigerator', {
     state: () : RefrigeratorState => ({
         refrigerators : [] as Refrigerator[],   
         selectedRefrigerator : null as Refrigerator | null,
-        selectedGrocery : {} as GroceryEntity,
+        selectedGrocery: null as GroceryEntity | null, // Update the initial state here
     }),
     persist: {
         storage: persistedState.sessionStorage,
     },
     getters: {
-        getSelectedGrocery : (state : RefrigeratorState) : GroceryEntity => {
+        getSelectedGrocery : (state : RefrigeratorState) : GroceryEntity | null => {
             return state.selectedGrocery;
         },
         getSelectedRefrigerator : (state : RefrigeratorState) : Refrigerator | null => {
@@ -46,6 +46,11 @@ export const useRefrigeratorStore = defineStore('refrigerator', {
         },
         setRefrigerators(newFridges : Refrigerator[]){
             this.refrigerators = newFridges;
+        },
+        resetState() {
+            this.refrigerators = [];
+            this.selectedRefrigerator = null;
+            this.selectedGrocery = null;
         },
     }
 

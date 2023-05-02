@@ -104,9 +104,9 @@ export default defineComponent ({
       this.refrigeratorStore.setSelectedRefrigerator(fridge);
       const route = this.$route.path
       if(route === '/administrate-fridge'){
-        location.reload(); 
+        location.reload();
       }
-      
+
     },
     fetchSelected() {
       const currentSelected = this.refrigeratorStore.getSelectedRefrigerator; 
@@ -129,10 +129,13 @@ export default defineComponent ({
         }
         else this.selected = null; 
       }
+      if (this.selected != null) {
+        this.refrigeratorStore.setSelectedRefrigerator(this.selected);
+      }
     }
   },
   mounted() {
-    this.fetchSelected(); 
+    this.fetchSelected();
   }
 });
 </script>

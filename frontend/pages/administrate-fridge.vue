@@ -127,17 +127,17 @@ export default {
                 alert(this.t("last_superuser_alert"))
               }
               else {
-                alert(this.t("edit_refrigerator_success"))
+                alert(this.t("member_added_success"))
                 location.reload(); 
               }
             }
             else {
-              alert(this.t("edit_refrigerator_failure"))
+              alert(this.t("member_added_failure"))
               location.reload(); 
             }
         }
         catch(error){
-          alert(this.t("edit_refrigerator_failure"))
+          alert(this.t("member_added_failure"))
           console.log(error)
           location.reload(); 
         }

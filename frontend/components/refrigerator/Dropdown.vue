@@ -1,20 +1,22 @@
 <template>
-  <div class="h-1/2 w-full py-6 flex flex-col items-center justify-center dark:bg-zinc-400 sm:py-6 overflow-hidden">
-    <input
-      @click="open = !open"
-      type="search"
-      id="input"
-      v-model="selectedGroceryName"
-      :placeholder="$t('search_here')"
-      class="py-3 w-11/12 sm:w-2/3 rounded-xl shadow font-thin focus:outline-none focus:shadow-lg focus:shadow-slate-200 duration-100 shadow-gray-300"
-    />
+  <div class="h-80 w-full py-6 flex flex-col items-center dark:bg-zinc-400 sm:py-6 overflow-hidden">
+    <div class="w-full flex justify-center">
+      <input
+          @click="open = !open"
+          type="search"
+          id="input"
+          v-model="selectedGroceryName"
+          :placeholder="$t('search_here')"
+          class="py-3 w-11/12 sm:w-2/3 rounded-xl shadow font-thin focus:outline-none focus:shadow-lg focus:shadow-slate-200 duration-100 shadow-gray-300"
+      />
+    </div>
     <div id="listwrapper" class="relative mt-2 overflow-hidden border border-black rounded-lg bg-gray-200 w-11/12 sm:w-2/3">
-      <ul v-if="open" @click="open = !open" class="h-72">
+      <ul v-if="open" @click="open = !open" class="h-fit">
         <div v-for="grocery in filteredGroceries" :key="grocery.id">
           <li
             @click="setGrocery(grocery)"
-            :class="{ 'bg-orange-200': grocery.id === selectedGrocery?.id && grocery.name === selectedGroceryName }"
-            class="w-full text-gray-700 bg-gray-200 p-2 mt-2 rounded-lg hover:bg-gray-300"
+            :class="{ 'bg-gray-400': grocery.id === selectedGrocery?.id && grocery.name === selectedGroceryName }"
+            class="w-full text-gray-700 bg-gray-200 p-2 mt-2 rounded-sm hover:bg-gray-300"
           >
             {{ grocery.name }} - {{ grocery.description }}
           </li>

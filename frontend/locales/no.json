@@ -61,6 +61,15 @@
   "use": "Bruk",
   "throw_away": "Kast",
   "select_fridge" : "Velg Kjøleskap",
+  "search_recipes": "Søk etter oppskrifter...",
+  "add_a_grocery_from_the_list": "Legg til en matvare fra listen",
+  "shopping_list": "Handleliste",
+  "shopping_cart": "Handlekurv",
+  "add_a_new_grocery": "Legg til en ny matvare",
+  "you_have_no_groceries_in_the_shopping_list": "Du har ingen matvarer i handlelisten",
+  "you_have_no_groceries_in_the_shopping_cart": "Du har ingen matvarer i handlekurven",
+  "view_shopping_list": "Vis handleliste",
+  "view_refrigerator": "Vis kjøleskap",
   "address" : "Addresse",
   "edit_refrigerator_success" : "Kjøleskap endret.",
   "edit_refrigerator_failure" : "Kjøleskap kunne ikke endres",
@@ -79,5 +88,6 @@
   "remove_member_failed" : "Medlem kunne ikke fjernes",
   "force_delete_alert" : "Advarsel! Å forlate et kjøleskap som siste superbruker vil slette kjøleskapet og alt innhold. Er du sikker på at du ønsker å gjøre dette?",
   "user_removed_success" : "Fjernet som bruker",
-  "user_removed_failure" : "Bruker kunne ikke fjernes, vennligst prøv igjen"
+  "user_removed_failure" : "Bruker kunne ikke fjernes, vennligst prøv igjen",
+  "your_recipes": "Dine oppskrifter"
 }

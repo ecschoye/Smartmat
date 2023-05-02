@@ -11,13 +11,11 @@
     </div>
   </template>
   <script setup lang="ts">
-  import { useRefrigeratorStore } from '~/store/refrigeratorStore';
   import type { GroceryEntity } from '~/types/GroceryEntityType';
   import { updateGrocery } from '~/service/httputils/GroceryService';
   import { getNotifications } from '~/service/httputils/NotificationService';
   import { useNotificationStore } from '~/store/notificationStore';  
 
-  const refrigeratorStore = useRefrigeratorStore();
   const notificationStore = useNotificationStore();
 
   async function loadNotifications(){
@@ -39,14 +37,10 @@
   });
   
   const el = ref<HTMLDivElement | null>(null);
-  const emit = defineEmits(['element-height', 'set-date']);
+  const emit = defineEmits(['element-height', 'emit-date']);
   
   function clicked() {
-    if (refrigeratorStore.setSelectedGrocery(props.grocery)) {
       emit('element-height', el.value?.getBoundingClientRect().y);
-    } else {
-      throw new ReferenceError('Could not find selected grocery in grocery store');
-    }
   }
   
   function isNearExpiry(): boolean {
@@ -64,7 +58,7 @@
         try{
           const response = await updateGrocery(newGrocery);
           if(response.status == 200){
-            refrigeratorStore.updateGrocery(newGrocery);
+            emit('emit-date', newGrocery);
             needsConfirmation.value = false;
             loadNotifications();
           }
@@ -88,8 +82,6 @@
   onMounted(() => {
     // get the expiry date input element
     const expiryDateInput = document.getElementById(`expiry-date-${props.grocery.id}`) as HTMLInputElement | null;
-    console.log("mounting - " + expiryDateInput!.value);
-    console.log(props.grocery.physicalExpireDate);
     if (expiryDateInput && props.grocery.physicalExpireDate instanceof Date) {
       // set the value of the input to the grocery's physicalExpireDate
       expiryDateInput.valueAsDate = props.grocery.physicalExpireDate;

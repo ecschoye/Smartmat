@@ -250,6 +250,7 @@ public class GroceryService {
         if(userRole.equals(FridgeRole.USER)){
             throw new UnauthorizedException("User does not have permission to do updates in this refrigerator");
         }
+
         if(!refrigeratorGroceryDTO.getPhysicalExpireDate().equals(oldGrocery.get().getPhysicalExpireDate())){
             notificationService.deleteNotificationsByRefrigeratorGrocery(oldGrocery.get());
         }

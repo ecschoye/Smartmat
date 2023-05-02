@@ -38,3 +38,7 @@ export const postEditMembers = async (memberRequests : MemberRequest[]) : Promis
     return axiosInstance.post('/api/refrigerator/members/edit-roles', memberRequests);
 }
 
+export const postEditFavorite = async (favoriteRefrigeratorId : Number) : Promise<AxiosResponse> => {
+    return axiosInstance.post('/api/refrigerator/members/edit-favorite', favoriteRefrigeratorId);
+}
+

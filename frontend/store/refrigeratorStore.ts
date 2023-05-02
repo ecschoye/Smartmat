@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { Category } from '~/types/CategoryType';
 import type { GroceryEntity } from '~/types/GroceryEntityType'
 import { Refrigerator } from '~/types/RefrigeratorType';
+import {useUserStore} from "~/store/userStore";
 
 export interface RefrigeratorState{
     refrigerators : Refrigerator[],
@@ -23,6 +24,15 @@ export const useRefrigeratorStore = defineStore('refrigerator', {
             return state.selectedGrocery;
         },
         getSelectedRefrigerator : (state : RefrigeratorState) : Refrigerator | null => {
+            const userStore = useUserStore();
+            const selectedFridge = state.selectedRefrigerator;
+            if (!selectedFridge && userStore.isLoggedIn) {
+                // If the user is logged in but has not selected a fridge, and there is only one fridge available,
+                // automatically select that fridge
+                if (state.refrigerators.length === 1) {
+                    state.selectedRefrigerator = state.refrigerators[0];
+                }
+            }
             return state.selectedRefrigerator;
         },
         getRefrigerators: (state : RefrigeratorState) : Refrigerator[] => {

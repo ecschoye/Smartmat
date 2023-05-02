@@ -38,12 +38,16 @@ const getRequestedGroceries = (shoppingListId: Number): Promise<AxiosResponse> =
     return axiosInstance.get(`/api/shopping-list/requested/groceries/${shoppingListId}`);
 };
 
+const getRequestedGroceriesInCategories = (shoppingListId: Number, categoryId: Number): Promise<AxiosResponse> => {
+    return axiosInstance.get(`/api/shopping-list/requested/groceries/${shoppingListId}/${categoryId}`);
+};
+
 const transferGroceryToShoppingCart = (groceryShoppingListId: Number): Promise<AxiosResponse> => {
     return axiosInstance.post(`/api/shopping-list/transfer-shopping-cart/${groceryShoppingListId}`);
 };
 
-const updateQuantity = (groceryId: Number, quantity: Number): Promise<AxiosResponse> => {
-    return axiosInstance.get(`/api/shopping-list/update/groceries/${groceryId}` + quantity);
+const updateGrocery = (groceryId: Number, quantity: Number): Promise<AxiosResponse> => {
+    return axiosInstance.post(`/api/shopping-list/edit-grocery/${groceryId}/${quantity}`);
 };
 
 export default {
@@ -55,6 +59,7 @@ export default {
     editGroceryQuantity,
     removeGroceryFromShoppingList,
     getRequestedGroceries,
+    getRequestedGroceriesInCategories,
     transferGroceryToShoppingCart,
-    updateQuantity
+    updateGrocery
 }

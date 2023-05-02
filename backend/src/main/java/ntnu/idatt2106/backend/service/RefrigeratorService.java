@@ -9,7 +9,6 @@ import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
-import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
@@ -27,7 +26,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
-import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

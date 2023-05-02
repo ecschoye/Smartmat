@@ -47,6 +47,7 @@ public class GroceryController {
     private final UserService userService;
     private final JwtService jwtService;
     private final NotificationService notificationService;
+    private final ShoppingListService shoppingListService;
     Logger logger = LoggerFactory.getLogger(GroceryController.class);
 
     @Operation(summary = "Get all groceries by refrigerator id")
@@ -72,11 +73,12 @@ public class GroceryController {
     })
     @DeleteMapping("/remove/{refrigeratorGroceryId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<SuccessResponse> removeRefrigeratorGrocery(@Valid @PathVariable long refrigeratorGroceryId, HttpServletRequest httpServletRequest) throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException {
+    public ResponseEntity<SuccessResponse> removeRefrigeratorGrocery(@Valid @PathVariable long refrigeratorGroceryId, HttpServletRequest httpServletRequest) throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException, SaveException, ShoppingListNotFound {
         logger.info("Received request to remove refrigeratorGrocery with id: {}",refrigeratorGroceryId);
         RefrigeratorGrocery refrigeratorGrocery = groceryService.getRefrigeratorGroceryById(refrigeratorGroceryId);
         notificationService.deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);
         groceryService.removeRefrigeratorGrocery(refrigeratorGroceryId, httpServletRequest);
+        shoppingListService.saveGroceryToSuggestionForRefrigerator(refrigeratorGrocery.getGrocery().getId(), refrigeratorGrocery.getRefrigerator().getId());
         return new ResponseEntity<>(new SuccessResponse("Grocery removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
@@ -133,19 +135,12 @@ public class GroceryController {
     })
     @GetMapping("/allDTOs")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<GroceryDTO>> getAllGroceriesDTOs(HttpServletRequest request) throws UnauthorizedException, NoGroceriesFound{
-        String token = cookieService.extractTokenFromCookie(request);
-        if (token == null) {
-            throw new UnauthorizedException("Unauthorized");
-        }
+    public ResponseEntity<List<GroceryDTO>> getAllGroceriesDTOs() throws NoGroceriesFound{
+        logger.info("Received request to get all DTOs");
         List<GroceryDTO> groceries = groceryService.getAllGroceriesDTO();
-
-        if(groceries.isEmpty()){
-            throw new NoGroceriesFound("No groceries found");
-        }
+        logger.info("Returning DTOs, and status kode OK");
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
-
 
     @PostMapping("/updateGrocery")
     @PreAuthorize("isAuthenticated()")

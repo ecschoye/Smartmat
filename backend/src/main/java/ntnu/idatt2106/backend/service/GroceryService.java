@@ -232,8 +232,12 @@ public class GroceryService {
         return groceryRepository.findAll();
     }
 
-    public List<GroceryDTO> getAllGroceriesDTO() {
+    public List<GroceryDTO> getAllGroceriesDTO() throws NoGroceriesFound {
         List<Grocery> groceries = groceryRepository.findAll();
+        if (groceries.isEmpty()) {
+            logger.info("Could not find any groceries");
+            throw new NoGroceriesFound("Could not find any groceries");
+        }
         return groceries.stream().map(GroceryDTO::new).collect(Collectors.toList());
     }
 

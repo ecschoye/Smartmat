@@ -8,6 +8,8 @@ import ntnu.idatt2106.backend.model.category.Category;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
+import ntnu.idatt2106.backend.service.GroceryService;
+import ntnu.idatt2106.backend.service.ShoppingCartService;
 import ntnu.idatt2106.backend.service.ShoppingListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,8 @@ import java.util.List;
 public class ShoppingListController {
 
     private final ShoppingListService shoppingListService;
+    private final ShoppingCartService shoppingCartService;
+    private final GroceryService groceryService;
 
     Logger logger = LoggerFactory.getLogger(ShoppingListController.class);
 
@@ -156,7 +160,7 @@ public class ShoppingListController {
     public ResponseEntity<Boolean> transferToShoppingCart(@PathVariable("groceryShoppingListId") long groceryShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SubCategoryNotFound {
         logger.info("Received request to transfer grocery item with id {} in shopping list to shopping cart", groceryShoppingListId);
 
-        shoppingListService.transferGrocery(groceryShoppingListId, httpRequest); //throws error if the transfer was unsuccessful
+        shoppingListService.transferGroceryToCart(groceryShoppingListId, httpRequest); //throws error if the transfer was unsuccessful
         logger.info("Returns transferStatus and status OK");
         return new ResponseEntity<>(true, HttpStatus.OK);
     }

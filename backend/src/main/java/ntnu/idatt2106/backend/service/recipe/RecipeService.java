@@ -27,6 +27,8 @@ public class RecipeService {
 
     private final Logger logger = Logger.getLogger(RecipeService.class.getName());
 
+    private static int lastDuplicateIndex = 0;
+
 
     /**
      * Method to fetch recipes based on what the user has stored in their fridge
@@ -35,6 +37,9 @@ public class RecipeService {
     public List<RecipeDTO> getRecipesByGroceriesAndExpirationDates(FetchRecipesDTO fetchRecipesDTO, boolean allRecipes) throws NoSuchElementException {
 
         long refrigeratorId = fetchRecipesDTO.getRefrigeratorId();
+        if (refrigeratorId == -1) {
+            throw new NoSuchElementException("No refrigerator ID provided.");
+        }
         int numRecipes = fetchRecipesDTO.getNumRecipes();
         List<Long> fetchedRecipeIds = fetchRecipesDTO.getFetchedRecipeIds();
 
@@ -57,11 +62,6 @@ public class RecipeService {
         Map<Grocery, Integer> groceryCount = validGroceries.stream()
                 .filter(item -> item.getRefrigerator().getId() == refrigeratorId)
                 .collect(Collectors.groupingBy(RefrigeratorGrocery::getGrocery, Collectors.summingInt(item -> 1)));
-
-        // Output the count for each grocery
-        for (Map.Entry<Grocery, Integer> entry : groceryCount.entrySet()) {
-            System.out.println(entry.getKey().getName() + entry.getKey().getId() + ": " + entry.getValue());
-        }
 
         // Retrieve all RecipeGrocery records that match the groceries in the validGroceries
         List<RecipeGrocery> matchingRecipeGroceries = recipeGroceryRepository.findAllByGroceryIn(
@@ -87,21 +87,30 @@ public class RecipeService {
             return convertToDTOs(sortedRecipes);
         }
 
-        // Exclude already fetched recipes from the sortedRecipes list
-        List<Recipe> newRecipes = sortedRecipes.stream()
-                .filter(recipe -> !fetchedRecipeIds.contains(recipe.getId()))
-                .collect(Collectors.toList());
+        // Prepare newRecipes list
+        List<Recipe> newRecipes = new ArrayList<>();
 
-        // If there are not enough new recipes, fill the list with already fetched recipes
-        if (newRecipes.size() < numRecipes) {
-            List<Recipe> remainingRecipes = sortedRecipes.stream()
-                    .filter(recipe -> fetchedRecipeIds.contains(recipe.getId()))
-                    .collect(Collectors.toList());
-            newRecipes.addAll(remainingRecipes.subList(0, numRecipes - newRecipes.size()));
-        } else {
-            newRecipes = newRecipes.subList(0, numRecipes);
+        // First, add new unique recipes
+        for (Recipe recipe : sortedRecipes) {
+            if (!fetchedRecipeIds.contains(recipe.getId()) && newRecipes.size() < numRecipes) {
+                newRecipes.add(recipe);
+            }
         }
+
+
+        // If there are not enough unique recipes, add duplicates from the beginning of the sortedRecipes list
+        if (newRecipes.size() < numRecipes) {
+            int remainingRecipes = numRecipes - newRecipes.size();
+
+            for (int i = 0; i < remainingRecipes; i++) {
+                // Find the next duplicate to be added
+                lastDuplicateIndex = (lastDuplicateIndex + 1) % sortedRecipes.size();
+                newRecipes.add(sortedRecipes.get(lastDuplicateIndex));
+            }
+        }
+
         return convertToDTOs(newRecipes);
+
     }
 
 

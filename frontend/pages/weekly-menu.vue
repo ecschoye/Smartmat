@@ -45,6 +45,13 @@ export default {
     },
     components: { RecipePool }
 }
+
+definePageMeta({
+  "requiresAuth": true,
+  middleware: [
+    'auth',
+  ],
+})
 </script>
 
 <style>

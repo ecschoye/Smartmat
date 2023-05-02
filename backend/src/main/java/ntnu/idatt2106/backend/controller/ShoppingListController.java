@@ -200,7 +200,7 @@ public class ShoppingListController {
 
     @PostMapping("refrigerator/transfer-shopping-cart/{refrigeratorShoppingListId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Boolean> transferToShoppingList(@PathVariable("refrigeratorShoppingListId") long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SubCategoryNotFound {
+    public ResponseEntity<Boolean> transferRefrigeratorGroceryToShoppingCart(@PathVariable("refrigeratorShoppingListId") long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SubCategoryNotFound {
         logger.info("Received request to transfer grocery item with id {} in refrigerator shopping list to shopping list", refrigeratorShoppingListId);
         shoppingListService.transferRefrigeratorGroceryToCart(refrigeratorShoppingListId, httpRequest); //throws error if the transfer was unsuccessful
 

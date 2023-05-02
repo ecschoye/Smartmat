@@ -342,7 +342,6 @@ public class ShoppingListService {
         }
     }
 
-    //todo: remove duplicates
     /**
      * Deletes a grocery from the refrigerator shopping list
      * @param refrigeratorShoppingListId ID to the grocery to delete
@@ -387,7 +386,6 @@ public class ShoppingListService {
         }
     }
 
-    //todo: remove duplicates...
     /**
      * Transfer one grocery from refrigerator shopping list to shopping cart
      * @param refrigeratorShoppingListId ID to the grocery in refrigerator shopping list to transfer to the shopping list

@@ -39,6 +39,10 @@ const getRequestedGroceriesInCategories = (shoppingListId: Number, categoryId: N
     return axiosInstance.get(`/api/shopping-list/requested/groceries/${shoppingListId}/${categoryId}`);
 };
 
+const getSuggestedGroceriesFromRefrigerator = (shoppingListId: Number): Promise<AxiosResponse> => {
+    return axiosInstance.get(`/api/shopping-list/suggested-refrigerator/groceries/${shoppingListId}`);
+};
+
 const transferGroceryToShoppingCart = (groceryShoppingListId: Number): Promise<AxiosResponse> => {
     return axiosInstance.post(`/api/shopping-list/transfer-shopping-cart/${groceryShoppingListId}`);
 };
@@ -57,6 +61,7 @@ export default {
     removeGroceryFromShoppingList,
     getRequestedGroceries,
     getRequestedGroceriesInCategories,
+    getSuggestedGroceriesFromRefrigerator,
     transferGroceryToShoppingCart,
     updateGrocery
 }

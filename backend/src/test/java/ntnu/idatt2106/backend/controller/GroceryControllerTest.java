@@ -2,10 +2,7 @@ package ntnu.idatt2106.backend.controller;
 
 import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
-import ntnu.idatt2106.backend.exceptions.NotificationException;
-import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
-import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
-import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
+import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.response.ErrorResponse;
@@ -85,7 +82,7 @@ class GroceryControllerTest {
     }
 
     @Test
-    void removeRefrigeratorGrocery_validInput_removesGrocery() throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException {
+    void removeRefrigeratorGrocery_validInput_removesGrocery() throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException, SaveException, ShoppingListNotFound {
         // Arrange
         long refrigeratorGroceryId = 1L;
 

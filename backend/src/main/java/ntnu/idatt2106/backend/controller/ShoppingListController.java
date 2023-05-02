@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.category.Category;
+import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTO;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
@@ -60,6 +61,16 @@ public class ShoppingListController {
         List<ShoppingListElementDTO> groceries = shoppingListService.getGroceries(shoppingListId, categoryId, false);
 
         logger.info("Returns groceries with category id {} and status OK", categoryId);
+        return new ResponseEntity<>(groceries, HttpStatus.OK);
+    }
+
+    @GetMapping("/suggested-refrigerator/groceries/{shoppingListId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<ShoppingCartElementDTO>> getSuggestedGroceriesFromRefrigerator(@PathVariable(name="shoppingListId") long shoppingListId) throws NoGroceriesFound {
+        logger.info("Received request to get suggested groceries from refrigerator for shopping list with id {}", shoppingListId);
+        List<ShoppingCartElementDTO> groceries = shoppingListService.getGroceriesFromRefrigeratorShoppingList(shoppingListId);
+
+        logger.info("Returns groceries and status OK");
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 

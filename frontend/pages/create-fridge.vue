@@ -22,6 +22,13 @@ export default {
     return { t };
   },
 }
+
+definePageMeta({
+  "requiresAuth": true,
+  middleware: [
+    'auth',
+  ],
+})
 </script>
 
 <style scoped>

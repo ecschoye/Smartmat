@@ -1,8 +1,9 @@
 interface ShoppingListElement {
     id: number;
-    name: string;
+    description: string;
     quantity: number;
     subCategoryName: string;
     isAddedToCart: boolean;
+    isSuggested: boolean;
   }
   

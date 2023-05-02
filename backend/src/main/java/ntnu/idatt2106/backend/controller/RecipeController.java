@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.NoSuchElementException;
 import ntnu.idatt2106.backend.model.dto.MemberDTO;
 import ntnu.idatt2106.backend.model.dto.RecipeDTO;
+import ntnu.idatt2106.backend.model.dto.recipe.FetchRecipesDTO;
 import ntnu.idatt2106.backend.model.recipe.Recipe;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.service.recipe.RecipeService;
@@ -36,14 +37,23 @@ public class RecipeController {
 
     @Operation(summary = "Fetch recipes based on available groceries and their expiration dates")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Recipes fetched successfully", content = @Content(schema = @Schema(implementation = Recipe.class))),
+            @ApiResponse(responseCode = "200", description = "Recipes fetched successfully", content = @Content(schema = @Schema(implementation = RecipeDTO.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @GetMapping("/{refrigeratorId}")
+    @GetMapping("/fetch")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> fetchRecipes(@Valid @PathVariable long refrigeratorId) throws NoSuchElementException {
+    public ResponseEntity<?> fetchRecipes(@Valid @ModelAttribute FetchRecipesDTO fetchRecipesDTO) throws NoSuchElementException {
         logger.info("Received request to fetch recipes for user");
-        List<RecipeDTO> recipes = recipeService.getRecipesByGroceriesAndExpirationDates(refrigeratorId);
+        logger.info(fetchRecipesDTO.toString());
+        List<RecipeDTO> recipes;
+        if (fetchRecipesDTO.getNumRecipes() == -1){
+            recipes = recipeService.getRecipesByGroceriesAndExpirationDates(fetchRecipesDTO, true);
+        }
+        else{
+            recipes = recipeService.getRecipesByGroceriesAndExpirationDates(fetchRecipesDTO, false);
+        }
+
         return ResponseEntity.ok(recipes);
     }
+
 }

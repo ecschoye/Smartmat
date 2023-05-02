@@ -6,8 +6,12 @@ import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
-import ntnu.idatt2106.backend.model.dto.ShoppingListElementDTO;
+import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTO;
+import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTOComparator;
+import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
+import ntnu.idatt2106.backend.model.grocery.Grocery;
+import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.repository.*;
@@ -60,15 +64,21 @@ public class ShoppingCartService {
         logger.info("Created shopping cart with id {}", shoppingCart.getId());
         return shoppingCart.getId();
     }
-    public List<ShoppingListElementDTO> getGroceries(long shoppingCartId) {
-        logger.info("Retrieving groceries from the database");
+
+    /**
+     * Getter for all groceries in the shopping cart specified in the parameter
+     * @param shoppingCartId ID to the shopping cart to retrieve groceries from
+     * @return All groceries from the shopping cart with the shopping cart id specified in the parameter
+     * @exception NoGroceriesFound Could not find any groceries
+     */
+    public List<ShoppingCartElementDTO> getGroceries(long shoppingCartId) throws NoGroceriesFound {
         List<GroceryShoppingCart> groceries = shoppingCartRepository.findByShoppingCartId(shoppingCartId);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries from the database");
+            throw new NoGroceriesFound("Could not find any groceries for shopping cart id " + shoppingCartId);
         }
-        List<ShoppingListElementDTO> dtos = groceries.stream().map(ShoppingListElementDTO::new).collect(Collectors.toList());
-        logger.info("Received groceries from the database");
-        return dtos;
+        return groceries.stream().map(ShoppingCartElementDTO::new).
+                sorted(new ShoppingCartElementDTOComparator()).collect(Collectors.toList());
     }
 
     // todo: is duplicate with method in ShoppingListService - remove
@@ -129,7 +139,7 @@ public class ShoppingCartService {
                 .description(groceryRequest.getDescription())
                 .subCategory(subCategory.get())
                 .build();
-        groceryRepository.save(grocery); //todo: what happens if i try to save the same grocery multiple times?
+        groceryRepository.save(grocery);
         logger.info("Created grocery with name {}", grocery.getName());
 
         GroceryShoppingCart groceryShoppingCart = new GroceryShoppingCart();

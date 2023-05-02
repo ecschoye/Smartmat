@@ -1,4 +1,4 @@
-package ntnu.idatt2106.backend.model;
+package ntnu.idatt2106.backend.model.grocery;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -7,8 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ntnu.idatt2106.backend.model.Refrigerator;
+import ntnu.idatt2106.backend.model.grocery.Grocery;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -30,7 +34,7 @@ public class RefrigeratorGrocery {
     private Date physicalExpireDate;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "refrigeratorId")
     @Schema(description = "The refrigerator the grocery is in")
     private Refrigerator refrigerator;
@@ -40,4 +44,7 @@ public class RefrigeratorGrocery {
     @JoinColumn(name = "groceryId")
     @Schema(description = "Grocery in the refrigerator")
     private Grocery grocery;
+
+    @OneToMany(mappedBy = "groceryEntity", cascade = CascadeType.REMOVE)
+    private Set<GroceryNotification> groceryNotifications = new HashSet<>();
 }

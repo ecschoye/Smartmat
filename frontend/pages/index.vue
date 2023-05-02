@@ -132,7 +132,7 @@
     ],
   })
 
-/*  async function ensureLoggedIn(){
+  async function ensureLoggedIn(){
     if (userStore.isLoggedIn) return;
     console.log("Not logged in");
     try{
@@ -143,10 +143,10 @@
     } catch (error : any){
       console.log(error);
     }
-  }*/
+  }
 
   onMounted(() => {
-    //ensureLoggedIn();
+    ensureLoggedIn();
     loadNotifications();
     loadRefrigerators();
   });

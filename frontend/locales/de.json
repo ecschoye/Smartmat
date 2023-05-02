@@ -57,5 +57,19 @@
 "remove": "Entfernen",
 "use": "Verwenden",
 "throw_away": "Wegwerfen",
-"select_fridge" : "Kühlschrank auswählen"
+"select_fridge" : "Kühlschrank auswählen",
+"address" : "Adresse",
+"edit_refrigerator_success" : "Kühlschrank gespeichert",
+"edit_refrigerator_failure" : "Kühlschrank konnte nicht gespeichert werden",
+"member_add_success" : "Mitglied hinzugefügt",
+"last_superuser_alert" : "Warnung! Kühlschrank benötigt jederzeit einen Superuser",
+"create_refrigerator" : "Neuer Kühlschrank",
+"administrate_refrigerator" : "Kühlschrank verwalten",
+"add_member" : "Mitglied hinzufügen",
+"edit_members" : "Benutzer bearbeiten",
+"update_information" : "Informationen aktualisieren",
+"save_userroles" : "Benutzer speichern",
+"invite_user" : "Benutzer einladen",
+"leave_refrigerator" : "Kühlschrank verlassen",
+"remove_member" : "Aus dem Kühlschrank entfernen"
 }

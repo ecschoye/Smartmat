@@ -4,12 +4,13 @@ import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import ntnu.idatt2106.backend.exceptions.*;
+import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.exceptions.LastSuperuserException;
 import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
 import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
-import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
@@ -21,13 +22,11 @@ import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
 import ntnu.idatt2106.backend.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
-import java.sql.Ref;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,12 +43,15 @@ import java.util.Optional;
 public class RefrigeratorService {
 
     private final FridgeRole DEFAULT_USER_Fridge_ROLE = FridgeRole.USER;
+    private final FridgeRole EDIT_PRIVILEGE = FridgeRole.SUPERUSER;
 
     private final CookieService cookieService;
     private final JwtService jwtService;
     private final RefrigeratorRepository refrigeratorRepository;
     private final RefrigeratorUserRepository refrigeratorUserRepository;
     private final RefrigeratorGroceryRepository refrigeratorGroceryRepository;
+    private final ShoppingListRepository shoppingListRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
     private final UserRepository userRepository;
 
     private final Logger logger = LoggerFactory.getLogger(RefrigeratorService.class);
@@ -78,6 +80,11 @@ public class RefrigeratorService {
             return null;
         }
 
+        Optional<RefrigeratorUser> existing = refrigeratorUserRepository.findByUserAndRefrigerator(user, refrigerator);
+        if(existing.isPresent()) {
+            return new MemberDTO(existing.get());
+        }
+
         RefrigeratorUser ru = new RefrigeratorUser();
         ru.setFridgeRole(DEFAULT_USER_Fridge_ROLE);
         ru.setRefrigerator(refrigerator);
@@ -93,6 +100,41 @@ public class RefrigeratorService {
         }
     }
 
+    /**
+     * Method to edit a refrigerator. Takes a refrigeratorDTO and
+     * changes the refrigerator with its values.
+     *
+     * @param refrigeratorDTO Updated refrigerator data
+     * @param request http request
+     * @throws UnauthorizedException If user not superuser
+     * @throws RefrigeratorNotFoundException If refrigerator by id returns empty
+     * @throws UserNotFoundException if user not found
+     * @throws SaveException if refrigerator could not be updated
+     */
+    @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void editRefrigerator(RefrigeratorDTO refrigeratorDTO, HttpServletRequest request) throws UnauthorizedException, UserNotFoundException, SaveException, RefrigeratorNotFoundException {
+        User user = getUser(extractEmail(request));
+        Refrigerator refrigerator = getRefrigerator(refrigeratorDTO.getId());
+        RefrigeratorUser refrigeratorUser = refrigeratorUserRepository.findByUserAndRefrigerator(user, refrigerator)
+                .orElseThrow(() -> new UnauthorizedException("User not a member"));
+        FridgeRole role = getFridgeRole(refrigerator, user.getEmail());
+
+        if(role != EDIT_PRIVILEGE) throw new UnauthorizedException("User not authorized to edit refrigerator");
+        logger.info("Updating refrigerator");
+
+        refrigerator.setName(refrigeratorDTO.getName());
+        if(refrigeratorDTO.getAddress() != null){
+            refrigerator.setAddress(refrigeratorDTO.getAddress());
+        }
+        try{
+            refrigerator = refrigeratorRepository.save(refrigerator);
+            refrigeratorUserRepository.save(refrigeratorUser);
+        }
+        catch(Exception e){
+            throw new SaveException("Refrigerator could not be updated");
+        }
+        refrigeratorUser.setRefrigerator(refrigerator);
+    }
     /**
      * Retrieves all refrigerators where a given user is a member
      *
@@ -147,6 +189,7 @@ public class RefrigeratorService {
     public void removeUserFromRefrigerator(RemoveMemberRequest request, HttpServletRequest httpRequest) throws Exception {
         if(request.isForceDelete()) {
             forceDeleteRefrigerator(request.getRefrigeratorId(), httpRequest);
+            return;
         }
 
         Refrigerator refrigerator = getRefrigerator(request.getRefrigeratorId());
@@ -195,7 +238,6 @@ public class RefrigeratorService {
     public Refrigerator save(NewRefrigeratorDTO refrigeratorDTO, HttpServletRequest httpRequest) throws Exception {
         logger.info("Converting to refrigerator object");
         Refrigerator refrigerator = convertToEntity(refrigeratorDTO);
-
         //Check user exists
         logger.info("Checking user");
         User user = getUser(extractEmail(httpRequest));
@@ -203,8 +245,14 @@ public class RefrigeratorService {
         try {
             logger.info("Saving refrigerator");
             refrigeratorResult = refrigeratorRepository.save(refrigerator);
+            ShoppingList shoppingList = new ShoppingList();
+            shoppingList.setRefrigerator(refrigeratorResult);
+            ShoppingList shoppingListResult = shoppingListRepository.save(shoppingList);
+            ShoppingCart shoppingCart = new ShoppingCart();
+            shoppingCart.setShoppingList(shoppingListResult);
+            shoppingCartRepository.save(shoppingCart);
         } catch (Exception e) {
-            logger.warn("Refrigerator could not be added: refrigerator could not be added");
+            logger.warn("Refrigerator could not be added: " + e.getMessage());
             throw new Exception("Refrigerator could not be added: refrigerator could not be added");
         }
 
@@ -215,7 +263,8 @@ public class RefrigeratorService {
         refrigeratorUser.setUser(user);
         refrigeratorUser.setFridgeRole(FridgeRole.SUPERUSER);
         try {
-            refrigeratorUserRepository.save(refrigeratorUser);
+            logger.info("Saving member");
+            RefrigeratorUser refrigeratorUser1 = refrigeratorUserRepository.save(refrigeratorUser);
         } catch (Exception e) {
             logger.warn("Refrigerator could not be added: User could not be connected to refrigerator");
             throw new Exception("User could not be connected to refrigerator");
@@ -230,7 +279,7 @@ public class RefrigeratorService {
      * @param httpRequest
      * @return Response containing user affected, and given role.
      */
-    public MemberDTO setFridgeRole(MemberRequest request, HttpServletRequest httpRequest) throws UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException {
+    public MemberDTO setFridgeRole(MemberRequest request, HttpServletRequest httpRequest) throws UserNotFoundException, UnauthorizedException, RefrigeratorNotFoundException, LastSuperuserException {
         //Get User
         logger.debug("Getting new member user");
         User user = getUser(request.getUserName());
@@ -245,14 +294,16 @@ public class RefrigeratorService {
             throw new UnauthorizedException("User does not have super-privileges");
         }
 
-        RefrigeratorUser ru = new RefrigeratorUser();
-        ru.setFridgeRole(FridgeRole.USER);
-        ru.setRefrigerator(refrigerator);
-        ru.setUser(user);
-
         //Check if we have an instance from before
         Optional<RefrigeratorUser> existingRu = refrigeratorUserRepository.findByUserAndRefrigerator(user,refrigerator);
         if(existingRu.isPresent()){
+
+            if(request.getFridgeRole() == FridgeRole.USER){ // Check that we have extra superusers
+                List<RefrigeratorUser> superUsers = refrigeratorUserRepository.findByRefrigeratorIdAndFridgeRole(refrigerator.getId(), FridgeRole.SUPERUSER);
+                if(superUsers.size() <= 1) {
+                    throw new LastSuperuserException("Last superuser in refrigerator");
+                }
+            }
             existingRu.get().setFridgeRole(request.getFridgeRole());
             try {
                 logger.info("Checks validated, updating refrigeratorUser");
@@ -260,11 +311,11 @@ public class RefrigeratorService {
                 return new MemberDTO(result);
             } catch (Exception e) {
                 logger.warn("Member could not be updated: Failed to update refrigeratoruser");
-                return null;
+                throw new UnauthorizedException("Member could not be updated: Failed to update refrigeratoruser");
             }
         }
         else logger.warn("Updating role failed: user is not a member");
-        return null;
+        throw new UserNotFoundException("Updating role failed: user is not a member");
     }
 
     /**
@@ -286,36 +337,31 @@ public class RefrigeratorService {
             throw new AccessDeniedException("Failed to delete refrigerator: User not superuser");
         }
         if (refrigeratorRepository.existsById(refrigeratorId)) {
-            long members = refrigeratorUserRepository.findByRefrigeratorId(refrigeratorId).size();
-            if(members > 0){
-                try {
-                    refrigeratorUserRepository.removeByRefrigeratorId(refrigeratorId);
-                } catch (Exception e) {
-                    logger.error("Failed to delete refrigerator: failed to remove refrigerator members, {}",e.getMessage());
-                    throw e;
-                }
-            }
-            long groceries = refrigeratorGroceryRepository.findAllByRefrigeratorId(refrigeratorId).size();
-            if(groceries > 0){
-                try {
-                    refrigeratorGroceryRepository.removeByRefrigeratorId(refrigeratorId);
-                } catch (Exception e) {
-                    logger.error("Failed to delete refrigerator: failed to remove refrigerator groceries, {}",e.getMessage());
-                    throw e;
-                }
-            }
             try {
+                // Remove all groceries
+                refrigeratorGroceryRepository.removeByRefrigeratorId(refrigeratorId);
+
+                // Remove Shopping Cart Groceries
+                Optional<ShoppingList> shoppingList = shoppingListRepository.findByRefrigeratorId(refrigeratorId);
+                if(shoppingList.isPresent()) {
+                    shoppingCartRepository.removeByShoppingList(shoppingList.get());
+                    shoppingListRepository.removeByRefrigerator_Id(refrigeratorId);
+                }
+
+                // Remove RefrigeratorUser entities, //NOT USER ENTITIES
+                refrigeratorUserRepository.removeByRefrigeratorId(refrigeratorId);
+
+                // Remove Refrigerator entity
                 refrigeratorRepository.deleteById(refrigeratorId);
-                return;
-            } catch (EmptyResultDataAccessException e) {
-                logger.error("Failed to delete refrigerator: Id {}: {},", refrigeratorId, e.getMessage());
+            } catch (Exception e) {
+                logger.error("Failed to delete refrigerator: " + e.getMessage());
+                throw e;
             }
         }
         else{
             logger.error("Failed to delete refrigerator: Refrigerator with id {} does not exist", refrigeratorId);
             throw new EntityNotFoundException("Failed to delete refrigerator: Refrigerator does not exist");
         }
-        throw new Exception("Failed to delete refrigerator");
     }
 
 

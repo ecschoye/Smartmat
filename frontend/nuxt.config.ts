@@ -10,6 +10,8 @@ export default defineNuxtConfig({
     '@pinia-plugin-persistedstate/nuxt',
   ],
   colorMode: {
+    preference: 'light',
+    fallback: 'light',
     classSuffix: ''
   },
   tailwindcss: {

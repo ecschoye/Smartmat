@@ -12,8 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
-import ntnu.idatt2106.backend.model.Grocery;
-import ntnu.idatt2106.backend.model.RefrigeratorGrocery;
+import ntnu.idatt2106.backend.model.grocery.Grocery;
+import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
@@ -111,16 +111,15 @@ public class GroceryController {
     })
     @PostMapping("/new/{refrigeratorId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> createNewGrocery(HttpServletRequest request, @RequestBody GroceryDTO grocery, @Valid @PathVariable long refrigeratorId) throws Exception {
+    public ResponseEntity<?> createNewGrocery(HttpServletRequest request, @RequestBody GroceryDTO groceryDTO, @Valid @PathVariable long refrigeratorId) throws Exception {
         try{
             String jwt = cookieService.extractTokenFromCookie(request);
             User user = userService.findByEmail(jwtService.extractUsername(jwt)); // Pass the JWT token instead of the request
             logger.info("Received request to create grocery from user: "+ user.getEmail() + ".");
-            System.out.println(grocery);
-            List<GroceryDTO> dtos = new ArrayList<>();
-            dtos.add(grocery);
-            groceryService.addGrocery(new SaveGroceryListRequest(refrigeratorId, dtos), request);
-            return ResponseEntity.ok(grocery);
+            List<GroceryDTO> DTOs = new ArrayList<>();
+            DTOs.add(groceryDTO);
+            groceryService.addGrocery(new SaveGroceryListRequest(refrigeratorId, DTOs), request);
+            return ResponseEntity.ok(groceryDTO);
         }catch(Exception e){
             throw new Exception(e);
         }
@@ -147,4 +146,22 @@ public class GroceryController {
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 
+
+    @PostMapping("/updateGrocery")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> updateGrocery(HttpServletRequest request, @RequestBody RefrigeratorGroceryDTO refrigeratorGroceryDTO) throws Exception {
+        try{
+            String jwt = cookieService.extractTokenFromCookie(request); // Extract the token from the cookie
+
+            User user = userService.findByEmail(jwtService.extractUsername(jwt)); // Pass the JWT token instead of the request
+            logger.info("Received request to update a grocery for user: "+ user.getEmail() + ".");
+
+            groceryService.updateRefrigeratorGrocery(user, refrigeratorGroceryDTO, request);
+
+            return ResponseEntity.ok(refrigeratorGroceryDTO);
+        }
+        catch(Exception e){
+            throw new Exception(e);
+        }
+    }
 }

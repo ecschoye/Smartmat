@@ -1,6 +1,7 @@
 package ntnu.idatt2106.backend.repository;
 
 import ntnu.idatt2106.backend.model.*;
+import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +20,6 @@ public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long
 
     @Query(value = "SELECT s FROM ShoppingCart s WHERE s.shoppingList.id = :id")
     ShoppingCart findShoppingListById(Long id);
+
+    void removeByShoppingList(ShoppingList shoppingList);
 }

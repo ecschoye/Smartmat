@@ -2,29 +2,40 @@ package ntnu.idatt2106.backend.config;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import ntnu.idatt2106.backend.model.Category;
-import ntnu.idatt2106.backend.model.Grocery;
+import ntnu.idatt2106.backend.model.*;
+import ntnu.idatt2106.backend.model.enums.FridgeRole;
+import ntnu.idatt2106.backend.model.enums.UserRole;
+import ntnu.idatt2106.backend.model.category.Category;
+import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.SubCategory;
+import ntnu.idatt2106.backend.model.*;
+import ntnu.idatt2106.backend.model.enums.FridgeRole;
+import ntnu.idatt2106.backend.model.enums.UserRole;
+import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.recipe.Recipe;
 import ntnu.idatt2106.backend.model.recipe.RecipeCategory;
 import ntnu.idatt2106.backend.model.recipe.RecipeGrocery;
-import ntnu.idatt2106.backend.repository.CategoryRepository;
-import ntnu.idatt2106.backend.repository.GroceryRepository;
-import ntnu.idatt2106.backend.repository.SubCategoryRepository;
+import ntnu.idatt2106.backend.repository.*;
 import ntnu.idatt2106.backend.repository.recipe.RecipeCategoryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 /**
  * Class that serialises data into database from formatted csv file with categories, subcategories and groceries.
@@ -56,26 +67,135 @@ public class TestDataSerializer {
 
     private final RecipeGroceryRepository recipeGroceryRepository;
 
+    private final UserRepository userRepository;
+
+    private final RefrigeratorRepository refrigeratorRepository;
+
+    private final RefrigeratorUserRepository refrigeratorUserRepository;
+
+    private final RefrigeratorGroceryRepository refrigeratorGroceryRepository;
+
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @PostConstruct
-    public void init() throws IOException, NumberFormatException {
+    public void init() throws NumberFormatException {
         serialize();
+
+
+        createUser();
+        createRefrigerator();
+
+        //add groceries to refrigerator
+        addGroceriesToRefrigerator();
+
         createRecipeCategories();
         createRecipes();
         createRecipeGroceries();
     }
+
+
+
+    private void addGroceriesToRefrigerator() {
+        Refrigerator refrigerator = refrigeratorRepository.findByName("Test Refrigerator")
+                .orElseThrow(() -> new RuntimeException("Refrigerator not found: Test Refrigerator"));
+
+        // Add groceries without the ids from the RecipeGrocery we looked at
+        List<Long> groceryIds = List.of(10L, 63L, 96L, 119L, 126L, 147L, 182L, 329L, 364L, 464L, 597L, 692L, 718L, 756L, 798L, 890L, 908L);
+        insertRecipeGroceries(refrigerator, groceryIds, 1);
+
+        // Add groceries from the scenario above with their respective quantities
+        List<Long> scenarioGroceryIds = List.of(95L, 153L, 798L, 870L, 320L);
+        int[] quantities = {1, 3, 2, 1, 1}; // Updated quantities
+        insertRecipeGroceries(refrigerator, scenarioGroceryIds, quantities);
+
+    }
+
+    private void insertRecipeGroceries(Refrigerator refrigerator, List<Long> groceryIds, int quantity) {
+        for (Long groceryId : groceryIds) {
+            insertRecipeGrocery(refrigerator, groceryId, quantity);
+        }
+    }
+
+    private void insertRecipeGroceries(Refrigerator refrigerator, List<Long> groceryIds, int[] quantities) {
+        for (int i = 0; i < groceryIds.size(); i++) {
+            Long groceryId = groceryIds.get(i);
+            int quantity = quantities[i];
+            insertRecipeGrocery(refrigerator, groceryId, quantity);
+        }
+    }
+
+    private void insertRecipeGrocery(Refrigerator refrigerator, long groceryId, int quantity) {
+        Grocery grocery = groceryRepository.findById(groceryId)
+                .orElseThrow(() -> new RuntimeException("Grocery not found: " + groceryId));
+
+        LocalDate localDate = LocalDate.now().plusDays(grocery.getGroceryExpiryDays());
+        Date physicalExpireDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        for (int i = 0; i < quantity; i++) {
+            // Check if the grocery already exists in the refrigerator
+            if (!refrigeratorGroceryRepository.existsByRefrigeratorAndGrocery(refrigerator, grocery)) {
+                RefrigeratorGrocery refrigeratorGrocery = RefrigeratorGrocery.builder()
+                        .grocery(grocery)
+                        .refrigerator(refrigerator)
+                        .physicalExpireDate(physicalExpireDate)
+                        .build();
+                refrigeratorGroceryRepository.save(refrigeratorGrocery);
+            }
+        }
+    }
+
+
+
+
+
+    private void createRefrigerator() {
+        String name = "Test Refrigerator";
+        String address = "Test Address";
+
+        if (!refrigeratorRepository.existsByName(name)) {
+            Refrigerator refrigerator = refrigeratorRepository.save(Refrigerator.builder()
+                    .name(name)
+                    .address(address)
+                    .build());
+
+            User user = userRepository.findByEmail("test@test")
+                    .orElseThrow(() -> new RuntimeException("User not found: test@test"));
+
+            RefrigeratorUser refrigeratorUser = refrigeratorUserRepository.save(RefrigeratorUser.builder()
+                    .refrigerator(refrigerator)
+                    .user(user)
+                    .fridgeRole(FridgeRole.SUPERUSER)
+                    .build());
+        }
+    }
+
+    private void createUser() {
+        String name = "test";
+        String email = "test@test";
+        String password = "test";
+
+        if (!userRepository.existsByEmail(email)) {
+            userRepository.save(User.builder()
+                    .name(name)
+                    .email(email)
+                    .password(passwordEncoder.encode(password))
+                    .userRole(UserRole.USER)
+                    .build());
+        }
+    }
+
 
     private void createRecipeGroceries() {
         // An array of recipe names
         String[] recipeNames = {"Eggerøre", "Ostesmørbrød", "Pølse i brød"};
 
         // An array of grocery names
-        long[] groceryNames = {153, 95, 724, 870, 320};
+        long[] groceryNames = {153, 95, 798, 870, 320};
 
         // An array of quantities for each recipe-grocery pair
         int[][] quantities = {
-                {4, 0, 0, 0, 0}, // Eggerøre needs one of 153
-                {0, 2, 1, 0, 0}, // Ostesmørbrød needs two of 95 and one of 724
+                {1, 0, 0, 0, 0}, // Eggerøre needs one of 153
+                {0, 2, 1, 0, 0}, // Ostesmørbrød needs two of 95 and one of 79
                 {0, 0, 0, 1, 1}  // Pølse i brød needs one of 870 and one of 320
         };
 
@@ -127,7 +247,6 @@ public class TestDataSerializer {
         String[] recipeUrls = {
                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsP-2AGz4oV39TsB-8_Fq2gtuPhdY2a9bg-g&usqp=CAU",
                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT63fKEnYFM1G0UdBFjhPYRjtPKEiooGZU7kA&usqp=CAU",
-                "https://www.example.com/recipes/spaghetti-bolognese",
                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwZNzTD7pUbIO7zEnTSKwZgv0dOvyHiD5B8Q&usqp=CAU"
         };
         RecipeCategory[] categories = {

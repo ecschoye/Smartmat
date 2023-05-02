@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ntnu.idatt2106.backend.model.GroceryShoppingCart;
-import ntnu.idatt2106.backend.model.GroceryShoppingList;
+import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
+import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 
 @Data
 @Builder

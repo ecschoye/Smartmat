@@ -95,6 +95,11 @@ public class GlobalExceptionHandler {
         logger.warn("RefrigeratorNotFoundException thrown: " + ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NO_CONTENT);
     }
+    @ExceptionHandler(NoGroceriesFound.class)
+    public ResponseEntity<String> handleNoGroceryFound(NoGroceriesFound ex) {
+        logger.warn("NoGroceryFound thrown: " + ex.getMessage());
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NO_CONTENT);
+    }
 
     @ExceptionHandler(OldPasswordDoesNotMatchException.class)
     public ResponseEntity<String> handleOldPasswordDoesNotMatchException(OldPasswordDoesNotMatchException ex) {

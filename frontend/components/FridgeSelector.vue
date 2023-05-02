@@ -90,22 +90,23 @@ export default defineComponent ({
     const {locale, locales, t} = useI18n()
     const userStore = useUserStore();
     const refrigeratorStore = useRefrigeratorStore();
-    const refrigerators = computed(() => refrigeratorStore.getRefrigerators); 
+    const refrigerators = computed(() => refrigeratorStore.getRefrigerators);
     
     return { t,locale,locales, userStore, refrigeratorStore, refrigerators}
   },
   methods: {
     goToCreateFridgePage() {
-      this.$router.push(this.$nuxt.localePath('/create-fridge'));
+      //this.$router.push(this.$nuxt.localePath('/create-fridge'));
+      this.$router.push('/create-fridge');
     },
     setSelected(fridge : Refrigerator){
       this.selected = fridge; 
       this.refrigeratorStore.setSelectedRefrigerator(fridge);
       const route = this.$route.path
       if(route === '/administrate-fridge'){
-        location.reload(); 
+        location.reload();
       }
-      
+
     },
     fetchSelected() {
       const currentSelected = this.refrigeratorStore.getSelectedRefrigerator; 
@@ -128,10 +129,13 @@ export default defineComponent ({
         }
         else this.selected = null; 
       }
+      if (this.selected != null) {
+        this.refrigeratorStore.setSelectedRefrigerator(this.selected);
+      }
     }
   },
   mounted() {
-    this.fetchSelected(); 
+    this.fetchSelected();
   }
 });
 </script>

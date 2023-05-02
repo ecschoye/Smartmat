@@ -7,7 +7,7 @@
     </NuxtLink>
     <div class="hidden lg:flex flex-1 space-x-5 items-center lg:justify-start">
       <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('home')}}</NuxtLink>
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('weekly_menu')}}</NuxtLink>
+      <NuxtLink :to="localePath('/weekly-menu')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('weekly_menu')}}</NuxtLink>
       <NuxtLink :to="localePath('/recipe-list')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('recipes')}}</NuxtLink>
       <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('statistics')}}</NuxtLink>
     </div>
@@ -74,8 +74,8 @@
           <div class="-my-6 divide-y divide-gray-700/10 dark:divide-black">
             <div class="space-y-2 py-6">
               <NuxtLink :to="localePath('/')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('home')}}</NuxtLink>
-              <NuxtLink :to="localePath('#')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('weekly_menu')}}</NuxtLink>
-              <NuxtLink :to="localePath('#')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('recipes')}}</NuxtLink>
+              <NuxtLink :to="localePath('/weekly-menu')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('weekly_menu')}}</NuxtLink>
+              <NuxtLink :to="localePath('/recipe-list')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('recipes')}}</NuxtLink>
               <NuxtLink :to="localePath('#')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('statistics')}}</NuxtLink>
             </div>
             <div class="py-6">

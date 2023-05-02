@@ -103,19 +103,19 @@
       return;
     }
       try{
-      const response = await getRefrigerators();
-      refrigeratorStore.setRefrigerators(response.data);
-      if(refrigeratorStore.getSelectedRefrigerator){
-        if(userStore.favoriteRefrigeratorId !== null){
-        const favoriteRefrigerator = refrigeratorStore.getRefrigeratorById(userStore.favoriteRefrigeratorId);
-        if(favoriteRefrigerator !== undefined){
-          refrigeratorStore.setSelectedRefrigerator(favoriteRefrigerator);
+        const response = await getRefrigerators();
+        refrigeratorStore.setRefrigerators(response.data);
+        if(refrigeratorStore.getSelectedRefrigerator){
+          if(userStore.favoriteRefrigeratorId !== null){
+          const favoriteRefrigerator = refrigeratorStore.getRefrigeratorById(userStore.favoriteRefrigeratorId);
+          if(favoriteRefrigerator !== undefined){
+            refrigeratorStore.setSelectedRefrigerator(favoriteRefrigerator);
+          }
+          else{
+            console.log("Could not find favorite refrigerator in store");
+          }
         }
-        else{
-          console.log("Could not find favorite refrigerator in store");
         }
-      }
-      }
     }
     catch(error){
       console.log(error);

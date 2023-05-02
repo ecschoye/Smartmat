@@ -6,7 +6,7 @@
         <div class="relative flex-row justify-center">
           <HeadlessListboxButton class=" relative w-full h-full cursor-default rounded-md bg-white dark:bg-zinc-600 py-1.5 pr-10 text-left text-gray-900 shadow-sm sm:leading-6 hover:cursor-pointer">
             <span class="flex item-center">
-              <span v-if="selected.name === ''" class="ml-3 block truncate opacity-70">{{ $t('select_fridge') }}</span>
+              <span v-if="selected === null" class="ml-3 block truncate opacity-70">{{ $t('select_fridge') }}</span>
               <span v-else class="ml-3 block truncate">{{ selected.name }}</span>
             </span>
             <span class="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
@@ -26,7 +26,7 @@
           <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
             <div class="max-h-64 overflow-y-scroll">
               <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-b-md bg-white dark:bg-zinc-600 py-0 text-base  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                <HeadlessListboxOption as="template" v-for="fridge in refrigeratorStore.getRefrigerators" :key="fridge.id" :value="fridge" v-slot="{ active, selected }" @click ="setSelected(fridge)">
+                <HeadlessListboxOption as="template" v-for="fridge in refrigerators" :key="fridge.id" :value="fridge" v-slot="{ active, selected }" @click ="setSelected(fridge)">
                   <li :class="[active ? 'bg-emerald-400 dark:bg-green-500 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-1 pr-4','hover:cursor-pointer']">
                     <div class="flex items-center">
                       <span :class="[selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate']">{{ fridge.name }}</span>
@@ -77,48 +77,60 @@
 <script lang="ts">
 import { Refrigerator } from "~/types/RefrigeratorType";
 import { useRefrigeratorStore } from "~/store/refrigeratorStore";
+import { useUserStore } from "~/store/userStore";
+import { computed, defineComponent } from 'vue'
 
-const refrigeratorStore = useRefrigeratorStore();
-
-export default {
-  data () {
+export default defineComponent ({
+  data() { 
     return {
-      refrigeratorStore
-    }
-  }, 
-  computed:{
-    selected(){
-      if(refrigeratorStore.getSelectedRefrigerator != null){
-        return refrigeratorStore.getSelectedRefrigerator;
-      }
-      else{
-        return {
-        id: -1, 
-        name: ''
-      }
-      }
+      selected : null as Refrigerator | null
     }
   },
   setup() {
     const {locale, locales, t} = useI18n()
-
-    return { t,locale,locales}
-  },
-
-  watch: {
-    selected : function(newVal, oldVal) {
-      if(newVal !== oldVal && newVal !== undefined) {
-        if(newVal !== -1) this.refrigeratorStore.setSelectedRefrigerator(newVal);
-      }
-    },
+    const userStore = useUserStore();
+    const refrigeratorStore = useRefrigeratorStore();
+    const refrigerators = computed(() => refrigeratorStore.getRefrigerators); 
+    
+    return { t,locale,locales, userStore, refrigeratorStore, refrigerators}
   },
   methods: {
     goToCreateFridgePage() {
-      this.$router.push(this.$nuxt.localePath('/create-fridge'))
+      this.$router.push(this.$nuxt.localePath('/create-fridge'));
     },
     setSelected(fridge : Refrigerator){
+      this.selected = fridge; 
       this.refrigeratorStore.setSelectedRefrigerator(fridge);
+      if(this.$route.path === '/administrate-fridge'){
+        location.reload(); 
+      } 
+      
+    },
+    fetchSelected() {
+      const currentSelected = this.refrigeratorStore.getSelectedRefrigerator; 
+      if(currentSelected !== null) this.selected = currentSelected; 
+      else {
+        const favoriteIndex = this.userStore.getFavoriteRefrigeratorId; 
+        let favoriteRefrigerator : Refrigerator | undefined;
+        if(favoriteIndex !== null){
+          favoriteRefrigerator = this.refrigeratorStore.getRefrigeratorById(favoriteIndex); 
+          if(favoriteRefrigerator !== undefined) {
+            this.selected = favoriteRefrigerator; 
+          }
+        }
+        if(favoriteRefrigerator === undefined && this.refrigerators !== null && this.refrigerators.length > 0){
+          this.selected = this.refrigerators[0]; 
+        }
+        else if (this.refrigeratorStore.getRefrigerators.length === 0) {
+          this.goToCreateFridgePage(); 
+          this.selected = null; 
+        }
+        else this.selected = null; 
+      }
     }
+  },
+  mounted() {
+    this.fetchSelected(); 
   }
-}
+});
 </script>

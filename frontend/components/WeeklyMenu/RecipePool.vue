@@ -16,7 +16,7 @@
                 <div v-else>
                     <WeeklyMenuRecipeWeeklyCard @unlocked-event="unlockRecipe(getDayIndex(weekday))" 
                     @locked-event="lockRecipe(getDayIndex(weekday))" 
-                    @remove-event="removeRecepe(getDayIndex(weekday))" 
+                    @remove-event="removeRecipe(getDayIndex(weekday))"
                     :recepe-info="weeklyMenuStore.$state.currentWeek[getDayIndex(weekday)]" 
                     :locked-boolean="weeklyMenuStore.$state.currentWeekLocks[getDayIndex(weekday)]" />
                 </div>
@@ -35,7 +35,7 @@
                 <div v-else>
                     <WeeklyMenuRecipeWeeklyCard @unlocked-event="unlockRecipe(getDayIndex(weekday))" 
                     @locked-event="lockRecipe(getDayIndex(weekday))" 
-                    @remove-event="removeRecepe(getDayIndex(weekday))" 
+                    @remove-event="removeRecipe(getDayIndex(weekday))"
                     :recepe-info="weeklyMenuStore.$state.nextWeek[getDayIndex(weekday)]" 
                     :locked-boolean="weeklyMenuStore.$state.nextWeekLocks[getDayIndex(weekday)]"/>
                 </div>
@@ -111,6 +111,9 @@ export default {
       } else {
         weeklyMenuStore.setNextWeek(index, null);
       }
+      let id = this.weeklyMenuStore.$state.currentWeek[index].id;
+      //remove id from array
+      this.fetchRecipeDTO.recipesFetched = this.fetchRecipeDTO.recipesFetched.filter((element: number) => element !== id);
     };
 
 
@@ -129,7 +132,7 @@ export default {
       addRecipeWeek,
       lockRecipe,
       unlockRecipe,
-      removeRecepe: removeRecipe,
+      removeRecipe,
       goToPreviousWeek,
       goToNextWeek,
       refrigeratorStore,
@@ -152,10 +155,6 @@ export default {
         },
         goToNextWeek() {
             this.goToNextWeek();
-        },
-
-        removeRecepe(dayIndex : number) {
-                this.removeRecepe(dayIndex)
         },
 
         async addRecipe(dayIndex: number) {
@@ -186,19 +185,31 @@ export default {
             }
         },
 
-        randomRecipesEvent() {
-            try {
-                this.fetchRecipeDTO.numRecipes = this.getAmountOfRecipesNeeded();
-                this.fetchRecipeDTO.refrigeratorId = this.refrigeratorStore.getSelectedRefrigerator.id;
-            } catch(error: any) {
-                console.log(error);
-            }
-            if(this.weeklyMenuStore.$state.chosenWeek === 1) {
-                this.weeklyMenuStore.setCurrentWeekRandomly(this.randomRecipes)
+      async randomRecipesEvent() {
+        try {
+          this.fetchRecipeDTO.numRecipes = this.getAmountOfRecipesNeeded();
+          this.fetchRecipeDTO.refrigeratorId = this.refrigeratorStore.getSelectedRefrigerator.id;
+
+          const response = await fetchRecipes(this.fetchRecipeDTO);
+
+          if (response.status === 200) {
+            const recipes = response.data.map((recipe : Recipe) => ({
+              id: recipe.id,
+              name: recipe.name,
+              url: recipe.url,
+            }));
+
+
+            if (this.weeklyMenuStore.$state.chosenWeek === 1) {
+              this.weeklyMenuStore.setCurrentWeekRandomly(recipes);
             } else {
-                this.weeklyMenuStore.setNextWeekRandomly(this.randomRecipes)
+              this.weeklyMenuStore.setNextWeekRandomly(recipes);
             }
-        },
+          }
+        } catch (error: any) {
+          console.log(error);
+        }
+      },
 
         lockRecipe(dayIndex : number) {
             this.lockRecipe(dayIndex);

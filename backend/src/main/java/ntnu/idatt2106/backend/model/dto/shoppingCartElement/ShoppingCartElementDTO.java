@@ -1,24 +1,23 @@
-package ntnu.idatt2106.backend.model.dto.shoppingListElement;
+package ntnu.idatt2106.backend.model.dto.shoppingCartElement;
 
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 
-public class ShoppingListElementDTO {
+public class ShoppingCartElementDTO {
     private long id;
     private long groceryId;
     private String description;
     private int quantity;
     private String categoryName;
     private boolean requested;
-    public ShoppingListElementDTO(GroceryShoppingList element) {
+
+    public ShoppingCartElementDTO(GroceryShoppingCart element) {
         this.id = element.getId();
         this.groceryId = element.getGrocery().getId();
         this.description = element.getGrocery().getDescription();
         this.quantity = element.getQuantity();
         this.categoryName = element.getGrocery().getSubCategory().getCategory().getName();
-        this.requested = element.isRequest();
     }
-
     public long getId() {
         return id;
     }

@@ -26,6 +26,7 @@
 import {fetchRecipes } from "~/service/httputils/RecipeService";
 import { useRefrigeratorStore } from "~/store/refrigeratorStore";
 import {onMounted} from "vue";
+import {integer} from "vscode-languageserver-types";
 
 
 const { t } = useI18n();
@@ -59,6 +60,12 @@ const displayedRecipes = computed(() => {
   return filteredRecipes.value.slice(start, end);
 });
 
+const fetchRecipeDTO = reactive({
+  refrigeratorId: 0,
+  numRecipes: 0,
+  recipesFetched: [] as Array<integer>
+})
+
 const pageCount = computed(() => Math.ceil(filteredRecipes.value.length / pageSize));
 
 function previousPage(): void {
@@ -75,8 +82,10 @@ function nextPage(): void {
 
 const loadRecipes = async () => {
   try {
-    const refrigeratorId = refrigeratorStore.getSelectedRefrigerator!.id;
-    const response = await fetchRecipes(refrigeratorId);
+    fetchRecipeDTO.refrigeratorId = refrigeratorStore.getSelectedRefrigerator!.id;
+    fetchRecipeDTO.numRecipes = -1;
+    fetchRecipeDTO.recipesFetched = [];
+    const response = await fetchRecipes(fetchRecipeDTO);
     if (response.status === 200) {
       console.log(response.data);
       data = response.data;

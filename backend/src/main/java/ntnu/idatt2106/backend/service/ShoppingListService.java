@@ -154,7 +154,7 @@ public class ShoppingListService {
 
 
     /**
-     * Edit the grocery. It is only possible for a superuser of the refrigerator assosiated with the shopping list
+     * Edit the grocery in shopping list. It is only possible for a superuser of the refrigerator assosiated with the shopping list
      * to edit the grocery. When a superuser is editing a suggested grocery is requested set to false
      * @param groceryShoppingListId ID to the grocery item on a shopping list
      * @param quantity Amount of groceries
@@ -177,6 +177,39 @@ public class ShoppingListService {
             return groceryShoppingList;
         }
         throw new SaveException("Failed to add a edit the grocery item with id " + groceryShoppingListId);
+    }
+
+    //todo: remove duplicates
+    /**
+     * Edit the grocery in refrigerator shopping list . It is only possible for a superuser of the refrigerator
+     * assosiated with the shopping list to edit the grocery. The grocery is transferred to the shopping list when a
+     * superuser is editing a grocery suggested from the refrigerator
+     * @param groceryRefrigeratorShoppingListId ID to the grocery item on a refrigerator shopping list
+     * @param quantity Amount of groceries
+     * @param httpRequest http request
+     * @return The item on the grocery shopping list
+     * @throws NoGroceriesFound if no grocery is found for the groceryShoppingListId
+     * @throws UserNotFoundException if no user is found
+     * @throws UnauthorizedException if the user is not a superuser in the refrigerator
+     * @throws SaveException if it was not possible to save the modifications to the database
+     */
+    public GroceryShoppingList editRefrigeratorGrocery(long groceryRefrigeratorShoppingListId, int quantity, HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, UnauthorizedException, SaveException {
+        RefrigeratorShoppingList refrigeratorShoppingListItem = refrigeratorShoppingListRepository.findById(groceryRefrigeratorShoppingListId)
+                .orElseThrow(() -> new NoGroceriesFound("Could not find a grocery with the given i"));
+        FridgeRole fridgeRole = groceryService.getFridgeRole(refrigeratorShoppingListItem.getShoppingList().getRefrigerator(), httpRequest);
+
+        if (fridgeRole == FridgeRole.SUPERUSER) {
+            GroceryShoppingList groceryShoppingList = GroceryShoppingList.builder()
+                            .shoppingList(refrigeratorShoppingListItem.getShoppingList())
+                            .grocery(refrigeratorShoppingListItem.getGrocery())
+                            .quantity(quantity)
+                            .isRequest(false)
+                            .build();
+            groceryShoppingListRepository.save(groceryShoppingList);
+            deleteRefrigeratorGrocery(groceryRefrigeratorShoppingListId, httpRequest);
+            return groceryShoppingList;
+        }
+        throw new SaveException("Failed to add a edit the refrigerator grocery item");
     }
 
     /**
@@ -309,6 +342,27 @@ public class ShoppingListService {
         }
     }
 
+    //todo: remove duplicates
+    /**
+     * Deletes a grocery from the refrigerator shopping list
+     * @param refrigeratorShoppingListId ID to the grocery to delete
+     * @param httpRequest http request
+     * @throws UnauthorizedException If not authorized
+     * @throws NoGroceriesFound If the grocery item not is found in the shopping list
+     * @throws UserNotFoundException If the user is not found
+     */
+    public void deleteRefrigeratorGrocery(long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {
+        RefrigeratorShoppingList refrigeratorShoppingListItem = refrigeratorShoppingListRepository.findById(refrigeratorShoppingListId)
+                .orElseThrow(() -> new NoGroceriesFound("Could not find grocery item"));
+        FridgeRole fridgeRole = groceryService.getFridgeRole(refrigeratorShoppingListItem.getShoppingList().getRefrigerator(), httpRequest);
+
+        if (fridgeRole == FridgeRole.SUPERUSER) {
+            refrigeratorShoppingListRepository.deleteById(refrigeratorShoppingListId);
+        } else {
+            throw new UnauthorizedException("The user is not authorized to delete a grocery list item");
+        }
+    }
+
     /**
      * Transfer one grocery from shopping list to shopping cart
      * @param groceryListId ID to the grocery in shopping list to transfer to the shopping cart
@@ -325,6 +379,31 @@ public class ShoppingListService {
         if (fridgeRole == FridgeRole.SUPERUSER) {
             SaveGroceryRequest saveGroceryRequest = new SaveGroceryRequest(groceryShoppingList);
             groceryShoppingListRepository.deleteById(groceryListId);
+            logger.info("The grocery is deleted from shopping list");
+            shoppingCartService.saveGrocery(saveGroceryRequest, httpRequest);
+            logger.info("The grocery is saved in shopping cart");
+        } else {
+            throw new UnauthorizedException("The user is not authorized to delete a grocery list item");
+        }
+    }
+
+    //todo: remove duplicates...
+    /**
+     * Transfer one grocery from refrigerator shopping list to shopping cart
+     * @param refrigeratorShoppingListId ID to the grocery in refrigerator shopping list to transfer to the shopping list
+     * @param httpRequest http request
+     * @throws UnauthorizedException If not authorized
+     * @throws NoGroceriesFound If the grocery item not is found in the shopping list
+     * @throws UserNotFoundException If the user is not found
+     */
+    public void transferRefrigeratorGroceryToCart(long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {
+        RefrigeratorShoppingList refrigeratorShoppingListItem = refrigeratorShoppingListRepository.findById(refrigeratorShoppingListId)
+                .orElseThrow(() -> new NoGroceriesFound("Could not find grocery item"));
+        FridgeRole fridgeRole = groceryService.getFridgeRole(refrigeratorShoppingListItem.getShoppingList().getRefrigerator(), httpRequest);
+
+        if (fridgeRole == FridgeRole.SUPERUSER) {
+            SaveGroceryRequest saveGroceryRequest = new SaveGroceryRequest(refrigeratorShoppingListItem);
+            refrigeratorShoppingListRepository.deleteById(refrigeratorShoppingListId);
             logger.info("The grocery is deleted from shopping list");
             shoppingCartService.saveGrocery(saveGroceryRequest, httpRequest);
             logger.info("The grocery is saved in shopping cart");

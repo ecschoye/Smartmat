@@ -115,10 +115,9 @@ public class ShoppingListController {
             throw new SaveException("Failed to add a new grocery to shopping list");
         }
     }
-
     @PostMapping("/edit-grocery/{groceryShoppingListId}/{quantity}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<GroceryShoppingList> editGroceryQuantity(@PathVariable("groceryShoppingListId") long groceryShoppingListId,
+    public ResponseEntity<GroceryShoppingList> editGrocery(@PathVariable("groceryShoppingListId") long groceryShoppingListId,
                                                                    @PathVariable("quantity") int quantity,
                                                                    HttpServletRequest httpRequest) throws SaveException{
         logger.info("Received request to edit grocery item with id {}", groceryShoppingListId);
@@ -130,12 +129,35 @@ public class ShoppingListController {
             throw new SaveException("Failed to add a edit the grocery item with id " + groceryShoppingListId);
         }
     }
+    @PostMapping("/edit-refrigerator-grocery/{groceryRefrigeratorShoppingListId}/{quantity}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<GroceryShoppingList> editRefrigeratorGrocery(@PathVariable("groceryRefrigeratorShoppingListId") long groceryRefrigeratorShoppingListId,
+                                                                   @PathVariable("quantity") int quantity,
+                                                                   HttpServletRequest httpRequest) throws SaveException{
+        logger.info("Received request to edit grocery item with id {}", groceryRefrigeratorShoppingListId);
+        try {
+            GroceryShoppingList grocery = shoppingListService.editRefrigeratorGrocery(groceryRefrigeratorShoppingListId, quantity, httpRequest);
+            return new ResponseEntity<>(grocery, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.info("No registered changes to grocery");
+            throw new SaveException("Failed to add a edit the refrigerator grocery item with id " + groceryRefrigeratorShoppingListId);
+        }
+    }
 
     @DeleteMapping("/delete-grocery/{groceryListId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Boolean> removeGroceryFromShoppingList(@PathVariable(name="groceryListId") long groceryListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {
         logger.info("Received request to delete grocery list item with id {}", groceryListId);
         shoppingListService.deleteGrocery(groceryListId, httpRequest); //throws error if the deletion was unsuccessful
+
+        logger.info("Returns deleteStatus and status OK");
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+    @DeleteMapping("/delete-refrigerator-grocery/{refrigeratorShoppingListId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Boolean> removeRefrigeratorGroceryFromShoppingList(@PathVariable(name="refrigeratorShoppingListId") long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {
+        logger.info("Received request to delete refrigerator grocery list item f with id {}", refrigeratorShoppingListId);
+        shoppingListService.deleteRefrigeratorGrocery(refrigeratorShoppingListId, httpRequest); //throws error if the deletion was unsuccessful
 
         logger.info("Returns deleteStatus and status OK");
         return new ResponseEntity<>(true, HttpStatus.OK);
@@ -175,4 +197,16 @@ public class ShoppingListController {
         logger.info("Returns transferStatus and status OK");
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
+
+    @PostMapping("refrigerator/transfer-shopping-cart/{refrigeratorShoppingListId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Boolean> transferToShoppingList(@PathVariable("refrigeratorShoppingListId") long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SubCategoryNotFound {
+        logger.info("Received request to transfer grocery item with id {} in refrigerator shopping list to shopping list", refrigeratorShoppingListId);
+        shoppingListService.transferRefrigeratorGroceryToCart(refrigeratorShoppingListId, httpRequest); //throws error if the transfer was unsuccessful
+
+        logger.info("Returns transferStatus and status OK");
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
+
+
 }

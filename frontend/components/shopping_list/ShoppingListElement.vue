@@ -98,7 +98,13 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
             },
             async removeElementFromList() {
                 // Remove the element from the list
-                let deleteResponse = await ShoppingListService.removeGroceryFromShoppingList(this.ElementDetails.id);
+                let deleteResponse: any;            
+    
+                if (!this.ElementDetails.isFromRefrigerator) {
+                    deleteResponse = await ShoppingListService.removeGroceryFromShoppingList(this.ElementDetails.id);
+                } else {
+                    deleteResponse = await ShoppingListService.removeRefrigeratorGroceryFromShoppingList(this.ElementDetails.id);
+                }
                 this.$emit('updateList')
                 console.log(deleteResponse);
                 if (deleteResponse.data) {
@@ -108,7 +114,10 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 }
             },
             async addElementToRefrigerator() {
-                let transferStatus = await ShoppingCartService.transferToRefrigerator(this.ElementDetails.id);    
+                let transferStatus: any;
+                if (!this.ElementDetails.isFromRefrigerator) {
+                    transferStatus = await ShoppingCartService.transferToRefrigerator(this.ElementDetails.id);    
+                }
                 this.$emit('updateList')            
                 if (transferStatus.status == 200) {
                     alert("Varen ble vellykket overført")
@@ -117,9 +126,13 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 }
             },
             async addElementToShoppingCart() {
-                console.log("Inside addElementToShoppingCart")
                 // Add the element to the shoppingCart
-                let transferStatus = await ShoppingListService.transferGroceryToShoppingCart(this.ElementDetails.id);
+                let transferStatus: any;
+                if (!this.ElementDetails.isFromRefrigerator) {
+                    transferStatus = await ShoppingListService.transferGroceryToShoppingCart(this.ElementDetails.id);
+                } else {
+                    transferStatus = await ShoppingListService.transferRefrigeratorGroceryToShoppingCart(this.ElementDetails.id);
+                }
                 this.$emit('updateList')
                 if (transferStatus.data) {
                     alert("Varen ble vellykket overført")
@@ -131,7 +144,11 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 this.editElement = false
                 this.ElementDetails.quantity = newQuantity
                 let quantity = newQuantity
-                ShoppingListService.updateGrocery(this.ElementDetails.id, quantity)
+                if (!this.ElementDetails.isFromRefrigerator) {
+                    ShoppingListService.updateGrocery(this.ElementDetails.id, quantity)
+                } else {
+                    ShoppingListService.updateRefrigeratorGrocery(this.ElementDetails.id, quantity);
+                }
                 this.$emit('updateList')
             }
         }

@@ -31,6 +31,10 @@ const removeGroceryFromShoppingList = (groceryListId: Number): Promise<AxiosResp
     return axiosInstance.delete(`/api/shopping-list/delete-grocery/${groceryListId}`);
 };
 
+const removeRefrigeratorGroceryFromShoppingList = (refrigeratorShoppingListId: Number): Promise<AxiosResponse> => {
+    return axiosInstance.delete(`/api/shopping-list/delete-refrigerator-grocery/${refrigeratorShoppingListId}`);
+};
+
 const getRequestedGroceries = (shoppingListId: Number): Promise<AxiosResponse> => {
     return axiosInstance.get(`/api/shopping-list/requested/groceries/${shoppingListId}`);
 };
@@ -47,8 +51,20 @@ const transferGroceryToShoppingCart = (groceryShoppingListId: Number): Promise<A
     return axiosInstance.post(`/api/shopping-list/transfer-shopping-cart/${groceryShoppingListId}`);
 };
 
+const transferRefrigeratorGroceryToShoppingCart = (groceryShoppingListId: Number): Promise<AxiosResponse> => {
+    return axiosInstance.post(`/api/shopping-list/refrigerator/transfer-shopping-cart/${groceryShoppingListId}`);
+};
+
+const transferGroceryToShoppingList = (refrigeratorShoppingListId: Number): Promise<AxiosResponse> => {
+    return axiosInstance.post(`/api/shopping-list/transfer-shopping-list/${refrigeratorShoppingListId}`);
+};
+
 const updateGrocery = (groceryId: Number, quantity: Number): Promise<AxiosResponse> => {
     return axiosInstance.post(`/api/shopping-list/edit-grocery/${groceryId}/${quantity}`);
+};
+
+const updateRefrigeratorGrocery = (groceryRefrigeratorShoppingListId: Number, quantity: Number): Promise<AxiosResponse> => {
+    return axiosInstance.post(`/api/shopping-list/edit-refrigerator-grocery/${groceryRefrigeratorShoppingListId}/${quantity}`);
 };
 
 export default {
@@ -59,9 +75,13 @@ export default {
     saveGroceryToShoppingList,
     editGroceryQuantity,
     removeGroceryFromShoppingList,
+    removeRefrigeratorGroceryFromShoppingList,
     getRequestedGroceries,
     getRequestedGroceriesInCategories,
     getSuggestedGroceriesFromRefrigerator,
     transferGroceryToShoppingCart,
-    updateGrocery
+    transferRefrigeratorGroceryToShoppingCart,
+    transferGroceryToShoppingList,
+    updateGrocery,
+    updateRefrigeratorGrocery
 }

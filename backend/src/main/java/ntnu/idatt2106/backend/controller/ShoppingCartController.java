@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
+import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTO;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
 import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
@@ -39,9 +40,9 @@ public class ShoppingCartController {
     }
 
     @GetMapping("/groceries/{shoppingCartId}")
-    public ResponseEntity<List<ShoppingListElementDTO>> getGroceriesFromShoppingCart(@PathVariable(name="shoppingCartId") long shoppingCartId) throws NullPointerException {
+    public ResponseEntity<List<ShoppingCartElementDTO>> getGroceriesFromShoppingCart(@PathVariable(name="shoppingCartId") long shoppingCartId) throws NullPointerException {
         logger.info("Received request to get groceries from shopping cart with id {}", shoppingCartId);
-        List<ShoppingListElementDTO> groceries = shoppingCartService.getGroceries(shoppingCartId);
+        List<ShoppingCartElementDTO> groceries = shoppingCartService.getGroceries(shoppingCartId);
         if (groceries.isEmpty()) {
             logger.info("Received no groceries. Return status NO_CONTENT");
             throw new NullPointerException("Received no groceries");

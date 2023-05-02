@@ -11,6 +11,7 @@
           <RefrigeratorList
               class="my-5"
               :groceries="props.groceries"
+              @emit-date="(payload) => emit('emit-date', payload)"
               @group-closed="emit('group-closed')"
               @popup-height="(payload : number) => emitHeight(payload)"
           ></RefrigeratorList>
@@ -35,7 +36,7 @@ import type { GroceryEntity } from '~/types/GroceryEntityType';
 import { Refrigerator } from '~/types/RefrigeratorType';
 
   const { t } = useI18n();
-  const emit = defineEmits(['popup-height', 'group-closed', 'toggle-create']);
+  const emit = defineEmits(['popup-height', 'group-closed', 'toggle-create', 'emit-date']);
 
   
   const props = defineProps({

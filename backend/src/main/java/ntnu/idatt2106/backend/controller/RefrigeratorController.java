@@ -53,6 +53,18 @@ public class RefrigeratorController {
 
     Logger logger = LoggerFactory.getLogger(RefrigeratorController.class);
 
+    @Operation(summary = "Edit favorite refrigerator")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "User not found"),
+            @ApiResponse(responseCode = "500", description = "Refrigerator not found")
+    })
+    @PostMapping("/members/edit-favorite")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<SuccessResponse> editFavoriteRefrigerator(@Valid @RequestBody Long refrigeratorId, HttpServletRequest httpServletRequest) throws UserNotFoundException, RefrigeratorNotFoundException {
+        logger.info("Received request to set favorite refrigerator id");
+        refrigeratorService.setFavoriteRefrigeratorId(refrigeratorId, httpServletRequest);
+        return new ResponseEntity<>(new SuccessResponse("Favorite refrigerator set", HttpStatus.OK.value()), HttpStatus.OK);
+    }
 
     @Operation(summary = "Edit role of a refrigerator member")
     @ApiResponses(value = {

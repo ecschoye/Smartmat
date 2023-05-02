@@ -15,7 +15,7 @@ export const useRefrigeratorStore = defineStore('refrigerator', {
     state: () : RefrigeratorState => ({
         groceries : [] as GroceryEntity[],
         refrigerators : [] as Refrigerator[],   
-        selectedRefrigerator : {} as Refrigerator | null,
+        selectedRefrigerator : null as Refrigerator | null,
         categories : [
             {
 

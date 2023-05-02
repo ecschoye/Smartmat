@@ -76,5 +76,7 @@
   "remove_member_failed" : "Member could not be removed",
   "force_delete_alert" : "Warning! Leaving a refrigerator as the last superuser will delete the refrigerator and all of it's contents. Are you sure you want to do this?",
   "user_removed_success" : "You were successfully removed",
-  "user_removed_failure" : "You could not be removed from refrigerator, try again"
+  "user_removed_failure" : "You could not be removed from refrigerator, try again",
+  "member_added_success" : "Member Successfully Added",
+  "member_added_failure" : "Member could not be added"
 }

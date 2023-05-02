@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axiosInstance from '~/service/AxiosInstance';
+import { useRefrigeratorStore} from "~/store/refrigeratorStore";
 
 interface UserState {
     userId: string;
@@ -37,6 +38,9 @@ export const useUserStore = defineStore({
             this.role = "";
             this.userId = "";
             this.favoriteRefrigeratorId = null;
+            sessionStorage.clear();
+            const refrigeratorStore = useRefrigeratorStore();
+            refrigeratorStore.resetState();
         },
         logIn(data: any) {
             this.authenticated = true;

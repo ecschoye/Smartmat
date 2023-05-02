@@ -21,12 +21,10 @@
 <script setup lang="ts">
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 import { deleteGrocery } from '~/service/httputils/GroceryService';
-import { useNotificationStore } from '~/store/notificationStore';
-import { getNotifications } from '~/service/httputils/NotificationService';
 
 const { t } = useI18n();
 const refrigeratorStore = useRefrigeratorStore();
-const notificationStore = useNotificationStore();
+
 const props = defineProps({
     pos:{
         type : Number,
@@ -34,20 +32,9 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(['toggleOptions']);
+const emit = defineEmits(['toggleOptions', 'delete-grocery']);
 
 const elementHeight = ref<number>(0);
-
-async function loadNotifications(){
-    try{
-      const response = await getNotifications();
-      if(response.status == 200){
-        notificationStore.setNotification(response.data);
-      }
-    }catch(error : any){
-      console.log(error);
-    }
-  }
 
 // Set the height of the element after it has been rendered
 onMounted(() => {
@@ -55,47 +42,19 @@ onMounted(() => {
 });
 
 async function removeGrocery() {
-
-    try{
-        const response = await deleteGrocery(refrigeratorStore.selectedGrocery);
-        if(response.status == 200){
-            refrigeratorStore.removeGrocery(refrigeratorStore.selectedGrocery);
-            emit('toggleOptions');
-            loadNotifications();
-        }
-    }
-    catch(error){
-        console.log(error)
-    } 
+  emit('delete-grocery', refrigeratorStore.getSelectedGrocery);
+  emit('toggleOptions');
 }
 
 
 async function eatGrocery() {
-    try{
-        const response = await deleteGrocery(refrigeratorStore.selectedGrocery);
-        if(response.status == 200){
-            refrigeratorStore.removeGrocery(refrigeratorStore.selectedGrocery);
-            emit('toggleOptions');
-            loadNotifications();
-        }
-    }
-    catch(error){
-        console.log(error)
-    } 
+      emit('delete-grocery', refrigeratorStore.getSelectedGrocery);
+      emit('toggleOptions');
 }
 
 async function trashGrocery() {
-    try{
-        const response = await deleteGrocery(refrigeratorStore.selectedGrocery);
-        if(response.status == 200){
-            refrigeratorStore.removeGrocery(refrigeratorStore.selectedGrocery);
-            emit('toggleOptions');
-            loadNotifications();
-        }
-    }
-    catch(error){
-        console.log(error)
-    } 
+  emit('delete-grocery', refrigeratorStore.getSelectedGrocery);
+  emit('toggleOptions');
 }
 
 async function closePopup(event: MouseEvent) {

@@ -132,6 +132,18 @@ public class ShoppingListService {
     }
 
 
+    /**
+     * Edit the grocery. It is only possible for a superuser of the refrigerator assosiated with the shopping list
+     * to edit the grocery. When a superuser is editing a suggested grocery is requested set to false
+     * @param groceryShoppingListId ID to the grocery item on a shopping list
+     * @param quantity Amount of groceries
+     * @param httpRequest http request
+     * @return The item on the grocery shopping list
+     * @throws NoGroceriesFound if no grocery is found for the groceryShoppingListId
+     * @throws UserNotFoundException if no user is found
+     * @throws UnauthorizedException if the user is not a superuser in the refrigerator
+     * @throws SaveException if it was not possible to save the modifications to the database
+     */
     public GroceryShoppingList editGrocery(long groceryShoppingListId, int quantity, HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, UnauthorizedException, SaveException {
         GroceryShoppingList groceryShoppingList = groceryShoppingListRepository.findById(groceryShoppingListId)
                 .orElseThrow(() -> new NoGroceriesFound("Could not find a grocery with the given i"));

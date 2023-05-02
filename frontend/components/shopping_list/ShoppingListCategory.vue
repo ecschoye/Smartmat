@@ -16,7 +16,8 @@
             <ShoppingListElement
                 v-for="element in categoryListItems"
                 :key="element.id"
-                :ElementDetails="element">
+                :ElementDetails="element"
+                @updateList="loadShoppingListCategories">
             </ShoppingListElement>
         </div>
     </div>
@@ -43,25 +44,36 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
         },
         async mounted() {   
             //loads shopping list    
-            try {
-                let response = await ShoppingListService.getGroceriesFromCategorizedShoppingList(this.ShoppingListId, this.CategoryDetails.id)                                                             
-                response.data.forEach((element: ResponseGrocery) => {
-                    let object:ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: false };
-                    this.categoryListItems.push(object);
-                }); 
-            } catch (error) {
-                console.error(error)
-            }
-            
+            this.loadShoppingList()
+
             //loads suggestions
-            try {
-                let responseSuggestions = await ShoppingListService.getRequestedGroceriesInCategories(this.ShoppingListId, this.CategoryDetails.id);
-                responseSuggestions.data.forEach((element: ResponseGrocery) => {
-                    let object: ShoppingListElement = { id: element.id, name: element.name, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true };
-                    this.categoryListItems.push(object);
-                }); 
-            } catch (error) {
-                console.error(error)                
+            this.loadSuggestions()
+        },
+        methods: {
+            async loadShoppingList() {
+                try {
+                    let response = await ShoppingListService.getGroceriesFromCategorizedShoppingList(this.ShoppingListId, this.CategoryDetails.id)
+                    response.data.forEach((element: ResponseGrocery) => {
+                        let object:ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: false };
+                        this.categoryListItems.push(object);
+                    });
+                } catch (error) {
+                    console.error(error)
+                }
+            },
+            async loadSuggestions() {
+                try {
+                    let responseSuggestions = await ShoppingListService.getRequestedGroceriesInCategories(this.ShoppingListId, this.CategoryDetails.id);
+                    responseSuggestions.data.forEach((element: ResponseGrocery) => {
+                        let object: ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true };
+                        this.categoryListItems.push(object);
+                    });
+                } catch (error) {
+                    console.error(error)
+                }
+            },
+            async loadShoppingListCategories() {
+                this.$emit('updateList')
             }
         }
     })

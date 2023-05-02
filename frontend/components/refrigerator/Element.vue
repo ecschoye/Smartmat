@@ -1,9 +1,9 @@
 <template>
-    <div ref="el" class="grid grid-cols-12 w-full justify-center py-3">
-      <p class ="col-span-8">{{ props.grocery.grocery.description }}</p>
+    <div ref="el" class="grid grid-cols-12 w-full justify-center py-5 md:py-3">
+      <p class ="col-span-8 text-sm md:text-base">{{ props.grocery.grocery.description }}</p>
       <div class="align-middle col-span-3 flex rounded-lg align-middle">
         <img v-if="needsConfirmation" src="../../assets\icons\done.png" alt="Menu" class="w-5 h-5 m-1 align-middle bg-green-500 hover:bg-green-600 rounded-xl" @click="setDate()">
-        <input type="date" :id="'expiry-date-' + props.grocery.id" name="expiry-date" class="hover:bg-zinc-500 bg-inherit rounded-lg" :class="{'text-red-500' : isNearExpiry() }">
+        <input type="date" :id="'expiry-date-' + props.grocery.id" name="expiry-date" class="hover:bg-zinc-500 h-6 bg-inherit text-sm md:text-base rounded-lg" :class="{'text-red-500' : isNearExpiry() }">
       </div>
       <button class="justify-self-end align-middle hover:bg-zinc-500 rounded-3xl" @click="clicked()">
         <img src="../../assets\icons\menu.png" alt="Menu" class="h-5 w-5">
@@ -11,13 +11,12 @@
     </div>
   </template>
   <script setup lang="ts">
-  import { useRefrigeratorStore } from '~/store/refrigeratorStore';
   import type { GroceryEntity } from '~/types/GroceryEntityType';
   import { updateGrocery } from '~/service/httputils/GroceryService';
   import { getNotifications } from '~/service/httputils/NotificationService';
-  import { useNotificationStore } from '~/store/notificationStore';  
+  import { useNotificationStore } from '~/store/notificationStore';
+  import {useRefrigeratorStore} from "~/store/refrigeratorStore";
 
-  const refrigeratorStore = useRefrigeratorStore();
   const notificationStore = useNotificationStore();
 
   async function loadNotifications(){
@@ -39,14 +38,12 @@
   });
   
   const el = ref<HTMLDivElement | null>(null);
-  const emit = defineEmits(['element-height', 'set-date']);
+  const emit = defineEmits(['element-height', 'emit-date', "selected-grocery"]);
   
   function clicked() {
-    if (refrigeratorStore.setSelectedGrocery(props.grocery)) {
+    emit("selected-grocery", props.grocery);
       emit('element-height', el.value?.getBoundingClientRect().y);
-    } else {
-      throw new ReferenceError('Could not find selected grocery in grocery store');
-    }
+
   }
   
   function isNearExpiry(): boolean {
@@ -64,7 +61,7 @@
         try{
           const response = await updateGrocery(newGrocery);
           if(response.status == 200){
-            refrigeratorStore.updateGrocery(newGrocery);
+            emit('emit-date', newGrocery);
             needsConfirmation.value = false;
             loadNotifications();
           }

@@ -1,8 +1,8 @@
 <template>
     <div class="items stretch text-sm">
-        <div :class="{'text-blue-800 font-bold': isElementSuggested}" class="ml-4 p-2 flex justify-end absolute left-0">
-            <h3 class="mr-2"> {{ ElementDetails.name }} </h3>
-            <h5> ({{ ElementDetails.quantity }})</h5>
+        <div :class="{'text-blue-800 font-bold': isElementSuggested}" class="ml-4 p-2 w-3/5 flex absolute left-0">
+            <h3 class="mr-2 truncate break-words"> {{ ElementDetails.description }} </h3>
+            <h5 class="mr-2"> ({{ ElementDetails.quantity }})</h5>
         </div>
         <div class="p-2 flex justify-end absolute right-0">
             <div v-if="isElementSuggested">
@@ -99,6 +99,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
             async removeElementFromList() {
                 // Remove the element from the list
                 let deleteResponse = await ShoppingListService.removeGroceryFromShoppingList(this.ElementDetails.id);
+                this.$emit('updateList')
                 console.log(deleteResponse);
                 if (deleteResponse.data) {
                     alert("Varen ble vellykket slettet")
@@ -107,7 +108,8 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 }
             },
             async addElementToRefrigerator() {
-                let transferStatus = await ShoppingCartService.transferToRefrigerator(this.ElementDetails.id);                
+                let transferStatus = await ShoppingCartService.transferToRefrigerator(this.ElementDetails.id);    
+                this.$emit('updateList')            
                 if (transferStatus.status == 200) {
                     alert("Varen ble vellykket overført")
                 } else {
@@ -118,6 +120,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 console.log("Inside addElementToShoppingCart")
                 // Add the element to the shoppingCart
                 let transferStatus = await ShoppingListService.transferGroceryToShoppingCart(this.ElementDetails.id);
+                this.$emit('updateList')
                 if (transferStatus.data) {
                     alert("Varen ble vellykket overført")
                 } else {
@@ -129,6 +132,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 this.ElementDetails.quantity = newQuantity
                 let quantity = newQuantity
                 ShoppingListService.updateGrocery(this.ElementDetails.id, quantity)
+                this.$emit('updateList')
             }
         }
     })

@@ -8,7 +8,7 @@
           </div>
           <div class="pr-6 md:pl-1">
             {{ category.name }} ({{ categorySum (category) }})
-              <div v-if="getClosestExpiryDateForCategory(category) !== null" class="px-5" :class="{'text-red-500' : isNearExpiry(getClosestExpiryDateForCategory(category)!) }">
+              <div v-if="getClosestExpiryDateForCategory(category) !== null && !isCategoryOpen(index)" class="px-5" :class="{'text-red-500' : isNearExpiry(getClosestExpiryDateForCategory(category)!) }">
             {{ getClosestExpiryDateForCategory(category)!.toLocaleDateString() }}
           </div>
           <i :class="['fa', isCategoryOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
@@ -26,14 +26,14 @@
             </div>
             <ul v-if="isCategoryGroupOpen(index,index2)" class="space-y-1 list-none list-inside">
               <li>
-                <RefrigeratorElement @element-height="(payload) => emitHeight(payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.id />
+                <RefrigeratorElement @emit-date="(payload : GroceryEntity) => emit('emit-date', payload)" @element-height="(payload) => emit('popup-height',payload)" @selected-grocery="(payload) => emit('selected-grocery',payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.id />
               </li>
             </ul>
           </li>
         </ul>
       </li>
     </ul>
-    <div v-else>
+    <div v-else class="ml-5">
       {{ t("no_items_in_refrigerator") }}
     </div>
   </div>
@@ -45,11 +45,8 @@
 import type { GroceryEntity } from '~/types/GroceryEntityType';
 const { t } = useI18n();
 
-    const emit = defineEmits(['popup-height', 'group-closed']);
+    const emit = defineEmits(['popup-height', 'group-closed', 'emit-date', 'selected-grocery']);
 
-    const emitHeight = ((payload : number) => {
-        emit("popup-height",payload)
-    })
 
     const props = defineProps({
       groceries:{

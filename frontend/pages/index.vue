@@ -106,7 +106,6 @@
       const response = await getRefrigerators();
       refrigeratorStore.setRefrigerators(response.data);
       if(refrigeratorStore.getSelectedRefrigerator){
-        console.log(userStore.favoriteRefrigeratorId)
         if(userStore.favoriteRefrigeratorId !== null){
         const favoriteRefrigerator = refrigeratorStore.getRefrigeratorById(userStore.favoriteRefrigeratorId);
         if(favoriteRefrigerator !== undefined){

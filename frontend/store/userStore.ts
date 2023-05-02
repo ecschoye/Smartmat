@@ -20,6 +20,7 @@ export const useUserStore = defineStore({
         isLoggedIn: (state: UserState) => state.authenticated,
         getLoggedInUserId: (state: UserState) => state.userId,
         getLoggedInUserRole: (state: UserState) => state.role,
+        getFavoriteRefrigeratorId: (state: UserState) => state.favoriteRefrigeratorId
     },
     actions: {
         setLoggedInUserId(id: string) {

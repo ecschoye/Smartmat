@@ -26,14 +26,14 @@
             </div>
             <ul v-if="isCategoryGroupOpen(index,index2)" class="space-y-1 list-none list-inside">
               <li>
-                <RefrigeratorElement @emit-date="(payload : GroceryEntity) => emit('emit-date', payload)" @element-height="(payload) => emitHeight(payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.id />
+                <RefrigeratorElement @emit-date="(payload : GroceryEntity) => emit('emit-date', payload)" @element-height="(payload) => emit('popup-height',payload)" @selected-grocery="(payload) => emit('selected-grocery',payload)" v-for="grocery in group.groceries" :grocery="grocery" :key=grocery.id />
               </li>
             </ul>
           </li>
         </ul>
       </li>
     </ul>
-    <div v-else>
+    <div v-else class="ml-5">
       {{ t("no_items_in_refrigerator") }}
     </div>
   </div>
@@ -45,11 +45,8 @@
 import type { GroceryEntity } from '~/types/GroceryEntityType';
 const { t } = useI18n();
 
-    const emit = defineEmits(['popup-height', 'group-closed', 'emit-date']);
+    const emit = defineEmits(['popup-height', 'group-closed', 'emit-date', 'selected-grocery']);
 
-    const emitHeight = ((payload : number) => {
-        emit("popup-height",payload)
-    })
 
     const props = defineProps({
       groceries:{

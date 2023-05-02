@@ -12,18 +12,7 @@
       <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('statistics')}}</NuxtLink>
     </div>
     <div class="flex flex-1 space-x-2 items-center justify-end">
-      <div class="p-0.5 rounded-md ring-1 min-w-fit ring-inset ring-gray-300 dark:ring-zinc-600 inline-flex items-center">
-        <FridgeSelector @selected-fridge-event="handleFridgeEvent" />
-        <NuxtLink to="administrate-fridge">
-          <button type="button"
-          class="inline-flex items-center hover:cursor-pointer
-              dark:button-dark-color sm:text-md outline:none hover:opacity-70
-              transition duration-150 p-2 border-l border-gray-300">
-          <img class="h-5 w-auto mr-2 pt-0.5" src="../assets/icons/refrigerator.png" alt="">
-          {{t('manage')}}
-        </button>
-        </NuxtLink>
-      </div>
+      <FridgeSelector v-if="loggedIn"/>
       <div class=" w-8"></div>
       <div class="flex lg:hidden">
         <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md min-w-fit p-2.5 text-gray-700" @click="mobileMenuOpen = true">
@@ -134,10 +123,6 @@ export default defineComponent({
     }
   },
   methods: {
-    handleFridgeEvent(value: any) {
-      this.selected = value;
-      this.refridgeratorStore.setSelectedRefrigerator(value);
-    },
     async handleLogOut() {
         try{
           const response = await postLogOut();
@@ -153,6 +138,11 @@ export default defineComponent({
       },
     closeMobileMenu() {
       this.mobileMenuOpen = false;
+    }
+  },
+  mounted() {
+    if(!this.loggedIn){
+      this.$router.push("/login");
     }
   }
 

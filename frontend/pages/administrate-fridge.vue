@@ -1,20 +1,19 @@
 <template>
-  <div class="flex items-center mt-10">
+  <div class="flex items-center my-10">
     <div class="administrate-fridge m-auto">
       <h1 class="mt-10" >{{$t("administrate_refrigerator")}}</h1>
       <div>
         <div class="wrapper">
-          <FormEditFridgeForm :refrigerator="fridge"/>
+          <FormEditFridgeForm :is-super-user="isSuperUser" :refrigerator="fridge"/>
         </div>
       </div>
       <div class="divider"></div>
-      <div>
-          <h1 class="title">{{ $t("add_member") }}</h1>
-          <div class="invite-wrapper">
-              <FormInviteUserForm :refrigerator="fridge" />
-          </div>
+      <h1 v-if="isSuperUser" class="title">{{ $t("add_member") }}</h1>
+      <FormInviteUserForm v-if="isSuperUser" :refrigerator="fridge" />
+      <div class="w-full">
           <div v-if="fridge !== null">
-              <h1 class="title">{{ $t("edit_members") }}</h1>
+              <h1 v-if="isSuperUser" class="title">{{ $t("edit_members") }}</h1>
+              <h1 v-else class="title">{{ $t("members") }}</h1>
               <div class="userlist-wrapper" v-for="member in fridge.members" :key="member.username">
                   <div class="userinfo-divider">
                       <div class="userinfo">
@@ -26,22 +25,25 @@
                            <h4>{{ member.username }}</h4>  
                           </div>
                       </div>
-                      <div class="member-role ">
-                          <select class="hover:cursor-pointer" v-model="member.fridgeRole" @change="handleOptionChange(member)">
+                      <div class="member-role items-center">
+                          <select 
+                          :disabled="!isSuperUser"  
+                          :class="[isSuperUser ? 'custom-select hover:cursor-pointer' : 'disabled-select', 'h-12 px-2 rounded-md ring-1 ring-gray-300 dark:ring-zinc-600  bg-white']"
+                          v-model="member.fridgeRole" @change="handleOptionChange(member)">
                               <option class="hover:cursor-pointer" value="USER">User</option>
                               <option class="hover:cursor-pointer" value="SUPERUSER">Superuser</option>
                           </select>
                       </div>
-                      <div class="choice-wrapper" v-if="isUser(member.username)" @click="handleLeaveFridge(member)">
+                      <div class="choice-wrapper w-full" v-if="isUser(member.username)" @click="handleLeaveFridge(member)">
                           <div class="action-choice">
                               <img class="choice-image" src="@/assets/icons/openDoor.png">
-                              <h4>{{ $t("leave_refrigerator")}}</h4>
+                              <h4 class="email-wrapper">{{ $t("leave_refrigerator")}}</h4>
                           </div>
                       </div>
-                      <div class="choice-wrapper" v-else @click="deleteMember(member)">
+                      <div class="choice-wrapper w-full" v-else-if="isSuperUser" @click="deleteMember(member)">
                           <div class="action-choice">
                               <img class="choice-image" src="@/assets/icons/trash.png">
-                              <h4>{{ $t("remove_member")}}</h4>
+                              <h4 class="email-wrapper">{{ $t("remove_member")}}</h4>
                           </div>
                       </div>
                   </div> 
@@ -49,23 +51,19 @@
               </div>
           </div>
       </div>
-      <ButtonGreenButton :label="$t('save_userroles')" width="67%" height="50px" @click="handleSaveUserRoles"/>
+      <ButtonGreenButton v-if="isSuperUser" :label="$t('save_userroles')" width="67%" height="50px" @click="handleSaveUserRoles"/>
   </div>
   </div>
 </template>
 
 <script lang="ts">
-import GreenButton from "~/components/Button/GreenButton.vue";
-import GrayButton from "~/components/Button/GrayButton.vue";
-import BaseInput from "~/components/Form/BaseInput.vue";
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
-import type { Refrigerator } from '~/types/RefrigeratorType'
 import { getRefrigeratorById, postEditMembers, postRemoveMember } from '~/service/httputils/RefrigeratorService';
-import type {Member} from "~/types/MemberType"
 import { getUserData } from "~/service/httputils/authentication/AuthenticationService";
 import { RemoveMemberRequest } from "~/types/RemoveMemberRequest";
 import { MemberRequest } from "~/types/MemberRequest";
-import { ErrorCodes } from "nuxt/dist/app/compat/capi";
+import type { Refrigerator } from '~/types/RefrigeratorType'
+import type {Member} from "~/types/MemberType"
 
 export default {
   data() {
@@ -73,7 +71,8 @@ export default {
       changes: [] as string[],
       fridge: null as Refrigerator | null,
       currentUser : null as String | null,
-      editedMembers : new Map<String, Member>()
+      editedMembers : new Map<String, Member>(),
+      isSuperUser : false 
   };
   },
   setup() {
@@ -102,6 +101,11 @@ export default {
       locale,
       locales,
       t
+    }
+  },
+  watch : {
+    fridge(){
+      this.setRefrigeratorRole(); 
     }
   },
   methods: {
@@ -194,37 +198,45 @@ export default {
         }
       },
       async getRefrigerator() {
-      let refrigerator = null as Refrigerator | null;
-      if(this.refrigeratorStore.getSelectedRefrigerator !== null){
-        let response = await getRefrigeratorById(this.refrigeratorStore.getSelectedRefrigerator.id);
-        if(response !== null){
-            let element : Refrigerator = response.data; 
-            let membersResponse = [] as Member[]; 
-            element.members?.forEach((element : Member) => {
-                const object : Member = {refrigeratorId : element.refrigeratorId, name : element.name, username : element.username, fridgeRole : element.fridgeRole}
-                membersResponse.push(object); 
-            })
-            refrigerator = {id: element.id, name: element.name, address: element.address, members: membersResponse}
-            this.fridge = refrigerator
+        let refrigerator = null as Refrigerator | null;
+        if(this.refrigeratorStore.getSelectedRefrigerator !== null){
+          let response = await getRefrigeratorById(this.refrigeratorStore.getSelectedRefrigerator.id);
+          if(response !== null){
+              let element : Refrigerator = response.data; 
+              let membersResponse = [] as Member[]; 
+              element.members?.forEach((element : Member) => {
+                  const object : Member = {refrigeratorId : element.refrigeratorId, name : element.name, username : element.username, fridgeRole : element.fridgeRole}
+                  membersResponse.push(object); 
+              })
+              refrigerator = {id: element.id, name: element.name, address: element.address, members: membersResponse}
+              this.fridge = refrigerator
 
+          }
         }
-      }
       },
       isUser(email : String):  boolean {
         return email == this.currentUser; 
       },
-
       async getUserData() {
-            const response = await getUserData();
-            if (response) {
-                this.currentUser = response.email
-            }
-        },
+        const response = await getUserData();
+        if (response) {
+            this.currentUser = response.email
+        }
+      },
+      setRefrigeratorRole() {
+        if(this.fridge !== null && this.currentUser !== null){
+          const member = this.fridge.members?.find((member : Member) => member.username === this.currentUser);
+          if(member !== undefined && member?.fridgeRole === 'SUPERUSER'){
+            this.isSuperUser = true; 
+          }
+          else this.isSuperUser = false; 
+        }
+      }
   },
   created(){
     this.getUserData();
     this.getRefrigerator();
-    
+    this.setRefrigeratorRole(); 
   }
 }
 
@@ -232,6 +244,19 @@ export default {
 
 
 <style>
+
+.custom-select {
+  -webkit-appearance: default;
+  -moz-appearance: default;
+  appearance: default;
+}
+
+.disabled-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
 .administrate-fridge {
   display: flex;
   flex-direction: column;
@@ -270,7 +295,6 @@ margin: 20px 0;
 }
 
 .userinfo {
-  
   display: flex;
   flex-direction: column;
   max-width: 200px;
@@ -296,6 +320,14 @@ margin: 20px 0;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align:center; 
+  min-width:150px; 
+  max-width:150px; 
+}
+
+.flex-row{
+  display: flex;
+  flex-direction: row;
 }
 
 .choice-wrapper {
@@ -307,8 +339,7 @@ margin: 20px 0;
 }
 
 .choice-image {
-  max-width: 40px;
-  max-height: 40px;
+  max-height: 30px;
 }
 
 </style>

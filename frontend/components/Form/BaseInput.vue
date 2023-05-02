@@ -7,10 +7,12 @@
         :type="type"
         :value="modelValue"
         required
+        :disabled="disabled"
+        :class="[disabled ? 'opacity-80' : 'opacity-100']"
         @input="$emit('update:modelValue', $event.target.value)"
     >
     <div class="cut" :style="{ width: cutWidth }"></div>
-    <label :for="id" class="placeholder">{{ label }}</label>
+    <label :class="[disabled ? 'opacity-80' : 'opacity-100']" :for="id" class="placeholder">{{ label }}</label>
   </div>
 </template>
 
@@ -42,6 +44,10 @@ export default defineComponent({
     initiatedValue: {
       type:[String, Number],
       required: false
+    },
+    disabled : {
+      type: Boolean, 
+      required: false 
     }
   },
   methods : {

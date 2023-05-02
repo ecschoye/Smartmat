@@ -12,7 +12,7 @@ export interface RefrigeratorState{
 export const useRefrigeratorStore = defineStore('refrigerator', {
     state: () : RefrigeratorState => ({
         refrigerators : [] as Refrigerator[],   
-        selectedRefrigerator : {} as Refrigerator | null,
+        selectedRefrigerator : null as Refrigerator | null,
         selectedGrocery : {} as GroceryEntity,
     }),
     persist: {

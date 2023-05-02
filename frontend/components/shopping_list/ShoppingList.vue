@@ -1,16 +1,16 @@
 <template>
-    <div class="p-3 font-mono text-sm flex justify-end">
-        <div class="w-2/5 h-96 p-1 overflow-auto bg-white border-2 rounded-lg border-black relative">
+    <div class="w-full font-mono text-sm flex justify-center">
+        <div class="w-11/12  md:w-9/12 h-96 mt-5 overflow-auto bg-white border-2 rounded-lg border-black relative">
             <div>
                 <div class="m-1 pl-2 pr-2 flex justify-center text-lg font-sans font-medium">
-                    <button @click.stop="selectTab('isShoppingListSelected')" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingListSelected}" class="pl-4 pr-4 bg-white border-2 rounded-l-lg border-black cursor-pointer hover:bg-slate-200"> Handleliste </button>
-                    <button @click.stop="selectTab('isShoppingCartSelected')" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingCartSelected}" class="pl-4 pr-4 bg-white border-2 rounded-r-lg border-black cursor-pointer hover:bg-slate-200"> Handlevogn </button>
+                    <button @click.stop="selectTab('isShoppingListSelected')" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingListSelected}" class="pl-4 pr-4 bg-white border-2 rounded-l-lg border-black cursor-pointer hover:bg-slate-200"> {{ t('shopping_list') }} </button>
+                    <button @click.stop="selectTab('isShoppingCartSelected')" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingCartSelected}" class="pl-4 pr-4 bg-white border-2 rounded-r-lg border-black cursor-pointer hover:bg-slate-200"> {{ t('shopping_cart') }} </button>
                 </div>
             </div>
             <div class="flex justify-center">
                 <div v-if="menuOptions.isShoppingListSelected">
                     <div v-if="categoryList === null || categoryList.length === 0">
-                        <h3 class="mt-3"> Du har ingen varer i handlelisten </h3>
+                        <h3 class="mt-3"> {{ t('you_have_no_groceries_in_the_shopping_list') }} </h3>
                     </div>
                     <div v-else class="grid grid-cols-1 gap-8">
                         <ShoppingListCategory
@@ -21,12 +21,12 @@
                         </ShoppingListCategory>
                     </div>
                     <div class="p-2 flex justify-end absolute bottom-0 right-0">
-                        <button @click.stop="addNewElementSelected = true" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-300 bg-sky-400"> Legg til Ny Vare </button>
+                        <button @click.stop="addNewElementSelected = true" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-300 bg-sky-400"> {{ t('add_a_new_grocery') }} </button>
                     </div>                
                 </div>
                 <div v-if="menuOptions.isShoppingCartSelected">
                     <div v-if="shoppingCart === null || shoppingCart.length === 0">
-                        <h3 class="mt-3"> Du har ingen varer i handlevognen </h3>
+                        <h3 class="mt-3"> {{ t('you_have_no_groceries_in_the_shopping_cart') }} </h3>
                     </div>
                     <div v-else class="grid grid-cols-1 gap-8">
                         <ShoppingListElement
@@ -35,22 +35,22 @@
                             :ElementDetails=element>
                         </ShoppingListElement>
                         <div class="p-2 flex justify-end absolute bottom-0 right-0">
-                            <button @click.stop="addAllElementsToRefrigerator" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-300 bg-sky-400"> Legg alt i Kjøleskapet </button>
+                            <button @click.stop="addAllElementsToRefrigerator" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-300 bg-sky-400"> {{ t('put_everything_in_the_refrigerator') }} </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div v-if="addNewElementSelected" class="w-2/5 h-96 p-1 overflow-auto bg-white border-2 rounded-lg border-black absolute">
-            <AddNewElement
-                :shoppingListId="shoppingListId"
-            />
-            <div class="p-2 flex justify-end absolute bottom-0 right-0">
-                <button @click.stop="addNewElementSelected = false" class="hover:bg-sky-200 bg-sky-300 border-2 rounded-full border-black h-8 w-8">
-                    <img src="../../assets/icons/close.png" alt="Close">
-                </button>
-            </div>
+      <div v-if="addNewElementSelected" class="w-2/5 h-96 p-1 overflow-auto bg-white border-2 rounded-lg border-black absolute">
+        <AddNewElement
+            :shoppingListId="shoppingListId"
+        />
+        <div class="p-2 flex justify-end sticky -bottom-2 right-0">
+          <button @click.stop="addNewElementSelected = false" class="hover:bg-sky-200 bg-sky-300 border-2 rounded-full border-black h-8 w-8">
+            <img src="../../assets/icons/close.png" alt="Close">
+          </button>
         </div>
+      </div>
     </div>
 </template>
 
@@ -79,6 +79,11 @@ import { data } from "cypress/types/jquery";
             categoryList: [] as ShoppingListCategory[],
             shoppingCart: [] as ShoppingListElement[]
         };
+    },
+    setup() {
+      const { t } = useI18n();
+
+      return { t }
     },
     created() {
         this.loadLists();

@@ -9,7 +9,12 @@
     </div>
   </div>
   <div class="flex flex-wrap justify-center w-3/4 mx-auto" v-if="data.length > 0">
-    <RecipeCard v-for="recipe in displayedRecipes" :recipe="recipe" :key="recipe.id" :recipe_name="recipe.name" :image_url="recipe.image_url" :recipe_url="recipe.recipe_url" class="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 py-2 mr-2 sm:mr-0" />
+    <RecipeCard
+        v-for="recipe in displayedRecipes"
+        :key="recipe.id"
+        :recipe_name="recipe.name"
+        :image_url="recipe.url"
+        class="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 py-2 mr-2 sm:mr-0" />
   </div>
   <div class="flex justify-center my-4 pb-5" v-if="pageCount > 1">
     <button class="bg-gray-200 hover:bg-gray-300 mx-2 px-4 py-2 rounded" @click="previousPage" :disabled="currentPage === 1">{{ t('previous_page') }}</button>
@@ -27,6 +32,7 @@ const { t } = useI18n();
 const refrigeratorStore = useRefrigeratorStore();
 
 interface Recipe {
+  id: number;
   name: string;
   image_url: string;
 }
@@ -74,6 +80,7 @@ const loadRecipes = async () => {
     if (response.status === 200) {
       console.log(response.data);
       data = response.data;
+      recipesPage.value = data;
     }
   } catch (error: any) {
     errorMessage.value = error.response.data || 'An error occurred.';

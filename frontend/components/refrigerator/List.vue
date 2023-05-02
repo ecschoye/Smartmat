@@ -1,20 +1,26 @@
 <template>
-  <div>
+  <div class="h-fit overflow-y-scroll pb-10">
     <ul v-if="groceries.length > 0" class="space-y-1 list-none list-inside px-3">
-      <li v-for="(category, index) in categorizedGroups" :key="index">
-        <div @click="toggleCategory(index)" class="flex">
-          {{ category.name }} ({{ categorySum (category) }})
-          <div class="px-5" :class="{'text-red-500' : isNearExpiry(getClosestExpiryDateForCategory(category)!) }">
-            {{ getClosestExpiryDateForCategory(category)?.toLocaleDateString() }}
+      <li v-for="(category, index) in categorizedGroups" :key="index" :class="index % 2 === 0 ? 'bg-white' : 'bg-gray-200'" class="rounded-lg">
+        <div @click="toggleCategory(index)" class="relative pl-1 py-2 border-2 border-gray-300 rounded-md">
+          <div class="absolute inset-y-0 right-5 pl-2 flex items-center">
+            <img src="../../assets/icons/expandMore.png" alt="Expand" class="h-4 w-4" />
+          </div>
+          <div class="pr-6 md:pl-1">
+            {{ category.name }} ({{ categorySum (category) }})
+              <div v-if="getClosestExpiryDateForCategory(category) !== null" class="px-5" :class="{'text-red-500' : isNearExpiry(getClosestExpiryDateForCategory(category)!) }">
+            {{ getClosestExpiryDateForCategory(category)!.toLocaleDateString() }}
           </div>
           <i :class="['fa', isCategoryOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+            <i :class="['fa', isCategoryOpen(index) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
+          </div>
         </div>
-        <ul v-if="isCategoryOpen(index)" class="py-2 px-3 w-12/12 list-none list-inside bg-gray-200 dark:bg-zinc-300 rounded-xl">
+        <ul v-if="isCategoryOpen(index)" class="py-2 px-3 w-full list-none list-inside rounded-xl">
           <li v-for="(group, index2) in Array.from(category.groups.values())" :key="index2">
             <div @click="toggleCategoryGroup(index, index2)" class="flex">
               - {{ group.name }} ({{ group.groceries.length }}) 
-              <div class="px-5" :class="{'text-red-500' : isNearExpiry(getClosestExpiryDateForCategory(category)!) }">
-                {{ getClosestExpiryDateForGroup(group)?.toLocaleDateString() }}
+              <div v-if="getClosestExpiryDateForGroup(group) !== null" class="px-5" :class="{'text-red-500' : isNearExpiry(getClosestExpiryDateForCategory(category)!) }">
+                {{ getClosestExpiryDateForGroup(group)!.toLocaleDateString() }}
               </div>
               <i :class="['fa', isCategoryGroupOpen(index,index2) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>
             </div>

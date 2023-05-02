@@ -7,5 +7,6 @@ export interface GroceryEntity {
     physicalExpireDate: Date,
     refrigerator : Refrigerator,
     grocery: Grocery,
-    unit : Unit
+    unit : Unit,
+    quantity : number
 }

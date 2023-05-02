@@ -14,6 +14,7 @@ import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.repository.GroceryRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
 import ntnu.idatt2106.backend.repository.SubCategoryRepository;
+import ntnu.idatt2106.backend.repository.UnitRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,9 @@ public class GroceryService {
     private final SubCategoryRepository subCategoryRepository;
     private final RefrigeratorService refrigeratorService;
     private final NotificationService notificationService;
+
+    //TODO:following line is temporary
+    private final UnitRepository unitRepository;
 
     /**
      * Saves a grocery to a refrigerator. If it is a custom
@@ -73,6 +77,10 @@ public class GroceryService {
             refrigeratorGrocery.setGrocery(grocery);
             refrigeratorGrocery.setRefrigerator(refrigerator);
             refrigeratorGrocery.setPhysicalExpireDate(getPhysicalExpireDate(groceryDTO.getGroceryExpiryDays()));
+            //TODO: TEMP FIX
+            Optional<Unit> unit = unitRepository.findById(1L);
+            refrigeratorGrocery.setUnit(unit.get());
+            refrigeratorGrocery.setQuantity(1);
 
             saveRefrigeratorGrocery(refrigeratorGrocery);
         }
@@ -255,6 +263,8 @@ public class GroceryService {
                 .grocery(oldGrocery.get().getGrocery())
                 .refrigerator(oldGrocery.get().getRefrigerator())
                 .id(refrigeratorGroceryDTO.getId())
+                .quantity(refrigeratorGroceryDTO.getQuantity())
+                .unit(oldGrocery.get().getUnit())
         .build();
         refrigeratorGroceryRepository.save(newGrocery);
     }

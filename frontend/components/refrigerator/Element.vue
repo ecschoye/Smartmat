@@ -1,6 +1,10 @@
 <template>
     <div ref="el" class="grid grid-cols-12 w-full justify-center py-3">
-      <p class ="col-span-8">{{ props.grocery.grocery.description }}</p>
+      <div class ="col-span-8 flex">
+        <p>{{ props.grocery.grocery.description }} |</p>
+        
+        <p class="mx-2"> {{ props.grocery.quantity }}{{ props.grocery.unit.name }}</p>
+      </div>
       <div class="align-middle col-span-3 flex rounded-lg align-middle">
         <img v-if="needsConfirmation" src="../../assets\icons\done.png" alt="Menu" class="w-5 h-5 m-1 align-middle bg-green-500 hover:bg-green-600 rounded-xl" @click="setDate()">
         <input type="date" :id="'expiry-date-' + props.grocery.id" name="expiry-date" class="hover:bg-zinc-500 bg-inherit rounded-lg" :class="{'text-red-500' : isNearExpiry() }">

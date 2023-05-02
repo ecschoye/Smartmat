@@ -1,4 +1,4 @@
 export interface Unit{
     id:number,
-    name:String,
+    name: string,
 }

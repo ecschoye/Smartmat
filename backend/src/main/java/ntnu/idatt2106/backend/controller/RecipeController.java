@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -42,7 +43,19 @@ public class RecipeController {
     })
     @GetMapping("/fetch")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> fetchRecipes(@Valid @ModelAttribute FetchRecipesDTO fetchRecipesDTO) throws NoSuchElementException {
+    public ResponseEntity<?> fetchRecipes(
+            @Valid @RequestParam("refrigeratorId") long refrigeratorId,
+            @Valid @RequestParam("numRecipes") int numRecipes,
+            @Valid @RequestParam(value = "recipesFetched", required = false) List<Long> fetchedRecipeIds) throws NoSuchElementException {
+        if (fetchedRecipeIds == null) {
+            fetchedRecipeIds = new ArrayList<>();
+        }
+
+        FetchRecipesDTO fetchRecipesDTO = new FetchRecipesDTO();
+        fetchRecipesDTO.setRefrigeratorId(refrigeratorId);
+        fetchRecipesDTO.setNumRecipes(numRecipes);
+        fetchRecipesDTO.setFetchedRecipeIds(fetchedRecipeIds);
+
         logger.info("Received request to fetch recipes for user");
         logger.info(fetchRecipesDTO.toString());
         List<RecipeDTO> recipes;
@@ -55,5 +68,6 @@ public class RecipeController {
 
         return ResponseEntity.ok(recipes);
     }
+
 
 }

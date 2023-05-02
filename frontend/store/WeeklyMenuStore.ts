@@ -18,6 +18,9 @@ export const useWeeklyMenuStore = defineStore({
     nextWeekLocks: Array(7).fill(false) as boolean[],
     chosenWeek: 1,
   }),
+    persist: {
+        storage: persistedState.sessionStorage,
+    },
   actions: {
     setCurrentWeek(index: number, recipe: Recipe | null) {
       this.currentWeek[index] = recipe;

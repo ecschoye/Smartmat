@@ -55,17 +55,14 @@
 </template>
 
 <script lang="ts">
-import GreenButton from "~/components/Button/GreenButton.vue";
-import GrayButton from "~/components/Button/GrayButton.vue";
-import BaseInput from "~/components/Form/BaseInput.vue";
+import {computed} from 'vue'; 
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
-import type { Refrigerator } from '~/types/RefrigeratorType'
 import { getRefrigeratorById, postEditMembers, postRemoveMember } from '~/service/httputils/RefrigeratorService';
-import type {Member} from "~/types/MemberType"
 import { getUserData } from "~/service/httputils/authentication/AuthenticationService";
 import { RemoveMemberRequest } from "~/types/RemoveMemberRequest";
 import { MemberRequest } from "~/types/MemberRequest";
-import { ErrorCodes } from "nuxt/dist/app/compat/capi";
+import type { Refrigerator } from '~/types/RefrigeratorType'
+import type {Member} from "~/types/MemberType"
 
 export default {
   data() {

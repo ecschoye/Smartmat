@@ -45,6 +45,8 @@ public class RefrigeratorGrocery {
     @Schema(description = "Grocery in the refrigerator")
     private Grocery grocery;
 
+
+
     @OneToMany(mappedBy = "groceryEntity", cascade = CascadeType.REMOVE)
     private Set<GroceryNotification> groceryNotifications = new HashSet<>();
 }

@@ -77,6 +77,8 @@ public class TestDataSerializer {
 
     private final BCryptPasswordEncoder passwordEncoder;
 
+    private final UnitRepository unitRepository;
+
     @PostConstruct
     public void init() throws NumberFormatException {
         serialize();
@@ -91,6 +93,7 @@ public class TestDataSerializer {
         createRecipeCategories();
         createRecipes();
         createRecipeGroceries();
+        createUnits();
     }
 
 
@@ -347,6 +350,27 @@ public class TestDataSerializer {
         grocery.setGroceryExpiryDays(subCategory.getCategoryExpiryDays());
         groceryRepository.save(grocery);
 
+    }
+
+    private void createUnits(){
+        unitRepository.save(Unit.builder().name("l")
+                        .weight(1000)
+                        .build());
+        unitRepository.save(Unit.builder().name("kg")
+                .weight(1000)
+                .build());
+        unitRepository.save(Unit.builder().name("g")
+                .weight(1)
+                .build());
+        unitRepository.save(Unit.builder().name("dl")
+                .weight(100)
+                .build());
+        unitRepository.save(Unit.builder().name("ml")
+                .weight(1)
+                .build());
+        unitRepository.save(Unit.builder().name("hg")
+                .weight(100)
+                .build());
     }
 
 }

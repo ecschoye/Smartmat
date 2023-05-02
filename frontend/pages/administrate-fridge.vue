@@ -38,7 +38,7 @@
                               <h4>{{ $t("leave_refrigerator")}}</h4>
                           </div>
                       </div>
-                      <div class="choice-wrapper" v-else @click="deleteMember(member.username)">
+                      <div class="choice-wrapper" v-else @click="deleteMember(member)">
                           <div class="action-choice">
                               <img class="choice-image" src="@/assets/icons/trash.png">
                               <h4>{{ $t("remove_member")}}</h4>
@@ -170,42 +170,44 @@ export default {
       },
       async handleLeaveFridge(member : Member) {
         const removeMemberRequest : RemoveMemberRequest = {
-          refrigeratorId : this.refrigeratorStore.getSelectedRefrigerator.id,
+          refrigeratorId : member.refrigeratorId,
           userName : member.username,
           forceDelete : false
         }
         await this.leaveFridge(removeMemberRequest); 
       },
-      async deleteMember(username : String) {
+      async deleteMember(member : Member) {
         const removeMemberRequest: RemoveMemberRequest = {
-        refrigeratorId: this.refrigeratorStore.getSelectedRefrigerator.id,
-        userName: username,
+        refrigeratorId: member.refrigeratorId,
+        userName: member.username,
         forceDelete: false,
-      };
-      try {
-        const response = await postRemoveMember(removeMemberRequest);
-        if(response !== null && response.status == 200) {
-          alert(this.t("remove_member_succsess"))
-          location.reload();
+        };
+        try {
+          const response = await postRemoveMember(removeMemberRequest);
+          if(response !== null && response.status == 200) {
+            alert(this.t("remove_member_succsess"))
+            location.reload();
+          }
+        } catch (error) {
+          alert(this.t("remove_member_failed"))
+          console.error(error);
         }
-      } catch (error) {
-        alert(this.t("remove_member_failed"))
-        console.error(error);
-      }
-    },
+      },
       async getRefrigerator() {
       let refrigerator = null as Refrigerator | null;
-      let response = await getRefrigeratorById(this.refrigeratorStore.getSelectedRefrigerator.id);
-      if(response !== null){
-          let element : Refrigerator = response.data; 
-          let membersResponse = [] as Member[]; 
-          element.members?.forEach((element : Member) => {
-              const object : Member = {refrigeratorId : element.refrigeratorId, name : element.name, username : element.username, fridgeRole : element.fridgeRole}
-              membersResponse.push(object); 
-          })
-          refrigerator = {id: element.id, name: element.name, address: element.address, members: membersResponse}
-          this.fridge = refrigerator
+      if(this.refrigeratorStore.getSelectedRefrigerator !== null){
+        let response = await getRefrigeratorById(this.refrigeratorStore.getSelectedRefrigerator.id);
+        if(response !== null){
+            let element : Refrigerator = response.data; 
+            let membersResponse = [] as Member[]; 
+            element.members?.forEach((element : Member) => {
+                const object : Member = {refrigeratorId : element.refrigeratorId, name : element.name, username : element.username, fridgeRole : element.fridgeRole}
+                membersResponse.push(object); 
+            })
+            refrigerator = {id: element.id, name: element.name, address: element.address, members: membersResponse}
+            this.fridge = refrigerator
 
+        }
       }
       },
       isUser(email : String):  boolean {

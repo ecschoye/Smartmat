@@ -5,5 +5,6 @@ interface ShoppingListElement {
     subCategoryName: string;
     isAddedToCart: boolean;
     isSuggested: boolean;
+    isFromRefrigerator: boolean;
   }
   

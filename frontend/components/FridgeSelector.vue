@@ -3,7 +3,7 @@
     <div style="min-width:150px;">
       <HeadlessListbox as="div" v-model="selected">
         <HeadlessListboxLabel></HeadlessListboxLabel>
-        <div class="relative flex-row justify-center">
+        <div class="relative justify-center">
           <HeadlessListboxButton class=" relative w-full h-full cursor-default rounded-md bg-white dark:bg-zinc-600 py-1.5 pr-10 text-left text-gray-900 shadow-sm sm:leading-6 hover:cursor-pointer">
             <span class="flex item-center">
               <span v-if="selected === null" class="ml-3 block truncate opacity-70">{{ $t('select_fridge') }}</span>
@@ -101,9 +101,10 @@ export default defineComponent ({
     setSelected(fridge : Refrigerator){
       this.selected = fridge; 
       this.refrigeratorStore.setSelectedRefrigerator(fridge);
-      if(this.$route.path === '/administrate-fridge'){
+      const route = this.$route.path
+      if(route === '/administrate-fridge'){
         location.reload(); 
-      } 
+      }
       
     },
     fetchSelected() {

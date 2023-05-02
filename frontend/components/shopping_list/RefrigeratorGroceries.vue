@@ -2,7 +2,7 @@
     <div class="grid grid-cols-1 gap-8">
         <div class="items stretch text-sm">
             <div class="ml-4 p-2 flex justify-end absolute left-0 font-extrabold">
-                <h3 class="mr-2"> {{ CategoryDetails.name }} </h3>
+                <h3 class="mr-2"> Foreslått fra kjøleskap </h3>
                 <h5> [{{ categoryListItems.length }}] </h5>
             </div>
             <div class="p-2 flex justify-end absolute right-0">
@@ -27,10 +27,6 @@
 import ShoppingListService from "~/service/httputils/ShoppingListService";
     export default defineComponent({
         props:{
-            CategoryDetails: {
-                type: Object as () => ShoppingListCategory,
-                required: true,
-            },
             ShoppingListId: {
                 type: Number,
                 required: true
@@ -43,29 +39,15 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
             }
         },
         async mounted() {   
-            //loads shopping list    
-            this.loadShoppingList()
-
             //loads suggestions
-            this.loadSuggestions()
+            this.loadSuggestionsFromRefrigerator()
         },
         methods: {
-            async loadShoppingList() {
+            async loadSuggestionsFromRefrigerator() {
                 try {
-                    let response = await ShoppingListService.getGroceriesFromCategorizedShoppingList(this.ShoppingListId, this.CategoryDetails.id)
-                    response.data.forEach((element: ResponseGrocery) => {
-                        let object:ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: false, isFromRefrigerator: false };
-                        this.categoryListItems.push(object);
-                    });
-                } catch (error) {
-                    console.error(error)
-                }
-            },
-            async loadSuggestions() {
-                try {
-                    let responseSuggestions = await ShoppingListService.getRequestedGroceriesInCategories(this.ShoppingListId, this.CategoryDetails.id);
+                    let responseSuggestions = await ShoppingListService.getSuggestedGroceriesFromRefrigerator(this.ShoppingListId);
                     responseSuggestions.data.forEach((element: ResponseGrocery) => {
-                        let object: ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true, isFromRefrigerator: false };
+                        let object: ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true, isFromRefrigerator: true };
                         this.categoryListItems.push(object);
                     });
                 } catch (error) {

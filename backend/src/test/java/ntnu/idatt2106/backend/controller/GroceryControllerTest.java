@@ -2,18 +2,16 @@ package ntnu.idatt2106.backend.controller;
 
 import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
-import ntnu.idatt2106.backend.exceptions.NotificationException;
-import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
-import ntnu.idatt2106.backend.exceptions.UnauthorizedException;
-import ntnu.idatt2106.backend.exceptions.UserNotFoundException;
+import ntnu.idatt2106.backend.exceptions.*;
+import ntnu.idatt2106.backend.model.Refrigerator;
+import ntnu.idatt2106.backend.model.SubCategory;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.response.ErrorResponse;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
-import ntnu.idatt2106.backend.service.CookieService;
-import ntnu.idatt2106.backend.service.GroceryService;
-import ntnu.idatt2106.backend.service.JwtService;
-import ntnu.idatt2106.backend.service.NotificationService;
+import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
+import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
+import ntnu.idatt2106.backend.service.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,8 +24,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 class GroceryControllerTest {
@@ -40,6 +41,12 @@ class GroceryControllerTest {
 
     @Mock
     private JwtService jwtService;
+
+    @Mock
+    private RefrigeratorGroceryRepository refrigeratorGroceryRepository;
+
+    @Mock
+    private ShoppingListService shoppingListService;
 
     @Mock
     private NotificationService notificationService;
@@ -85,10 +92,15 @@ class GroceryControllerTest {
     }
 
     @Test
-    void removeRefrigeratorGrocery_validInput_removesGrocery() throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException {
+    void removeRefrigeratorGrocery_validInput_removesGrocery() throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException, SaveException, ShoppingListNotFound {
         // Arrange
         long refrigeratorGroceryId = 1L;
-
+        RefrigeratorGrocery refrigeratorGrocery = new RefrigeratorGrocery();
+        refrigeratorGrocery.setId(refrigeratorGroceryId);
+        refrigeratorGrocery.setGrocery(new Grocery(1L, "Milk", 1, "Description", new SubCategory()));
+        refrigeratorGrocery.setPhysicalExpireDate(new Date());
+        refrigeratorGrocery.setRefrigerator(new Refrigerator(1, "test", "ntnu"));
+        when(groceryService.getRefrigeratorGroceryById(refrigeratorGroceryId)).thenReturn(refrigeratorGrocery);
         // Act
         ResponseEntity<SuccessResponse> responseEntity = groceryController.removeRefrigeratorGrocery(refrigeratorGroceryId, httpServletRequest);
 

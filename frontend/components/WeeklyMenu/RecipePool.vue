@@ -188,7 +188,8 @@ export default {
         },
 
       async randomRecipesEvent() {
-        try {
+        if(this.getAmountOfRecipesNeeded() > 0) {
+            try {
           this.fetchRecipeDTO.numRecipes = this.getAmountOfRecipesNeeded();
           this.fetchRecipeDTO.refrigeratorId = this.refrigeratorStore.getSelectedRefrigerator.id;
 
@@ -201,7 +202,6 @@ export default {
               url: recipe.url,
             }));
 
-
             if (this.weeklyMenuStore.$state.chosenWeek === 1) {
               this.weeklyMenuStore.setCurrentWeekRandomly(recipes);
             } else {
@@ -210,6 +210,7 @@ export default {
           }
         } catch (error: any) {
           console.log(error);
+        }
         }
       },
 

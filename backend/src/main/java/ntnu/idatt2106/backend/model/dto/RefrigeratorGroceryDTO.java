@@ -18,7 +18,7 @@ public class RefrigeratorGroceryDTO {
     private long id;
     private Date physicalExpireDate;
     private GroceryDTO grocery;
-    private Unit unit;
+    private UnitDTO unit;
     private int quantity;
 
 
@@ -26,7 +26,7 @@ public class RefrigeratorGroceryDTO {
         this.id = refrigeratorGrocery.getId();
         this.physicalExpireDate = refrigeratorGrocery.getPhysicalExpireDate();
         this.grocery = new GroceryDTO(refrigeratorGrocery.getGrocery());
-        this.unit = refrigeratorGrocery.getUnit();
+        this.unit = new UnitDTO(refrigeratorGrocery.getUnit());
         this.quantity = refrigeratorGrocery.getQuantity();
     }
 }

@@ -39,7 +39,7 @@ test_backend:
   artifacts:
     when: always
     paths:
-      - target/site/jacoco
+      - target/site/jacoco/index.html
     reports:
       junit:
         - target/surefire-reports/TEST-*.xml

@@ -90,13 +90,14 @@ export default defineComponent ({
     const {locale, locales, t} = useI18n()
     const userStore = useUserStore();
     const refrigeratorStore = useRefrigeratorStore();
-    const refrigerators = computed(() => refrigeratorStore.getRefrigerators); 
+    const refrigerators = computed(() => refrigeratorStore.getRefrigerators);
     
     return { t,locale,locales, userStore, refrigeratorStore, refrigerators}
   },
   methods: {
     goToCreateFridgePage() {
-      this.$router.push(this.$nuxt.localePath('/create-fridge'));
+      //this.$router.push(this.$nuxt.localePath('/create-fridge'));
+      this.$router.push('/create-fridge');
     },
     setSelected(fridge : Refrigerator){
       this.selected = fridge; 

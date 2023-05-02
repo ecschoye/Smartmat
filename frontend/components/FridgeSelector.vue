@@ -124,7 +124,6 @@ export default defineComponent ({
           this.selected = this.refrigerators[0]; 
         }
         else if (this.refrigeratorStore.getRefrigerators.length === 0) {
-          this.goToCreateFridgePage(); 
           this.selected = null; 
         }
         else this.selected = null; 

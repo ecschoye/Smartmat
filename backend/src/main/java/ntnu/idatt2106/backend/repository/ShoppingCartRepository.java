@@ -12,14 +12,11 @@ import java.util.Optional;
 
 @Repository
 public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long> {
-    Optional<ShoppingCart> findById(Long id);
     @Query(value = "SELECT gsc" +
             " FROM ShoppingCart sc, GroceryShoppingCart gsc, Grocery g" +
             " WHERE gsc.grocery.id = g.id AND sc.id = gsc.shoppingCart.id AND sc.id = :shoppingCartId")
     List<GroceryShoppingCart> findByShoppingCartId(@Param("shoppingCartId")Long shoppingCartId);
-
-    @Query(value = "SELECT s FROM ShoppingCart s WHERE s.shoppingList.id = :id")
-    ShoppingCart findShoppingListById(Long id);
+    Optional<ShoppingCart> findByShoppingListId(Long id);
 
     void removeByShoppingList(ShoppingList shoppingList);
 }

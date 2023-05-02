@@ -9,8 +9,6 @@ import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementD
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
-import ntnu.idatt2106.backend.service.GroceryService;
-import ntnu.idatt2106.backend.service.ShoppingCartService;
 import ntnu.idatt2106.backend.service.ShoppingListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +26,6 @@ import java.util.List;
 public class ShoppingListController {
 
     private final ShoppingListService shoppingListService;
-    private final ShoppingCartService shoppingCartService;
-    private final GroceryService groceryService;
 
     Logger logger = LoggerFactory.getLogger(ShoppingListController.class);
 
@@ -110,6 +106,7 @@ public class ShoppingListController {
         shoppingListService.saveGrocery(groceryId, shoppingListId, quantity, request);
         return new ResponseEntity<>(new SuccessResponse("The grocery was added successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
+
     @PostMapping("/edit-grocery/{groceryShoppingListId}/{quantity}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<GroceryShoppingList> editGrocery(@PathVariable("groceryShoppingListId") long groceryShoppingListId,
@@ -119,6 +116,7 @@ public class ShoppingListController {
         GroceryShoppingList grocery = shoppingListService.editGrocery(groceryShoppingListId, quantity, httpRequest);
         return new ResponseEntity<>(grocery, HttpStatus.OK);
     }
+
     @PostMapping("/edit-refrigerator-grocery/{groceryRefrigeratorShoppingListId}/{quantity}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<GroceryShoppingList> editRefrigeratorGrocery(@PathVariable("groceryRefrigeratorShoppingListId") long groceryRefrigeratorShoppingListId,
@@ -138,6 +136,7 @@ public class ShoppingListController {
         logger.info("Returns deleteStatus and status OK");
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
+
     @DeleteMapping("/delete-refrigerator-grocery/{refrigeratorShoppingListId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Boolean> removeRefrigeratorGroceryFromShoppingList(@PathVariable(name="refrigeratorShoppingListId") long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {
@@ -169,10 +168,9 @@ public class ShoppingListController {
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 
-
     @PostMapping("transfer-shopping-cart/{groceryShoppingListId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Boolean> transferToShoppingCart(@PathVariable("groceryShoppingListId") long groceryShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SubCategoryNotFound {
+    public ResponseEntity<Boolean> transferToShoppingCart(@PathVariable("groceryShoppingListId") long groceryShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {
         logger.info("Received request to transfer grocery item with id {} in shopping list to shopping cart", groceryShoppingListId);
 
         shoppingListService.transferGroceryToCart(groceryShoppingListId, httpRequest); //throws error if the transfer was unsuccessful
@@ -182,13 +180,11 @@ public class ShoppingListController {
 
     @PostMapping("refrigerator/transfer-shopping-cart/{refrigeratorShoppingListId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Boolean> transferRefrigeratorGroceryToShoppingCart(@PathVariable("refrigeratorShoppingListId") long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SubCategoryNotFound {
+    public ResponseEntity<Boolean> transferRefrigeratorGroceryToShoppingCart(@PathVariable("refrigeratorShoppingListId") long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {
         logger.info("Received request to transfer grocery item with id {} in refrigerator shopping list to shopping list", refrigeratorShoppingListId);
         shoppingListService.transferRefrigeratorGroceryToCart(refrigeratorShoppingListId, httpRequest); //throws error if the transfer was unsuccessful
 
         logger.info("Returns transferStatus and status OK");
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
-
-
 }

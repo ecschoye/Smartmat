@@ -61,7 +61,7 @@ public class ShoppingListService {
 
     /**
      * Creates a new shopping list if it does not already exist a shopping list for the refrigerator id
-     * The shopping id to an already existing list is returned if it already exists a shopping list for the given refrigerator
+     * The shopping list id to an already existing list is returned if it already exists a shopping list for the given refrigerator
      * @param refrigeratorId ID of connected refrigerator
      * @return shopping list id for the refrigerator id in the parameter
      * @throws RefrigeratorNotFoundException If no refrigerator is found the refrigerator id in the parameter
@@ -119,22 +119,22 @@ public class ShoppingListService {
                 .sorted(new ShoppingListElementDTOComparator()).collect(Collectors.toList());
     }
 
-        /**
-         * Getter for all groceries from the suggested refrigerator shopping list belonging to the shopping list specified in the parameter
-         * @param shoppingListId ID to the shopping list related to the refrigerator shopping list
-         * @return All groceries from the shopping list with the shopping list id specified in the parameter
-         * @exception NoGroceriesFound Could not find any groceries
-         */
-        public List<ShoppingCartElementDTO> getGroceriesFromRefrigeratorShoppingList(long shoppingListId) throws NoGroceriesFound {
-            List<RefrigeratorShoppingList> groceries = refrigeratorShoppingListRepository.findByShoppingListId(shoppingListId);
-            if (groceries.isEmpty()) {
-                logger.info("Received no groceries from the database");
-                throw new NoGroceriesFound("Could not find any groceries for shopping list id " + shoppingListId);
+    /**
+     * Getter for all groceries from the suggested refrigerator shopping list belonging to the shopping list specified in the parameter
+     * @param shoppingListId ID to the shopping list related to the refrigerator shopping list
+     * @return All groceries from the shopping list with the shopping list id specified in the parameter
+     * @exception NoGroceriesFound Could not find any groceries
+     */
+    public List<ShoppingCartElementDTO> getGroceriesFromRefrigeratorShoppingList(long shoppingListId) throws NoGroceriesFound {
+        List<RefrigeratorShoppingList> groceries = refrigeratorShoppingListRepository.findByShoppingListId(shoppingListId);
+        if (groceries.isEmpty()) {
+            logger.info("Received no groceries from the database");
+            throw new NoGroceriesFound("Could not find any groceries for shopping list id " + shoppingListId);
 
-            }
-            return groceries.stream().map(ShoppingCartElementDTO::new)
-                    .sorted(new ShoppingCartElementDTOComparator()).collect(Collectors.toList());
         }
+        return groceries.stream().map(ShoppingCartElementDTO::new)
+                .sorted(new ShoppingCartElementDTOComparator()).collect(Collectors.toList());
+    }
 
     /**
      * Getter for all categories of groceries in shopping list
@@ -151,7 +151,6 @@ public class ShoppingListService {
         categories.sort(new CategoryComparator());
         return categories;
     }
-
 
     /**
      * Edit the grocery in shopping list. It is only possible for a superuser of the refrigerator assosiated with the shopping list
@@ -179,7 +178,6 @@ public class ShoppingListService {
         throw new SaveException("Failed to add a edit the grocery item with id " + groceryShoppingListId);
     }
 
-    //todo: remove duplicates
     /**
      * Edit the grocery in refrigerator shopping list . It is only possible for a superuser of the refrigerator
      * assosiated with the shopping list to edit the grocery. The grocery is transferred to the shopping list when a
@@ -248,7 +246,7 @@ public class ShoppingListService {
      * @exception ShoppingListNotFound If the shopping list is not found
      * @exception UserNotFoundException If the user is not found
      */
-    public void saveGroceryToSuggestionForRefrigerator(long groceryId, long refrigeratorId) throws ShoppingListNotFound, UserNotFoundException, UnauthorizedException, SaveException {
+    public void saveGroceryToSuggestionForRefrigerator(long groceryId, long refrigeratorId) throws ShoppingListNotFound, SaveException {
         ShoppingList shoppingList = getShoppingListByRefrigeratorId(refrigeratorId);
         Optional<RefrigeratorShoppingList> refrigeratorShoppingListOptional = refrigeratorShoppingListRepository
                 .findByGroceryIdAndShoppingListId(groceryId, shoppingList.getId());

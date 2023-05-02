@@ -164,7 +164,7 @@ public class ShoppingListController {
                                                                                                          @PathVariable("categoryId") long categoryId) throws NoGroceriesFound {
         logger.info("Received request to get groceries requested to the shopping list with id {}", shoppingListId);
         List<ShoppingListElementDTO> groceries = shoppingListService.getGroceries(shoppingListId, categoryId, true);
-       
+
         logger.info("Returns groceries and status OK");
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }

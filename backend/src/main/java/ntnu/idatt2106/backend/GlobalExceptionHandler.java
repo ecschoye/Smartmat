@@ -66,6 +66,13 @@ public class GlobalExceptionHandler {
                 .body(ex.getMessage());
     }
 
+    @ExceptionHandler(CategoryNotFound.class)
+    public ResponseEntity<String> handleCategoryNotFound(Exception ex) {
+        logger.info("Could not find any categories");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(ex.getMessage());
+    }
+
     @ExceptionHandler(SaveException.class)
     public ResponseEntity<String> handleSaveException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

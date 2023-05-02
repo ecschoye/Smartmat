@@ -154,6 +154,11 @@ export default defineComponent({
     closeMobileMenu() {
       this.mobileMenuOpen = false;
     }
+  },
+  mounted() {
+    if(!this.loggedIn){
+      this.$router.push("/login");
+    }
   }
 
 })

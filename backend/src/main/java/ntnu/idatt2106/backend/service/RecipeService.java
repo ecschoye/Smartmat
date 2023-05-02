@@ -1,4 +1,4 @@
-package ntnu.idatt2106.backend.service.recipe;
+package ntnu.idatt2106.backend.service;
 
 
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 

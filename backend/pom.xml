@@ -196,6 +196,22 @@
 		</plugins>
 
 	</build>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.9</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>html</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
 
 
 

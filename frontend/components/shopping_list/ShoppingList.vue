@@ -1,14 +1,11 @@
 <template>
     <div class="p-3 font-mono text-sm flex justify-end">
-        <div class="w-2/5 h-96 p-1 overflow-auto bg-white dark:bg-zinc-400 border-2 rounded-lg border-black relative">
     <div class="w-full font-mono text-sm flex justify-center">
-        <div class="w-11/12  md:w-9/12 h-96 mt-5 overflow-auto bg-white border-2 rounded-lg border-black relative">
+        <div class="w-11/12  md:w-9/12 h-96 mt-5 overflow-auto bg-white dark:bg-zinc-400 border-2 rounded-lg border-black relative">
             <div>
                 <div class="m-1 pl-2 pr-2 flex justify-center text-lg font-sans font-medium">
                     <button @click.stop="selectListTab" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingListSelected}" class="pl-4 pr-4 bg-white dark:bg-zinc-300 border-2 rounded-l-lg border-black cursor-pointer hover:bg-slate-200"> Handleliste </button>
                     <button @click.stop="selectCartTab" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingCartSelected}" class="pl-4 pr-4 bg-white dark:bg-zinc-300 border-2 rounded-r-lg border-black cursor-pointer hover:bg-slate-200"> Handlevogn </button>
-                    <button @click.stop="selectTab('isShoppingListSelected')" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingListSelected}" class="pl-4 pr-4 bg-white border-2 rounded-l-lg border-black cursor-pointer hover:bg-slate-200"> {{ t('shopping_list') }} </button>
-                    <button @click.stop="selectTab('isShoppingCartSelected')" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingCartSelected}" class="pl-4 pr-4 bg-white border-2 rounded-r-lg border-black cursor-pointer hover:bg-slate-200"> {{ t('shopping_cart') }} </button>
                 </div>
             </div>
             <div class="flex justify-center">
@@ -58,6 +55,7 @@
         </div>
       </div>
     </div>
+</div>
 </template>
 
 <script lang="ts">
@@ -65,6 +63,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
 import ShoppingCartService from "~/service/httputils/ShoppingCartService";
 import ShoppingListElement from "./ShoppingListElement.vue";
 import AddNewElement from "./AddNewElement.vue";
+import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 import { data } from "cypress/types/jquery";
     export default defineComponent({
     props: {
@@ -80,20 +79,27 @@ import { data } from "cypress/types/jquery";
                 isShoppingCartSelected: false,
             },
             addNewElementSelected: false,
+            refrigeratorId: -1,
             shoppingListId: -1,
             shoppingCartId: -1,
             categoryList: [] as ShoppingListCategory[],
             shoppingCart: [] as ShoppingListElement[]
         };
     },
+    mounted() {
+        const refrigeratorStore = useRefrigeratorStore();
+        if (refrigeratorStore.getSelectedRefrigerator !== null) {
+            this.refrigeratorId = refrigeratorStore.getSelectedRefrigerator.id
+        }
+        console.log("REF_ID: " + this.refrigeratorId)
+        this.loadLists();
+    },
     setup() {
       const { t } = useI18n();
 
       return { t }
     },
-    created() {
-        this.loadLists();
-    },
+    
     methods: {
         async loadLists() {
             

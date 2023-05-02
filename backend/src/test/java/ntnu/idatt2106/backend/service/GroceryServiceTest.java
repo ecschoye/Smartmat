@@ -12,10 +12,7 @@ import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
-import ntnu.idatt2106.backend.repository.GroceryRepository;
-import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
-import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
-import ntnu.idatt2106.backend.repository.SubCategoryRepository;
+import ntnu.idatt2106.backend.repository.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -77,7 +74,7 @@ public class GroceryServiceTest {
     private RefrigeratorUser refrigeratorUser;
     private User user;
     private HttpServletRequest HttpRequest;
-
+    private UnitRepository unitRepository;
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -108,7 +105,9 @@ public class GroceryServiceTest {
         refrigeratorGrocery = new RefrigeratorGrocery();
         refrigeratorGrocery.setGrocery(grocery);
         refrigeratorGrocery.setRefrigerator(refrigerator);
-
+        Unit unit = new Unit(1, "dl", 100);
+        refrigeratorGrocery.setUnit(unit);
+        refrigeratorGrocery.setQuantity(1);
         customGroceryDTO = new GroceryDTO();
         customGroceryDTO.setName("Name");
         customGroceryDTO.setDescription("Desc");

@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "unit")
+@Table(name = "Unit")
 @Schema(description = "Unit of measurement")
 @Entity
 public class Unit {

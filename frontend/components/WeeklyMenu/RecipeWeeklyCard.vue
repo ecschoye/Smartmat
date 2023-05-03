@@ -1,5 +1,5 @@
 <template>
-  <div class="Recipe-card-wrapper">
+  <div class="Recipe-card-wrapper bg-green-color dark:bg-zinc-500">
     <div class="lock-container">
         <img
           v-if="lockedBoolean"
@@ -15,9 +15,9 @@
         />
       </div>
     <div v-if="!showIngredients" class="Recipe-card">
-      
-      <div class="image-wrapper">
-        <img :src="recepeInfo.url" alt="" />
+      <div class="">
+      <div class="h-40 dark:hidden bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(49,196,141,0) 90%, rgba(49,196,141,1) 100%), url(${recepeInfo.url})` }"></div>
+      <div class="h-40 hidden dark:block bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(39,39,42,0) 95%, rgba(39,39,42,1) 100%), url(${recepeInfo.url})` }"></div>
       </div>
       <div class="recipe-info">
         <div>
@@ -116,7 +116,6 @@
   overflow: hidden;
   z-index: 1;
   border-radius: 14px;
-  background-color: rgba(49, 196, 141, 1);
 }
 
 .Recipe-card-wrapper:hover {

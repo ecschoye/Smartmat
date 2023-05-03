@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <div class="bg-light-container dark:bg-dark-container hover:transform hover:scale-105 pb-3 w-11/12 h-72 justify-center relative rounded-xl">
+    <div class="bg-green-color dark:bg-zinc-500 hover:transform hover:scale-105 pb-3 w-11/12 h-72 justify-center relative rounded-xl">
       <div class="h-40 dark:hidden bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(49,196,141,0) 90%, rgba(49,196,141,1) 100%), url(${image_url})` }"></div>
       <div class="h-40 hidden dark:block bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(39,39,42,0) 95%, rgba(39,39,42,1) 100%), url(${image_url})` }"></div>
       <div class="">

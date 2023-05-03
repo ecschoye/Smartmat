@@ -252,7 +252,7 @@ public class GroceryService {
         return groceries.stream().map(GroceryDTO::new).sorted(new GroceryDTOComparator()).collect(Collectors.toList());
     }
 
-    public void useRefrigeratorGrocery(DeleteRefrigeratorGroceryDTO dto, HttpServletRequest request) throws Exception {
+    public RefrigeratorGrocery useRefrigeratorGrocery(DeleteRefrigeratorGroceryDTO dto, HttpServletRequest request) throws Exception {
         Optional<RefrigeratorGrocery> grocery = refrigeratorGroceryRepository.findById(dto.getRefrigeratorGroceryDTO().getId());
         if(grocery.isEmpty()){
             throw new EntityNotFoundException("Could not find grocery with id: " + dto.getRefrigeratorGroceryDTO().getId());
@@ -265,6 +265,7 @@ public class GroceryService {
         if(newGrocery.getQuantity() - dto.getQuantity() <= 0){
             notificationService.deleteNotificationsByRefrigeratorGrocery(grocery.get());
             removeRefrigeratorGrocery(grocery.get().getId(), request);
+            return newGrocery;
         }
         else{
             if(newGrocery.getUnit().getId() == dto.getUnitDTO().getId()){
@@ -272,6 +273,7 @@ public class GroceryService {
                 refrigeratorGroceryRepository.save(newGrocery);
             }
         }
+        return null;
     }
 
 

@@ -93,9 +93,14 @@ public class GroceryController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> eatRefrigeratorGrocery(@RequestBody DeleteRefrigeratorGroceryDTO dto, HttpServletRequest httpServletRequest) throws Exception {
         try{
-            System.out.println(dto);
             String jwt = cookieService.extractTokenFromCookie(httpServletRequest);
-            groceryService.useRefrigeratorGrocery(dto, httpServletRequest);
+            logger.info("Received request to trash refrigeratorGrocery: " + dto.getRefrigeratorGroceryDTO().getId());
+            RefrigeratorGrocery grocery = groceryService.useRefrigeratorGrocery(dto, httpServletRequest);
+            if(grocery != null){
+                logger.info("All of grocery trashed, sending refrigeratorGrocery to shopping list");
+                shoppingListService.saveGroceryToSuggestionForRefrigerator(grocery.getGrocery().getId(),
+                        grocery.getRefrigerator().getId(), httpServletRequest);
+            }
         }catch(Exception e){
             throw new Exception(e);
         }
@@ -112,9 +117,14 @@ public class GroceryController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> trashRefrigeratorGrocery(@RequestBody DeleteRefrigeratorGroceryDTO dto, HttpServletRequest httpServletRequest) throws Exception {
         try{
-            System.out.println(dto);
             String jwt = cookieService.extractTokenFromCookie(httpServletRequest);
-            groceryService.useRefrigeratorGrocery(dto, httpServletRequest);
+            logger.info("Received request to trash refrigeratorGrocery: " + dto.getRefrigeratorGroceryDTO().getId());
+            RefrigeratorGrocery grocery = groceryService.useRefrigeratorGrocery(dto, httpServletRequest);
+            if(grocery != null){
+                logger.info("All of grocery trashed, sending refrigeratorGrocery to shopping list");
+                shoppingListService.saveGroceryToSuggestionForRefrigerator(grocery.getGrocery().getId(),
+                        grocery.getRefrigerator().getId(), httpServletRequest);
+            }
         }catch(Exception e){
             throw new Exception(e);
         }
@@ -132,9 +142,14 @@ public class GroceryController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> removeRefrigeratorGrocery(@RequestBody DeleteRefrigeratorGroceryDTO dto, HttpServletRequest httpServletRequest) throws Exception {
         try{
-            System.out.println(dto);
             String jwt = cookieService.extractTokenFromCookie(httpServletRequest);
-            groceryService.useRefrigeratorGrocery(dto, httpServletRequest);
+            logger.info("Received request to trash refrigeratorGrocery: " + dto.getRefrigeratorGroceryDTO().getId());
+            RefrigeratorGrocery grocery = groceryService.useRefrigeratorGrocery(dto, httpServletRequest);
+            if(grocery != null){
+                logger.info("All of grocery trashed, sending refrigeratorGrocery to shopping list");
+                shoppingListService.saveGroceryToSuggestionForRefrigerator(grocery.getGrocery().getId(),
+                        grocery.getRefrigerator().getId(), httpServletRequest);
+            }
         }catch(Exception e){
             throw new Exception(e);
         }

@@ -11,6 +11,7 @@ import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
+import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.repository.*;
@@ -140,6 +141,28 @@ public class ShoppingCartService {
                 logger.info("Error when saving grocery");
                 throw new SaveException("Could not save the grocery to shopping cart");
             }
+        }
+    }
+
+    /**
+     * Deletes a grocery from the shopping cart
+     * @param groceryListId ID to the grocery to delete
+     * @param httpRequest http request
+     * @return grocery item deleted
+     * @throws UnauthorizedException If not authorized
+     * @throws NoGroceriesFound If the grocery item not is found in the shopping list
+     * @throws UserNotFoundException If the user is not found
+     */
+    public GroceryShoppingCart deleteGrocery(long groceryListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {
+        GroceryShoppingCart groceryShoppingCart = groceryShoppingCartRepository.findById(groceryListId)
+                .orElseThrow(() -> new NoGroceriesFound("Could not find grocery item"));
+        FridgeRole fridgeRole = groceryService.getFridgeRole(groceryShoppingCart.getShoppingCart().getShoppingList().getRefrigerator(), httpRequest);
+
+        if (fridgeRole == FridgeRole.SUPERUSER) {
+            groceryShoppingCartRepository.deleteById(groceryListId);
+            return groceryShoppingCart;
+        } else {
+            throw new UnauthorizedException("The user is not authorized to delete a grocery list item");
         }
     }
 

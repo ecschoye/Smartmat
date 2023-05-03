@@ -16,7 +16,7 @@
                         <h3 class="mt-3"> {{ t('you_have_no_groceries_in_the_shopping_list') }} </h3>
                     </div>
                     <div class="grid grid-cols-1 gap-8">
-                        <div v-if="categoryList !== null && categoryList.length !== 0">
+                        <div v-if="categoryList !== null && categoryList.length !== 0" class="grid grid-cols-1 gap-8">
                             <ShoppingListCategory
                                 v-for="category in categoryList"
                                 :key="category.id"

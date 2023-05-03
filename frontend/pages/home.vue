@@ -23,8 +23,8 @@
         {{ showRefrigerator ? t('view_shopping_list') : t('view_refrigerator') }}
       </button>
     </div>
-    <div class="w-full flex justify-center mt-5">
-      <div v-if="showRefrigerator" class="w-1/2 ml-5">
+    <div>
+      <div v-if="showRefrigerator" class="ml-5">
         <RefrigeratorWrapper />
       </div>
       <div v-else class="w-full">

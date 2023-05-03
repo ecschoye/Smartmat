@@ -3,7 +3,7 @@
     <div class="user-details">
       <div class="header">Edit Account</div>
       <div class="form-group">
-        <BaseInput id="inpName" class="input-container" type="text" label="Name" v-model="user.name"/>
+        <BaseInput id="inpName" class="input-container" type="text" label="Name" v-model="user.name" maxlength="30"/>
       </div>
       <div class="form-group">
         <BaseInput id="inpEmail" class="input-container" type="text" label="Email" v-model="user.email"/>

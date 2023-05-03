@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="sendForm" class="form">
+  <form @submit.prevent="sendForm" class="form form-light-color dark:form-dark-color">
     <FormBaseInput id="email" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
     <div class="button-wrapper">
       <ButtonGreenButton :label="$t('invite_user')" width="100%"  height="50px" />
@@ -57,7 +57,6 @@
    .form {
     width: 400px;
     height: fit-content;
-    background: white;
     padding: 0 20px 20px;
     border-radius: 15px;
   }

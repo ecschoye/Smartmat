@@ -1,26 +1,26 @@
 <template>
-  <div class="header text-white mt-8 text-center text-4xl font-bold">{{t('change_password')}}</div>
-  <div class="edit-container w-5/6 h-11/12 md:w-3/5 lg:w-5/12 mt-5 mx-auto form-light-color dark:form-dark-color">
+  <div class="header text-black dark:text-white mt-8 text-center text-4xl font-bold">{{t('change_password')}}</div>
+  <div class="edit-container border-2 border-[#31C48D]/60 w-5/6 h-11/12 md:w-3/5 lg:w-5/12 mt-5 mx-auto form-light-color dark:form-dark-color">
     <div class="user-details">
       <div class="form-group w-full">
-        <p class="text-xl font-semibold">{{t('enter_your_old_password')}}</p>
+        <p class="text-black dark:text-white text-xl font-semibold">{{t('enter_your_old_password')}}</p>
         <BaseInput id="oldPassword" type="password" class="" :label="$t('old_password')" v-model="oldPassword"/>
       </div>
       <div class="form-group">
-        <p class="text-xl font-semibold">{{t('enter_your_new_password')}}</p>
+        <p class="text-black dark:text-white text-xl font-semibold">{{t('enter_your_new_password')}}</p>
         <BaseInput id="newPassword" type="password" class="" :label="$t('new_password')" v-model="newPassword"/>
       </div>
       <div class="form-group">
-        <p class="text-xl font-semibold">{{t('confirm_your_new_password')}}</p>
+        <p class="text-black dark:text-white text-xl font-semibold">{{t('confirm_your_new_password')}}</p>
         <BaseInput id="verifyNewPassword" type="password" class="" :label="$t('verify_new_password')" v-model="verifyNewPassword"/>
       </div>
       <div class="flex flex-row">
         <NuxtLink :to="localePath('/my-profile')">
-          <button class="w-36 h-14 button-light-color dark:button-dark-color dark:text-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 sm:flex sm:justify-center mr-4">
+          <button class="w-36 h-14 border-2 border-[#31C48D]/60 button-light-color dark:button-dark-color dark:text-white text-black hover:bg-slate-400 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 sm:flex sm:justify-center mr-4">
             {{t('go_back')}}
           </button>
         </NuxtLink>
-        <button @click="updatePassword()" class="w-36 h-14 button-light-color dark:button-dark-color dark:text-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center rounded transform hover:scale-100 sm:flex sm:justify-center">{{t('change_password')}}</button>
+        <button @click="updatePassword()" class="w-36 h-14 border-2 border-[#31C48D]/60 button-light-color dark:button-dark-color dark:text-white text-black hover:bg-slate-400 hover:text-white font-bold items-center rounded transform hover:scale-100 sm:flex sm:justify-center">{{t('change_password')}}</button>
       </div>
     </div>
   </div>
@@ -199,7 +199,6 @@ async function loadData() {
   position: relative;
   flex-direction: column;
   align-items: flex-start;
-  border: solid 3px white;
   border-radius: 20px;
   padding: 2rem;
 }
@@ -258,10 +257,6 @@ async function loadData() {
 
 .log-out-btn:hover {
   background-color: lightgray;
-}
-
-p {
-  color: white;
 }
 
 

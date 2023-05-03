@@ -1,5 +1,5 @@
 <template>
-  <div class="box w-3/4 md:1/2 lg:w-3/4 bg-white rounded-2xl mx-auto">
+  <div class="box w-3/4 md:1/2 lg:w-3/4 bg-white rounded-2xl mx-auto border-2 border-[#31C48D]/60">
     <h1 class="text-center h-24 pt-6 items"> {{ title }}</h1>
   </div>
 </template>

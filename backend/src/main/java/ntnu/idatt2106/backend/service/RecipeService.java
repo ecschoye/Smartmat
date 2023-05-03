@@ -155,12 +155,14 @@ public class RecipeService {
                 .orElseThrow(() -> new NoSuchElementException("Could not find recipe"));
     }
 
-
-
-
-
-
-
+    /**
+     * Find all ingredients in a recipe
+     * @param recipe the recipe
+     * @return ingredients list of RecipeGrocery
+     */
+    public List<RecipeGrocery> getIngredientsByRecipe(Recipe recipe) {
+        return recipeGroceryRepository.findAllByRecipe(recipe);
+    }
 
     /*public List<RecipeDTO> convertToDTOs(List<Recipe> recipes) {
         return recipes.stream().map(RecipeDTO::new).toList();

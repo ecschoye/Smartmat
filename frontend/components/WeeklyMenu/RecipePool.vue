@@ -18,6 +18,7 @@
                     <WeeklyMenuRecipeWeeklyCard @unlocked-event="unlockRecipe(getDayIndex(weekday))" 
                     @locked-event="lockRecipe(getDayIndex(weekday))" 
                     @remove-event="removeRecipe(getDayIndex(weekday))"
+                    @see-recipe-event="seeRecipeCurrentWeek(getDayIndex[weekday])"
                     :recepe-info="weeklyMenuStore.$state.currentWeek[getDayIndex(weekday)]" 
                     :locked-boolean="weeklyMenuStore.$state.currentWeekLocks[getDayIndex(weekday)]" />
                 </div>
@@ -37,6 +38,7 @@
                     <WeeklyMenuRecipeWeeklyCard @unlocked-event="unlockRecipe(getDayIndex(weekday))" 
                     @locked-event="lockRecipe(getDayIndex(weekday))" 
                     @remove-event="removeRecipe(getDayIndex(weekday))"
+                    @see-recipe-event="seeRecipeNextWeek(getDayIndex(weekday))"
                     :recepe-info="weeklyMenuStore.$state.nextWeek[getDayIndex(weekday)]" 
                     :locked-boolean="weeklyMenuStore.$state.nextWeekLocks[getDayIndex(weekday)]"/>
                 </div>
@@ -164,6 +166,14 @@ export default {
         },
         goToNextWeek() {
             this.goToNextWeek();
+        },
+
+        seeRecipeCurrentWeek(dayIndex: number) {
+            this.$emit("seeRecipeEvent", this.weeklyMenuStore.$state.currentWeek[dayIndex]);
+        },
+
+        seeRecipeNextWeek(dayIndex: number) {
+            this.$emit("seeRecipeEvent", this.weeklyMenuStore.$state.nextWeek[dayIndex]);
         },
 
         async addRecipe(dayIndex: number) {

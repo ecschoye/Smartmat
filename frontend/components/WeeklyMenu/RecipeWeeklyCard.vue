@@ -91,7 +91,7 @@
             this.showIngredients = true;
             break;
           case "option2":
-            break;
+            this.$emit("seeRecipeEvent")
           case "option3":
             this.$emit("removeEvent");
             break;

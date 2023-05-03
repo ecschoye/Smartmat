@@ -79,5 +79,7 @@
   "user_removed_failure" : "You could not be removed from refrigerator, try again",
   "member_added_success" : "Member Successfully Added",
   "member_added_failure" : "Member could not be added",
-  "members" : "Members"
+  "members" : "Members",
+  "add_favorite" : "Favorite",
+  "remove_favorite" : "Unfavorite"
 }

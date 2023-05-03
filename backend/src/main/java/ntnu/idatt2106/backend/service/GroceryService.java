@@ -61,12 +61,19 @@ public class GroceryService {
         if(FridgeRole != ADD_PRIVILEGE) throw new UnauthorizedException("User not authorized to add groceries");
 
         logger.info("Saving grocery list to refrigerator");
+        System.out.println(saveRequest.getGroceryList());
+        System.out.println(httpRequest);
         //Handle each grocery in the list individually based on custom grocery or existing
         for (GroceryDTO groceryDTO: saveRequest.getGroceryList()) {
             Grocery grocery;
             //If custom add custom grocery, else fetch
-            if(groceryDTO.isCustom()) grocery = addCustomGrocery(groceryDTO);
-            else grocery = getGroceryById(groceryDTO.getId());
+            if(groceryDTO.isCustom()) {
+                grocery = addCustomGrocery(groceryDTO);
+            } else {
+                logger.debug("Fetching grocery with ID: " + groceryDTO.getId());
+                grocery = getGroceryById(groceryDTO.getId());
+                logger.debug("Fetched grocery: " + grocery);
+            }
 
             //Define refrigerator grocery
             RefrigeratorGrocery refrigeratorGrocery = new RefrigeratorGrocery();
@@ -262,4 +269,22 @@ public class GroceryService {
         .build();
         refrigeratorGroceryRepository.save(newGrocery);
     }
+
+
+    /**
+     * for testing purposes
+     * @param grocery
+     * @return
+     */
+    public Grocery createGrocery(GroceryDTO grocery) {
+        //convert from dto to entity
+        Grocery newGrocery = Grocery.builder()
+                .id(grocery.getId())
+                .name(grocery.getName())
+                .groceryExpiryDays(grocery.getGroceryExpiryDays())
+                .build();
+        return groceryRepository.save(newGrocery);
+    }
+
+
 }

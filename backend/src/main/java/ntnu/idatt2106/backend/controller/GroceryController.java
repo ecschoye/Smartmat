@@ -127,6 +127,13 @@ public class GroceryController {
         }
     }
 
+    @PostMapping("/create")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Grocery> saveGrocery(@RequestBody GroceryDTO grocery) {
+        Grocery savedGrocery = groceryService.createGrocery(grocery);
+        return ResponseEntity.ok(savedGrocery);
+    }
+
     @Operation(summary = "Get all grocery DTOs")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of grocery DTOs fetched successfully", content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroceryDTO.class)))),

@@ -8,10 +8,12 @@ import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.dto.MemberDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
+import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.model.refrigerator.NewRefrigeratorDTO;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
+import ntnu.idatt2106.backend.repository.UnitRepository;
 import ntnu.idatt2106.backend.service.CookieService;
 import ntnu.idatt2106.backend.service.JwtService;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
@@ -38,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/refrigerator")
+    @RequestMapping("/api/refrigerator")
 @RequiredArgsConstructor
 @Tag(name = "Refrigerator Controller", description = "Controller to handle the refrigerator")
 public class RefrigeratorController {
@@ -50,6 +52,7 @@ public class RefrigeratorController {
     private final UserService userService;
 
     private final JwtService jwtService;
+
 
     Logger logger = LoggerFactory.getLogger(RefrigeratorController.class);
 
@@ -217,6 +220,15 @@ public class RefrigeratorController {
 
         RefrigeratorDTO result = refrigeratorService.getRefrigeratorDTOById(refrigeratorId, httpServletRequest);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/units")
+    public ResponseEntity<?> getUnits(){
+        logger.info("Received request for retrieving all units");
+
+        List<UnitDTO> list = refrigeratorService.getUnits();
+        return ResponseEntity.ok(list);
+
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

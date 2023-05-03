@@ -14,13 +14,18 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RefrigeratorGroceryDTO {
+    private GroceryDTO grocery;
     private long id;
     private Date physicalExpireDate;
-    private GroceryDTO grocery;
+    private int quantity;
+    private UnitDTO unit;
+
 
     public RefrigeratorGroceryDTO(RefrigeratorGrocery refrigeratorGrocery) {
         this.id = refrigeratorGrocery.getId();
         this.physicalExpireDate = refrigeratorGrocery.getPhysicalExpireDate();
         this.grocery = new GroceryDTO(refrigeratorGrocery.getGrocery());
+        this.unit = new UnitDTO(refrigeratorGrocery.getUnit());
+        this.quantity = refrigeratorGrocery.getQuantity();
     }
 }

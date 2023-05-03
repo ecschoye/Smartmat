@@ -1,14 +1,28 @@
 <template>
-    <div class="weekly-menu">
-        <RecipePool/>
-    </div>
-
+  <div class="weekly-menu">
+    <RecipeDisplay :recipe="recipe" @close-display-event="closeDisplayEvent"/>
+    <WeeklyMenuRecipePool />
+  </div>
 </template>
 
-<script>
-import RecipePool from '~/components/WeeklyMenu/RecipePool.vue';
+<script lang="ts">
+import type { Recipe } from '~/types/RecipeType';
+
 export default {
-    components: { RecipePool }
+    data() {
+        return {
+          overlay : true,
+          recipe : null as Recipe | null
+        };
+    },
+    methods: {
+      handleRecipeEvent(recipe : Recipe) {
+        this.recipe = recipe
+      },
+      closeDisplayEvent(){
+        this.recipe = null;
+      }
+    }
 }
 
 definePageMeta({
@@ -20,7 +34,5 @@ definePageMeta({
 </script>
 
 <style>
-.weekly-menu {
-    margin: 20px;
-}
+
 </style>

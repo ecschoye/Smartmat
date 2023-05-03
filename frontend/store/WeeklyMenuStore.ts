@@ -48,7 +48,7 @@ export const useWeeklyMenuStore = defineStore({
       
       setCurrentWeekRandomly(recipes: Recipe[]) {
         for (let i = 0; i < 7; i++) {
-          if (!this.currentWeekLocks[i]) { // check lock before setting recipe
+          if (!this.currentWeekLocks[i]) { 
             const randomIndex = Math.floor(Math.random() * recipes.length);
             this.setCurrentWeek(i, recipes[randomIndex]);
           }

@@ -30,7 +30,7 @@
                   <li :class="[active ? 'bg-emerald-400 dark:bg-green-500 text-white' : 'text-gray-900  dark:text-white', 'relative cursor-default select-none py-2 pl-1 pr-4','hover:cursor-pointer']">
                     <span @click="goToAdministrateFridgePage(fridge)" :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 right-0 flex items-center pr-1']">
                       <!-- provide this to accessability: {{t('manage')}} -->
-                      <img class="hidden sm:block h-5 w-auto" src="../assets/icons/settings.png" alt="">
+                      <img class=" h-5 w-auto" src="../assets/icons/settings.png" alt="">
                     </span>
                     <div class="flex items-center">
                       <span :class="[selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate']">{{ fridge.name }}</span>

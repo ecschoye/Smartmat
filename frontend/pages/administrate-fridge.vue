@@ -1,7 +1,13 @@
 <template>
-  <div class="flex items-center my-10">
-    <div class="administrate-fridge m-auto">
-      <h1 class="mt-10" >{{$t("administrate_refrigerator")}}</h1>
+  <div class="flex items-center py-10">
+    <div class="flex administrate-fridge m-auto">
+      <ButtonFavoriteToggler 
+        class="relative -top-7 -left-12"
+        @favorite-event="favoriteEventHandler" 
+        :text="false" 
+        :large="true"
+        :isFavorite="isFavorite" />
+      <h1>{{$t("administrate_refrigerator")}}</h1>
       <div>
         <div class="wrapper">
           <FormEditFridgeForm :is-super-user="isSuperUser" :refrigerator="fridge"/>
@@ -58,7 +64,8 @@
 
 <script lang="ts">
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
-import { getRefrigeratorById, postEditMembers, postRemoveMember } from '~/service/httputils/RefrigeratorService';
+import { useUserStore } from '~/store/userStore';
+import { getRefrigeratorById, postEditMembers, postRemoveMember, postEditFavorite, postRemoveFavorite } from '~/service/httputils/RefrigeratorService';
 import { getUserData } from "~/service/httputils/authentication/AuthenticationService";
 import { RemoveMemberRequest } from "~/types/RemoveMemberRequest";
 import { MemberRequest } from "~/types/MemberRequest";
@@ -71,15 +78,23 @@ export default {
       changes: [] as string[],
       fridge: null as Refrigerator | null,
       currentUser : null as String | null,
+      favoriteRefrigeratorId : -1 as number,
       editedMembers : new Map<String, Member>(),
       isSuperUser : false 
-  };
+    };
+  },
+  computed: {
+    isFavorite() : boolean {
+      if(this.fridge === null) return false; 
+      else if(this.favoriteRefrigeratorId < 0) return false; 
+      else return this.fridge.id === this.favoriteRefrigeratorId; 
+    }
   },
   setup() {
     const errorMessage = ref("");
     const refrigeratorStore = useRefrigeratorStore();
+    const userStore = useUserStore(); 
     const {locale, locales, t} = useI18n()
-
 
     const sendForm = async () => {
       try {
@@ -100,6 +115,7 @@ export default {
       form,
       locale,
       locales,
+      userStore,
       t
     }
   },
@@ -221,6 +237,7 @@ export default {
         const response = await getUserData();
         if (response) {
             this.currentUser = response.email
+            this.favoriteRefrigeratorId = response.favoriteRefrigeratorId; 
         }
       },
       setRefrigeratorRole() {
@@ -231,6 +248,51 @@ export default {
           }
           else this.isSuperUser = false; 
         }
+      },
+      favoriteEventHandler(value : boolean) {
+        if(this.fridge !== null) {
+          if(value === true) this.favorite();
+          else this.unfavorite();  
+        }
+      },
+      favorite(){
+        const refId = this.fridge?.id
+        if(refId !== undefined) {
+          postEditFavorite(refId)
+            .then((response) => {
+              if(response.status === 200) {
+                this.userStore.setFavoritedRefrigeratorId(refId); 
+                let numb = this.userStore.getFavoriteRefrigeratorId;
+                if(numb !== null) this.favoriteRefrigeratorId = numb;
+                alert(this.t("favorited_success"))
+              }
+              else {
+                alert(this.t("favorited_failure"))
+              }
+            })
+            .catch((error) => {
+              console.log(error)
+              alert(this.t("favorited_failure"))
+            })
+        }
+        
+      },
+      unfavorite(){
+        postRemoveFavorite()
+            .then((response) => {
+              if(response.status === 200) {
+                this.userStore.setFavoritedRefrigeratorId(-1); 
+                this.favoriteRefrigeratorId = -1;
+                alert(this.t("unfavorited_success"))
+              }
+              else {
+                alert(this.t("unfavorited_failure"))
+              }
+            })
+            .catch((error) => {
+              console.log(error)
+              alert(this.t("unfavorited_failure"))
+            })
       }
   },
   created(){

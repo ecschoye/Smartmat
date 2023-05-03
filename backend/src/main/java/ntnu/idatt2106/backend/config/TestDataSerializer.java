@@ -141,8 +141,7 @@ public class TestDataSerializer {
         Unit unit = unitRepository.findById((unitId))
                 .orElseThrow(() -> new RuntimeException("Unit not found: " + unitId));
 
-        LocalDate localDate = LocalDate.now().plusDays(grocery.getGroceryExpiryDays());
-        Date physicalExpireDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        LocalDate physicalExpireDate = LocalDate.now().plusDays(grocery.getGroceryExpiryDays());
 
         for (int i = 0; i < quantity; i++) {
             // Check if the grocery already exists in the refrigerator

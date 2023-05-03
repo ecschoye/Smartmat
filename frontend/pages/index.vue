@@ -3,7 +3,7 @@
     <div class="">
       <h1 class="text-black dark:text-white tracking-wide font-serif  text-center text-4xl sm:text-6xl mb-8 mt-14">{{t('welcome_to_smart_mat')}}</h1>
     </div>
-    <div v-if="select" class="flex justify-center">
+    <div v-if="select" class="flex justify-center w-44 truncate mx-auto rounded-xl">
       <SelectPrompt @clicked="(payload) => goToFridge(payload)" :refrigerators="refrigeratorStore.getRefrigerators"/>
     </div>
     <div v-else class="flex justify-center pb-5 sm:pb-0 dark:hidden ">
@@ -12,7 +12,7 @@
     </div>
     <div class="dark:flex dark:justify-center dark:pb-5 hidden">
       <!-- logo -->
-      <img src="../assets/icons/smartmat/smartMat_transparent.png" alt="logo" class="w-72 h-auto sm:w-3/5 sm:h-auto image">
+      <img src="../assets/icons/smartmat/smartMat_transparent.png" alt="logo" class="w-72 h-auto sm:w-3/5 sm:h-auto image pointer-events-none">
     </div>
 
     <div class="sm:flex sm:justify-center text-center" >
@@ -69,7 +69,11 @@
   function toggleSelect(){
 
     console.log(refrigeratorStore.getRefrigerators);
-    select.value = !select.value
+    if (refrigeratorStore.getRefrigerators.length == 0) {
+      router.push('/create-fridge');
+    } else {
+      select.value = !select.value
+    }
   }
 
   function isSelected(){

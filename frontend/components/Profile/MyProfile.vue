@@ -1,15 +1,15 @@
 <template>
-  <div class="profile-container form-light-color dark:form-dark-color border-4 border-[#31C48D]/60 p-2 h-40 w-3/4  sm:w-1/2 md:w-1/2 lg:w-6/12 lg:h-52 justify-center items-center">
+  <div class="profile-container form-light-color dark:form-dark-color border-4 border-[#31C48D]/60 p-2 h-40 w-3/4  lg:w-6/12 lg:h-52 justify-center items-center">
     <div class="flex flex-row justify-between align-middle h-full relative">
       <div class="user-details pt-5">
-        <h1 class="user-name text-black dark:text-white ml-1 text-4xl lg:text-6xl font-light">{{ user.name }}</h1>
-        <p class="user-email mt-4 ml-3 lg:ml-4 text-black dark:text-white lg:text-4xl text-sm font-light">{{ user.email }}</p>
+        <h1 class="user-name text-black dark:text-white ml-1 text-2xl lg:text-4xl font-light">{{ user.name }}</h1>
+        <p class="user-email mt-2 lg:mt-5 ml-2 lg:ml-2 text-black dark:text-white lg:text-4xl text-lg font-light">{{ user.email }}</p>
       </div>
       <div class="flex items-center">
-        <img class=" hidden md:block h-24 lg:h-32 w-24 lg:w-32 mr-1" src="~/assets/profile.png" alt="Profile Picture" />
+        <img class="h-24 lg:h-32 w-24 lg:w-32 mr-1 pointer-events-none" src="~/assets/profile.png" alt="Profile Picture" />
       </div>
     </div>
-    <button class="logout-btn text-black dark:text-white form-light-color dark:form-dark-color border-2 border-[#31C48D]/60" @click="logOut">Log out</button>
+    <button class="box logout-btn text-black dark:text-white form-light-color dark:form-dark-color border-2 border-[#31C48D]/60" @click="logOut">Log out</button>
   </div>
 </template>
 
@@ -146,4 +146,10 @@ async function loadData() {
 }
 
  */
+
+.box:hover {
+  cursor: pointer;
+  transform: scale(1.15);
+  transition: transform .5s ease-out;
+}
 </style>

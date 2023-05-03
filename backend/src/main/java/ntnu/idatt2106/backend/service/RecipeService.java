@@ -16,6 +16,7 @@ import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
 import org.springframework.stereotype.Service;
 import ntnu.idatt2106.backend.exceptions.NoSuchElementRuntimeException;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -54,7 +55,7 @@ public class RecipeService {
 
         // Filter groceries based on the expiration date to only include groceries that have not expired
         List<RefrigeratorGrocery> validGroceries = allGroceries.stream()
-                .filter(item -> item.getPhysicalExpireDate().after(new Date())).toList();
+                .filter(item -> item.getPhysicalExpireDate().isAfter(LocalDate.now())).toList();
 
         if (validGroceries.isEmpty()) {
             throw new NoSuchElementException("No valid groceries found. All groceries have expired.");

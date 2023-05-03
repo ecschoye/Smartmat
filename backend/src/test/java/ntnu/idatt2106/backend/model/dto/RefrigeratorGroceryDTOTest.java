@@ -3,6 +3,7 @@ package ntnu.idatt2106.backend.model.dto;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,7 +45,7 @@ public class RefrigeratorGroceryDTOTest {
         // Arrange
         long id = 1L;
         GroceryDTO groceryDTO = new GroceryDTO();
-        Date physicalExpireDate = new Date();
+        LocalDate physicalExpireDate = LocalDate.now();
         int quantity = 2;
         UnitDTO unitDTO = new UnitDTO();
         RefrigeratorGroceryDTO refrigeratorGroceryDTO = new RefrigeratorGroceryDTO();
@@ -67,7 +68,7 @@ public class RefrigeratorGroceryDTOTest {
         // Arrange
         long id = 1L;
         GroceryDTO groceryDTO = new GroceryDTO();
-        Date physicalExpireDate = new Date();
+        LocalDate physicalExpireDate = LocalDate.now();
         int quantity = 2;
         UnitDTO unitDTO = new UnitDTO();
         RefrigeratorGroceryDTO refrigeratorGroceryDTO = new RefrigeratorGroceryDTO();

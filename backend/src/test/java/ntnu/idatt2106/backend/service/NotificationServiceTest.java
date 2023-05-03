@@ -1,6 +1,7 @@
 package ntnu.idatt2106.backend.service;
 
 
+import jnr.constants.platform.Local;
 import ntnu.idatt2106.backend.exceptions.NotificationException;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.GroceryNotificationDTO;
@@ -20,6 +21,8 @@ import org.mockito.MockitoAnnotations;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,7 +77,7 @@ public class NotificationServiceTest {
     @Test
     public void testGenerateNotificationsNoPrevious(){
         List<RefrigeratorGrocery> refrigeratorGroceries = new ArrayList<>();
-        refrigeratorGrocery.setPhysicalExpireDate(new Date());
+        refrigeratorGrocery.setPhysicalExpireDate(LocalDate.now());
         refrigeratorGroceries.add(refrigeratorGrocery);
 
         when(groceryNotificationRepository.findAllByGroceryEntity(refrigeratorGroceries.get(0))).thenReturn(new ArrayList<>());
@@ -86,7 +89,7 @@ public class NotificationServiceTest {
     @Test
     public void testGenerateNotificationsOnePrevious(){
         List<RefrigeratorGrocery> refrigeratorGroceries = new ArrayList<>();
-        refrigeratorGrocery.setPhysicalExpireDate(new Date());
+        refrigeratorGrocery.setPhysicalExpireDate(LocalDate.now());
         refrigeratorGroceries.add(refrigeratorGrocery);
 
         ArrayList<GroceryNotification> notifications = new ArrayList<>();
@@ -101,7 +104,7 @@ public class NotificationServiceTest {
     @Test
     public void testGenerateNotificationsTwoPrevious(){
         List<RefrigeratorGrocery> refrigeratorGroceries = new ArrayList<>();
-        refrigeratorGrocery.setPhysicalExpireDate(new Date());
+        refrigeratorGrocery.setPhysicalExpireDate(LocalDate.now());
         refrigeratorGroceries.add(refrigeratorGrocery);
 
         ArrayList<GroceryNotification> notifications = new ArrayList<>();
@@ -119,11 +122,8 @@ public class NotificationServiceTest {
         List<RefrigeratorGrocery> refrigeratorGroceries = new ArrayList<>();
 
         String date_string = "26-04-2300";
-        //Instantiating the SimpleDateFormat class
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        //Parsing the given String to Date object
-        Date date = formatter.parse(date_string);
-
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        LocalDate date = LocalDate.parse(date_string, formatter);
         refrigeratorGrocery.setPhysicalExpireDate(date);
         refrigeratorGroceries.add(refrigeratorGrocery);
         ArrayList<GroceryNotification> notifications = new ArrayList<>();
@@ -138,19 +138,9 @@ public class NotificationServiceTest {
     public void testGenerateNotificationsItemDoesNotNeedAlreadyExists() throws ParseException {
         List<RefrigeratorGrocery> refrigeratorGroceries = new ArrayList<>();
         // Create a new Date object
-        Date currentDate = new Date();
+        LocalDate currentDate = LocalDate.now().plusDays(3);
 
-// Create a Calendar object and set it to the current date
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-
-// Add three days to the calendar object
-        calendar.add(Calendar.DATE, 3);
-
-// Get the new date from the calendar object
-        Date newDate = calendar.getTime();
-
-        refrigeratorGrocery.setPhysicalExpireDate(newDate);
+        refrigeratorGrocery.setPhysicalExpireDate(currentDate);
         refrigeratorGroceries.add(refrigeratorGrocery);
 
         ArrayList<GroceryNotification> notifications = new ArrayList<>();
@@ -166,18 +156,8 @@ public class NotificationServiceTest {
     public void testGenerateNotificationsThreeDayWarning() throws ParseException {
         List<RefrigeratorGrocery> refrigeratorGroceries = new ArrayList<>();
         // Create a new Date object
-        Date currentDate = new Date();
-
-// Create a Calendar object and set it to the current date
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-
-// Add three days to the calendar object
-        calendar.add(Calendar.DATE, 3);
-
-// Get the new date from the calendar object
-        Date newDate = calendar.getTime();
-        refrigeratorGrocery.setPhysicalExpireDate(newDate);
+        LocalDate currentDate = LocalDate.now().plusDays(3);
+        refrigeratorGrocery.setPhysicalExpireDate(currentDate);
         refrigeratorGroceries.add(refrigeratorGrocery);
 
         ArrayList<GroceryNotification> notifications = new ArrayList<>();

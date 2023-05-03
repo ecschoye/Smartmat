@@ -1,6 +1,6 @@
 <template>
     <div>
-        <button class="random-button" @click="randomRecipesEvent">Tilfeldige oppskrifter</button>
+        <button class="random-button" @click="randomRecipesEvent">Generer Oppskrifter basert på ditt kjøleskap</button>
     </div>
     <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title">Denne uken</h1>
     <h1 v-else class="title">Neste uke</h1>

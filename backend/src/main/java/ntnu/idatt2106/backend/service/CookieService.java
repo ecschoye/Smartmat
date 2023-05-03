@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 public class CookieService {
 
     /**
-     * Extracts cookie from a HttpSerletRequest
+     * Extracts cookie from a HttpServletRequest
      * @param request HttpServletRequest
      * @return Cookie
      */

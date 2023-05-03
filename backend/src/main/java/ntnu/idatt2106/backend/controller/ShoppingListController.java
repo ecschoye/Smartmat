@@ -81,22 +81,6 @@ public class ShoppingListController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    //todo: method for creating custom groceries...
-    /*
-    @PostMapping("/add-grocery")
-    public ResponseEntity<GroceryShoppingList> saveGroceryToShoppingList(@RequestBody SaveGroceryRequest groceryRequest, HttpServletRequest request) throws SaveException{
-        logger.info("Received request to save grocery {} to shopping list with id {}", groceryRequest.getName(), groceryRequest.getForeignKey());
-        Optional<GroceryShoppingList> groceryListItem = shoppingListService.saveGrocery(groceryRequest, request);
-        if (groceryListItem.isEmpty()) {
-            logger.info("No registered changes to grocery is saved");
-            throw new SaveException("Failed to add a new grocery to shopping list");
-        }
-        logger.info("Returns groceries and status OK");
-        return new ResponseEntity<>(groceryListItem.get(), HttpStatus.OK);
-    }
-
-     */
-
     @PostMapping("/add-grocery")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<SuccessResponse> saveGroceryToShoppingList(@RequestBody SaveGroceryRequest saveGroceryRequest,

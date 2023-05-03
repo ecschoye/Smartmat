@@ -41,3 +41,6 @@ export const postEditFavorite = async (favoriteRefrigeratorId : Number) : Promis
     return axiosInstance.post('/api/refrigerator/members/edit-favorite', favoriteRefrigeratorId);
 }
 
+export const postRemoveFavorite = async () : Promise<AxiosResponse> => {
+    return axiosInstance.post('/api/refrigerator/members/edit-favorite', -1);
+}

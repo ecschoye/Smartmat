@@ -1,6 +1,7 @@
 package ntnu.idatt2106.backend.config;
 
 import jakarta.annotation.PostConstruct;
+import jnr.constants.platform.Local;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
@@ -19,6 +20,7 @@ import ntnu.idatt2106.backend.repository.*;
 import ntnu.idatt2106.backend.repository.recipe.RecipeCategoryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeRepository;
+import ntnu.idatt2106.backend.service.GroceryHistoryService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -79,6 +81,7 @@ public class TestDataSerializer {
 
     private final UnitRepository unitRepository;
 
+    private final GroceryHistoryRepository groceryHistoryRepository;
     @PostConstruct
     public void init() throws NumberFormatException {
         serialize();
@@ -94,6 +97,7 @@ public class TestDataSerializer {
         createRecipeCategories();
         createRecipes();
         createRecipeGroceries();
+        createGroceryHistory();
     }
 
 
@@ -157,6 +161,30 @@ public class TestDataSerializer {
             }
         }
     }
+
+    private void createGroceryHistory() {
+        Refrigerator refrigerator = refrigeratorRepository.findByName("Test Refrigerator")
+                .orElseThrow(() -> new RuntimeException("Refrigerator not found: Test Refrigerator"));
+
+        Random random = new Random();
+        for (int i = 1; i <= 12; i++) {
+            LocalDate date = LocalDate.now().minusMonths(i);
+
+            for (int j = 0; j < 25; j++) {
+                int weight = (j + 1) * 100;
+                boolean wasTrashed = random.nextDouble() <= 0.2;
+
+                groceryHistoryRepository.save(GroceryHistory.builder()
+                        .weightInGrams(weight)
+                        .wasTrashed(wasTrashed)
+                        .refrigerator(refrigerator)
+                        .dateConsumed(date)
+                        .build());
+            }
+        }
+    }
+
+
 
 
 

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
+import ntnu.idatt2106.backend.model.grocery.RefrigeratorShoppingList;
 
 @Data
 @Builder
@@ -35,6 +36,15 @@ public class SaveGroceryRequest {
         this.description = listItem.getGrocery().getDescription();
         this.subCategoryId = listItem.getGrocery().getSubCategory().getId();
         this.foreignKey = listItem.getShoppingCart().getId();
+        this.quantity = listItem.getQuantity();
+    }
+
+    public SaveGroceryRequest(RefrigeratorShoppingList listItem) {
+        this.name = listItem.getGrocery().getName();
+        this.groceryExpiryDays = listItem.getGrocery().getGroceryExpiryDays();
+        this.description = listItem.getGrocery().getDescription();
+        this.subCategoryId = listItem.getGrocery().getSubCategory().getId();
+        this.foreignKey = listItem.getShoppingList().getId();
         this.quantity = listItem.getQuantity();
     }
 }

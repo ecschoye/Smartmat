@@ -1,9 +1,9 @@
 <template>
   <div class="w-full px-4 pt-16">
-    <div class="mx-auto w-full max-w-md rounded-2xl form-light-color dark:form-dark-color dark:text-white p-2">
+    <div class="mx-auto w-full max-w-md rounded-2xl form-light-color dark:form-dark-color border-2 border-[#31C48D]/60 dark:text-white p-2">
       <HeadlessDisclosure v-slot="{ open }">
         <HeadlessDisclosureButton
-            class="flex w-full justify-between rounded-lg button-light-color button-green-color dark:button-dark-color px-4 py-2 text-left text-sm font-medium text-white hover:bg-emerald-800 dark:hover:bg-gray-800 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
+            class="flex w-full justify-between rounded-lg button-light-color button-green-color dark:button-dark-color px-4 py-2 text-left font-medium text-white hover:bg-emerald-800 dark:hover:bg-gray-800 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
         >
           <span>{{ t('who_is_smart_mat_for') }}</span>
           <ChevronUpIcon
@@ -17,7 +17,7 @@
       </HeadlessDisclosure>
       <HeadlessDisclosure as="div" class="mt-2" v-slot="{ open }">
         <HeadlessDisclosureButton
-            class="flex w-full justify-between rounded-lg button-light-color button-green-color dark:button-dark-color px-4 py-2 text-left text-sm font-medium text-white hover:bg-emerald-800 dark:hover:bg-gray-800 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
+            class="flex w-full justify-between rounded-lg button-light-color button-green-color dark:button-dark-color px-4 py-2 text-left font-medium text-white hover:bg-emerald-800 dark:hover:bg-gray-800 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
         >
           <span>{{ t('who_is_behind_smart_mat') }}</span>
           <ChevronUpIcon

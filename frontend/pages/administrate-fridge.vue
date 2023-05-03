@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center my-10">
-    <div class="administrate-fridge m-auto">
+    <div class="administrate-fridge text-black dark:text-white form-light-color dark:form-dark-color m-auto border-2 border-[#31C48D]/60">
       <h1 class="mt-10" >{{$t("administrate_refrigerator")}}</h1>
       <div>
         <div class="wrapper">
@@ -22,13 +22,13 @@
                               <h3>{{ member.name }}</h3>
                           </div>
                           <div class="email-wrapper">
-                           <h4>{{ member.username }}</h4>  
+                           <h4>{{ member.username }}</h4>
                           </div>
                       </div>
                       <div class="member-role items-center">
-                          <select 
-                          :disabled="!isSuperUser"  
-                          :class="[isSuperUser ? 'custom-select hover:cursor-pointer' : 'disabled-select', 'h-12 px-2 rounded-md ring-1 ring-gray-300 dark:ring-zinc-600  bg-white']"
+                          <select
+                          :disabled="!isSuperUser"
+                          :class="[isSuperUser ? 'custom-select hover:cursor-pointer' : 'disabled-select', 'h-12 px-2 rounded-md ring-1 ring-gray-300 dark:ring-zinc-600  text-black bg-white']"
                           v-model="member.fridgeRole" @change="handleOptionChange(member)">
                               <option class="hover:cursor-pointer" value="USER">User</option>
                               <option class="hover:cursor-pointer" value="SUPERUSER">Superuser</option>
@@ -46,7 +46,7 @@
                               <h4 class="email-wrapper">{{ $t("remove_member")}}</h4>
                           </div>
                       </div>
-                  </div> 
+                  </div>
                   <div class="divider"></div>
               </div>
           </div>
@@ -236,7 +236,7 @@ export default {
   created(){
     this.getUserData();
     this.getRefrigerator();
-    this.setRefrigeratorRole(); 
+    this.setRefrigeratorRole();
   }
 }
 
@@ -263,11 +263,9 @@ export default {
   align-items: center;
   width: 600px;
   height: fit-content;
-  background: white;
   padding: 0 20px 20px;
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border: solid 2px #dcdbdb;
 }
 
 .email-wrapper {

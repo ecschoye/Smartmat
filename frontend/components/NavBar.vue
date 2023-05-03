@@ -1,15 +1,16 @@
 <template>
-<header class="navbar-light-color dark:navbar-dark-color" style="min-width:360px; max-height: 96px;">
+<header class="navbar-light-color dark:navbar-dark-color border-b-4 dark:border-black" style="min-width:360px; max-height: 96px;">
   <nav class="mx-auto flex max-w-7xl items-center p-6 lg:px-8" aria-label="Global">
     <NuxtLink sm:hidden :to="localePath('/')" class="-m-1.5 p-1.5 mr-4 hidden pointer-events-none sm:block sm:pointer-events-auto">
       <span class="sr-only">SmartMat</span>
-      <img class="h-12 w-auto hover:transform hover:scale-125" src="../assets/icons/smartmat/leafTransparent.png" alt="">
+      <img class="hidden dark:block h-12 w-auto hover:transform hover:scale-125 pointer-events-none" src="../assets/icons/smartmat/leafTransparent.png" alt="">
+      <img class="dark:hidden h-12 w-auto hover:transform hover:scale-125 pointer-events-none" src="../assets/icons/smartmat/leaf.png" alt="">
     </NuxtLink>
     <div class="hidden lg:flex flex-1 space-x-5 items-center lg:justify-start">
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('home')}}</NuxtLink>
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('weekly_menu')}}</NuxtLink>
-      <NuxtLink :to="localePath('/recipe-list')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('recipes')}}</NuxtLink>
-      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-green-custom">{{t('statistics')}}</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('home')}}</NuxtLink>
+      <NuxtLink :to="localePath('/weekly-menu')" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('weekly_menu')}}</NuxtLink>
+      <NuxtLink :to="localePath('/recipe-list')" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('recipes')}}</NuxtLink>
+      <NuxtLink :to="localePath('/')" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('statistics')}}</NuxtLink>
     </div>
     <div class="flex flex-1 space-x-2 items-center justify-end">
       <FridgeSelector v-if="loggedIn"/>
@@ -28,7 +29,7 @@
         </NuxtLink>
         <HeadlessMenu v-if="loggedInStatus" as="div" class="relative inline-block text-left">
           <div>
-            <HeadlessMenuButton title="Kontovalg og innstillinger" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white dark:bg-zinc-600 px-3 py-2 text-sm font-semibold text-gray-900" >
+            <HeadlessMenuButton title="Kontovalg og innstillinger" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-green-color ring-1 ring-gray-300 dark:ring-zinc-600 dark:bg-zinc-600 px-3 py-2 text-sm font-semibold text-gray-900" >
               <img class="h-8 w-auto hover:transform hover:scale-125" src="../assets/icons/profile.png" alt="">
             </HeadlessMenuButton>
           </div>
@@ -37,18 +38,18 @@
             <HeadlessMenuItems class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white dark:button-dark-color shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none">
               <div class="py-1">
                 <HeadlessMenuItem v-if="loggedIn" v-slot="{ active }">
-                  <NuxtLink :to="localePath('/my-profile')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-900', 'block px-4 py-2 text-sm']">{{t('edit_profile')}}</NuxtLink>
+                  <NuxtLink :to="localePath('/my-profile')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700  dark:text-white', 'block px-4 py-2 text-sm']">{{t('edit_profile')}}</NuxtLink>
                 </HeadlessMenuItem>
                 <HeadlessMenuItem v-slot="{ active }">
-                  <NuxtLink :to="localePath('/system-settings')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-900', 'block px-4 py-2 text-sm']">{{t('system_settings')}}</NuxtLink>
+                  <NuxtLink :to="localePath('/system-settings')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700  dark:text-white', 'block px-4 py-2 text-sm']">{{t('system_settings')}}</NuxtLink>
                 </HeadlessMenuItem>
                 <!-- TODO: delete post -->
                 <li class="border-t border-gray-200 max-h-10 list-none"></li>
                 <HeadlessMenuItem v-if="loggedIn" v-slot="{ active }">
-                  <button @click="handleLogOut()" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900' : 'text-gray-700 dark:text-gray-900', 'block w-full px-4 py-2 text-left text-sm']">{{t('log_out')}}</button>
+                  <button @click="handleLogOut()" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900' : 'text-gray-700  dark:text-white', 'block w-full px-4 py-2 text-left text-sm']">{{t('log_out')}}</button>
                 </HeadlessMenuItem>
                 <HeadlessMenuItem v-else v-slot="{ active }">
-                  <NuxtLink :to="localePath('/login')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-900', 'block px-4 py-2 text-sm']">{{t('log_in')}}</NuxtLink>
+                  <NuxtLink :to="localePath('/login')" :class="[active ? 'bg-gray-100 dark:bg-zinc-700 text-gray-900 dark:text-white' : 'text-gray-700  dark:text-white', 'block px-4 py-2 text-sm']">{{t('log_in')}}</NuxtLink>
                 </HeadlessMenuItem>
               </div>
             </HeadlessMenuItems>
@@ -73,15 +74,16 @@
         <div class="mt-6 flow-root">
           <div class="-my-6 divide-y divide-gray-700/10 dark:divide-black">
             <div class="space-y-2 py-6">
-              <NuxtLink :to="localePath('/')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('home')}}</NuxtLink>
-              <NuxtLink :to="localePath('#')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('weekly_menu')}}</NuxtLink>
-              <NuxtLink :to="localePath('#')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('recipes')}}</NuxtLink>
-              <NuxtLink :to="localePath('#')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('statistics')}}</NuxtLink>
+              <NuxtLink :to="localePath('/')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('home')}}</NuxtLink>
+              <NuxtLink :to="localePath('/weekly-menu')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('weekly_menu')}}</NuxtLink>
+              <NuxtLink :to="localePath('/recipe-list')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('recipes')}}</NuxtLink>
+              <NuxtLink :to="localePath('#')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('statistics')}}</NuxtLink>
             </div>
             <div class="py-6">
-              <NuxtLink v-if="loggedIn" :to="localePath('/my-profile')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('edit_profile')}}</NuxtLink>
-              <NuxtLink v-else :to="localePath('/login')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('log_in')}}</NuxtLink>
-              <NuxtLink :to="localePath('/system-settings')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('system_settings')}}</NuxtLink>
+              <NuxtLink v-if="loggedIn" :to="localePath('/my-profile')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('edit_profile')}}</NuxtLink>
+              <NuxtLink v-else :to="localePath('/login')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('log_in')}}</NuxtLink>
+              <NuxtLink :to="localePath('/system-settings')" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('system_settings')}}</NuxtLink>
+              <button @click="handleLogOut()" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-400">{{t('log_out')}}</button>
             </div>
           </div>
         </div>

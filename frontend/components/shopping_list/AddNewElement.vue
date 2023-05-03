@@ -30,6 +30,7 @@
 <script lang="ts">
 import {getGroceriesDTOs} from "~/service/httputils/GroceryService";
 import ShoppingListService from "~/service/httputils/ShoppingListService";
+import { SaveGrocery } from "~/types/SaveGrocery";
 
 export default defineComponent({
     props: {
@@ -60,8 +61,10 @@ export default defineComponent({
                 this.groceryList.push(element);
             });
         },
-        async addGroceryToShoppingList(groceryId: number, quantity: number) {
-            let responseStatus = await ShoppingListService.saveGroceryToShoppingList(this.shoppingListId, groceryId, quantity);
+        async addGroceryToShoppingList(groceryItemId: number, groceryQuantity: number) {
+
+            const grocery: SaveGrocery = { groceryId: groceryItemId, quantity: groceryQuantity, foreignKey: this.shoppingListId };
+            let responseStatus = await ShoppingListService.saveGroceryToShoppingList(grocery);
             if (responseStatus.status === 200) {
                 alert("Varen er lagt til i handlelisten")
             } else {

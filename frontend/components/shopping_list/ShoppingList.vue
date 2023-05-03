@@ -12,22 +12,25 @@
             </div>
             <div class="flex justify-center">
                 <div v-if="menuOptions.isShoppingListSelected">
-                    <div v-if="categoryList === null || categoryList.length === 0">
+                    <div v-if="(categoryList === null || categoryList.length === 0) && (refrigeratorSuggestions === null || refrigeratorSuggestions.length === 0)">
                         <h3 class="mt-3"> {{ t('you_have_no_groceries_in_the_shopping_list') }} </h3>
                     </div>
-                    <div v-else class="grid grid-cols-1 gap-8">
-                        <ShoppingListCategory
-                            v-for="category in categoryList"
-                            :key="category.id"
-                            :CategoryDetails="category"
-                            :ShoppingListId="shoppingListId"
-                            @updateList="loadCategories">
-                        </ShoppingListCategory>
-                        <RefrigeratorGroceries
-                            :ShoppingListId="shoppingListId"
-                            @updateList="loadCategories"
-                        >
-                        </RefrigeratorGroceries>
+                    <div class="grid grid-cols-1 gap-8">
+                        <div v-if="categoryList !== null && categoryList.length !== 0">
+                            <ShoppingListCategory
+                                v-for="category in categoryList"
+                                :key="category.id"
+                                :CategoryDetails="category"
+                                :ShoppingListId="shoppingListId"
+                                @updateList="loadCategories">
+                            </ShoppingListCategory>
+                        </div>
+                        <div v-if="refrigeratorSuggestions !== null && refrigeratorSuggestions.length !== 0">
+                            <RefrigeratorGroceries
+                                :ShoppingListId="shoppingListId"
+                                :CategoryListItems="refrigeratorSuggestions">
+                            </RefrigeratorGroceries>
+                        </div>
                     </div>
                     <div class="p-2 flex justify-end absolute bottom-0 right-0">
                         <button @click.stop="addNewElementSelected = true" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-300 bg-sky-400"> {{ t('add_a_new_grocery') }} </button>
@@ -71,7 +74,6 @@ import ShoppingCartService from "~/service/httputils/ShoppingCartService";
 import ShoppingListElement from "./ShoppingListElement.vue";
 import AddNewElement from "./AddNewElement.vue";
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
-import { data } from "cypress/types/jquery";
 import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
     export default defineComponent({
     props: {
@@ -91,7 +93,8 @@ import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
             shoppingListId: -1,
             shoppingCartId: -1,
             categoryList: [] as ShoppingListCategory[],
-            shoppingCart: [] as ShoppingListElement[]
+            shoppingCart: [] as ShoppingListElement[],
+            refrigeratorSuggestions: [] as ShoppingListElement[]
         };
     },
     mounted() {
@@ -110,20 +113,19 @@ import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
     
     methods: {
         async loadLists() {
-            
-            //TODO: SHOULD BE DONE AUTOMATIC IN BACKEND WHEN CREATING REFRIGERATOR
-            //create shopping list
+            //create/load shopping list
             let responseListId = await ShoppingListService.createShoppingList(this.refrigeratorId);
             this.shoppingListId = responseListId.data;
-            //create shopping cart
+            //create/load shopping cart
             let responseCartId = await ShoppingCartService.createShoppingCart(this.shoppingListId);
             this.shoppingCartId = responseCartId.data;
-            //TODO: END
 
             //loads categories
             this.loadCategories()
             //loads shopping cart
             this.loadShoppingCart()
+            //loasds suggestions list from refrigerator
+            this.loadSuggestionsFromRefrigerator();
         },
         async loadCategories() {
             try {
@@ -153,6 +155,19 @@ import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
                 console.error(error);
                 this.shoppingCart = [];
             }
+        },
+        async loadSuggestionsFromRefrigerator() {
+                try {
+                    let responseSuggestions = await ShoppingListService.getSuggestedGroceriesFromRefrigerator(this.shoppingListId);
+                    if (responseSuggestions.data.length > 0) {
+                        responseSuggestions.data.forEach((element: ResponseGrocery) => {
+                            let object: ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true, isFromRefrigerator: true };
+                            this.refrigeratorSuggestions.push(object);
+                        });
+                    }
+                } catch (error) {
+                    console.error(error)
+                }
         },
         selectListTab() {
             this.menuOptions.isShoppingListSelected = true

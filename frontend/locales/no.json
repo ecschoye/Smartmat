@@ -1,4 +1,6 @@
 {
+  "amount" : "Mengde",
+  "select_unit" : "enhet",
   "no_items_in_refrigerator" : "Du har ingen matvarer i kjøleskapet",
   "no_notifications" : "Du har ingen varslinger",
   "my_refrigerator" : "Mitt kjøleskap",
@@ -89,5 +91,12 @@
   "force_delete_alert" : "Advarsel! Å forlate et kjøleskap som siste superbruker vil slette kjøleskapet og alt innhold. Er du sikker på at du ønsker å gjøre dette?",
   "user_removed_success" : "Fjernet som bruker",
   "user_removed_failure" : "Bruker kunne ikke fjernes, vennligst prøv igjen",
-  "your_recipes": "Dine oppskrifter"
+  "member_added_success": "Medlem lagt til",
+  "member_added_failure": "Medlem kunne ikke legges til",
+  "members": "Medlemmer",
+  "your_recipes": "Dine oppskrifter",
+  "find_recipe": "Finn oppskrift",
+  "go_to_weekly_menu": "Gå til ukemeny",
+  "to_refrigerator": "Til kjøleskap"
+
 }

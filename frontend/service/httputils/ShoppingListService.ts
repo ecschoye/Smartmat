@@ -1,6 +1,6 @@
 import type { AxiosResponse } from 'axios';
 import axiosInstance from "~/service/AxiosInstance";
-import type {EditGrocery} from "~/types/EditGrocery";
+import type {SaveGrocery} from "~/types/SaveGrocery";
 
 
 const createShoppingList = (refrigeratorId: Number): Promise<AxiosResponse> => {
@@ -19,16 +19,20 @@ const getCategoriesFromShoppingList = (shoppingListId: Number): Promise<AxiosRes
     return axiosInstance.get(`/api/shopping-list/categories/${shoppingListId}`);
 };
 
-const saveGroceryToShoppingList = (shoppingListId: Number, groceryId: Number, quantity: Number): Promise<AxiosResponse> => {
-    return axiosInstance.post(`/api/shopping-list/add-grocery/${shoppingListId}/${groceryId}/${quantity}`);
+const saveGroceryToShoppingList = (grocery: SaveGrocery): Promise<AxiosResponse> => {
+    return axiosInstance.post(`/api/shopping-list/add-grocery`, grocery);
 };
 
-const editGroceryQuantity = (editGrocery: EditGrocery): Promise<AxiosResponse> => {
+const editGroceryQuantity = (editGrocery: SaveGrocery): Promise<AxiosResponse> => {
     return axiosInstance.post(`/api/shopping-list/edit-grocery`, editGrocery);
 };
 
 const removeGroceryFromShoppingList = (groceryListId: Number): Promise<AxiosResponse> => {
     return axiosInstance.delete(`/api/shopping-list/delete-grocery/${groceryListId}`);
+};
+
+const removeRefrigeratorGroceryFromShoppingList = (refrigeratorShoppingListId: Number): Promise<AxiosResponse> => {
+    return axiosInstance.delete(`/api/shopping-list/delete-refrigerator-grocery/${refrigeratorShoppingListId}`);
 };
 
 const getRequestedGroceries = (shoppingListId: Number): Promise<AxiosResponse> => {
@@ -39,12 +43,28 @@ const getRequestedGroceriesInCategories = (shoppingListId: Number, categoryId: N
     return axiosInstance.get(`/api/shopping-list/requested/groceries/${shoppingListId}/${categoryId}`);
 };
 
+const getSuggestedGroceriesFromRefrigerator = (shoppingListId: Number): Promise<AxiosResponse> => {
+    return axiosInstance.get(`/api/shopping-list/suggested-refrigerator/groceries/${shoppingListId}`);
+};
+
 const transferGroceryToShoppingCart = (groceryShoppingListId: Number): Promise<AxiosResponse> => {
     return axiosInstance.post(`/api/shopping-list/transfer-shopping-cart/${groceryShoppingListId}`);
 };
 
+const transferRefrigeratorGroceryToShoppingCart = (groceryShoppingListId: Number): Promise<AxiosResponse> => {
+    return axiosInstance.post(`/api/shopping-list/refrigerator/transfer-shopping-cart/${groceryShoppingListId}`);
+};
+
+const transferGroceryToShoppingList = (refrigeratorShoppingListId: Number): Promise<AxiosResponse> => {
+    return axiosInstance.post(`/api/shopping-list/transfer-shopping-list/${refrigeratorShoppingListId}`);
+};
+
 const updateGrocery = (groceryId: Number, quantity: Number): Promise<AxiosResponse> => {
     return axiosInstance.post(`/api/shopping-list/edit-grocery/${groceryId}/${quantity}`);
+};
+
+const updateRefrigeratorGrocery = (groceryRefrigeratorShoppingListId: Number, quantity: Number): Promise<AxiosResponse> => {
+    return axiosInstance.post(`/api/shopping-list/edit-refrigerator-grocery/${groceryRefrigeratorShoppingListId}/${quantity}`);
 };
 
 export default {
@@ -55,8 +75,13 @@ export default {
     saveGroceryToShoppingList,
     editGroceryQuantity,
     removeGroceryFromShoppingList,
+    removeRefrigeratorGroceryFromShoppingList,
     getRequestedGroceries,
     getRequestedGroceriesInCategories,
+    getSuggestedGroceriesFromRefrigerator,
     transferGroceryToShoppingCart,
-    updateGrocery
+    transferRefrigeratorGroceryToShoppingCart,
+    transferGroceryToShoppingList,
+    updateGrocery,
+    updateRefrigeratorGrocery
 }

@@ -54,7 +54,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 try {
                     let response = await ShoppingListService.getGroceriesFromCategorizedShoppingList(this.ShoppingListId, this.CategoryDetails.id)
                     response.data.forEach((element: ResponseGrocery) => {
-                        let object:ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: false };
+                        let object:ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: false, isFromRefrigerator: false };
                         this.categoryListItems.push(object);
                     });
                 } catch (error) {
@@ -64,10 +64,12 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
             async loadSuggestions() {
                 try {
                     let responseSuggestions = await ShoppingListService.getRequestedGroceriesInCategories(this.ShoppingListId, this.CategoryDetails.id);
-                    responseSuggestions.data.forEach((element: ResponseGrocery) => {
-                        let object: ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true };
-                        this.categoryListItems.push(object);
-                    });
+                    if (responseSuggestions.data.length > 0) {
+                        responseSuggestions.data.forEach((element: ResponseGrocery) => {
+                            let object: ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true, isFromRefrigerator: false };
+                            this.categoryListItems.push(object);
+                        });
+                    }
                 } catch (error) {
                     console.error(error)
                 }

@@ -1,10 +1,10 @@
 <template>
-    <div class="relative">
-      <button @click = "emit('delete-notif',notification)" class="absolute top-1 -right-5 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center -mt-3 mr-3">
+    <div class="relative w-full">
+      <div class="flex-col border border-black text-lg  bg-green-color rounded-xl my-3 mx-2 p-3">
+        <button @click = "emit('delete-notif',notification)" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
         X
       </button>
-      <div class="flex-row border rounded-xl my-3 py-1">
-        <div class="flex flex-cols-2 py-1 px-3 justify-center">
+        <div class="flex flex-cols-2 p-2 justify-center">
           <img src="../../assets\icons\restaurant.png" class="h-5 w-5 ml-5 mr-2">
           <div>
             <div v-if="notification.daysLeft == 0" class="mr-5 ml-2">
@@ -18,14 +18,17 @@
             </div>
           </div>
         </div>
-        <div class="flex flex-cols-2 py-1 px-3 justify-center align-middle">
+        <div class="flex flex-cols-2 p-2 justify-center align-middle">
           <img src="../../assets\icons\refrigerator.png" class="h-5 w-5 ml-5 mr-2">
           <div class="text-center">{{notification.refrigeratorGrocery.refrigerator.name }}</div>
         </div>
-        <div>
-          <button :disabled="true" class="border border-black mx-2 p-1 rounded disabled:bg-slate-300 disabled:text-slate-500">Finn oppskrift</button>
-          <button :disabled="true" class="border border-black mx-2 p-1 rounded disabled:bg-slate-300 disabled:text-slate-500">Gå til ukesmeny</button>
-          <button @click="goToFridge()" class="border border-black mx-2 p-1 rounded hover:bg-slate-400 cursor-pointer">Til kjøleskap</button>
+        <div class="py-2" >
+          <button :disabled="true" class="border bg-white border-black mx-2 p-1 my-1 rounded disabled:bg-slate-300 disabled:text-slate-500">
+            {{ t('find_recipe') }}</button>
+          <button :disabled="true" class="border bg-white border-black mx-2 p-1 my-1 rounded disabled:bg-slate-300 disabled:text-slate-500">
+            {{ t('go_to_weekly_menu') }}</button>
+          <button @click="goToFridge()" class="border bg-white border-black mx-2 p-1 my-1 rounded hover:bg-slate-400 cursor-pointer">
+            {{ t('to_refrigerator') }}</button>
         </div>
       </div>
     </div>

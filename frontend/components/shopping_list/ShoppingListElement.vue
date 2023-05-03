@@ -86,43 +86,54 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
         methods: {
             async removeElementFromCart() {
                 // Remove the element from the cart and add it back to the list
-                /*
                 let transferStatus = await ShoppingCartService.transferGroceryToShoppingList(this.ElementDetails.id);
                 console.log(transferStatus);
                 if (transferStatus.data) {
-                    alert("Varen ble vellykket lagt tilbake i handlelisten")
+                    //alert("Varen ble vellykket lagt tilbake i handlelisten")
                 } else {
                     alert("Det oppstod en feil ved overføring av varen")
                 }
-                */
             },
             async removeElementFromList() {
                 // Remove the element from the list
-                let deleteResponse = await ShoppingListService.removeGroceryFromShoppingList(this.ElementDetails.id);
+                let deleteResponse: any;            
+    
+                if (!this.ElementDetails.isFromRefrigerator) {
+                    deleteResponse = await ShoppingListService.removeGroceryFromShoppingList(this.ElementDetails.id);
+                } else {
+                    deleteResponse = await ShoppingListService.removeRefrigeratorGroceryFromShoppingList(this.ElementDetails.id);
+                }
                 this.$emit('updateList')
                 console.log(deleteResponse);
                 if (deleteResponse.data) {
-                    alert("Varen ble vellykket slettet")
+                    //alert("Varen ble vellykket slettet")
                 } else {
                     alert("Det oppstod en feil ved sletting av varen")
                 }
             },
             async addElementToRefrigerator() {
-                let transferStatus = await ShoppingCartService.transferToRefrigerator(this.ElementDetails.id);    
+                let transferStatus: any;
+                if (!this.ElementDetails.isFromRefrigerator) {
+                    transferStatus = await ShoppingCartService.transferToRefrigerator(this.ElementDetails.id);    
+                }
                 this.$emit('updateList')            
                 if (transferStatus.status == 200) {
-                    alert("Varen ble vellykket overført")
+                    //alert("Varen ble vellykket overført")
                 } else {
                     alert("Det oppstod en feil ved overføring av varen")
                 }
             },
             async addElementToShoppingCart() {
-                console.log("Inside addElementToShoppingCart")
                 // Add the element to the shoppingCart
-                let transferStatus = await ShoppingListService.transferGroceryToShoppingCart(this.ElementDetails.id);
+                let transferStatus: any;
+                if (!this.ElementDetails.isFromRefrigerator) {
+                    transferStatus = await ShoppingListService.transferGroceryToShoppingCart(this.ElementDetails.id);
+                } else {
+                    transferStatus = await ShoppingListService.transferRefrigeratorGroceryToShoppingCart(this.ElementDetails.id);
+                }
                 this.$emit('updateList')
                 if (transferStatus.data) {
-                    alert("Varen ble vellykket overført")
+                    //alert("Varen ble vellykket overført")
                 } else {
                     alert("Det oppstod en feil ved overføring av varen")
                 }
@@ -131,7 +142,11 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 this.editElement = false
                 this.ElementDetails.quantity = newQuantity
                 let quantity = newQuantity
-                ShoppingListService.updateGrocery(this.ElementDetails.id, quantity)
+                if (!this.ElementDetails.isFromRefrigerator) {
+                    ShoppingListService.updateGrocery(this.ElementDetails.id, quantity)
+                } else {
+                    ShoppingListService.updateRefrigeratorGrocery(this.ElementDetails.id, quantity);
+                }
                 this.$emit('updateList')
             }
         }

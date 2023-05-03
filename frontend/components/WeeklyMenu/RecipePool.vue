@@ -1,6 +1,6 @@
 <template>
     <div>
-        <button class="random-button" @click="randomRecipesEvent">Tilfeldige oppskrifter</button>
+        <button class="random-button" @click="randomRecipesEvent">Generer Oppskrifter basert på ditt kjøleskap</button>
     </div>
     <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title">Denne uken</h1>
     <h1 v-else class="title">Neste uke</h1>
@@ -11,12 +11,12 @@
                     {{ weekday }}
                 </div>
                 <div v-if="weeklyMenuStore.$state.currentWeek[getDayIndex(weekday)] === null">
-                    <UnknownRecipe @add-recepe-event="addRecepe(getDayIndex(weekday))"/>
+                    <UnknownRecipe @add-recipe-event="addRecipe(getDayIndex(weekday))"/>
                 </div>
                 <div v-else>
                     <WeeklyMenuRecipeWeeklyCard @unlocked-event="unlockRecipe(getDayIndex(weekday))" 
                     @locked-event="lockRecipe(getDayIndex(weekday))" 
-                    @remove-event="removeRecepe(getDayIndex(weekday))" 
+                    @remove-event="removeRecipe(getDayIndex(weekday))"
                     :recepe-info="weeklyMenuStore.$state.currentWeek[getDayIndex(weekday)]" 
                     :locked-boolean="weeklyMenuStore.$state.currentWeekLocks[getDayIndex(weekday)]" />
                 </div>
@@ -30,12 +30,12 @@
                     {{ weekday }}
                 </div>
                 <div v-if="weeklyMenuStore.$state.nextWeek[getDayIndex(weekday)] === null">
-                    <UnknownRecipe @add-recepe-event="addRecepe(getDayIndex(weekday))"/>
+                    <UnknownRecipe @add-recipe-event="addRecipe(getDayIndex(weekday))"/>
                 </div>
                 <div v-else>
                     <WeeklyMenuRecipeWeeklyCard @unlocked-event="unlockRecipe(getDayIndex(weekday))" 
                     @locked-event="lockRecipe(getDayIndex(weekday))" 
-                    @remove-event="removeRecepe(getDayIndex(weekday))" 
+                    @remove-event="removeRecipe(getDayIndex(weekday))"
                     :recepe-info="weeklyMenuStore.$state.nextWeek[getDayIndex(weekday)]" 
                     :locked-boolean="weeklyMenuStore.$state.nextWeekLocks[getDayIndex(weekday)]"/>
                 </div>
@@ -50,87 +50,20 @@
     
 </template>
 
-<script script lang="ts">
+<script lang="ts">
 import { useWeeklyMenuStore } from '~/store/WeeklyMenuStore';
 import { Recipe } from '~/types/RecipeType';
 import GrayButton from '../Button/GrayButton.vue';
 import UnknownRecipe from './UnknownRecipe.vue';
-import UnknownRecepe from './UnknownRecipe.vue';
 import { fetchRecipes } from '~/service/httputils/RecipeService';
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 import { number } from '@intlify/core-base';
+import {FetchRecipeDTO} from "~/types/FetchRecipeDTO";
 
 export default {
     data() {
         return {
             Weekdays: ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"],
-            randomRecipes: [
-            {id: 1,
-            name: "Spaghetti Bolognese",
-            ingredients: [
-                "Spaghetti",
-                "Tomatsaus",
-                "kjøttdeig",
-                "parmesan ost"
-            ], 
-                url: "https://bing.com/th?id=OSK.8b00f357a386bb363248f27939f07372"
-            }, 
-            {name: "Kjøttkaker i brun saus",
-                ingredients: [
-                "Spaghetti",
-                "Tomatsaus",
-                "kjøttdeig",
-                "parmesan ost"
-                ],
-                url: "https://i2.wp.com/detgladekjokken.no/wp-content/uploads/2016/05/hjemmelagede-kj%C3%B8ttkaker-i-brun-saus-servert-med-gulrot-og-brokkoli.jpg?resize=1024%2C1024&ssl=1"
-            },
-            {name: "Pizza",
-                ingredients: [
-                "Spaghetti",
-                "Tomatsaus",
-                "kjøttdeig",
-                "parmesan ost",
-                "Spaghetti",
-                ], 
-                url: "https://th.bing.com/th/id/OIP.XXLN3abrSIN9wcatgp1-xwHaE6?pid=ImgDet&rs=1"
-            },
-            {name: "Pizza",
-                ingredients: [
-                "Spaghetti",
-                "Tomatsaus",
-                "kjøttdeig",
-                "parmesan ost"
-                ], 
-                url: "https://th.bing.com/th/id/OIP.XXLN3abrSIN9wcatgp1-xwHaE6?pid=ImgDet&rs=1"
-            },
-            {name: "Spaghetti Bolognese",
-                ingredients: [
-                "Spaghetti",
-                "Tomatsaus",
-                "kjøttdeig",
-                "parmesan ost"
-                ], 
-                url: "https://bing.com/th?id=OSK.8b00f357a386bb363248f27939f07372"
-            },
-            {name: "Spaghetti Bolognese",
-                ingredients: [
-                "Spaghetti",
-                "Tomatsaus",
-                "kjøttdeig",
-                "parmesan ost"
-                ], 
-                url: "https://bing.com/th?id=OSK.8b00f357a386bb363248f27939f07372"
-            }, 
-            {name: "Kjøttkaker i brun saus",
-                ingredients: [
-                "Spaghetti",
-                "Tomatsaus",
-                "kjøttdeig",
-                "parmesan ost"
-                ], 
-                url: "https://i2.wp.com/detgladekjokken.no/wp-content/uploads/2016/05/hjemmelagede-kj%C3%B8ttkaker-i-brun-saus-servert-med-gulrot-og-brokkoli.jpg?resize=1024%2C1024&ssl=1"
-            },
-    ] as Recipe[]
         };
     },
 
@@ -138,19 +71,13 @@ export default {
     const weeklyMenuStore = useWeeklyMenuStore();
     const refrigeratorStore = useRefrigeratorStore();
 
-    interface FetchRecipeDTO {
-        refrigeratorId: number;
-        numRecipes: number;
-        recipesFetched: number[];
-    }
-
     const fetchRecipeDTO: FetchRecipeDTO = reactive({
         refrigeratorId: -1,
         numRecipes: -1,
         recipesFetched: []
         });
 
-    const addRecepe = (index: number, recipe : Recipe) => {
+    const addRecipeWeek = (index: number, recipe : Recipe) => {
       // Logic to add a recipe to the current or next week
       if (weeklyMenuStore.chosenWeek === 1) {
         weeklyMenuStore.setCurrentWeek(index, recipe);
@@ -177,13 +104,18 @@ export default {
       }
     };
 
-    const removeRecepe = (index: number) => {
+    const removeRecipe = (index: number) => {
       // Logic to remove a recipe from the current or next week
       if (weeklyMenuStore.chosenWeek === 1) {
         weeklyMenuStore.setCurrentWeek(index, null);
+        weeklyMenuStore.setCurrentWeekLock(index, false);
       } else {
         weeklyMenuStore.setNextWeek(index, null);
+        weeklyMenuStore.setNextWeekLock(index, false);
       }
+      let id = weeklyMenuStore.$state.currentWeek[index].id;
+      //remove id from array
+      this.fetchRecipeDTO.recipesFetched = this.fetchRecipeDTO.recipesFetched.filter((element: number) => element !== id);
     };
 
 
@@ -199,20 +131,20 @@ export default {
 
     return {
       weeklyMenuStore,
-      addRecepe,
+      addRecipeWeek,
       lockRecipe,
       unlockRecipe,
-      removeRecepe,
+      removeRecipe,
       goToPreviousWeek,
       goToNextWeek,
       refrigeratorStore,
-      fetchRecipeDTO
+      fetchRecipeDTO,
     };
   },
 
     computed: {
         //gets the remaining days of the current week
-        activeWeekdays() {
+        activeWeekdays(): void {
             const currentDate = new Date();
             const currentDay = currentDate.getDay();
             const activeDays = this.Weekdays.slice(currentDay - 1);
@@ -227,15 +159,15 @@ export default {
             this.goToNextWeek();
         },
 
-        removeRecepe(dayIndex : number) {
-                this.removeRecepe(dayIndex)
-        },
-
-        async addRecepe(dayIndex: number) {
+        async addRecipe(dayIndex: number) {
             try {
-                this.fetchRecipeDTO.refrigeratorId = this.refrigeratorStore.getSelectedRefrigerator.id;
-                this.fetchRecipeDTO.numRecipes = 1;
-                const response = await fetchRecipes(this.fetchRecipeDTO.refrigeratorId);
+              this.fetchRecipeDTO = {
+                refrigeratorId: this.refrigeratorStore.getSelectedRefrigerator.id,
+                numRecipes: 1,
+                recipesFetched: this.fetchRecipeDTO.recipesFetched || [],
+              };
+                const response = await fetchRecipes(this.fetchRecipeDTO);
+
                 if (response.status === 200) {
                     const recipe = await response.data[0];
                     const newRecipe: Recipe = {
@@ -244,27 +176,43 @@ export default {
                         url: recipe.url,
                         ingredients: recipe.ingredients,
                     };
-                this.addRecepe(dayIndex, newRecipe);
-                this.fetchRecipeDTO.recipesFetched.push(newRecipe.id)
+
+                this.addRecipeWeek(dayIndex, newRecipe);
+                if (!this.fetchRecipeDTO.recipesFetched.includes(newRecipe.id)) {
+                  this.fetchRecipeDTO.recipesFetched.push(newRecipe.id);
+                }
                 }
             } catch (error: any) {
                 console.log(error);
             }
         },
 
-        randomRecipesEvent() {
+      async randomRecipesEvent() {
+        if(this.getAmountOfRecipesNeeded() > 0) {
             try {
-                this.fetchRecipeDTO.numRecipes = this.getAmountOfRecipesNeeded();
-                this.fetchRecipeDTO.refrigeratorId = this.refrigeratorStore.getSelectedRefrigerator.id;
-            } catch(error: any) {
-                console.log(error);
-            }
-            if(this.weeklyMenuStore.$state.chosenWeek === 1) {
-                this.weeklyMenuStore.setCurrentWeekRandomly(this.randomRecipes)
+          this.fetchRecipeDTO.numRecipes = this.getAmountOfRecipesNeeded();
+          this.fetchRecipeDTO.refrigeratorId = this.refrigeratorStore.getSelectedRefrigerator.id;
+
+          const response = await fetchRecipes(this.fetchRecipeDTO);
+
+          if (response.status === 200) {
+            const recipes = response.data.map((recipe : Recipe) => ({
+              id: recipe.id,
+              name: recipe.name,
+              url: recipe.url,
+            }));
+
+            if (this.weeklyMenuStore.$state.chosenWeek === 1) {
+              this.weeklyMenuStore.setCurrentWeekRandomly(recipes);
             } else {
-                this.weeklyMenuStore.setNextWeekRandomly(this.randomRecipes)
+              this.weeklyMenuStore.setNextWeekRandomly(recipes);
             }
-        },
+          }
+        } catch (error: any) {
+          console.log(error);
+        }
+        }
+      },
 
         lockRecipe(dayIndex : number) {
             this.lockRecipe(dayIndex);
@@ -298,7 +246,7 @@ export default {
             return recipesNeeded;
         }
     },
-    components: { GrayButton, UnknownRecepe, UnknownRecipe }
+    components: { GrayButton, UnknownRecipe }
 }
 
 </script>
@@ -347,21 +295,21 @@ export default {
   justify-content: space-between;
   margin-top: 1rem;
   margin: 20px;
-  border-color: none;
+  border: none;
   margin: 30px;
 }
 
 .week-button {
     background-color: white;
     border-radius: 8%;
-    border-color: solid black 5px;
+    border: solid black 5px;
 }
 
 .random-button {
     margin: 20px;
     background-color: white;
     border-radius: 8%;
-    border-color: solid black 5px;
+    border: solid black 5px;
 }
 
 </style>

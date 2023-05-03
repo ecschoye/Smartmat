@@ -1,41 +1,41 @@
 <template>
   <div class="wrapper">
     <div class="">
-      <h1 class="text-white text-center text-4xl sm:text-6xl mb-8 mt-14">{{t('welcome_to_smart_mat')}}</h1>
+      <h1 class="text-black dark:text-white tracking-wide font-serif  text-center text-4xl sm:text-6xl mb-8 mt-14">{{t('welcome_to_smart_mat')}}</h1>
     </div>
-    <div v-if="select" class="flex justify-center">
+    <div v-if="select" class="flex justify-center w-44 truncate mx-auto rounded-xl">
       <SelectPrompt @clicked="(payload) => goToFridge(payload)" :refrigerators="refrigeratorStore.getRefrigerators"/>
     </div>
-    <div v-else class="flex justify-center pb-5 sm:pb-0 dark:hidden">
+    <div v-else class="flex justify-center pb-5 sm:pb-0 dark:hidden ">
       <!-- logo -->
-      <img src="../assets/icons/smartmat/smartMat.png" alt="logo" class="w-72 h-auto sm:w-3/5 sm:h-auto image">
+      <img src="../assets/icons/smartmat/smartMat.png" alt="logo" class="w-72 h-auto sm:w-3/5 sm:h-auto image rounded-3xl pointer-events-none">
     </div>
     <div class="dark:flex dark:justify-center dark:pb-5 hidden">
       <!-- logo -->
-      <img src="../assets/icons/smartmat/smartMat_transparent.png" alt="logo" class="w-72 h-auto sm:w-3/5 sm:h-auto image">
+      <img src="../assets/icons/smartmat/smartMat_transparent.png" alt="logo" class="w-72 h-auto sm:w-3/5 sm:h-auto image pointer-events-none">
     </div>
 
     <div class="sm:flex sm:justify-center text-center" >
       <NuxtLink v-if="loggedIn && isSelected()" :to="localePath('/home')" class="sm:mt-5 sm:pr-4">
-        <button class="w-54 h-14 sm:w-50 button-light-color dark:button-dark-color dark:text-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
+        <button class="w-54 h-14 sm:w-50 button-light-color border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
           {{  t('go_to_my_fridge') }}
         </button>
       </NuxtLink>
 
       <NuxtLink v-else-if="loggedIn" @click="toggleSelect()" class="sm:mt-5 sm:pr-4">
-        <button class="w-54 h-14 sm:w-50 button-light-color dark:button-dark-color dark:text-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
+        <button class="w-54 h-14 sm:w-50 button-light-color border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
           {{  t('go_to_my_fridge') }}
         </button>
       </NuxtLink>
 
 
       <NuxtLink v-else :to="localePath('/login')" class="sm:mt-5 sm:pr-4">
-        <button class="w-52 h-14 sm:w-50 button-light-color dark:button-dark-color dark:text-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
+        <button class="w-54 h-14 sm:w-50 button-light-color border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
           {{ t('log_in_here') }}
         </button>
       </NuxtLink>
       <NuxtLink :to="localePath('/about-us')" class="sm:mt-5 sm:pl-4">
-        <button class="w-52 h-14 sm:w-50 button-light-color dark:button-dark-color dark:text-white text-green-700 hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
+        <button class="w-54 h-14 sm:w-50 button-light-color border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
           {{ t('read_more_about_us')}}
         </button>
       </NuxtLink>
@@ -67,7 +67,13 @@
 
   const select = ref(false);
   function toggleSelect(){
-    select.value = !select.value
+
+    console.log(refrigeratorStore.getRefrigerators);
+    if (refrigeratorStore.getRefrigerators.length == 0) {
+      router.push('/create-fridge');
+    } else {
+      select.value = !select.value
+    }
   }
 
   function isSelected(){
@@ -103,20 +109,19 @@
       return;
     }
       try{
-      const response = await getRefrigerators();
-      refrigeratorStore.setRefrigerators(response.data);
-      if(refrigeratorStore.getSelectedRefrigerator){
-        console.log(userStore.favoriteRefrigeratorId)
-        if(userStore.favoriteRefrigeratorId !== null){
-        const favoriteRefrigerator = refrigeratorStore.getRefrigeratorById(userStore.favoriteRefrigeratorId);
-        if(favoriteRefrigerator !== undefined){
-          refrigeratorStore.setSelectedRefrigerator(favoriteRefrigerator);
+        const response = await getRefrigerators();
+        refrigeratorStore.setRefrigerators(response.data);
+        if(refrigeratorStore.getSelectedRefrigerator){
+          if(userStore.favoriteRefrigeratorId !== null){
+          const favoriteRefrigerator = refrigeratorStore.getRefrigeratorById(userStore.favoriteRefrigeratorId);
+          if(favoriteRefrigerator !== undefined){
+            refrigeratorStore.setSelectedRefrigerator(favoriteRefrigerator);
+          }
+          else{
+            console.log("Could not find favorite refrigerator in store");
+          }
         }
-        else{
-          console.log("Could not find favorite refrigerator in store");
         }
-      }
-      }
     }
     catch(error){
       console.log(error);

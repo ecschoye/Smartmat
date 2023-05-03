@@ -1,10 +1,10 @@
 <template>
     <div class="wrapper">
-      <form @submit.prevent="sendForm" class="form">
-        <FormBaseInput id="name" class="input-container" type="name" :label="$t('name')" :initiated-value="refrigerator?.name" v-model="form.name" />
-        <FormBaseInput id="address" class="input-container" type="address" :label="$t('address')" :initiated-value="refrigerator?.address" v-model="form.address" />
+      <form @submit.prevent="sendForm" class="form form-light-color dark:form-dark-color">
+        <FormBaseInput :disabled="!isSuperUser" id="name" class="input-container" type="name" :label="$t('name')" :initiated-value="refrigerator?.name" v-model="form.name" />
+        <FormBaseInput :disabled="!isSuperUser" id="address" class="input-container" type="address" :label="$t('address')" :initiated-value="refrigerator?.address" v-model="form.address" />
         <div class="button-wrapper">
-          <ButtonGreenButton :label="$t('update_information')" width="100%" height="50px" />
+          <ButtonGreenButton v-if="isSuperUser" :label="$t('update_information')" width="100%" height="50px" />
         </div>
       </form>
     </div>
@@ -19,8 +19,13 @@
 
   export default {
     props: {
-      refrigerator : Object as () => Refrigerator | null
-  
+      refrigerator : Object as () => Refrigerator | null,
+      isSuperUser : {
+        type : Boolean, 
+        required: false,
+        default: false 
+      }
+      
     },
     setup() {
         const {locale, locales, t} = useI18n()
@@ -80,14 +85,10 @@
   
   
   
-  <style scoped>
-  
-  
-  
+  <style scoped> 
   .form {
     width: 400px;
     height: fit-content;
-    background: white;
     padding: 0 20px 20px;
     border-radius: 15px;
   }

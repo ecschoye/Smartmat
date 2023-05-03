@@ -71,5 +71,18 @@
   "save_userroles" : "Guardar usuarios",
   "invite_user" : "Invitar usuario",
   "leave_refrigerator" : "Salir del refrigerador",
-  "remove_member" : "Eliminar del refrigerador"
+  "remove_member" : "Eliminar del refrigerador",
+  "remove_member_succsess" : "Miembro eliminado con éxito",
+  "remove_member_failed" : "No se pudo eliminar el miembro",
+  "force_delete_alert" : "¡Advertencia! Si abandona el refrigerador como último superusuario, se eliminará el refrigerador y todo su contenido. ¿Está seguro de que desea hacer esto?",
+  "user_removed_success" : "Usuario eliminado con éxito",
+  "user_removed_failure" : "No se pudo eliminar el usuario, inténtelo de nuevo",
+  "member_added_success": "Miembro añadido con éxito",
+  "member_added_failure": "No se pudo añadir el miembro",
+  "members": "Miembros",
+  "your_recipes": "Tus recetas",
+  "you_have_no_groceries_in_the_shopping_list" : "No tienes alimentos en la lista de compras",
+  "you_have_no_groceries_in_the_shopping_cart" : "No tienes alimentos en el carrito de compras",
+  "add_a_new_grocery" : "Agregar un nuevo comestible",
+  "add_a_grocery_from_the_list" : "Agregar un comestible de la lista"
 }

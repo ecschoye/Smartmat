@@ -22,6 +22,13 @@
     * Light mode background color
      */
     .bg-light-color {
+        background-color: #F3FCF9;
+    }
+
+    /*
+    * Green background color
+     */
+    .bg-green-color {
         background-color: #31C48D;
     }
 
@@ -29,7 +36,6 @@
     * Dark mode background color
      */
     .bg-dark-color {
-
         @apply bg-zinc-800;
     }
 
@@ -37,7 +43,7 @@
     * Light mode navbar color
      */
     .navbar-light-color {
-        @apply bg-white;
+        background-color: #31C48D;
     }
 
     /*
@@ -51,7 +57,7 @@
     * Light mode button color
      */
     .button-light-color {
-        @apply bg-white;
+        @apply bg-slate-300;
     }
 
     /*
@@ -69,17 +75,10 @@
     }
 
     /*
-    * Dark mode button color
-     */
-    .button-dark-color {
-        @apply bg-zinc-600;
-    }
-
-    /*
     * Light mode form color
      */
     .form-light-color {
-        @apply bg-white;
+        @apply bg-slate-100;
     }
 
     /*
@@ -93,15 +92,22 @@
          */
     }
 
+    /*
+    *  Light mode border color
+     */
+    .border-light-color {
+        @apply border-slate-100;
+    }
+
     .form-light-button {
         background-color: #5c5850;
     }
 
-    .bg-light-container {
-        background-color: #31C48D;
+    .light-container {
+        @apply border-slate-100;
     }
 
-    .bg-dark-container {
+    .dark-container {
         @apply bg-zinc-700;
     }
 

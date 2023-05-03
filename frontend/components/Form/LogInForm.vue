@@ -1,8 +1,8 @@
 <template>
   <div class="wrapper">
-    <form @submit.prevent="sendForm" class="form form-light-color dark:form-dark-color">
+    <form @submit.prevent="sendForm" class="form border-2 border-[#31C48D]/60 form-light-color dark:form-dark-color">
       <BaseInput :cutWidth="'58px'" id="inpEmail" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
-      <BaseInput :cutWidth="'68px'" id="inpPassword" class="input-container" type="password" :label="$t('log_in')" v-model="form.password" />
+      <BaseInput :cutWidth="'68px'" id="inpPassword" class="input-container" type="password" :label="$t('password')" v-model="form.password" />
       <div class="button-wrapper">
         <GreenButton id="login" :label="$t('log_in')" width="100%" height="50px" />
         <div class="divider"></div>
@@ -77,7 +77,6 @@ h1{
   padding: 0 40px 40px 40px;
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border: solid 2px #dcdbdb;
 }
 
 .input-container {

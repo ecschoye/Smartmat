@@ -1,6 +1,6 @@
 <template>
-    <div class="w-full h-full flex flex-col justify-center items-center">
-        <h1 class="p-5">
+    <div class="w-full h-full items-center">
+        <h1 class="p-5 text-black text-center dark:text-white">
             {{t("Notification")}}
         </h1>
         <NotificationsList @delete-notif="(payload) => deleteNotification(payload)" :notifications="notificationStore.getNotifications"/>

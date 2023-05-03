@@ -1,12 +1,10 @@
 <template>
-    <div class="wrapper">
-      <form @submit.prevent="sendForm" class="form">
-        <FormBaseInput id="email" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
-        <div class="button-wrapper">
-          <ButtonGreenButton :label="$t('invite_user')" width="100%" height="50px" />
-        </div>
-      </form>
+  <form @submit.prevent="sendForm" class="form form-light-color dark:form-dark-color">
+    <FormBaseInput id="email" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
+    <div class="button-wrapper">
+      <ButtonGreenButton :label="$t('invite_user')" width="100%"  height="50px" />
     </div>
+  </form>
   </template>
   
   <script lang="ts">
@@ -56,17 +54,14 @@
 
 </script>
   <style scoped>
-  .form {
+   .form {
     width: 400px;
     height: fit-content;
-    background: white;
     padding: 0 20px 20px;
     border-radius: 15px;
-    margin-left: 20px;
   }
   
   .input-container {
-    margin-top: 10px;
     height: 50px;
     position: relative;
     width: 100%;
@@ -151,6 +146,5 @@
       width: 370px;
     }
   }
-  
   
   </style>

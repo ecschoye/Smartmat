@@ -1,10 +1,12 @@
-package ntnu.idatt2106.backend.service.recipe;
+package ntnu.idatt2106.backend.service;
 
 
 import lombok.RequiredArgsConstructor;
-import ntnu.idatt2106.backend.exceptions.NoSuchElementException;
-import ntnu.idatt2106.backend.model.dto.RecipeDTO;
+import ntnu.idatt2106.backend.model.dto.GroceryInfoDTO;
+import ntnu.idatt2106.backend.model.dto.recipe.IngredientDTO;
+import ntnu.idatt2106.backend.model.dto.recipe.RecipeDTO;
 import ntnu.idatt2106.backend.model.dto.recipe.FetchRecipesDTO;
+import ntnu.idatt2106.backend.model.dto.recipe.SimpleGrocery;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.recipe.Recipe;
@@ -12,9 +14,10 @@ import ntnu.idatt2106.backend.model.recipe.RecipeGrocery;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
 import org.springframework.stereotype.Service;
+import ntnu.idatt2106.backend.exceptions.NoSuchElementRuntimeException;
 
+import java.time.LocalDate;
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -27,6 +30,8 @@ public class RecipeService {
 
     private final Logger logger = Logger.getLogger(RecipeService.class.getName());
 
+    private static int lastDuplicateIndex = 0;
+
 
     /**
      * Method to fetch recipes based on what the user has stored in their fridge
@@ -35,6 +40,9 @@ public class RecipeService {
     public List<RecipeDTO> getRecipesByGroceriesAndExpirationDates(FetchRecipesDTO fetchRecipesDTO, boolean allRecipes) throws NoSuchElementException {
 
         long refrigeratorId = fetchRecipesDTO.getRefrigeratorId();
+        if (refrigeratorId == -1) {
+            throw new NoSuchElementException("No refrigerator ID provided.");
+        }
         int numRecipes = fetchRecipesDTO.getNumRecipes();
         List<Long> fetchedRecipeIds = fetchRecipesDTO.getFetchedRecipeIds();
 
@@ -47,7 +55,7 @@ public class RecipeService {
 
         // Filter groceries based on the expiration date to only include groceries that have not expired
         List<RefrigeratorGrocery> validGroceries = allGroceries.stream()
-                .filter(item -> item.getPhysicalExpireDate().after(new Date())).toList();
+                .filter(item -> item.getPhysicalExpireDate().isAfter(LocalDate.now())).toList();
 
         if (validGroceries.isEmpty()) {
             throw new NoSuchElementException("No valid groceries found. All groceries have expired.");
@@ -57,11 +65,6 @@ public class RecipeService {
         Map<Grocery, Integer> groceryCount = validGroceries.stream()
                 .filter(item -> item.getRefrigerator().getId() == refrigeratorId)
                 .collect(Collectors.groupingBy(RefrigeratorGrocery::getGrocery, Collectors.summingInt(item -> 1)));
-
-        // Output the count for each grocery
-        for (Map.Entry<Grocery, Integer> entry : groceryCount.entrySet()) {
-            System.out.println(entry.getKey().getName() + entry.getKey().getId() + ": " + entry.getValue());
-        }
 
         // Retrieve all RecipeGrocery records that match the groceries in the validGroceries
         List<RecipeGrocery> matchingRecipeGroceries = recipeGroceryRepository.findAllByGroceryIn(
@@ -87,27 +90,68 @@ public class RecipeService {
             return convertToDTOs(sortedRecipes);
         }
 
-        // Exclude already fetched recipes from the sortedRecipes list
-        List<Recipe> newRecipes = sortedRecipes.stream()
-                .filter(recipe -> !fetchedRecipeIds.contains(recipe.getId()))
-                .collect(Collectors.toList());
+        // Prepare newRecipes list
+        List<Recipe> newRecipes = new ArrayList<>();
 
-        // If there are not enough new recipes, fill the list with already fetched recipes
-        if (newRecipes.size() < numRecipes) {
-            List<Recipe> remainingRecipes = sortedRecipes.stream()
-                    .filter(recipe -> fetchedRecipeIds.contains(recipe.getId()))
-                    .collect(Collectors.toList());
-            newRecipes.addAll(remainingRecipes.subList(0, numRecipes - newRecipes.size()));
-        } else {
-            newRecipes = newRecipes.subList(0, numRecipes);
+        // First, add new unique recipes
+        for (Recipe recipe : sortedRecipes) {
+            if (!fetchedRecipeIds.contains(recipe.getId()) && newRecipes.size() < numRecipes) {
+                newRecipes.add(recipe);
+            }
         }
+
+
+        // If there are not enough unique recipes, add duplicates from the beginning of the sortedRecipes list
+        if (newRecipes.size() < numRecipes) {
+            int remainingRecipes = numRecipes - newRecipes.size();
+
+            for (int i = 0; i < remainingRecipes; i++) {
+                // Find the next duplicate to be added
+                lastDuplicateIndex = (lastDuplicateIndex + 1) % sortedRecipes.size();
+                newRecipes.add(sortedRecipes.get(lastDuplicateIndex));
+            }
+        }
+
         return convertToDTOs(newRecipes);
+
     }
-
-
-
 
     public List<RecipeDTO> convertToDTOs(List<Recipe> recipes) {
-        return recipes.stream().map(RecipeDTO::new).toList();
+        return recipes.stream().map(recipe -> {
+            RecipeDTO recipeDTO = new RecipeDTO(recipe);
+            List<GroceryInfoDTO> groceryInfoList = recipeGroceryRepository.findGroceryInfoByRecipe(recipe);
+
+            // Convert the GroceryInfoDTO list to a list of IngredientDTOs
+            List<IngredientDTO> ingredients = groceryInfoList.stream()
+                    .map(gi -> {
+                        SimpleGrocery grocery = new SimpleGrocery(gi.getId(), gi.getName());
+                        Grocery groceryForSearch = new Grocery();
+                        groceryForSearch.setId(gi.getId());
+                        groceryForSearch.setName(gi.getName());
+
+                        RecipeGrocery recipeGrocery = recipeGroceryRepository
+                                .findFirstByRecipeAndGrocery(recipe, groceryForSearch)
+                                .orElseThrow(() -> new NoSuchElementRuntimeException("No matching RecipeGrocery found."));
+
+                        return new IngredientDTO(grocery, recipeGrocery.getQuantity());
+                    })
+                    .collect(Collectors.toList());
+
+            recipeDTO.setIngredients(ingredients);
+            return recipeDTO;
+        }).toList();
     }
+
+
+
+
+
+
+
+
+
+
+    /*public List<RecipeDTO> convertToDTOs(List<Recipe> recipes) {
+        return recipes.stream().map(RecipeDTO::new).toList();
+    }*/
 }

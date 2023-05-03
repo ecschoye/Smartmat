@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axiosInstance from '~/service/AxiosInstance';
+import { useRefrigeratorStore} from "~/store/refrigeratorStore";
 
 interface UserState {
     userId: string;
@@ -20,6 +21,7 @@ export const useUserStore = defineStore({
         isLoggedIn: (state: UserState) => state.authenticated,
         getLoggedInUserId: (state: UserState) => state.userId,
         getLoggedInUserRole: (state: UserState) => state.role,
+        getFavoriteRefrigeratorId: (state: UserState) => state.favoriteRefrigeratorId
     },
     actions: {
         setLoggedInUserId(id: string) {
@@ -31,11 +33,17 @@ export const useUserStore = defineStore({
         setLoggedInUserStatus(status: boolean) {
             this.authenticated = status;
         },
+        setFavoritedRefrigeratorId(favoriteId : number) {
+            this.favoriteRefrigeratorId = favoriteId; 
+        },
         logOut() {
             this.authenticated = false;
             this.role = "";
             this.userId = "";
             this.favoriteRefrigeratorId = null;
+            sessionStorage.clear();
+            const refrigeratorStore = useRefrigeratorStore();
+            refrigeratorStore.resetState();
         },
         logIn(data: any) {
             this.authenticated = true;

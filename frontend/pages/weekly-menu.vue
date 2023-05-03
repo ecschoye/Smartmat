@@ -11,7 +11,7 @@ import type { Recipe } from '~/types/RecipeType';
 export default {
     data() {
         return {
-          overlay : true, 
+          overlay : true,
           recipe : null as Recipe | null
         };
     },
@@ -20,7 +20,7 @@ export default {
         this.recipe = recipe
       },
       closeDisplayEvent(){
-        this.recipe = null; 
+        this.recipe = null;
       }
     }
 }

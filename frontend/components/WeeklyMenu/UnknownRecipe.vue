@@ -3,7 +3,7 @@
       <div class="add-recepe">
         <div class="centered-content">
           <img src="@/assets/icons/add.png" alt="icon" />
-          <h3>Legg til Oppskrift</h3>
+          <h3>{{$t("add_recipe_to_day")}}</h3>
         </div>
       </div>
     </div>
@@ -11,6 +11,10 @@
 
 <script lang="ts">
   export default {
+    setup() {
+      const {locale, locales, t} = useI18n()
+      return {locale, locales, t}
+    },
     methods: {
 
         addRecipe() {

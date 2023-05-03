@@ -85,5 +85,13 @@
   "favorited_success" : "Refrigerator was favorited",
   "favorited_failure" : "Refrigerator could not be favorited",
   "unfavorited_success" : "Refrigerator was unfavorited",
-  "unfavorited_failure" : "Refrigerator could not be unfavorited"
+  "unfavorited_failure" : "Refrigerator could not be unfavorited",
+  "your_recipes" : "Your Recipes",
+  "you_have_no_groceries_in_the_shopping_list" : "You have no groceries in the shopping list",
+  "you_have_no_groceries_in_the_shopping_cart" : "You have no groceries in the shopping cart",
+  "add_a_new_grocery" : "Add a new grocery",
+  "add_a_grocery_from_the_list" : "Add a grocery from the list",
+  "find_recipe": "Find recipe",
+  "go_to_weekly_menu": "Go to weekly menu",
+  "to_refrigerator": "To refrigerator"
 }

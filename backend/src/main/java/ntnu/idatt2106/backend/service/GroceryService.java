@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.*;
+import ntnu.idatt2106.backend.model.dto.DeleteRefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
@@ -43,6 +44,7 @@ public class GroceryService {
     private final SubCategoryRepository subCategoryRepository;
     private final RefrigeratorService refrigeratorService;
     private final NotificationService notificationService;
+    private final UnitService unitService;
 
     //TODO:following line is temporary
     private final UnitRepository unitRepository;
@@ -201,8 +203,9 @@ public class GroceryService {
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
     public void removeRefrigeratorGrocery(long refrigeratorGroceryId, HttpServletRequest request) throws UserNotFoundException, UnauthorizedException, EntityNotFoundException {
         RefrigeratorGrocery refrigeratorGrocery = getRefrigeratorGroceryById(refrigeratorGroceryId);
-        if(getFridgeRole(refrigeratorGrocery.getRefrigerator(), request) != REMOVE_PRIVILEGE) {
-            throw new UnauthorizedException("User does not have permission to remove this grocery");
+        FridgeRole userRole = getFridgeRole(refrigeratorGrocery.getRefrigerator(), request);
+        if(userRole == null){
+            throw new UnauthorizedException("User is not a member of the refrigerator");
         }
         refrigeratorGroceryRepository.deleteById(refrigeratorGroceryId);
     }
@@ -243,6 +246,30 @@ public class GroceryService {
         List<Grocery> groceries = groceryRepository.findAll();
         return groceries.stream().map(GroceryDTO::new).collect(Collectors.toList());
     }
+
+    public void useRefrigeratorGrocery(DeleteRefrigeratorGroceryDTO dto, HttpServletRequest request) throws Exception {
+        Optional<RefrigeratorGrocery> grocery = refrigeratorGroceryRepository.findById(dto.getRefrigeratorGroceryDTO().getId());
+        if(grocery.isEmpty()){
+            throw new EntityNotFoundException("Could not find grocery with id: " + dto.getRefrigeratorGroceryDTO().getId());
+        }
+        FridgeRole userRole = getFridgeRole(grocery.get().getRefrigerator(), request);
+        if(userRole == null){
+            throw new UnauthorizedException("User is not a member of the refrigerator");
+        }
+        RefrigeratorGrocery newGrocery = unitService.convertGrocery(grocery.get(), dto.getUnitDTO().getId());
+        if(newGrocery.getQuantity() - dto.getQuantity() <= 0){
+            notificationService.deleteNotificationsByRefrigeratorGrocery(grocery.get());
+            removeRefrigeratorGrocery(grocery.get().getId(), request);
+        }
+        else{
+            if(newGrocery.getUnit().getId() == dto.getUnitDTO().getId()){
+                newGrocery.setQuantity(newGrocery.getQuantity() - dto.getQuantity());
+                refrigeratorGroceryRepository.save(newGrocery);
+            }
+        }
+    }
+
+
 
     public void updateRefrigeratorGrocery(User user, RefrigeratorGroceryDTO refrigeratorGroceryDTO, HttpServletRequest request) throws UserNotFoundException, UnauthorizedException, NotificationException {
         Optional<RefrigeratorGrocery> oldGrocery = refrigeratorGroceryRepository.findById(refrigeratorGroceryDTO.getId());

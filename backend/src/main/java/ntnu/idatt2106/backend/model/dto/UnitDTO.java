@@ -13,9 +13,11 @@ import ntnu.idatt2106.backend.model.Unit;
 public class UnitDTO {
     private Long id;
     private String name;
+    private Integer weight;
 
     public UnitDTO(Unit unit){
         this.id = unit.getId();
         this.name = unit.getName();
+        this.weight = unit.getWeight();
     }
 }

@@ -4,7 +4,7 @@
         <RefrigeratorDisplay v-else @emit-date="(payload) => updateGrocery(payload)" @toggle-create="(payload) => onToggleCreate(payload)" :refrigerator="refrigeratorStore.getSelectedRefrigerator" class="font-mono" @group-closed="togglePos(false)" :groceries="groceries" @popup-height="(payload) => setPos(payload)" />
             <div>
             <Transition>
-                <RefrigeratorEditGrocery @delete-grocery="(payload) => removeGrocery(payload)" :pos="position" v-if="toggle" @toggle-options="togglePos(false)"/>
+                <RefrigeratorEditGrocery @delete-grocery="reload()" :pos="position" v-if="toggle" @toggle-options="togglePos(false)"/>
             </Transition>
         </div>
     </div>
@@ -15,7 +15,6 @@ import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 import { getGroceriesByFridge } from '~/service/httputils/GroceryService';
 import { Refrigerator } from '~/types/RefrigeratorType';
 import { GroceryEntity } from '~/types/GroceryEntityType';
-import { deleteGrocery } from '~/service/httputils/GroceryService';
 import { getNotifications } from '~/service/httputils/NotificationService';
 import { useNotificationStore } from '~/store/notificationStore';
 
@@ -70,19 +69,10 @@ async function loadNotifications(){
     }
   }
 
-async function removeGrocery(grocery : GroceryEntity) {
-    try{
-        const response = await deleteGrocery(grocery);
-        if(response.status == 200){
-            const index = groceries.value.findIndex(grocery => grocery.id === grocery.id);
-            groceries.value.splice(index, 1);
-            loadNotifications();
-        }
-    }
-    catch(error){
-        console.log(error)
-    } 
-}
+function reload(){
+    loadGroceries();
+    loadNotifications();
+  }
 
 async function loadGroceries(){
     try {

@@ -19,8 +19,10 @@
   import { updateGrocery } from '~/service/httputils/GroceryService';
   import { getNotifications } from '~/service/httputils/NotificationService';
   import { useNotificationStore } from '~/store/notificationStore';  
+import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 
   const notificationStore = useNotificationStore();
+  const refrigeratorStore = useRefrigeratorStore();
 
   async function loadNotifications(){
     try{
@@ -45,6 +47,7 @@
   
   function clicked() {
       emit('element-height', el.value?.getBoundingClientRect().y);
+      refrigeratorStore.setSelectedGrocery(props.grocery);
   }
   
   function isNearExpiry(): boolean {

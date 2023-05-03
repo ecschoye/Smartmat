@@ -43,7 +43,7 @@
         </ul>
       </div>
       <div class="back-button">
-        <GreenButton label="Tilbake" width="100%" height="50px" @click="returnEvent" />
+        <ButtonGreenButton label="Tilbake" width="100%" height="50px" @click="returnEvent" />
       </div>
     </div>
   </div>
@@ -51,7 +51,6 @@
 
 <script lang="ts">
   import { Recipe } from "@/types/RecipeType";
-  import GreenButton from "@/components/Button/GreenButton.vue";
 
   export default {
     data() {
@@ -101,8 +100,7 @@
         this.selectedOption = "";
         this.showIngredients = false;
       },
-    },
-    components: { GreenButton },
+    }
   };
 </script>
 

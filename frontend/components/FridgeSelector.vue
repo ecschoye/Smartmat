@@ -4,7 +4,7 @@
       <HeadlessListbox as="div" v-model="selected">
         <HeadlessListboxLabel></HeadlessListboxLabel>
         <div class="relative justify-center">
-          <HeadlessListboxButton class=" relative w-full h-full cursor-default rounded-md bg-white dark:bg-zinc-600 py-1.5 pr-10 text-left text-gray-900 shadow-sm sm:leading-6 hover:cursor-pointer">
+          <HeadlessListboxButton class=" relative w-full h-full cursor-default rounded-md bg-green-color dark:bg-zinc-600 py-1.5 pr-10 text-left text-gray-900 dark:text-white shadow-sm sm:leading-6 hover:cursor-pointer">
             <span class="flex item-center">
               <span v-if="selected === null" class="ml-3 block truncate opacity-70">{{ $t('select_fridge') }}</span>
               <span v-else class="ml-3 block truncate">{{ selected.name }}</span>
@@ -25,14 +25,14 @@
 
           <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
             <div class="max-h-64 overflow-y-scroll">
-              <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-b-md bg-white dark:bg-zinc-600 py-0 text-base  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+              <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-b-md bg-green-color dark:bg-zinc-600 py-0 text-base  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                 <HeadlessListboxOption as="template" v-for="fridge in refrigerators" :key="fridge.id" :value="fridge" v-slot="{ active, selected }" @click ="setSelected(fridge)">
-                  <li :class="[active ? 'bg-emerald-400 dark:bg-green-500 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-1 pr-4','hover:cursor-pointer']">
+                  <li :class="[active ? 'bg-emerald-400 dark:bg-green-500 text-white' : 'text-gray-900  dark:text-white', 'relative cursor-default select-none py-2 pl-1 pr-4','hover:cursor-pointer']">
                     <div class="flex items-center">
                       <span :class="[selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate']">{{ fridge.name }}</span>
                     </div>
 
-                    <span v-if="selected" :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 right-0 flex items-center pr-1']">
+                    <span v-if="selected" :class="[active ? 'text-white' : 'text-white', 'absolute inset-y-0 right-0 flex items-center pr-1']">
                       <svg 
                         xmlns="http://www.w3.org/2000/svg" 
                         fill="none" 
@@ -47,9 +47,9 @@
                     </span>
                   </li>
                 </HeadlessListboxOption>
-                <li class="border-t border-gray-200 my-2"></li>
+                <li class="border-t border-gray-300 dark:ring-zinc-600 my-2"></li>
                 <HeadlessListboxOption v-slot="{ active, selected }" as="template" :value="{ id: 'link', name: 'Link to page' }" >
-                  <NuxtLink to="/create-fridge" :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'block cursor-default select-none py-2 pl-3 pr-2','hover:cursor-pointer']" :aria-selected="selected">
+                  <NuxtLink to="/create-fridge" :class="[active ? 'bg-emerald-400 dark:bg-green-500 text-white' : 'text-black  dark:text-white', 'block cursor-default select-none py-2 pl-3 pr-2','hover:cursor-pointer']" :aria-selected="selected">
                     <div class="flex items-center ">
                       <img class="hidden sm:block h-5 w-auto" src="../assets/icons/add.png" alt="">
                       <span :class="[selected ? 'font-semibold' : 'font-normal', 'ml-1 sm:ml-3 block truncate']">{{ $t('new_fridge') }}</span>
@@ -62,15 +62,13 @@
         </div>
       </HeadlessListbox>
     </div>
-    <NuxtLink to="administrate-fridge">
-        <button type="button"
-        class="inline-flex items-center hover:cursor-pointer
-            dark:button-dark-color sm:text-md outline:none hover:opacity-70
-            transition duration-150 p-2 border-l border-gray-300">
-        <img class="h-5 w-auto mr-2 pt-0.5" src="../assets/icons/refrigerator.png" alt="">
-        {{t('manage')}}
-      </button>
-    </NuxtLink>
+    <button type="button" @click="goToAdministrateFridgePage"
+    class="inline-flex text-black dark:text-white items-center hover:cursor-pointer
+        dark:button-dark-color sm:text-md outline:none hover:opacity-70
+        transition duration-150 p-2 border-l border-gray-300">
+    <img class="h-5 w-auto mr-2 pt-0.5" src="../assets/icons/refrigerator.png" alt="">
+    {{t('manage')}}
+  </button>
   </div>
 </template>
 
@@ -81,7 +79,7 @@ import { useUserStore } from "~/store/userStore";
 import { computed, defineComponent } from 'vue'
 
 export default defineComponent ({
-  data() { 
+  data() {
     return {
       selected : null as Refrigerator | null
     }
@@ -98,6 +96,10 @@ export default defineComponent ({
     goToCreateFridgePage() {
       //this.$router.push(this.$nuxt.localePath('/create-fridge'));
       this.$router.push('/create-fridge');
+    },
+    goToAdministrateFridgePage() {
+      //this.$router.push(this.$nuxt.localePath('/create-fridge'));
+      this.$router.push('/administrate-fridge');
     },
     setSelected(fridge : Refrigerator){
       this.selected = fridge; 
@@ -124,8 +126,7 @@ export default defineComponent ({
           this.selected = this.refrigerators[0]; 
         }
         else if (this.refrigeratorStore.getRefrigerators.length === 0) {
-          this.goToCreateFridgePage(); 
-          this.selected = null; 
+          this.selected = null;
         }
         else this.selected = null; 
       }

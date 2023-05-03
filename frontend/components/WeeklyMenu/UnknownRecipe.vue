@@ -27,8 +27,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 150px;
-    height: 250px;
+    width: 170px;
+    height: 260px;
     border: 3px solid black;
     border-radius: 14px;
   }

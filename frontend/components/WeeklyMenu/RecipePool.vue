@@ -1,6 +1,6 @@
 <template>
     <div>
-        <button class="random-button" @click="randomRecipesEvent">Tilfeldige oppskrifter</button>
+        <button class="random-button" @click="randomRecipesEvent">Generer Oppskrifter basert på ditt kjøleskap</button>
     </div>
     <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title">Denne uken</h1>
     <h1 v-else class="title">Neste uke</h1>
@@ -108,10 +108,12 @@ export default {
       // Logic to remove a recipe from the current or next week
       if (weeklyMenuStore.chosenWeek === 1) {
         weeklyMenuStore.setCurrentWeek(index, null);
+        weeklyMenuStore.setCurrentWeekLock(index, false);
       } else {
         weeklyMenuStore.setNextWeek(index, null);
+        weeklyMenuStore.setNextWeekLock(index, false);
       }
-      let id = this.weeklyMenuStore.$state.currentWeek[index].id;
+      let id = weeklyMenuStore.$state.currentWeek[index].id;
       //remove id from array
       this.fetchRecipeDTO.recipesFetched = this.fetchRecipeDTO.recipesFetched.filter((element: number) => element !== id);
     };
@@ -186,7 +188,8 @@ export default {
         },
 
       async randomRecipesEvent() {
-        try {
+        if(this.getAmountOfRecipesNeeded() > 0) {
+            try {
           this.fetchRecipeDTO.numRecipes = this.getAmountOfRecipesNeeded();
           this.fetchRecipeDTO.refrigeratorId = this.refrigeratorStore.getSelectedRefrigerator.id;
 
@@ -199,7 +202,6 @@ export default {
               url: recipe.url,
             }));
 
-
             if (this.weeklyMenuStore.$state.chosenWeek === 1) {
               this.weeklyMenuStore.setCurrentWeekRandomly(recipes);
             } else {
@@ -208,6 +210,7 @@ export default {
           }
         } catch (error: any) {
           console.log(error);
+        }
         }
       },
 

@@ -92,9 +92,13 @@ export default defineComponent ({
     
     return { t,locale,locales, userStore, refrigeratorStore, refrigerators}
   },
+  watch : {
+    refrigerators() {
+      this.fetchSelected(); 
+    }
+  },
   methods: {
     goToCreateFridgePage() {
-      //this.$router.push(this.$nuxt.localePath('/create-fridge'));
       this.$router.push('/create-fridge');
     },
     goToAdministrateFridgePage() {
@@ -114,10 +118,10 @@ export default defineComponent ({
       const currentSelected = this.refrigeratorStore.getSelectedRefrigerator; 
       if(currentSelected !== null) this.selected = currentSelected; 
       else {
-        const favoriteIndex = this.userStore.getFavoriteRefrigeratorId; 
+        const favoriteId = this.userStore.getFavoriteRefrigeratorId;
         let favoriteRefrigerator : Refrigerator | undefined;
-        if(favoriteIndex !== null){
-          favoriteRefrigerator = this.refrigeratorStore.getRefrigeratorById(favoriteIndex); 
+        if(favoriteId !== null){
+          favoriteRefrigerator = this.refrigerators.find(refrigerator => refrigerator.id === favoriteId);
           if(favoriteRefrigerator !== undefined) {
             this.selected = favoriteRefrigerator; 
           }
@@ -125,10 +129,12 @@ export default defineComponent ({
         if(favoriteRefrigerator === undefined && this.refrigerators !== null && this.refrigerators.length > 0){
           this.selected = this.refrigerators[0]; 
         }
-        else if (this.refrigeratorStore.getRefrigerators.length === 0) {
+        else if (favoriteRefrigerator === undefined && this.refrigeratorStore.getRefrigerators.length === 0) {
           this.selected = null;
         }
-        else this.selected = null; 
+        else if(favoriteRefrigerator === undefined) {
+          this.selected = null; 
+        }
       }
       if (this.selected != null) {
         this.refrigeratorStore.setSelectedRefrigerator(this.selected);

@@ -9,6 +9,7 @@ import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementD
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
+import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.service.ShoppingListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,14 +97,12 @@ public class ShoppingListController {
 
      */
 
-    @PostMapping("/add-grocery/{shoppingListId}/{groceryId}/{quantity}")
+    @PostMapping("/add-grocery")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<SuccessResponse> saveGroceryToShoppingList(@PathVariable(name = "shoppingListId") long shoppingListId,
-                                                                     @PathVariable(name = "groceryId") long groceryId,
-                                                                     @PathVariable(name = "quantity") int quantity,
+    public ResponseEntity<SuccessResponse> saveGroceryToShoppingList(@RequestBody SaveGroceryRequest saveGroceryRequest,
                                                                      HttpServletRequest request) throws SaveException, UserNotFoundException, ShoppingListNotFound, UnauthorizedException {
-        logger.info("Received request to save grocery with id {} to shopping list with id {}", groceryId, shoppingListId);
-        shoppingListService.saveGrocery(groceryId, shoppingListId, quantity, request);
+        logger.info("Received request to save grocery with id {} to shopping list with id {}", saveGroceryRequest.getGroceryId(), saveGroceryRequest.getForeignKey());
+        shoppingListService.saveGrocery(saveGroceryRequest, request);
         return new ResponseEntity<>(new SuccessResponse("The grocery was added successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
@@ -170,7 +169,7 @@ public class ShoppingListController {
 
     @PostMapping("transfer-shopping-cart/{groceryShoppingListId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Boolean> transferToShoppingCart(@PathVariable("groceryShoppingListId") long groceryShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {
+    public ResponseEntity<Boolean> transferToShoppingCart(@PathVariable("groceryShoppingListId") long groceryShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SaveException {
         logger.info("Received request to transfer grocery item with id {} in shopping list to shopping cart", groceryShoppingListId);
 
         shoppingListService.transferGroceryToCart(groceryShoppingListId, httpRequest); //throws error if the transfer was unsuccessful
@@ -180,7 +179,7 @@ public class ShoppingListController {
 
     @PostMapping("refrigerator/transfer-shopping-cart/{refrigeratorShoppingListId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Boolean> transferRefrigeratorGroceryToShoppingCart(@PathVariable("refrigeratorShoppingListId") long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {
+    public ResponseEntity<Boolean> transferRefrigeratorGroceryToShoppingCart(@PathVariable("refrigeratorShoppingListId") long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SaveException {
         logger.info("Received request to transfer grocery item with id {} in refrigerator shopping list to shopping list", refrigeratorShoppingListId);
         shoppingListService.transferRefrigeratorGroceryToCart(refrigeratorShoppingListId, httpRequest); //throws error if the transfer was unsuccessful
 

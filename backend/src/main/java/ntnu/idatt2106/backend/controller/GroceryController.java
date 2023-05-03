@@ -78,7 +78,8 @@ public class GroceryController {
         RefrigeratorGrocery refrigeratorGrocery = groceryService.getRefrigeratorGroceryById(refrigeratorGroceryId);
         notificationService.deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);
         groceryService.removeRefrigeratorGrocery(refrigeratorGroceryId, httpServletRequest);
-        shoppingListService.saveGroceryToSuggestionForRefrigerator(refrigeratorGrocery.getGrocery().getId(), refrigeratorGrocery.getRefrigerator().getId());
+        shoppingListService.saveGroceryToSuggestionForRefrigerator(refrigeratorGrocery.getGrocery().getId(),
+                refrigeratorGrocery.getRefrigerator().getId(), httpServletRequest);
         return new ResponseEntity<>(new SuccessResponse("Grocery removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 

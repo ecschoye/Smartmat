@@ -1,7 +1,5 @@
 import type { AxiosResponse } from 'axios';
 import axiosInstance from "~/service/AxiosInstance";
-import type {SaveGrocery} from "~/types/SaveGrocery";
-import type {EditGrocery} from "~/types/EditGrocery";
 
 
 const createShoppingCart = (shoppingListId: Number): Promise<AxiosResponse> => {

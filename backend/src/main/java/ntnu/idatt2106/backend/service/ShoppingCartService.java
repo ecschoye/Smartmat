@@ -1,6 +1,5 @@
 package ntnu.idatt2106.backend.service;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
@@ -28,15 +27,9 @@ import java.util.stream.Collectors;
 public class ShoppingCartService {
     private final ShoppingCartRepository shoppingCartRepository;
     private final ShoppingListRepository shoppingListRepository;
-    private final SubCategoryRepository subCategoryRepository;
-    private final UserRepository userRepository;
-    private final RefrigeratorUserRepository refrigeratorUserRepository;
-    private final GroceryRepository groceryRepository;
     private final GroceryShoppingCartRepository groceryShoppingCartRepository;
-
     private final GroceryService groceryService;
-    private final CookieService cookieService;
-    private final JwtService jwtService;
+
     private Logger logger = LoggerFactory.getLogger(ShoppingCartService.class);
 
     /**
@@ -45,7 +38,7 @@ public class ShoppingCartService {
      * @return Shopping list object
      * @throws ShoppingListNotFound If it is not find any shopping list for the shopping list id in the parameter
      */
-    protected ShoppingList getShoppingListById(long shoppingListId) throws ShoppingListNotFound {
+    private ShoppingList getShoppingListById(long shoppingListId) throws ShoppingListNotFound {
         return shoppingListRepository.findById(shoppingListId)
                 .orElseThrow(() -> new ShoppingListNotFound("Shopping list not found for shopping list id " + shoppingListId));
     }
@@ -56,9 +49,20 @@ public class ShoppingCartService {
      * @return Shopping list object
      * @throws ShoppingCartNotFound If it is not find any shopping cart for the shopping list id in the parameter
      */
-    protected ShoppingCart getShoppingCartById(long shoppingListId) throws ShoppingCartNotFound {
+    private ShoppingCart getShoppingCartByShoppingListId(long shoppingListId) throws ShoppingCartNotFound {
         return shoppingCartRepository.findByShoppingListId(shoppingListId)
                 .orElseThrow(() -> new ShoppingCartNotFound("Shopping cart not found for shopping list id " + shoppingListId));
+    }
+
+    /**
+     * Getter for the shopping list by the shopping cart id
+     * @param shoppingCartId ID to the shopping cart
+     * @return Shopping list object
+     * @throws ShoppingCartNotFound If it is not find any shopping cart for the shopping list id in the parameter
+     */
+    private ShoppingCart getShoppingCartById(long shoppingCartId) throws ShoppingCartNotFound {
+        return shoppingCartRepository.findById(shoppingCartId)
+                .orElseThrow(() -> new ShoppingCartNotFound("Shopping cart not found for shopping cart id " + shoppingCartId));
     }
 
     /**
@@ -71,7 +75,7 @@ public class ShoppingCartService {
         ShoppingList shoppingList = getShoppingListById(shoppingListId);
 
         try {
-            ShoppingCart shoppingCart = getShoppingCartById(shoppingListId);
+            ShoppingCart shoppingCart = getShoppingCartByShoppingListId(shoppingListId);
             return shoppingCart.getId();
         } catch (ShoppingCartNotFound e) {
             ShoppingCart newShoppingCart = new ShoppingCart();
@@ -99,75 +103,43 @@ public class ShoppingCartService {
                 sorted(new ShoppingCartElementDTOComparator()).collect(Collectors.toList());
     }
 
-    // todo: is duplicate with method in ShoppingListService - remove
-    private String extractEmail(HttpServletRequest httpRequest) {
-        String token = cookieService.extractTokenFromCookie(httpRequest);
-        return jwtService.extractClaim(token, Claims::getSubject);
-    }
+    /**
+     * Adds predefined grocery to the shopping cart for groceries
+     * @param groceryRequest JSON object to save
+     * @param httpRequest The http request
+     * @exception ShoppingCartNotFound If the shopping cart is not found
+     * @exception UserNotFoundException If the user is not found
+     * @exception UnauthorizedException If the user is not authorized
+     * @exception SaveException If error while saving
+     */
+    public void saveGrocery(SaveGroceryRequest groceryRequest, HttpServletRequest httpRequest) throws UnauthorizedException, ShoppingCartNotFound, UserNotFoundException, SaveException {
+        ShoppingCart shoppingCart = getShoppingCartById(groceryRequest.getForeignKey());
+        FridgeRole fridgeRole = groceryService.getFridgeRole(shoppingCart.getShoppingList().getRefrigerator(), httpRequest);
 
-    private boolean isSuperUser(String eMail, long shoppingListId) {
-        //find the refrigerator connected to the shoppingList
-        Optional<Refrigerator> refrigerator = Optional.of(shoppingListRepository.findRefrigeratorById(shoppingListId));
-        //find the role to the eMail in the refrigerator
-        Optional<User> user = userRepository.findByEmail(eMail);
+        if (fridgeRole == FridgeRole.SUPERUSER) {
+            Optional<GroceryShoppingCart> groceryShoppingCart = groceryShoppingCartRepository
+                    .findByGroceryIdAndShoppingCartId(groceryRequest.getGroceryId(), shoppingCart.getId());
 
-        if (user.isEmpty()) {
-            logger.info("User is empty");
-            return false;
+            if (groceryShoppingCart.isPresent()) {
+                logger.info("Grocery item exist already in entity for shopping cart. Increment quantity with one");
+                groceryShoppingCart.get().editQuantity(groceryRequest.getQuantity());
+            } else {
+                logger.info("Grocery item does not exit in shopping cart. Saving the grocery to the database");
+                Grocery grocery = groceryService.getGroceryById(groceryRequest.getGroceryId());
+                groceryShoppingCart = Optional.of(GroceryShoppingCart.builder()
+                        .grocery(grocery)
+                        .shoppingCart(shoppingCart)
+                        .quantity(1)
+                        .build());
+            }
+
+            try {
+                groceryShoppingCartRepository.save(groceryShoppingCart.get());
+            } catch (Exception e) {
+                logger.info("Error when saving grocery");
+                throw new SaveException("Could not save the grocery to shopping cart");
+            }
         }
-
-        Optional<RefrigeratorUser> refrigeratorUser = refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(user.get().getId(), refrigerator.get().getId());
-
-        if (refrigeratorUser.isEmpty()) {
-            logger.info("Refrigerator user is empty");
-            return false;
-        }
-
-        logger.info("isUserSuper user {}", refrigeratorUser.get().getFridgeRole() == FridgeRole.SUPERUSER);
-        return refrigeratorUser.get().getFridgeRole() == FridgeRole.SUPERUSER;
-    }
-
-    public Optional<GroceryShoppingCart> saveGrocery(SaveGroceryRequest groceryRequest, HttpServletRequest httpRequest) throws UnauthorizedException {
-        String eMail = extractEmail(httpRequest);
-        logger.info("Saving grocery: {} to shopping cart with id {}", groceryRequest.getName(), groceryRequest.getForeignKey());
-
-        Optional<ShoppingCart> shoppingCart = shoppingCartRepository.findById(groceryRequest.getForeignKey());
-        if (shoppingCart.isEmpty()) {
-            logger.info("Could not find a shopping cart with id {}", groceryRequest.getForeignKey());
-            return Optional.empty();
-        }
-
-        logger.info("Found shopping cart for shopping cart id {}", shoppingCart.get().getId());
-
-        if (!isSuperUser(eMail, shoppingCart.get().getId())) {
-            logger.info("You have to be super user to add a grocery to the shopping cart");
-            throw new UnauthorizedException("It is only possible for super users to add grocery in shopping cart");
-        }
-
-        Optional<SubCategory> subCategory = subCategoryRepository.findById(groceryRequest.getSubCategoryId());
-        if (subCategory.isEmpty()) {
-            logger.info("Could not find a shopping list with id {}", groceryRequest.getForeignKey());
-            return Optional.empty();
-        }
-
-        logger.info("Found subcategory with id {}", subCategory.get().getId());
-        Grocery grocery = Grocery.builder()
-                .name(groceryRequest.getName())
-                .groceryExpiryDays(groceryRequest.getGroceryExpiryDays())
-                .description(groceryRequest.getDescription())
-                .subCategory(subCategory.get())
-                .build();
-        groceryRepository.save(grocery);
-        logger.info("Created grocery with name {}", grocery.getName());
-
-        GroceryShoppingCart groceryShoppingCart = new GroceryShoppingCart();
-        groceryShoppingCart.setGrocery(grocery);
-        groceryShoppingCart.setShoppingCart(shoppingCart.get());
-        groceryShoppingCart.setQuantity(groceryRequest.getQuantity());
-
-        logger.info("Saved new grocery to the grocery list");
-
-        return Optional.of(groceryShoppingCartRepository.save(groceryShoppingCart));
     }
 
     /**

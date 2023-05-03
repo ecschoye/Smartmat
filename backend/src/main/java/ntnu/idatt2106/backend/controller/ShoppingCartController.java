@@ -43,10 +43,10 @@ public class ShoppingCartController {
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 
-    //todo: edit: Do the same as in shoppingList: create a common request object...
+
     @PostMapping("/add-grocery")
-    public ResponseEntity<SuccessResponse> saveGroceryToShoppingCart(@RequestBody SaveGroceryRequest groceryRequest, HttpServletRequest request) throws UnauthorizedException {
-        logger.info("Received request to save grocery {} to shopping cart with id {}", groceryRequest.getName(), groceryRequest.getForeignKey());
+    public ResponseEntity<SuccessResponse> saveGroceryToShoppingCart(@RequestBody SaveGroceryRequest groceryRequest, HttpServletRequest request) throws UnauthorizedException, ShoppingCartNotFound, UserNotFoundException, SaveException {
+        logger.info("Received request to save grocery with id {} to shopping cart with id {}", groceryRequest.getGroceryId(), groceryRequest.getForeignKey());
         shoppingCartService.saveGrocery(groceryRequest, request);
         return new ResponseEntity<>(new SuccessResponse("The grocery was added successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }

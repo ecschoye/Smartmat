@@ -54,6 +54,24 @@ export const useWeeklyMenuStore = defineStore({
           }
         }
       },
+
+      isCurrentWeekEmpty(): boolean {
+        for(let i = 0; i < this.currentWeek.length; i++) {
+            if(this.currentWeek[i] != null) {
+                return false;
+            }
+        }
+        return true;
+      },
+
+      isNextWeekEmpty(): boolean {
+        for(let i = 0; i < this.nextWeek.length; i++) {
+            if(this.nextWeek[i] != null) {
+                return false;
+            }
+        }
+        return true;
+      },
       
   },
 });

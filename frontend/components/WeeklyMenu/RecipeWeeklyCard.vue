@@ -25,10 +25,10 @@
         </div>
         <div class="recipe-choices">
           <select @change="handleOptionChange" v-model="selectedOption">
-            <option value="" disabled selected hidden>Valg</option>
-            <option value="option1">Se ingredienser</option>
-            <option value="option2">Legg til i handlekurv</option>
-            <option value="option3">Fjern</option>
+            <option value="" disabled selected hidden>{{ $t("options") }}</option>
+            <option value="option1">{{ $t("view_ingredients") }}</option>
+            <option value="option2">{{ $t("see_recipe") }}</option>
+            <option value="option3">{{ $t("remove") }}</option>
           </select>
         </div>
       </div>
@@ -38,11 +38,13 @@
       <div class="ingredients">
         <ul>
           <li v-for="ingredient in recepeInfo.ingredients" :key="ingredient">
-            {{ ingredient }}
+            {{ ingredient.name + "(" + ingredient.quantity + ")" }} 
           </li>
         </ul>
       </div>
-      <GreenButton label="Tilbake" width="100%" height="50px" @click="returnEvent" />
+      <div class="back-button">
+        <GreenButton label="Tilbake" width="100%" height="50px" @click="returnEvent" />
+      </div>
     </div>
   </div>
 </template>
@@ -57,6 +59,11 @@
         selectedOption: "",
         showIngredients: false,
       };
+    },
+
+    setup() {
+      const {locale, locales, t} = useI18n()
+      return {locale, locales, t}
     },
 
     props: {
@@ -102,12 +109,13 @@
 <style>
  .Recipe-card-wrapper {
   position: relative;
-  width: 170px;
+  width: 160px;
   height: 260px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   z-index: 1;
   border-radius: 14px;
+  background-color: rgba(49, 196, 141, 1);
 }
 
 .Recipe-card-wrapper:hover {
@@ -159,12 +167,10 @@
   height: 120px;
 }
 
-.recipe-choices {
-}
 
 .recepe-title {
   font-size: 20px;
-  margin: 0;
+  margin-bottom: 15px;
   display: flex;
   justify-content: center;
   color: white;
@@ -172,6 +178,7 @@
 
 .ingredients {
   padding: 10px;
+  height: 150px;
 }
 
 .ingredients ul {
@@ -186,6 +193,11 @@
 
 .select {
   width: 20px;
+}
+
+.back-button {
+  display: flex;
+  justify-content: end;
 }
 
 </style>

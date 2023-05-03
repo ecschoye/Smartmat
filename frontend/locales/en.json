@@ -79,5 +79,19 @@
   "user_removed_failure" : "You could not be removed from refrigerator, try again",
   "member_added_success" : "Member Successfully Added",
   "member_added_failure" : "Member could not be added",
-  "members" : "Members"
+  "members" : "Members",
+  "generate_random_recipes" : "Generate random recipes based on groceries in your fridge",
+  "remove_all_recipes" : "Remove all recipes",
+  "current_week" : "Current week",
+  "next_week" : "Next week",
+  "monday" : "Monday",
+  "tuesday" : "Tuesday",
+  "wednesday" : "Wednesday",
+  "thursday" : "Thursday",
+  "friday" : "Friday",
+  "saturday" : "Saturday",
+  "sunday" : "Sunday",
+  "view_ingredients" : "View Ingredients",
+  "see_recipe" : "view recipe",
+  "options" : "Oprions"
 }

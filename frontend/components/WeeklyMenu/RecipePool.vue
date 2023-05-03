@@ -1,9 +1,10 @@
 <template>
-    <div>
-        <button class="random-button" @click="randomRecipesEvent">Generer Oppskrifter basert på ditt kjøleskap</button>
+    <div class="top-buttons">
+        <button class="random-button" @click="randomRecipesEvent">{{ $t("generate_random_recipes") }}</button>
+        <button class="random-button" @click="removeAllRecipes">{{ $t("remove_all_recipes") }}</button>
     </div>
-    <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title">Denne uken</h1>
-    <h1 v-else class="title">Neste uke</h1>
+    <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title">{{ $t("current_week") }}</h1>
+    <h1 v-else class="title">{{ $t("next_week") }}</h1>
     <div class="recepe-pool" v-if="weeklyMenuStore.$state.chosenWeek === 1">
         <div v-for="weekday in activeWeekdays" :key="weekday" class="recepe-card">
             <div class="recepe-content">
@@ -44,8 +45,8 @@
     </div>
 
     <div class="navigation-buttons">
-      <button @click="goToPreviousWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 1" class="week-button">Forrige uke</button>
-      <button @click="goToNextWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 2" class="week-button">Neste uke</button>
+      <button @click="goToPreviousWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 1" class="week-button">{{ $t("current_week") }}</button>
+      <button @click="goToNextWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 2" class="week-button">{{ $t("next_week") }}</button>
     </div>
     
 </template>
@@ -59,17 +60,19 @@ import { fetchRecipes } from '~/service/httputils/RecipeService';
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 import { number } from '@intlify/core-base';
 import {FetchRecipeDTO} from "~/types/FetchRecipeDTO";
+import { Ingredient } from "~/types/IngredientType"
 
 export default {
     data() {
         return {
-            Weekdays: ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"],
+            Weekdays: [this.t("monday"), this.t("tuesday"), this.t("wednesday"), this.t("thursday"), this.t("friday"), this.t("saturday"), this.t("sunday")],
         };
     },
 
     setup() {
     const weeklyMenuStore = useWeeklyMenuStore();
     const refrigeratorStore = useRefrigeratorStore();
+    const {locale, locales, t} = useI18n()
 
     const fetchRecipeDTO: FetchRecipeDTO = reactive({
         refrigeratorId: -1,
@@ -129,6 +132,7 @@ export default {
       weeklyMenuStore.setChosenWeek(2);
     };
 
+
     return {
       weeklyMenuStore,
       addRecipeWeek,
@@ -139,6 +143,9 @@ export default {
       goToNextWeek,
       refrigeratorStore,
       fetchRecipeDTO,
+      locale, 
+      locales,
+      t
     };
   },
 
@@ -167,21 +174,30 @@ export default {
                 recipesFetched: this.fetchRecipeDTO.recipesFetched || [],
               };
                 const response = await fetchRecipes(this.fetchRecipeDTO);
-
+                console.log(response);
                 if (response.status === 200) {
-                    const recipe = await response.data[0];
+                    const recipe = response.data[0];
+                    const ingredientsRecieved = response.data[0].ingredients;
+                    console.log(ingredientsRecieved)
+                    
+                    const ingredients = response.data[0].ingredients.map((ingredientsRecieved : Ingredient) => ({
+                    id: ingredientsRecieved.simpleGrocery.id,
+                    name: ingredientsRecieved.simpleGrocery.name,
+                    quantity: ingredientsRecieved.quantity,
+                    }));
+
                     const newRecipe: Recipe = {
                         id: recipe.id,
                         name: recipe.name,
                         url: recipe.url,
-                        ingredients: recipe.ingredients,
+                        ingredients: ingredients,
                     };
 
-                this.addRecipeWeek(dayIndex, newRecipe);
-                if (!this.fetchRecipeDTO.recipesFetched.includes(newRecipe.id)) {
-                  this.fetchRecipeDTO.recipesFetched.push(newRecipe.id);
-                }
-                }
+                    this.addRecipeWeek(dayIndex, newRecipe);
+                    if (!this.fetchRecipeDTO.recipesFetched.includes(newRecipe.id)) {
+                        this.fetchRecipeDTO.recipesFetched.push(newRecipe.id);
+                    }
+                }            
             } catch (error: any) {
                 console.log(error);
             }
@@ -194,13 +210,23 @@ export default {
           this.fetchRecipeDTO.refrigeratorId = this.refrigeratorStore.getSelectedRefrigerator.id;
 
           const response = await fetchRecipes(this.fetchRecipeDTO);
-
-          if (response.status === 200) {
-            const recipes = response.data.map((recipe : Recipe) => ({
+          const recipes = response.data.map((recipe : Recipe) => ({
               id: recipe.id,
               name: recipe.name,
               url: recipe.url,
+              ingredients: []
             }));
+          let ingredients;       
+          if (response.status === 200) {
+            for(let i = 0; i < response.data.length; i++) {
+                ingredients = response.data[i].ingredients.map((ingredientsRecieved : Ingredient) => ({
+                    id: ingredientsRecieved.simpleGrocery.id,
+                    name: ingredientsRecieved.simpleGrocery.name,
+                    quantity: ingredientsRecieved.quantity,
+                    }));
+                recipes[i].ingredients = ingredients;   
+            }
+            
 
             if (this.weeklyMenuStore.$state.chosenWeek === 1) {
               this.weeklyMenuStore.setCurrentWeekRandomly(recipes);
@@ -244,6 +270,24 @@ export default {
 
             }
             return recipesNeeded;
+        },
+
+        removeAllRecipes() {
+            if(this.weeklyMenuStore.$state.chosenWeek === 1 && !this.weeklyMenuStore.isCurrentWeekEmpty()) {
+                if(confirm("Er du sikker på at du vil fjerne alle oppskriftene for denne uken?")) {
+                    for(let i = 0; i < this.weeklyMenuStore.$state.currentWeek.length; i++) {
+                    this.weeklyMenuStore.$state.currentWeek[i] = null;
+                    }
+                }
+            } else if(this.weeklyMenuStore.$state.chosenWeek === 2 && !this.weeklyMenuStore.isNextWeekEmpty()) {
+                if(confirm("Er du sikker på at du vil fjerne alle oppskriftene for neste uke?")) {
+                    for(let i = 0; i < this.weeklyMenuStore.$state.nextWeek.length; i++) {
+                    this.weeklyMenuStore.$state.nextWeek[i] = null;
+                    } 
+                } 
+            } else {
+                    alert("Det er ingen oppskrifter å slette")
+                }
         }
     },
     components: { GrayButton, UnknownRecipe }
@@ -261,6 +305,11 @@ export default {
     overflow: hidden;
     align-items: center;
     justify-content: center;
+}
+
+.top-buttons {
+    display: flex;
+    justify-content: space-between;
 }
 
 .recepe-card {

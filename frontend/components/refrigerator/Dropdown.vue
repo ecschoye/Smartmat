@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { getGroceries } from "~/service/httputils/GroceryService";
+import { getGroceriesDTOs } from "~/service/httputils/GroceryService";
 import { Grocery } from "~/types/GroceryType";
 
 const { t } = useI18n();
@@ -43,7 +43,7 @@ let groceries: Grocery[] = [];
 
 async function loadGroceries() {
   try {
-    const response = await getGroceries();
+    const response = await getGroceriesDTOs();
     groceries = response.data;
   } catch (error) {
     console.log("Could not load groceries", error);

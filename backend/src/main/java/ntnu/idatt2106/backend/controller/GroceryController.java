@@ -156,28 +156,6 @@ public class GroceryController {
         return new ResponseEntity<>(new SuccessResponse("Grocery updated properly", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
-
-    @Operation(summary = "Get all groceries")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of groceries fetched successfully", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Grocery.class)))),
-            @ApiResponse(responseCode = "204", description = "No content", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    @GetMapping("/all")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getAllGroceries(HttpServletRequest request){
-        String jwt = cookieService.extractTokenFromCookie(request); // Extract the token from the cookie
-        if (jwt == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Unauthorized"));
-        }
-        List<Grocery> list = groceryService.getAllGroceries();
-
-        if(list.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ErrorResponse("No groceries found"));
-        }
-        return ResponseEntity.ok(list);
-    }
-
     @Operation(summary = "Create a new grocery")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Grocery created successfully", content = @Content(schema = @Schema(implementation = GroceryDTO.class))),

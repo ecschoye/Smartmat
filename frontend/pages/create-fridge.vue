@@ -1,7 +1,7 @@
 <template>
   <div class="create-fridge-wrapper">
     <div class=" mt-14">
-      <h1 class="flex justify-center text-white text-4xl ">{{ t('new_fridge') }}</h1>
+      <h1 class="flex justify-center text-black dark:text-white text-4xl ">{{ t('new_fridge') }}</h1>
     </div>
     <div class="form-wrapper mx-auto">
       <CreateFridgeForm id="fridge"></CreateFridgeForm>

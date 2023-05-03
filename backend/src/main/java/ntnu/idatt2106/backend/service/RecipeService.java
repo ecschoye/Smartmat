@@ -1,10 +1,12 @@
-package ntnu.idatt2106.backend.service.recipe;
+package ntnu.idatt2106.backend.service;
 
 
 import lombok.RequiredArgsConstructor;
-import ntnu.idatt2106.backend.exceptions.NoSuchElementException;
-import ntnu.idatt2106.backend.model.dto.RecipeDTO;
+import ntnu.idatt2106.backend.model.dto.GroceryInfoDTO;
+import ntnu.idatt2106.backend.model.dto.recipe.IngredientDTO;
+import ntnu.idatt2106.backend.model.dto.recipe.RecipeDTO;
 import ntnu.idatt2106.backend.model.dto.recipe.FetchRecipesDTO;
+import ntnu.idatt2106.backend.model.dto.recipe.SimpleGrocery;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.recipe.Recipe;
@@ -12,9 +14,9 @@ import ntnu.idatt2106.backend.model.recipe.RecipeGrocery;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
 import org.springframework.stereotype.Service;
+import ntnu.idatt2106.backend.exceptions.NoSuchElementRuntimeException;
 
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -113,10 +115,42 @@ public class RecipeService {
 
     }
 
-
-
-
     public List<RecipeDTO> convertToDTOs(List<Recipe> recipes) {
-        return recipes.stream().map(RecipeDTO::new).toList();
+        return recipes.stream().map(recipe -> {
+            RecipeDTO recipeDTO = new RecipeDTO(recipe);
+            List<GroceryInfoDTO> groceryInfoList = recipeGroceryRepository.findGroceryInfoByRecipe(recipe);
+
+            // Convert the GroceryInfoDTO list to a list of IngredientDTOs
+            List<IngredientDTO> ingredients = groceryInfoList.stream()
+                    .map(gi -> {
+                        SimpleGrocery grocery = new SimpleGrocery(gi.getId(), gi.getName());
+                        Grocery groceryForSearch = new Grocery();
+                        groceryForSearch.setId(gi.getId());
+                        groceryForSearch.setName(gi.getName());
+
+                        RecipeGrocery recipeGrocery = recipeGroceryRepository
+                                .findFirstByRecipeAndGrocery(recipe, groceryForSearch)
+                                .orElseThrow(() -> new NoSuchElementRuntimeException("No matching RecipeGrocery found."));
+
+                        return new IngredientDTO(grocery, recipeGrocery.getQuantity());
+                    })
+                    .collect(Collectors.toList());
+
+            recipeDTO.setIngredients(ingredients);
+            return recipeDTO;
+        }).toList();
     }
+
+
+
+
+
+
+
+
+
+
+    /*public List<RecipeDTO> convertToDTOs(List<Recipe> recipes) {
+        return recipes.stream().map(RecipeDTO::new).toList();
+    }*/
 }

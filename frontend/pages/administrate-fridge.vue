@@ -1,10 +1,10 @@
 <template>
   <div class="flex items-center py-10">
-    <div class="flex administrate-fridge m-auto">
-      <ButtonFavoriteToggler 
+    <div class="flex administrate-fridge text-black dark:text-white form-light-color dark:form-dark-color m-auto border-2 border-[#31C48D]/60">
+      <ButtonFavoriteToggler
         class="relative -top-7 -left-12"
-        @favorite-event="favoriteEventHandler" 
-        :text="false" 
+        @favorite-event="favoriteEventHandler"
+        :text="false"
         :large="true"
         :isFavorite="isFavorite" />
       <h1>{{$t("administrate_refrigerator")}}</h1>
@@ -28,13 +28,13 @@
                               <h3>{{ member.name }}</h3>
                           </div>
                           <div class="email-wrapper">
-                           <h4>{{ member.username }}</h4>  
+                           <h4>{{ member.username }}</h4>
                           </div>
                       </div>
                       <div class="member-role items-center">
-                          <select 
-                          :disabled="!isSuperUser"  
-                          :class="[isSuperUser ? 'custom-select hover:cursor-pointer' : 'disabled-select', 'h-12 px-2 rounded-md ring-1 ring-gray-300 dark:ring-zinc-600  bg-white']"
+                          <select
+                          :disabled="!isSuperUser"
+                          :class="[isSuperUser ? 'custom-select hover:cursor-pointer' : 'disabled-select', 'h-12 px-2 rounded-md ring-1 ring-gray-300 dark:ring-zinc-600  text-black bg-white']"
                           v-model="member.fridgeRole" @change="handleOptionChange(member)">
                               <option class="hover:cursor-pointer" value="USER">User</option>
                               <option class="hover:cursor-pointer" value="SUPERUSER">Superuser</option>
@@ -52,7 +52,7 @@
                               <h4 class="email-wrapper">{{ $t("remove_member")}}</h4>
                           </div>
                       </div>
-                  </div> 
+                  </div>
                   <div class="divider"></div>
               </div>
           </div>
@@ -85,15 +85,15 @@ export default {
   },
   computed: {
     isFavorite() : boolean {
-      if(this.fridge === null) return false; 
-      else if(this.favoriteRefrigeratorId < 0) return false; 
-      else return this.fridge.id === this.favoriteRefrigeratorId; 
+      if(this.fridge === null) return false;
+      else if(this.favoriteRefrigeratorId < 0) return false;
+      else return this.fridge.id === this.favoriteRefrigeratorId;
     }
   },
   setup() {
     const errorMessage = ref("");
     const refrigeratorStore = useRefrigeratorStore();
-    const userStore = useUserStore(); 
+    const userStore = useUserStore();
     const {locale, locales, t} = useI18n()
 
     const sendForm = async () => {
@@ -237,7 +237,6 @@ export default {
         const response = await getUserData();
         if (response) {
             this.currentUser = response.email
-            this.favoriteRefrigeratorId = response.favoriteRefrigeratorId; 
         }
       },
       setRefrigeratorRole() {
@@ -252,7 +251,7 @@ export default {
       favoriteEventHandler(value : boolean) {
         if(this.fridge !== null) {
           if(value === true) this.favorite();
-          else this.unfavorite();  
+          else this.unfavorite();
         }
       },
       favorite(){
@@ -261,7 +260,7 @@ export default {
           postEditFavorite(refId)
             .then((response) => {
               if(response.status === 200) {
-                this.userStore.setFavoritedRefrigeratorId(refId); 
+                this.userStore.setFavoritedRefrigeratorId(refId);
                 let numb = this.userStore.getFavoriteRefrigeratorId;
                 if(numb !== null) this.favoriteRefrigeratorId = numb;
                 alert(this.t("favorited_success"))
@@ -275,13 +274,13 @@ export default {
               alert(this.t("favorited_failure"))
             })
         }
-        
+
       },
       unfavorite(){
         postRemoveFavorite()
             .then((response) => {
               if(response.status === 200) {
-                this.userStore.setFavoritedRefrigeratorId(-1); 
+                this.userStore.setFavoritedRefrigeratorId(-1);
                 this.favoriteRefrigeratorId = -1;
                 alert(this.t("unfavorited_success"))
               }
@@ -298,7 +297,7 @@ export default {
   created(){
     this.getUserData();
     this.getRefrigerator();
-    this.setRefrigeratorRole(); 
+    this.setRefrigeratorRole();
   }
 }
 
@@ -325,11 +324,9 @@ export default {
   align-items: center;
   width: 600px;
   height: fit-content;
-  background: white;
   padding: 0 20px 20px;
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border: solid 2px #dcdbdb;
 }
 
 .email-wrapper {

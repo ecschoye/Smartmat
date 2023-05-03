@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-      <form @submit.prevent="sendForm" class="form">
+      <form @submit.prevent="sendForm" class="form form-light-color dark:form-dark-color">
         <FormBaseInput :disabled="!isSuperUser" id="name" class="input-container" type="name" :label="$t('name')" :initiated-value="refrigerator?.name" v-model="form.name" />
         <FormBaseInput :disabled="!isSuperUser" id="address" class="input-container" type="address" :label="$t('address')" :initiated-value="refrigerator?.address" v-model="form.address" />
         <div class="button-wrapper">
@@ -89,7 +89,6 @@
   .form {
     width: 400px;
     height: fit-content;
-    background: white;
     padding: 0 20px 20px;
     border-radius: 15px;
   }

@@ -15,5 +15,5 @@ public interface GroceryHistoryRepository extends JpaRepository<GroceryHistory, 
     Optional<GroceryHistory> findById(long l);
 
     List<GroceryHistory> findAllByDateConsumedAfter(LocalDate date);
-    List<GroceryHistory> findByDateConsumedBetween(LocalDate startDate, LocalDate endDate);
+    List<GroceryHistory> findByDateConsumedBetweenAndRefrigeratorId(LocalDate startDate, LocalDate endDate, Long refrigeratorId);
 }

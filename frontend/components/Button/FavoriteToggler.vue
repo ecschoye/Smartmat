@@ -7,7 +7,7 @@
       <img 
         :class="[large ? 'h-16':'h-12']"
         class=" hover:transform hover:cursor-pointer " 
-        src="@/assets/icons/heartFilled.png" 
+        src="@/assets/icons/heartfilled.png"
         alt="">
       <h2 class="px-2" v-if="text">{{ $t("remove_favorite") }}</h2>
     </div>

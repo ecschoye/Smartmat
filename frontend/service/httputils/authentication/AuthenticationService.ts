@@ -21,7 +21,7 @@ export const getUserData = async (): Promise<User | null> => {
     try {
         const response: AxiosResponse<User> = await axiosInstance.get('/api/my-profile');
         const { name, email } = response.data;
-        return { id: response.data.id, name, email, roles: response.data.roles };
+        return { id: response.data.id, name, email, roles: response.data.roles, favoriteRefrigeratorId : response.data.favoriteRefrigeratorId };
     } catch (error) {
         console.error(error);
         return null;

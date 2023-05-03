@@ -14,6 +14,7 @@ import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorDTO;
+import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.refrigerator.NewRefrigeratorDTO;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
@@ -30,6 +31,7 @@ import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * The RefrigeratorService class provides access to user data stored in the RefrigeratorRepository.
@@ -53,6 +55,7 @@ public class RefrigeratorService {
     private final ShoppingListRepository shoppingListRepository;
     private final ShoppingCartRepository shoppingCartRepository;
     private final UserRepository userRepository;
+    private final UnitRepository unitRepository;
 
     private final Logger logger = LoggerFactory.getLogger(RefrigeratorService.class);
 
@@ -319,6 +322,26 @@ public class RefrigeratorService {
     }
 
     /**
+     * Sets the users favorite refrigerator's Id
+     *
+     * @param refrigeratorId Id of refrigerator
+     * @param httpServletRequest Http request
+     * @throws UserNotFoundException If user is not found
+     * @throws RefrigeratorNotFoundException If refrigerator does not exist
+     */
+    public void setFavoriteRefrigeratorId(long refrigeratorId, HttpServletRequest httpServletRequest) throws UserNotFoundException, RefrigeratorNotFoundException {
+        User user = getUser(extractEmail(httpServletRequest));
+        long refId;
+        if(refrigeratorId >= 0){
+            refId = getRefrigerator(refrigeratorId).getId();
+        }
+        else refId = -1L;
+
+        user.setFavoriteRefrigeratorId(refId);
+        userRepository.save(user);
+    }
+
+    /**
      * Forcefully deletes a refrigerator and all its members. Gets
      * the user that requested the delete and checks permission. Then
      * deletes any members and the refrigerator itself.
@@ -425,5 +448,12 @@ public class RefrigeratorService {
     public String extractEmail(HttpServletRequest httpRequest) {
         String token = cookieService.extractTokenFromCookie(httpRequest);
         return jwtService.extractClaim(token, Claims::getSubject);
+    }
+
+    public List<UnitDTO> getUnits(){
+        List<Unit> list = unitRepository.findAll();
+        List<UnitDTO> dtos = list.stream().map(unit -> new UnitDTO(unit))
+                .collect(Collectors.toList());
+        return dtos;
     }
 }

@@ -1,7 +1,5 @@
 import type { AxiosResponse } from 'axios';
 import axiosInstance from "~/service/AxiosInstance";
-import type {SaveGrocery} from "~/types/SaveGrocery";
-import type {EditGrocery} from "~/types/EditGrocery";
 
 
 const createShoppingCart = (shoppingListId: Number): Promise<AxiosResponse> => {
@@ -20,9 +18,14 @@ const tranferAllToRefrigerator = (groceryIds: Number[]): Promise<AxiosResponse> 
     return axiosInstance.post(`api/shopping-cart/all/transfer-refrigerator/${groceryIds}`)
 };
 
+const transferGroceryToShoppingList = (groceryIds: Number[]): Promise<AxiosResponse> => {
+    return axiosInstance.post(`api/shopping-cart/transfer-shoppingList/${groceryIds}`)
+};
+
 export default {
     createShoppingCart,
     getGroceriesFromShoppingCart,
     transferToRefrigerator,
-    tranferAllToRefrigerator
+    tranferAllToRefrigerator,
+    transferGroceryToShoppingList
 }

@@ -206,7 +206,6 @@ public class ShoppingListService {
             saveGrocery(saveGroceryRequest, httpRequest);
             deleteRefrigeratorGrocery(groceryRefrigeratorShoppingListId, httpRequest);
         }
-        throw new SaveException("Failed to add a edit the refrigerator grocery item");
     }
 
 

@@ -239,10 +239,6 @@ public class GroceryService {
         }
     }
 
-    public List<Grocery> getAllGroceries() {
-        return groceryRepository.findAll();
-    }
-
     public List<GroceryDTO> getAllGroceriesDTO() throws NoGroceriesFound {
         List<Grocery> groceries = groceryRepository.findAll();
         if (groceries.isEmpty()) {

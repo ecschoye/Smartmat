@@ -21,6 +21,11 @@
                             :ShoppingListId="shoppingListId"
                             @updateList="loadCategories">
                         </ShoppingListCategory>
+                        <RefrigeratorGroceries
+                            :ShoppingListId="shoppingListId"
+                            @updateList="loadCategories"
+                        >
+                        </RefrigeratorGroceries>
                     </div>
                     <div class="p-2 flex justify-end absolute bottom-0 right-0">
                         <button @click.stop="addNewElementSelected = true" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-300 bg-sky-400"> {{ t('add_a_new_grocery') }} </button>
@@ -65,6 +70,7 @@ import ShoppingListElement from "./ShoppingListElement.vue";
 import AddNewElement from "./AddNewElement.vue";
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 import { data } from "cypress/types/jquery";
+import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
     export default defineComponent({
     props: {
         refrigeratorId: {
@@ -137,7 +143,7 @@ import { data } from "cypress/types/jquery";
                 let responseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);
                 if (responseCart.data.length > 0) {
                     responseCart.data.forEach((element: ResponseGrocery) => {
-                        let object: ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true, isSuggested: false };
+                        let object: ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true, isSuggested: false, isFromRefrigerator: false };
                         this.shoppingCart.push(object);
                     }); 
                 }
@@ -176,6 +182,6 @@ import { data } from "cypress/types/jquery";
             this.loadCategories()
         }
     },
-    components: { AddNewElement }
+    components: { AddNewElement, RefrigeratorGroceries }
 })
 </script>

@@ -42,45 +42,19 @@ onMounted(() => {
 });
 
 async function removeGrocery() {
-
-    try{
-        const response = await deleteGrocery(refrigeratorStore.selectedGrocery);
-        if(response.status == 200){
-            emit('delete-grocery', refrigeratorStore.getSelectedGrocery);
-            emit('toggleOptions');
-        }
-    }
-    catch(error){
-        console.log(error)
-    } 
-
-    //TODO: add enpoint for this in shopping list
+  emit('delete-grocery', refrigeratorStore.getSelectedGrocery);
+  emit('toggleOptions');
 }
 
 
 async function eatGrocery() {
-    try{
-        const response = await deleteGrocery(refrigeratorStore.selectedGrocery);
-        if(response.status == 200){
-            emit('delete-grocery', refrigeratorStore.getSelectedGrocery);
-        }
-    }
-    catch(error){
-        console.log(error)
-    } 
+      emit('delete-grocery', refrigeratorStore.getSelectedGrocery);
+      emit('toggleOptions');
 }
 
 async function trashGrocery() {
-    try{
-        const response = await deleteGrocery(refrigeratorStore.selectedGrocery);
-        if(response.status == 200){
-            emit('delete-grocery', refrigeratorStore.getSelectedGrocery);
-            emit('toggleOptions');
-        }
-    }
-    catch(error){
-        console.log(error)
-    } 
+  emit('delete-grocery', refrigeratorStore.getSelectedGrocery);
+  emit('toggleOptions');
 }
 
 async function closePopup(event: MouseEvent) {

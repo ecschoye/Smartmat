@@ -364,19 +364,6 @@ public class RefrigeratorService {
         }
     }
 
-
-    /**
-     * Gets refrigerator
-     *
-     * @param refrigeratorId id of refrigerator
-     * @return Refrigerator
-     * @throws RefrigeratorNotFoundException if not found
-     */
-    public Refrigerator getRefrigerator(long refrigeratorId) throws RefrigeratorNotFoundException{
-        return refrigeratorRepository.findById(refrigeratorId)
-                .orElseThrow(() -> new RefrigeratorNotFoundException("Refrigerator not found"));
-    }
-
     /**
      * Gets a users role in the refrigerator
      *
@@ -394,17 +381,28 @@ public class RefrigeratorService {
     }
 
     /**
-     * Gets a users role in the refrigerator
+     * Gets refrigerator
+     *
+     * @param refrigeratorId id of refrigerator
+     * @return Refrigerator
+     * @throws RefrigeratorNotFoundException if not found
+     */
+    public Refrigerator getRefrigerator(long refrigeratorId) throws RefrigeratorNotFoundException{
+        return refrigeratorRepository.findById(refrigeratorId)
+                .orElseThrow(() -> new RefrigeratorNotFoundException("Refrigerator not found"));
+    }
+
+    /**
+     * Gets refrigeratorUser in the refrigerator by ids
      *
      * @param refrigeratorId id of refrigerator
      * @param userId id of user
-     * @return Role in refrigerator
+     * @return refrigeratorUser in refrigerator
      * @throws UnauthorizedException if user not member of refrigerator
      */
-    public FridgeRole getFridgeRoleById(long refrigeratorId, String userId) throws UnauthorizedException {
-        RefrigeratorUser ru = refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(userId, refrigeratorId)
+    public RefrigeratorUser getRefrigeratorUserById(long refrigeratorId, String userId) throws UnauthorizedException {
+        return refrigeratorUserRepository.findByUser_IdAndRefrigerator_Id(userId, refrigeratorId)
                 .orElseThrow(() -> new UnauthorizedException("User not member of refrigerator"));
-        return ru.getFridgeRole();
     }
 
     /**

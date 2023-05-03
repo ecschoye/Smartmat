@@ -1,7 +1,7 @@
 <template>
     <div class = "flex h-4/5 w-full">
         <RefrigeratorNew v-if="toggleCreate" @toggle="(payload) => onToggleCreate(payload)" />
-        <RefrigeratorDisplay v-else @emit-date="(payload) => updateGrocery(payload)" @toggle-create="(payload) => onToggleCreate(payload)" :refrigerator="refrigeratorStore.getSelectedRefrigerator" class="font-mono" @group-closed="togglePos(false)" :groceries="groceries" @popup-height="(payload) => setPos(payload)" />
+        <RefrigeratorDisplay v-else @selected-grocery="(payload) => refrigeratorStore.setSelectedGrocery(payload)" @emit-date="(payload) => updateGrocery(payload)" @toggle-create="(payload) => onToggleCreate(payload)" :refrigerator="refrigeratorStore.getSelectedRefrigerator" class="font-mono" @group-closed="togglePos(false)" :groceries="groceries" @popup-height="(payload) => setPos(payload)" />
             <div>
             <Transition>
                 <RefrigeratorEditGrocery @delete-grocery="(payload) => removeGrocery(payload)" :pos="position" v-if="toggle" @toggle-options="togglePos(false)"/>
@@ -74,8 +74,10 @@ async function removeGrocery(grocery : GroceryEntity) {
     try{
         const response = await deleteGrocery(grocery);
         if(response.status == 200){
-            const index = groceries.value.findIndex(grocery => grocery.id === grocery.id);
+            const index = groceries.value.findIndex(search => search.id === grocery.id);
+            console.log(groceries.value)
             groceries.value.splice(index, 1);
+            console.log(groceries.value);
             loadNotifications();
         }
     }

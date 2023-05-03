@@ -1,6 +1,5 @@
 package ntnu.idatt2106.backend.model.dto.shoppingListElement;
 
-import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 
 public class ShoppingListElementDTO {

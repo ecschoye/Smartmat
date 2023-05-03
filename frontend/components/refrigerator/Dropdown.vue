@@ -18,7 +18,7 @@
             :class="{ 'bg-gray-400': grocery.id === selectedGrocery?.id && grocery.name === selectedGroceryName }"
             class="w-full text-gray-700 bg-gray-200 p-2 mt-2 rounded-sm hover:bg-gray-300"
           >
-            {{ grocery.name }} - {{ grocery.description }}
+            {{ grocery.description }}
           </li>
         </div>
       </ul>

@@ -1,6 +1,6 @@
 <template>
-    <div class="w-full flex justify-center">
-      <div class="border-2 w-11/12 md:w-9/12 h-3/5 mt-5 border-black rounded-lg bg-white dark:bg-zinc-400 overflow-hidden flex flex-col absolute" id="wrapper">
+    <div class="w-full justify-center">
+      <div class="border-2 w-11/12 md:w-1/2 h-3/5 mt-5 border-black rounded-lg bg-white dark:bg-zinc-400 overflow-hidden flex flex-col absolute" id="wrapper">
         <div class="text-lg text-center m-3 font-semibold" v-if="refrigerator">
           {{ refrigerator.name }}
         </div>
@@ -14,6 +14,7 @@
               @emit-date="(payload) => emit('emit-date', payload)"
               @group-closed="emit('group-closed')"
               @popup-height="(payload : number) => emitHeight(payload)"
+              @selected-grocery="(payload) => emit('selected-grocery', payload)"
           ></RefrigeratorList>
         </div>
         <div class ="absolute bottom-0 w-full flex justify-end border-t self-end border-black bg-gray-200">
@@ -36,7 +37,7 @@ import type { GroceryEntity } from '~/types/GroceryEntityType';
 import { Refrigerator } from '~/types/RefrigeratorType';
 
   const { t } = useI18n();
-  const emit = defineEmits(['popup-height', 'group-closed', 'toggle-create', 'emit-date']);
+  const emit = defineEmits(['popup-height', 'group-closed', 'toggle-create', 'emit-date', 'selected-grocery']);
 
   
   const props = defineProps({

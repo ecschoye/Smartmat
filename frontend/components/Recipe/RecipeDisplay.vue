@@ -26,7 +26,7 @@ import type { Recipe } from '~/types/RecipeType';
     },
     methods : {
       overLay() : boolean {
-        return this.recipe === null
+        return this.recipe !== null
       }
     }
   }

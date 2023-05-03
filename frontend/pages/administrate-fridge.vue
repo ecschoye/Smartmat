@@ -6,7 +6,7 @@
         @favorite-event="favoriteEventHandler"
         :text="false"
         :large="true"
-        :isFavorite="isFavorite" />
+        :isFavorite="isFavorite()" />
       <h1>{{$t("administrate_refrigerator")}}</h1>
       <div>
         <div class="wrapper">
@@ -84,11 +84,7 @@ export default {
     };
   },
   computed: {
-    isFavorite() : boolean {
-      if(this.fridge === null) return false;
-      else if(this.favoriteRefrigeratorId < 0) return false;
-      else return this.fridge.id === this.favoriteRefrigeratorId;
-    }
+    
   },
   setup() {
     const errorMessage = ref("");
@@ -122,182 +118,192 @@ export default {
   watch : {
     fridge(){
       this.setRefrigeratorRole(); 
+      this.isFavorite(); 
     }
   },
   methods: {
-      handleOptionChange(member : Member) {
-        this.editedMembers.set(member.username, member)
-        console.log(this.editedMembers)
-      },
-      async handleSaveUserRoles(){
-        let memberRequests : MemberRequest[] = [];
-        this.editedMembers.forEach((member : Member) =>{
-            const memberRequest : MemberRequest = {
-            refrigeratorId : member.refrigeratorId,
-            userName : member.username,
-            fridgeRole : member.fridgeRole 
-          }
-          memberRequests.push(memberRequest); 
-        })
+    isFavorite() : boolean {
+      if(this.fridge === null) return false;
+      else if(this.favoriteRefrigeratorId < 0) return false;
+      else {
+        return this.fridge.id === this.favoriteRefrigeratorId;
+      }
+    },
+    handleOptionChange(member : Member) {
+      this.editedMembers.set(member.username, member)
+      console.log(this.editedMembers)
+    },
+    async handleSaveUserRoles(){
+      let memberRequests : MemberRequest[] = [];
+      this.editedMembers.forEach((member : Member) =>{
+          const memberRequest : MemberRequest = {
+          refrigeratorId : member.refrigeratorId,
+          userName : member.username,
+          fridgeRole : member.fridgeRole 
+        }
+        memberRequests.push(memberRequest); 
+      })
 
-        try{
-            let response = await postEditMembers(memberRequests); 
-            if(response !== null && response.status == 200){
-              if(response.data == ""){
-                alert(this.t("last_superuser_alert"))
-              }
-              else {
-                alert(this.t("member_added_success"))
-                location.reload(); 
-              }
-            }
-            else {
-              alert(this.t("member_added_failure"))
-              location.reload(); 
-            }
-        }
-        catch(error){
-          alert(this.t("member_added_failure"))
-          console.log(error)
-          location.reload(); 
-        }
-      },
-      async leaveFridge(removeMemberRequest : RemoveMemberRequest) {
-        try {
-          let response = await postRemoveMember(removeMemberRequest); 
+      try{
+          let response = await postEditMembers(memberRequests); 
           if(response !== null && response.status == 200){
-            if(response.data == "" && removeMemberRequest.forceDelete == false){
-              if(window.confirm(this.t("force_delete_alert"))) {
-                removeMemberRequest.forceDelete = true; 
-                await this.leaveFridge(removeMemberRequest); 
-              }
+            if(response.data == ""){
+              alert(this.t("last_superuser_alert"))
             }
             else {
-              alert(this.t("user_removed_success"))
-              this.$router.push("/")
+              alert(this.t("member_added_success"))
+              location.reload(); 
             }
           }
           else {
-            alert(this.t("user_removed_failure"))
+            alert(this.t("member_added_failure"))
             location.reload(); 
           }
+      }
+      catch(error){
+        alert(this.t("member_added_failure"))
+        console.log(error)
+        location.reload(); 
+      }
+    },
+    async leaveFridge(removeMemberRequest : RemoveMemberRequest) {
+      try {
+        let response = await postRemoveMember(removeMemberRequest); 
+        if(response !== null && response.status == 200){
+          if(response.data == "" && removeMemberRequest.forceDelete == false){
+            if(window.confirm(this.t("force_delete_alert"))) {
+              removeMemberRequest.forceDelete = true; 
+              await this.leaveFridge(removeMemberRequest); 
+            }
+          }
+          else {
+            alert(this.t("user_removed_success"))
+            this.$router.push("/")
+          }
         }
-        catch(error) {
+        else {
           alert(this.t("user_removed_failure"))
-          console.log(error)
+          location.reload(); 
+        }
+      }
+      catch(error) {
+        alert(this.t("user_removed_failure"))
+        console.log(error)
+        location.reload();
+      }
+    },
+    async handleLeaveFridge(member : Member) {
+      const removeMemberRequest : RemoveMemberRequest = {
+        refrigeratorId : member.refrigeratorId,
+        userName : member.username,
+        forceDelete : false
+      }
+      await this.leaveFridge(removeMemberRequest); 
+    },
+    async deleteMember(member : Member) {
+      const removeMemberRequest: RemoveMemberRequest = {
+      refrigeratorId: member.refrigeratorId,
+      userName: member.username,
+      forceDelete: false,
+      };
+      try {
+        const response = await postRemoveMember(removeMemberRequest);
+        if(response !== null && response.status == 200) {
+          alert(this.t("remove_member_succsess"))
           location.reload();
         }
-      },
-      async handleLeaveFridge(member : Member) {
-        const removeMemberRequest : RemoveMemberRequest = {
-          refrigeratorId : member.refrigeratorId,
-          userName : member.username,
-          forceDelete : false
-        }
-        await this.leaveFridge(removeMemberRequest); 
-      },
-      async deleteMember(member : Member) {
-        const removeMemberRequest: RemoveMemberRequest = {
-        refrigeratorId: member.refrigeratorId,
-        userName: member.username,
-        forceDelete: false,
-        };
-        try {
-          const response = await postRemoveMember(removeMemberRequest);
-          if(response !== null && response.status == 200) {
-            alert(this.t("remove_member_succsess"))
-            location.reload();
-          }
-        } catch (error) {
-          alert(this.t("remove_member_failed"))
-          console.error(error);
-        }
-      },
-      async getRefrigerator() {
-        let refrigerator = null as Refrigerator | null;
-        if(this.refrigeratorStore.getSelectedRefrigerator !== null){
-          let response = await getRefrigeratorById(this.refrigeratorStore.getSelectedRefrigerator.id);
-          if(response !== null){
-              let element : Refrigerator = response.data; 
-              let membersResponse = [] as Member[]; 
-              element.members?.forEach((element : Member) => {
-                  const object : Member = {refrigeratorId : element.refrigeratorId, name : element.name, username : element.username, fridgeRole : element.fridgeRole}
-                  membersResponse.push(object); 
-              })
-              refrigerator = {id: element.id, name: element.name, address: element.address, members: membersResponse}
-              this.fridge = refrigerator
-
-          }
-        }
-      },
-      isUser(email : String):  boolean {
-        return email == this.currentUser; 
-      },
-      async getUserData() {
-        const response = await getUserData();
-        if (response) {
-            this.currentUser = response.email
-        }
-      },
-      setRefrigeratorRole() {
-        if(this.fridge !== null && this.currentUser !== null){
-          const member = this.fridge.members?.find((member : Member) => member.username === this.currentUser);
-          if(member !== undefined && member?.fridgeRole === 'SUPERUSER'){
-            this.isSuperUser = true; 
-          }
-          else this.isSuperUser = false; 
-        }
-      },
-      favoriteEventHandler(value : boolean) {
-        if(this.fridge !== null) {
-          if(value === true) this.favorite();
-          else this.unfavorite();
-        }
-      },
-      favorite(){
-        const refId = this.fridge?.id
-        if(refId !== undefined) {
-          postEditFavorite(refId)
-            .then((response) => {
-              if(response.status === 200) {
-                this.userStore.setFavoritedRefrigeratorId(refId);
-                let numb = this.userStore.getFavoriteRefrigeratorId;
-                if(numb !== null) this.favoriteRefrigeratorId = numb;
-                alert(this.t("favorited_success"))
-              }
-              else {
-                alert(this.t("favorited_failure"))
-              }
-            })
-            .catch((error) => {
-              console.log(error)
-              alert(this.t("favorited_failure"))
-            })
-        }
-
-      },
-      unfavorite(){
-        postRemoveFavorite()
-            .then((response) => {
-              if(response.status === 200) {
-                this.userStore.setFavoritedRefrigeratorId(-1);
-                this.favoriteRefrigeratorId = -1;
-                alert(this.t("unfavorited_success"))
-              }
-              else {
-                alert(this.t("unfavorited_failure"))
-              }
-            })
-            .catch((error) => {
-              console.log(error)
-              alert(this.t("unfavorited_failure"))
-            })
+      } catch (error) {
+        alert(this.t("remove_member_failed"))
+        console.error(error);
       }
+    },
+    async getRefrigerator() {
+      let refrigerator = null as Refrigerator | null;
+      if(this.refrigeratorStore.getSelectedRefrigerator !== null){
+        let response = await getRefrigeratorById(this.refrigeratorStore.getSelectedRefrigerator.id);
+        if(response !== null){
+            let element : Refrigerator = response.data; 
+            let membersResponse = [] as Member[]; 
+            element.members?.forEach((element : Member) => {
+                const object : Member = {refrigeratorId : element.refrigeratorId, name : element.name, username : element.username, fridgeRole : element.fridgeRole}
+                membersResponse.push(object); 
+            })
+            refrigerator = {id: element.id, name: element.name, address: element.address, members: membersResponse}
+            this.fridge = refrigerator
+
+        }
+      }
+    },
+    isUser(email : String):  boolean {
+      return email == this.currentUser; 
+    },
+    async getUserData() {
+      const response = await getUserData();
+      if (response) {
+          this.currentUser = response.email;
+          this.favoriteRefrigeratorId = response.favoriteRefrigeratorId;
+      }
+    },
+    setRefrigeratorRole() {
+      if(this.fridge !== null && this.currentUser !== null){
+        const member = this.fridge.members?.find((member : Member) => member.username === this.currentUser);
+        if(member !== undefined && member?.fridgeRole === 'SUPERUSER'){
+          this.isSuperUser = true; 
+        }
+        else this.isSuperUser = false; 
+      }
+    },
+    favoriteEventHandler(value : boolean) {
+      if(this.fridge !== null) {
+        if(value === true) this.favorite();
+        else this.unfavorite();
+      }
+    },
+    favorite(){
+      const refId = this.fridge?.id
+      if(refId !== undefined) {
+        postEditFavorite(refId)
+          .then((response) => {
+            if(response.status === 200) {
+              this.userStore.setFavoritedRefrigeratorId(refId);
+              let numb = this.userStore.getFavoriteRefrigeratorId;
+              if(numb !== null) this.favoriteRefrigeratorId = numb;
+              alert(this.t("favorited_success"))
+            }
+            else {
+              alert(this.t("favorited_failure"))
+            }
+          })
+          .catch((error) => {
+            console.log(error)
+            alert(this.t("favorited_failure"))
+          })
+      }
+
+    },
+    unfavorite(){
+      postRemoveFavorite()
+          .then((response) => {
+            if(response.status === 200) {
+              this.userStore.setFavoritedRefrigeratorId(-1);
+              this.favoriteRefrigeratorId = -1;
+              alert(this.t("unfavorited_success"))
+            }
+            else {
+              alert(this.t("unfavorited_failure"))
+            }
+          })
+          .catch((error) => {
+            console.log(error)
+            alert(this.t("unfavorited_failure"))
+          })
+    }
   },
   created(){
     this.getUserData();
     this.getRefrigerator();
     this.setRefrigeratorRole();
+
   }
 }
 

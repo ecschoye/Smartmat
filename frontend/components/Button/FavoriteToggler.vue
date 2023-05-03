@@ -3,7 +3,7 @@
     @click="favoriteHandler(false)" 
     v-if="isFavorite"
     class=" inline-flex items-center justify-left w-full"> 
-    <div class="ring-2 ring-inset ring-gray-300 dark:ring-zinc-600 bg-white rounded-2xl inline-flex items-center">
+    <div class="text-black dark:text-white form-light-color dark:form-dark-color border-2 border-[#31C48D]/60 rounded-2xl inline-flex items-center">
       <img 
         :class="[large ? 'h-16':'h-12']"
         class=" hover:transform hover:cursor-pointer " 
@@ -16,7 +16,7 @@
     v-else 
     @click="favoriteHandler(true)" 
     class=" inline-flex items-center justify-left w-full"> 
-    <div class="ring-2 ring-inset ring-gray-300 dark:ring-zinc-600 bg-white rounded-2xl inline-flex items-center">
+    <div class="text-black dark:text-white form-light-color dark:form-dark-color border-2 border-[#31C48D]/60 rounded-2xl inline-flex items-center">
       <img 
       :class="[large ? 'h-16':'h-12']"
       class=" hover:transform hover:cursor-pointer hover:scale-110" 

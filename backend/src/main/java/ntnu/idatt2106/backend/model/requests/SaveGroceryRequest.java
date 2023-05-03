@@ -34,5 +34,4 @@ public class SaveGroceryRequest {
         this.quantity = listItem.getQuantity();
         this.foreignKey = listItem.getShoppingList().getId();
     }
-
 }

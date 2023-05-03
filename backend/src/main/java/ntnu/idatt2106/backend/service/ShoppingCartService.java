@@ -162,7 +162,7 @@ public class ShoppingCartService {
         List<GroceryDTO> groceries = new ArrayList<>();
         groceries.add(groceryDTO);
 
-        SaveGroceryListRequest saveGrocery = new SaveGroceryListRequest(refrigeratorId, groceriesUnitDTO.builder().id(1L).name("dl").build(), 1);
+        SaveGroceryListRequest saveGrocery = new SaveGroceryListRequest(refrigeratorId, groceries, UnitDTO.builder().id(1L).name("dl").build(), 1);
         for (int i = 0; i < shoppingCartItem.getQuantity(); i++) {
             groceryService.addGrocery(saveGrocery, httpRequest);
         }

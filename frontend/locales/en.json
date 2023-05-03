@@ -105,12 +105,14 @@
   "friday" : "Friday",
   "saturday" : "Saturday",
   "sunday" : "Sunday",
+  "ingredient" : "Ingredient",
   "view_ingredients" : "View Ingredients",
   "see_recipe" : "view recipe",
   "options" : "Options",
   "remove_all_this_week" : "Are you sure you want to remove all recipes from this week?",
   "remove_all_next_week" : "Are you sure you want to remove all recipes from next week?",
   "no_recipes_to_delete" : "There are no recipes to remove",
-  "add_recipe_to_day" : "Add a recipe"
-
+  "add_recipe_to_day" : "Add a recipe",
+  "amount" : "Amount", 
+  "add" : "Add"
 }

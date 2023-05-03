@@ -11,6 +11,7 @@ import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.Unit;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,7 +33,7 @@ public class RefrigeratorGrocery {
     @NotNull
     @Column(name = "physicalExpireDate")
     @Schema(description = "Expire date for the grocery")
-    private Date physicalExpireDate;
+    private LocalDate physicalExpireDate;
 
     @NotNull
     @ManyToOne

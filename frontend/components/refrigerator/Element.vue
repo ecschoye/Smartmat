@@ -60,6 +60,7 @@
     if(expiryDateInput){
       const newGrocery = props.grocery;
       if(expiryDateInput.valueAsDate !== null){
+        console.log(expiryDateInput.value)
         newGrocery.physicalExpireDate = expiryDateInput.valueAsDate;
         try{
           const response = await updateGrocery(newGrocery);

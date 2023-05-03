@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -80,7 +82,6 @@ public class GroceryService {
             refrigeratorGrocery.setGrocery(grocery);
             refrigeratorGrocery.setRefrigerator(refrigerator);
             refrigeratorGrocery.setPhysicalExpireDate(getPhysicalExpireDate(groceryDTO.getGroceryExpiryDays()));
-            //TODO: TEMP FIX
             Optional<Unit> unit = unitRepository.findById(saveRequest.getUnitDTO().getId());
             refrigeratorGrocery.setUnit(unit.get());
             refrigeratorGrocery.setQuantity(saveRequest.getQuantity());
@@ -187,10 +188,8 @@ public class GroceryService {
      * @param groceryExpiryDays expected shelf life
      * @return expected expiry date
      */
-    public Date getPhysicalExpireDate(int groceryExpiryDays) {
-        Calendar calendar = Calendar.getInstance(); // get the current date and time
-        calendar.add(Calendar.DAY_OF_MONTH, groceryExpiryDays); // add groceryExpiryDays to the current date
-        return calendar.getTime();
+    public LocalDate getPhysicalExpireDate(int groceryExpiryDays) {
+        return LocalDate.now().plus(groceryExpiryDays, ChronoUnit.DAYS);
     }
 
     /**

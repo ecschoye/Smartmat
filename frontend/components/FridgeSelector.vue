@@ -94,9 +94,13 @@ export default defineComponent ({
     
     return { t,locale,locales, userStore, refrigeratorStore, refrigerators}
   },
+  watch : {
+    refrigerators() {
+      this.fetchSelected(); 
+    }
+  },
   methods: {
     goToCreateFridgePage() {
-      //this.$router.push(this.$nuxt.localePath('/create-fridge'));
       this.$router.push('/create-fridge');
     },
     setSelected(fridge : Refrigerator){

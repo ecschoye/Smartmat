@@ -92,6 +92,7 @@
             break;
           case "option2":
             this.$emit("seeRecipeEvent")
+            break;
           case "option3":
             this.$emit("removeEvent");
             break;

@@ -130,7 +130,7 @@ public class ShoppingCartService {
                 groceryShoppingCart = Optional.of(GroceryShoppingCart.builder()
                         .grocery(grocery)
                         .shoppingCart(shoppingCart)
-                        .quantity(1)
+                        .quantity(groceryRequest.getQuantity())
                         .build());
             }
 

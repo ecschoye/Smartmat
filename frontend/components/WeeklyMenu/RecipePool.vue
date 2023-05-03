@@ -274,19 +274,19 @@ export default {
 
         removeAllRecipes() {
             if(this.weeklyMenuStore.$state.chosenWeek === 1 && !this.weeklyMenuStore.isCurrentWeekEmpty()) {
-                if(confirm("Er du sikker på at du vil fjerne alle oppskriftene for denne uken?")) {
+                if(confirm(this.t("remove_all_this_week"))) {
                     for(let i = 0; i < this.weeklyMenuStore.$state.currentWeek.length; i++) {
                     this.weeklyMenuStore.$state.currentWeek[i] = null;
                     }
                 }
             } else if(this.weeklyMenuStore.$state.chosenWeek === 2 && !this.weeklyMenuStore.isNextWeekEmpty()) {
-                if(confirm("Er du sikker på at du vil fjerne alle oppskriftene for neste uke?")) {
+                if(confirm(this.t("remove_all_next_week"))) {
                     for(let i = 0; i < this.weeklyMenuStore.$state.nextWeek.length; i++) {
                     this.weeklyMenuStore.$state.nextWeek[i] = null;
                     } 
                 } 
             } else {
-                    alert("Det er ingen oppskrifter å slette")
+                    alert(this.t("no_recipes_to_delete"))
                 }
         }
     },

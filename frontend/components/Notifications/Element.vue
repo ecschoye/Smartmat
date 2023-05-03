@@ -1,6 +1,6 @@
 <template>
     <div class="relative w-full">
-      <div class="flex-col border border-black text-lg  bg-green-color rounded-xl my-3 mx-2 p-3">
+      <div class="flex-col border border-black text-lg  bg-green-color dark:form-dark-color dark:text-white rounded-xl my-3 mx-2 p-3">
         <button @click = "emit('delete-notif',notification)" class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center">
         X
       </button>
@@ -27,7 +27,7 @@
             {{ t('find_recipe') }}</button>
           <button :disabled="true" class="border bg-white border-black mx-2 p-1 my-1 rounded disabled:bg-slate-300 disabled:text-slate-500">
             {{ t('go_to_weekly_menu') }}</button>
-          <button @click="goToFridge()" class="border bg-white border-black mx-2 p-1 my-1 rounded hover:bg-slate-400 cursor-pointer">
+          <button @click="goToFridge()" class="border bg-white dark:bg-neutral-50 text-black border-black mx-2 p-1 my-1 rounded hover:bg-slate-400 cursor-pointer">
             {{ t('to_refrigerator') }}</button>
         </div>
       </div>

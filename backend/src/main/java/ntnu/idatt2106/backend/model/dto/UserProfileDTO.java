@@ -15,4 +15,5 @@ public class UserProfileDTO {
 
     private String name;
     private String email;
+    private long favoriteRefrigeratorId;
 }

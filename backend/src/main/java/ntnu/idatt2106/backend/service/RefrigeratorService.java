@@ -322,6 +322,26 @@ public class RefrigeratorService {
     }
 
     /**
+     * Sets the users favorite refrigerator's Id
+     *
+     * @param refrigeratorId Id of refrigerator
+     * @param httpServletRequest Http request
+     * @throws UserNotFoundException If user is not found
+     * @throws RefrigeratorNotFoundException If refrigerator does not exist
+     */
+    public void setFavoriteRefrigeratorId(long refrigeratorId, HttpServletRequest httpServletRequest) throws UserNotFoundException, RefrigeratorNotFoundException {
+        User user = getUser(extractEmail(httpServletRequest));
+        long refId;
+        if(refrigeratorId >= 0){
+            refId = getRefrigerator(refrigeratorId).getId();
+        }
+        else refId = -1L;
+
+        user.setFavoriteRefrigeratorId(refId);
+        userRepository.save(user);
+    }
+
+    /**
      * Forcefully deletes a refrigerator and all its members. Gets
      * the user that requested the delete and checks permission. Then
      * deletes any members and the refrigerator itself.

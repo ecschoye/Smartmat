@@ -33,6 +33,9 @@ export const useUserStore = defineStore({
         setLoggedInUserStatus(status: boolean) {
             this.authenticated = status;
         },
+        setFavoritedRefrigeratorId(favoriteId : number) {
+            this.favoriteRefrigeratorId = favoriteId; 
+        },
         logOut() {
             this.authenticated = false;
             this.role = "";

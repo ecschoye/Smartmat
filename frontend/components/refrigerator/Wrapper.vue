@@ -89,8 +89,8 @@ async function loadGroceries(){
                     grocery.physicalExpireDate = new Date(grocery.physicalExpireDate);
                 }
             })
-
         }
+        else useRouter().push("/create-fridge")
     }
     catch(error){
         console.log(error);

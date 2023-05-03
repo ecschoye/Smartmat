@@ -1,7 +1,7 @@
 <template>
     <div class="mt-5 font-mono text-sm flex justify-end">
     <div class="w-full font-mono text-sm flex justify-center">
-        <div class="w-11/12  md:w-9/12 h-96 overflow-auto bg-white dark:bg-zinc-400 border-2 rounded-lg border-black relative">
+        <div class="w-11/12  md:w-full h-96 overflow-auto bg-white dark:bg-zinc-400 border-2 rounded-lg border-black relative">
             <div>
                 <div class="m-2 pl-2 pr-2 flex justify-center text-lg font-sans font-medium">
                     <button @click.stop="selectListTab" :class="{'bg-sky-400 dark:bg-sky-900 dark:text-white': menuOptions.isShoppingListSelected, 'bg-white dark:bg-zinc-400 dark:text-white': !menuOptions.isShoppingListSelected}" class="pl-4 pr-4 border-2 rounded-l-lg border-black cursor-pointer">
@@ -54,7 +54,7 @@
                 </div>
             </div>
         </div>
-      <div v-if="addNewElementSelected" class="w-2/5 h-96 p-1 overflow-auto bg-white border-2 rounded-lg border-black absolute">
+      <div v-if="addNewElementSelected" class="w-4/5 md:w-2/5 h-96 p-1 overflow-auto bg-white border-2 rounded-lg border-black absolute">
         <AddNewElement
             :shoppingListId="shoppingListId"
         />
@@ -189,7 +189,7 @@ import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
             let transferStatus = await ShoppingCartService.tranferAllToRefrigerator(groceryIds);
             this.loadShoppingCart()
             if (transferStatus.status == 200) {
-                alert("Varen ble vellykket overført")
+                //alert("Varen ble vellykket overført")
             } else {
                 alert("Det oppstod en feil ved overføring av varen")
             }

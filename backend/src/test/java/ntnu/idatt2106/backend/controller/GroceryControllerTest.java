@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -96,7 +97,7 @@ class GroceryControllerTest {
         RefrigeratorGrocery refrigeratorGrocery = new RefrigeratorGrocery();
         refrigeratorGrocery.setId(refrigeratorGroceryId);
         refrigeratorGrocery.setGrocery(new Grocery(1L, "Milk", 1, "Description", new SubCategory()));
-        refrigeratorGrocery.setPhysicalExpireDate(new Date());
+        refrigeratorGrocery.setPhysicalExpireDate(LocalDate.now());
         refrigeratorGrocery.setRefrigerator(new Refrigerator(1, "test", "ntnu"));
         when(groceryService.getRefrigeratorGroceryById(refrigeratorGroceryId)).thenReturn(refrigeratorGrocery);
         // Act

@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
+import ntnu.idatt2106.backend.exceptions.NoSuchElementException;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.DeleteRefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
@@ -23,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -80,7 +83,6 @@ public class GroceryService {
             refrigeratorGrocery.setGrocery(grocery);
             refrigeratorGrocery.setRefrigerator(refrigerator);
             refrigeratorGrocery.setPhysicalExpireDate(getPhysicalExpireDate(groceryDTO.getGroceryExpiryDays()));
-            //TODO: TEMP FIX
             Optional<Unit> unit = unitRepository.findById(saveRequest.getUnitDTO().getId());
             refrigeratorGrocery.setUnit(unit.get());
             refrigeratorGrocery.setQuantity(saveRequest.getQuantity());
@@ -187,10 +189,8 @@ public class GroceryService {
      * @param groceryExpiryDays expected shelf life
      * @return expected expiry date
      */
-    public Date getPhysicalExpireDate(int groceryExpiryDays) {
-        Calendar calendar = Calendar.getInstance(); // get the current date and time
-        calendar.add(Calendar.DAY_OF_MONTH, groceryExpiryDays); // add groceryExpiryDays to the current date
-        return calendar.getTime();
+    public LocalDate getPhysicalExpireDate(int groceryExpiryDays) {
+        return LocalDate.now().plus(groceryExpiryDays, ChronoUnit.DAYS);
     }
 
     /**
@@ -251,7 +251,7 @@ public class GroceryService {
     public RefrigeratorGrocery useRefrigeratorGrocery(DeleteRefrigeratorGroceryDTO dto, HttpServletRequest request) throws Exception {
         Optional<RefrigeratorGrocery> grocery = refrigeratorGroceryRepository.findById(dto.getRefrigeratorGroceryDTO().getId());
         if(grocery.isEmpty()){
-            throw new EntityNotFoundException("Could not find grocery with id: " + dto.getRefrigeratorGroceryDTO().getId());
+            throw new NoSuchElementException("Could not find grocery with id: " + dto.getRefrigeratorGroceryDTO().getId());
         }
         FridgeRole userRole = getFridgeRole(grocery.get().getRefrigerator(), request);
         if(userRole == null){
@@ -274,10 +274,10 @@ public class GroceryService {
 
 
 
-    public void updateRefrigeratorGrocery(User user, RefrigeratorGroceryDTO refrigeratorGroceryDTO, HttpServletRequest request) throws UserNotFoundException, UnauthorizedException, NotificationException {
+    public void updateRefrigeratorGrocery(RefrigeratorGroceryDTO refrigeratorGroceryDTO, HttpServletRequest request) throws UserNotFoundException, UnauthorizedException, NotificationException, NoSuchElementException {
         Optional<RefrigeratorGrocery> oldGrocery = refrigeratorGroceryRepository.findById(refrigeratorGroceryDTO.getId());
         if(oldGrocery.isEmpty()){
-            throw new EntityNotFoundException("Could not find grocery with id: " + refrigeratorGroceryDTO.getId());
+            throw new NoSuchElementException("Could not find grocery with id: " + refrigeratorGroceryDTO.getId());
         }
         FridgeRole userRole = getFridgeRole(oldGrocery.get().getRefrigerator(), request);
         if(userRole.equals(FridgeRole.USER)){

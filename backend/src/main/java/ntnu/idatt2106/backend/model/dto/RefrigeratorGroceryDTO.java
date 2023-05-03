@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -16,7 +17,7 @@ import java.util.Date;
 public class RefrigeratorGroceryDTO {
     private GroceryDTO grocery;
     private long id;
-    private Date physicalExpireDate;
+    private LocalDate physicalExpireDate;
     private int quantity;
     private UnitDTO unit;
 

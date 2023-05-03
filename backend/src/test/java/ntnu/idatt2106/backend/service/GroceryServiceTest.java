@@ -26,6 +26,8 @@ import org.mockito.MockitoAnnotations;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -133,14 +135,16 @@ public class GroceryServiceTest {
 
     @Test
     @DisplayName("Test updateRefrigeratorGrocery succeeds")
-    public void testUpdateRefrigeratorGrocerySucceeds() throws UserNotFoundException, UnauthorizedException, NotificationException, EntityNotFoundException, ParseException {
+    public void testUpdateRefrigeratorGrocerySucceeds() throws UserNotFoundException, UnauthorizedException, NotificationException, EntityNotFoundException, NoSuchElementException {
         // Setup
 
 
-        refrigeratorGrocery.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("10/05/2023"));
+        refrigeratorGrocery.setPhysicalExpireDate(LocalDate.parse("10/05/2023", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
 
         RefrigeratorGroceryDTO refrigeratorGroceryDTO = new RefrigeratorGroceryDTO();
-        refrigeratorGroceryDTO.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("20/05/2023"));
+        refrigeratorGroceryDTO.setPhysicalExpireDate(LocalDate.parse("20/05/2023", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
         refrigeratorGroceryDTO.setId(1L);
 
         String expectedEmail = "testuser@test.com";
@@ -152,7 +156,7 @@ public class GroceryServiceTest {
         Mockito.when(groceryService.getFridgeRole(refrigerator, HttpRequest)).thenReturn(FridgeRole.SUPERUSER);
 
         // Execute
-        groceryService.updateRefrigeratorGrocery(mock(User.class), refrigeratorGroceryDTO, HttpRequest);
+        groceryService.updateRefrigeratorGrocery(refrigeratorGroceryDTO, HttpRequest);
 
         // Verify
         verify(notificationService, times(1)).deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);
@@ -164,10 +168,12 @@ public class GroceryServiceTest {
     public void testUpdateRefrigeratorGroceryThrowsEntityNotFound() throws UserNotFoundException, UnauthorizedException, NotificationException, EntityNotFoundException, ParseException {
         // Setup
 
-        refrigeratorGrocery.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("10/05/2023"));
+        refrigeratorGrocery.setPhysicalExpireDate(LocalDate.parse("10/05/2023", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
 
         RefrigeratorGroceryDTO refrigeratorGroceryDTO = new RefrigeratorGroceryDTO();
-        refrigeratorGroceryDTO.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("20/05/2023"));
+        refrigeratorGrocery.setPhysicalExpireDate(LocalDate.parse("20/05/2023", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
         refrigeratorGroceryDTO.setId(3L);
 
 
@@ -180,8 +186,8 @@ public class GroceryServiceTest {
         Mockito.when(groceryService.getFridgeRole(refrigerator, HttpRequest)).thenReturn(FridgeRole.SUPERUSER);
 
         // Execute and Verify
-        assertThrows(EntityNotFoundException.class, () -> {
-            groceryService.updateRefrigeratorGrocery(mock(User.class), refrigeratorGroceryDTO, HttpRequest);
+        assertThrows(NoSuchElementException.class, () -> {
+            groceryService.updateRefrigeratorGrocery(refrigeratorGroceryDTO, HttpRequest);
         });
 
         verify(notificationService, times(0)).deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);
@@ -193,10 +199,12 @@ public class GroceryServiceTest {
     public void testUpdateRefrigeratorGroceryThrowsUnathorized() throws UserNotFoundException, UnauthorizedException, NotificationException, EntityNotFoundException, ParseException {
         // Setup
 
-        refrigeratorGrocery.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("10/05/2023"));
+        refrigeratorGrocery.setPhysicalExpireDate(LocalDate.parse("10/05/2023", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
 
         RefrigeratorGroceryDTO refrigeratorGroceryDTO = new RefrigeratorGroceryDTO();
-        refrigeratorGroceryDTO.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("20/05/2023"));
+        refrigeratorGrocery.setPhysicalExpireDate(LocalDate.parse("20/05/2023", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
         refrigeratorGroceryDTO.setId(1L);
 
         String expectedEmail = "testuser@test.com";
@@ -209,7 +217,7 @@ public class GroceryServiceTest {
 
         // Execute and Verify
         assertThrows(UnauthorizedException.class, () -> {
-            groceryService.updateRefrigeratorGrocery(mock(User.class), refrigeratorGroceryDTO, HttpRequest);
+            groceryService.updateRefrigeratorGrocery(refrigeratorGroceryDTO, HttpRequest);
         });
 
         verify(notificationService, times(0)).deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);
@@ -218,12 +226,14 @@ public class GroceryServiceTest {
 
     @Test
     @DisplayName("Test updateRefrigeratorGrocery does not call notificationService if date is same")
-    public void testUpdateRefrigeratorGroceryDoesNotCallNotificationService() throws UserNotFoundException, UnauthorizedException, NotificationException, EntityNotFoundException, ParseException {
+    public void testUpdateRefrigeratorGroceryDoesNotCallNotificationService() throws UserNotFoundException, UnauthorizedException, NotificationException, EntityNotFoundException, ParseException, NoSuchElementException {
         // Setup
-        refrigeratorGrocery.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("10/05/2023"));
+        refrigeratorGrocery.setPhysicalExpireDate(LocalDate.parse("10/05/2023", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
 
         RefrigeratorGroceryDTO refrigeratorGroceryDTO = new RefrigeratorGroceryDTO();
-        refrigeratorGroceryDTO.setPhysicalExpireDate(new SimpleDateFormat("dd/MM/yyyy").parse("10/05/2023"));
+        refrigeratorGroceryDTO.setPhysicalExpireDate(LocalDate.parse("10/05/2023", DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
         refrigeratorGroceryDTO.setId(1L);
 
         String expectedEmail = "testuser@test.com";
@@ -235,7 +245,7 @@ public class GroceryServiceTest {
         Mockito.when(groceryService.getFridgeRole(refrigerator, HttpRequest)).thenReturn(FridgeRole.SUPERUSER);
 
         // Execute
-        groceryService.updateRefrigeratorGrocery(mock(User.class), refrigeratorGroceryDTO, HttpRequest);
+        groceryService.updateRefrigeratorGrocery(refrigeratorGroceryDTO, HttpRequest);
 
         // Verify
 

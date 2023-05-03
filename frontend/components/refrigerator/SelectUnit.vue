@@ -1,41 +1,39 @@
 <template>
-    <div>
+  <div class="flex flex-row">
     <div class="w-full mx-5">
-        <input class=" p-2 text-center rounded-sm shadow font-thin focus:outline-none
-        focus:shadow-lg focus:shadow-slate-200 duration-100 shadow-gray-300"
-        type="number" :placeholder=" $t('amount')"
-        v-model="selectedQuantity"
-        :max="allowedMax ? allowedMax : undefined"
-        @input="enforceMax"
-        pattern="^\d+$"
-        onkeypress="return /\d/.test(String.fromCharCode(event.keyCode));" />
+      <input class="p-2 w-16 rounded-xl text-center rounded-sm shadow font-thin focus:outline-none focus:shadow-lg focus:shadow-slate-200 duration-100 shadow-gray-300"
+             type="number"
+             :placeholder="$t('amount')"
+             v-model="selectedQuantity"
+             :max="allowedMax ? allowedMax : undefined"
+             :min="0"
+             @input="enforceMax"
+             pattern="^\d+$"
+             onkeypress="return /\d/.test(String.fromCharCode(event.keyCode));" />
     </div>
-    <div class="flex flex-col items-center justify-center dark:bg-zinc-400 sm:py-6">
-    <div class="w-full justify-center flex">
-      <button v-if="selectedUnitName.length > 0"
-          @click="open = !open"
-          class="w-auto p-2 sm:w-2/3 rounded-sm shadow font-thin focus:outline-none focus:shadow-lg focus:shadow-slate-200 duration-100 shadow-gray-300">
-        {{ selectedUnitName }}
-        </button>
-        <button v-else
-        @click="open = !open"
-        class="w-auto p-2 sm:w-2/3 rounded-sm shadow font-thin focus:outline-none focus:shadow-lg focus:shadow-slate-200 duration-100 shadow-gray-300">Unit</button>
-    </div>
-    <div id="listwrapper" class="relative mt-2 self-center overflow-auto border border-black rounded-lg bg-gray-200 w-fit sm:w-2/3">
-      <ul v-if="open" @click="open = !open" class="h-fit">
-        <div v-for="unit in units" :key="unit.id">
-          <li
-            @click="setSelected(unit)"
-            :class="{ 'bg-gray-400': unit.id === selectedUnit?.id}"
-            class="w-full text-gray-700 bg-gray-200 p-2 mt-2 rounded-sm hover:bg-gray-300"
-          >
+
+    <div class="flex flex-row items-center justify-center dark:bg-zinc-400">
+      <div class="w-full justify-center flex">
+        <template v-for="(unit, index) in units">
+          <input type="radio"
+                 :id="unit.id"
+                 :value="unit.id"
+                 :checked="unit.id === selectedUnit?.id"
+                 @click="setSelected(unit)"
+                 class="sr-only" />
+          <label :for="unit.id"
+                 :class="[
+              'w-8 text-center p-2 rounded-sm shadow font-thin focus:outline-none focus:shadow-lg focus:shadow-slate-200 duration-100 shadow-gray-300',
+              index === 0 ? 'rounded-l-lg' : '',
+              index === units.length - 1 ? 'rounded-r-lg' : '',
+              unit.id === selectedUnit?.id ? 'bg-green-color text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            ]">
             {{ unit.name }}
-          </li>
-        </div>
-      </ul>
+          </label>
+        </template>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script setup lang="ts">

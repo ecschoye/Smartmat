@@ -78,10 +78,9 @@ public class GroceryService {
             refrigeratorGrocery.setRefrigerator(refrigerator);
             refrigeratorGrocery.setPhysicalExpireDate(getPhysicalExpireDate(groceryDTO.getGroceryExpiryDays()));
             //TODO: TEMP FIX
-            Optional<Unit> unit = unitRepository.findById(1L);
+            Optional<Unit> unit = unitRepository.findById(saveRequest.getUnitDTO().getId());
             refrigeratorGrocery.setUnit(unit.get());
-            refrigeratorGrocery.setQuantity(1);
-
+            refrigeratorGrocery.setQuantity(saveRequest.getQuantity());
             saveRefrigeratorGrocery(refrigeratorGrocery);
         }
     }

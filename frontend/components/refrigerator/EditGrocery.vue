@@ -50,7 +50,6 @@ let unit : Unit | null = null;
 let quantity : number = 0;
 
 function setUnit(newUnit : Unit, newQuantity : number){
-    toggleSub.value = true;
     unit = newUnit;
     quantity = newQuantity;
 }
@@ -58,6 +57,7 @@ function setUnit(newUnit : Unit, newQuantity : number){
 // Set the height of the element after it has been rendered
 onMounted(() => {
     elementHeight.value = document.querySelector('#box')?.clientHeight ?? 0;
+    
 });
 
 let action : string = "";

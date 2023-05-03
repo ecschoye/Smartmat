@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
+import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
@@ -153,7 +154,7 @@ public class ShoppingCartService {
         List<GroceryDTO> groceries = new ArrayList<>();
         groceries.add(groceryDTO);
 
-        SaveGroceryListRequest saveGrocery = new SaveGroceryListRequest(refrigeratorId, groceries);
+        SaveGroceryListRequest saveGrocery = new SaveGroceryListRequest(refrigeratorId, groceries, UnitDTO.builder().id(1L).name("dl").build(), 1);
         try {
             for (int i = 0; i < shoppingCartItem.getQuantity(); i++) {
                 groceryService.addGrocery(saveGrocery, httpRequest);

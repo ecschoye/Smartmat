@@ -1,6 +1,7 @@
 package ntnu.idatt2106.backend.model.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.Unit;
@@ -8,6 +9,7 @@ import ntnu.idatt2106.backend.model.Unit;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UnitDTO {
     private Long id;
     private String name;

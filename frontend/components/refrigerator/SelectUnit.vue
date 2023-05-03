@@ -37,6 +37,7 @@
 <script setup lang="ts">
 import type { Unit } from '~/types/UnitType';
 import axiosInstance from '~/service/AxiosInstance';
+import { GroceryEntity } from '~/types/GroceryEntityType';
 const { t } = useI18n();
 
 let open = ref(false);
@@ -47,21 +48,32 @@ let selectedUnit = ref<Unit | null>(null);
 let selectedUnitName = ref("");
 let selectedQuantity = ref<number>(0);
 
+const props = defineProps({
+  grocery : {
+    type: Object as () => GroceryEntity
+  }
+});
+
+function loadGrocery(){
+  if(props.grocery){
+    
+  }
+}
 async function getUnits(){
     const response = await axiosInstance.get("/api/refrigerator/units");
     if(response.status == 200){
         units.value = response.data;
     }
 }
+const emit = defineEmits(['unit-set']);
 
 watch([selectedUnit, selectedQuantity], ([unit, quantity]) => {
-    if (unit && quantity && quantity !== 0) {
+    if (unit && quantity) {
         emit('unit-set', { unit, quantity });
     }
 });
 
 
-const emit = defineEmits(['unit-set']);
 
 function setSelected(unit : Unit){
     selectedUnit.value = unit;
@@ -69,6 +81,7 @@ function setSelected(unit : Unit){
 }
 onMounted(() => {
     getUnits();
+
 })
 </script>
 

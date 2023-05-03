@@ -81,5 +81,9 @@
   "member_added_failure" : "Member could not be added",
   "members" : "Members",
   "add_favorite" : "Favorite",
-  "remove_favorite" : "Unfavorite"
+  "remove_favorite" : "Unfavorite",
+  "favorited_success" : "Refrigerator was favorited",
+  "favorited_failure" : "Refrigerator could not be favorited",
+  "unfavorited_success" : "Refrigerator was unfavorited",
+  "unfavorited_failure" : "Refrigerator could not be unfavorited"
 }

@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface GroceryHistoryRepository extends JpaRepository<GroceryHistory, long> {
+public interface GroceryHistoryRepository extends JpaRepository<GroceryHistory, Long> {
     @Override
-    Optional<GroceryHistory> findById(long l);
+    Optional<GroceryHistory> findById(Long l);
 
     List<GroceryHistory> findAllByDateConsumedAfter(LocalDate date);
     List<GroceryHistory> findByDateConsumedBetweenAndRefrigeratorId(LocalDate startDate, LocalDate endDate, Long refrigeratorId);

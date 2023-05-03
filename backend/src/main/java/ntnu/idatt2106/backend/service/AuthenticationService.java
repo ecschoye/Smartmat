@@ -50,6 +50,7 @@ public class AuthenticationService {
                 .name(request.getName())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .userRole(UserRole.USER)
+                .favoriteRefrigeratorId(-1L)
                 .build();
 
         if (repository.findByEmail(user.getEmail()).isPresent())

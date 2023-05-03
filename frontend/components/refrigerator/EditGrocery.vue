@@ -1,8 +1,8 @@
 <template>
 
-    <div class="fixed inset-x-0 -inset-y-0 z-50 flex items-center justify-end " @click="closePopup">
+    <div class="fixed -inset-y-20 z-50 flex items-center justify-end " @click="closePopup">
       <div id="box" :style="{ top: (props.pos - elementHeight/2) + 'px' }" class="absolute flex flex-col justify-center align-middle rounded-md shadow-sm w-fit h-fit m-5 bg-white border border-black" role="group">
-        <div class="space-y-5 p-5">
+        <div class="space-y-5 w-40 p-5">
             <button @click="setAction('remove')" type="button" class="grid grid-cols-2 justify-items-center w-full px-4 py-2 font-medium text-black bg-transparent border border-black rounded-md hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-black focus:bg-gray-900 focus:text-white">
             <div class="" >{{ t('remove') }}</div>
             <img src="../../assets\icons\remove.png" class="h-7 w-7" :alt="$t('remove')">
@@ -16,7 +16,7 @@
             <img src="../../assets\icons\trash.png" class="h-7 w-7" :alt="$t('throw_away')">
             </button>
         </div>
-        <RefrigeratorSelectUnit v-if="toggle" :grocery="refrigeratorStore.getSelectedGrocery" @unit-set="({unit, quantity}) => setUnit(unit, quantity)" />
+        <RefrigeratorSelectUnit class="pb-3 mr-2" v-if="toggle" :grocery="refrigeratorStore.getSelectedGrocery" @unit-set="({unit, quantity}) => setUnit(unit, quantity)" />
         <button v-if="toggleSub" @click="done()" class="m-3 mt-0 px-4 py-2 font-medium text-black bg-transparent border border-black rounded-md hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-black focus:bg-gray-900 focus:text-white">Done</button>
     </div>
 

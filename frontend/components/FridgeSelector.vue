@@ -5,7 +5,7 @@
         <HeadlessListboxLabel></HeadlessListboxLabel>
         <div class="relative justify-center">
           <HeadlessListboxButton class="bg-light-color dark:bg-dark-color relative w-full h-full cursor-default rounded-md dark:bg-zinc-600 py-1.5 pr-10 text-left text-gray-900 dark:text-white shadow-sm sm:leading-6 hover:cursor-pointer">
-            <span class="flex item-center">
+            <span class="flex item-center w-32">
               <span v-if="selected === null" class="ml-3 block truncate opacity-70">{{ $t('create_refrigerator') }}</span>
               <span v-else class="ml-3 block truncate">{{ selected.name }}</span>
             </span>

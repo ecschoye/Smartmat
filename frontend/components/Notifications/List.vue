@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-wrap w-full justify-center align-middle  rounded-xl p-5">
+    <div class="hidden md:block flex flex-wrap w-full justify-center align-middle  rounded-xl p-5">
         <div v-if="notifications.length > 0 && notifications.length < 5" class="grid grid-cols-1">
             <NotificationsElement v-for="notification in props.notifications" :key="notification.id" @delete-notif = "(payload) => emit('delete-notif', payload)" :notification="notification"/>
         </div>
@@ -10,6 +10,11 @@
             <NotificationsElement v-for="notification in props.notifications" :key="notification.id" @delete-notif = "(payload) => emit('delete-notif', payload)" :notification="notification"/>
         </div>
         <div v-else>{{ t('no_notifications') }}!</div>
+    </div>
+    <div class="block md:hidden flex flex-wrap w-full justify-center align-middle  rounded-xl p-5">
+      <div class="grid grid-cols-1">
+        <NotificationsElement v-for="notification in props.notifications" :key="notification.id" @delete-notif = "(payload) => emit('delete-notif', payload)" :notification="notification"/>
+      </div>
     </div>
 </template>
 

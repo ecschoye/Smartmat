@@ -23,11 +23,11 @@
           <div class="text-center">{{notification.refrigeratorGrocery.refrigerator.name }}</div>
         </div>
         <div class="py-2" >
-          <button :disabled="true" class="border bg-white border-black mx-2 p-1 rounded disabled:bg-slate-300 disabled:text-slate-500">
+          <button :disabled="true" class="border bg-white border-black mx-2 p-1 my-1 rounded disabled:bg-slate-300 disabled:text-slate-500">
             {{ t('find_recipe') }}</button>
-          <button :disabled="true" class="border bg-white border-black mx-2 p-1 rounded disabled:bg-slate-300 disabled:text-slate-500">
+          <button :disabled="true" class="border bg-white border-black mx-2 p-1 my-1 rounded disabled:bg-slate-300 disabled:text-slate-500">
             {{ t('go_to_weekly_menu') }}</button>
-          <button @click="goToFridge()" class="border bg-white border-black mx-2 p-1 rounded hover:bg-slate-400 cursor-pointer">
+          <button @click="goToFridge()" class="border bg-white border-black mx-2 p-1 my-1 rounded hover:bg-slate-400 cursor-pointer">
             {{ t('to_refrigerator') }}</button>
         </div>
       </div>

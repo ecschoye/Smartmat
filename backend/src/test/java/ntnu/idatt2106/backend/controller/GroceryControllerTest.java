@@ -23,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -98,7 +99,7 @@ class GroceryControllerTest {
         RefrigeratorGrocery refrigeratorGrocery = new RefrigeratorGrocery();
         refrigeratorGrocery.setId(refrigeratorGroceryId);
         refrigeratorGrocery.setGrocery(new Grocery(1L, "Milk", 1, "Description", new SubCategory()));
-        refrigeratorGrocery.setPhysicalExpireDate(new Date());
+        refrigeratorGrocery.setPhysicalExpireDate(LocalDate.now());
         refrigeratorGrocery.setRefrigerator(new Refrigerator(1, "test", "ntnu"));
         when(groceryService.getRefrigeratorGroceryById(refrigeratorGroceryId)).thenReturn(refrigeratorGrocery);
         // Act
@@ -108,62 +109,5 @@ class GroceryControllerTest {
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         Assertions.assertEquals("Grocery removed successfully", responseEntity.getBody().getMessage());
         Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    }
-
-    @Test
-    void getAllGroceries_validInput_returnsListOfGroceries() {
-        // Arrange
-        List<Grocery> expectedList = new ArrayList<>();
-        Grocery grocery = new Grocery();
-        grocery.setName("Milk");
-        grocery.setId(1);
-        Grocery grocery1 = new Grocery();
-        grocery1.setName("Eggs");
-        grocery1.setId(2);
-        expectedList.add(grocery);
-        expectedList.add(grocery1);
-        when(groceryService.getAllGroceries()).thenReturn(expectedList);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        String token = "valid_token";
-        Mockito.when(cookieService.extractTokenFromCookie(request)).thenReturn(token);
-        Mockito.when(jwtService.extractClaim(token, Claims::getSubject)).thenReturn("test");
-
-        // Act
-        ResponseEntity<?> responseEntity = groceryController.getAllGroceries(request);
-
-        // Assert
-        Assertions.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        Assertions.assertEquals(expectedList, responseEntity.getBody());
-    }
-
-    @Test
-    void getAllGroceries_emptyList_returnsNoContent() {
-        // Arrange
-        List<Grocery> expectedList = new ArrayList<>();
-        when(groceryService.getAllGroceries()).thenReturn(expectedList);
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        String token = "valid_token";
-        Mockito.when(cookieService.extractTokenFromCookie(request)).thenReturn(token);
-        Mockito.when(jwtService.extractClaim(token, Claims::getSubject)).thenReturn("test");
-
-        // Act
-        ResponseEntity<?> responseEntity = groceryController.getAllGroceries(request);
-
-        // Assert
-        Assertions.assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
-        Assertions.assertEquals(new ErrorResponse("No groceries found"), responseEntity.getBody());
-    }
-
-    @Test
-    void getAllGroceries_unauthorized_returnsUnauthorized() {
-        // Arrange
-        MockHttpServletRequest request = new MockHttpServletRequest();
-
-        // Act
-        ResponseEntity<?> responseEntity = groceryController.getAllGroceries(request);
-
-        // Assert
-        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
-        Assertions.assertEquals(new ErrorResponse("Unauthorized"), responseEntity.getBody());
     }
 }

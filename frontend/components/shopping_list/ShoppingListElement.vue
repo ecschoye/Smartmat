@@ -86,15 +86,13 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
         methods: {
             async removeElementFromCart() {
                 // Remove the element from the cart and add it back to the list
-                /*
                 let transferStatus = await ShoppingCartService.transferGroceryToShoppingList(this.ElementDetails.id);
                 console.log(transferStatus);
                 if (transferStatus.data) {
-                    alert("Varen ble vellykket lagt tilbake i handlelisten")
+                    //alert("Varen ble vellykket lagt tilbake i handlelisten")
                 } else {
                     alert("Det oppstod en feil ved overføring av varen")
                 }
-                */
             },
             async removeElementFromList() {
                 // Remove the element from the list
@@ -108,7 +106,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 this.$emit('updateList')
                 console.log(deleteResponse);
                 if (deleteResponse.data) {
-                    alert("Varen ble vellykket slettet")
+                    //alert("Varen ble vellykket slettet")
                 } else {
                     alert("Det oppstod en feil ved sletting av varen")
                 }
@@ -120,7 +118,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 }
                 this.$emit('updateList')            
                 if (transferStatus.status == 200) {
-                    alert("Varen ble vellykket overført")
+                    //alert("Varen ble vellykket overført")
                 } else {
                     alert("Det oppstod en feil ved overføring av varen")
                 }
@@ -135,7 +133,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 }
                 this.$emit('updateList')
                 if (transferStatus.data) {
-                    alert("Varen ble vellykket overført")
+                    //alert("Varen ble vellykket overført")
                 } else {
                     alert("Det oppstod en feil ved overføring av varen")
                 }

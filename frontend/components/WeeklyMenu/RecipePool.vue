@@ -1,9 +1,10 @@
 <template>
-    <div>
-        <button class="random-button" @click="randomRecipesEvent">Tilfeldige oppskrifter</button>
+    <div class="top-buttons">
+        <button class="random-button" @click="randomRecipesEvent">{{ $t("generate_random_recipes") }}</button>
+        <button class="random-button" @click="removeAllRecipes">{{ $t("remove_all_recipes") }}</button>
     </div>
-    <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title">Denne uken</h1>
-    <h1 v-else class="title">Neste uke</h1>
+    <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title">{{ $t("current_week") }}</h1>
+    <h1 v-else class="title">{{ $t("next_week") }}</h1>
     <div class="recepe-pool" v-if="weeklyMenuStore.$state.chosenWeek === 1">
         <div v-for="weekday in activeWeekdays" :key="weekday" class="recepe-card">
             <div class="recepe-content">
@@ -17,6 +18,7 @@
                     <WeeklyMenuRecipeWeeklyCard @unlocked-event="unlockRecipe(getDayIndex(weekday))" 
                     @locked-event="lockRecipe(getDayIndex(weekday))" 
                     @remove-event="removeRecipe(getDayIndex(weekday))"
+                    @see-recipe-event="seeRecipeCurrentWeek(getDayIndex(weekday))"
                     :recepe-info="weeklyMenuStore.$state.currentWeek[getDayIndex(weekday)]" 
                     :locked-boolean="weeklyMenuStore.$state.currentWeekLocks[getDayIndex(weekday)]" />
                 </div>
@@ -36,6 +38,7 @@
                     <WeeklyMenuRecipeWeeklyCard @unlocked-event="unlockRecipe(getDayIndex(weekday))" 
                     @locked-event="lockRecipe(getDayIndex(weekday))" 
                     @remove-event="removeRecipe(getDayIndex(weekday))"
+                    @see-recipe-event="seeRecipeNextWeek(getDayIndex(weekday))"
                     :recepe-info="weeklyMenuStore.$state.nextWeek[getDayIndex(weekday)]" 
                     :locked-boolean="weeklyMenuStore.$state.nextWeekLocks[getDayIndex(weekday)]"/>
                 </div>
@@ -44,8 +47,8 @@
     </div>
 
     <div class="navigation-buttons">
-      <button @click="goToPreviousWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 1" class="week-button">Forrige uke</button>
-      <button @click="goToNextWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 2" class="week-button">Neste uke</button>
+      <button @click="goToPreviousWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 1" class="week-button">{{ $t("current_week") }}</button>
+      <button @click="goToNextWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 2" class="week-button">{{ $t("next_week") }}</button>
     </div>
     
 </template>
@@ -59,17 +62,19 @@ import { fetchRecipes } from '~/service/httputils/RecipeService';
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 import { number } from '@intlify/core-base';
 import {FetchRecipeDTO} from "~/types/FetchRecipeDTO";
+import { Ingredient } from "~/types/IngredientType"
 
 export default {
     data() {
         return {
-            Weekdays: ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"],
+            Weekdays: [this.t("monday"), this.t("tuesday"), this.t("wednesday"), this.t("thursday"), this.t("friday"), this.t("saturday"), this.t("sunday")],
         };
     },
 
     setup() {
     const weeklyMenuStore = useWeeklyMenuStore();
     const refrigeratorStore = useRefrigeratorStore();
+    const {locale, locales, t} = useI18n()
 
     const fetchRecipeDTO: FetchRecipeDTO = reactive({
         refrigeratorId: -1,
@@ -106,14 +111,18 @@ export default {
 
     const removeRecipe = (index: number) => {
       // Logic to remove a recipe from the current or next week
+      let recipeId = -1;
       if (weeklyMenuStore.chosenWeek === 1) {
+        recipeId = weeklyMenuStore.$state.currentWeek[index].id;
         weeklyMenuStore.setCurrentWeek(index, null);
+        weeklyMenuStore.setCurrentWeekLock(index, false);
       } else {
+        recipeId = weeklyMenuStore.$state.nextWeek[index].id;
         weeklyMenuStore.setNextWeek(index, null);
+        weeklyMenuStore.setNextWeekLock(index, false);
       }
-      let id = this.weeklyMenuStore.$state.currentWeek[index].id;
       //remove id from array
-      this.fetchRecipeDTO.recipesFetched = this.fetchRecipeDTO.recipesFetched.filter((element: number) => element !== id);
+      fetchRecipeDTO.recipesFetched = fetchRecipeDTO.recipesFetched.filter((element: number) => element !== recipeId);
     };
 
 
@@ -127,6 +136,7 @@ export default {
       weeklyMenuStore.setChosenWeek(2);
     };
 
+
     return {
       weeklyMenuStore,
       addRecipeWeek,
@@ -137,6 +147,9 @@ export default {
       goToNextWeek,
       refrigeratorStore,
       fetchRecipeDTO,
+      locale, 
+      locales,
+      t
     };
   },
 
@@ -157,6 +170,14 @@ export default {
             this.goToNextWeek();
         },
 
+        seeRecipeCurrentWeek(dayIndex: number) {
+            this.$emit("seeRecipeEvent", this.weeklyMenuStore.$state.currentWeek[dayIndex]);
+        },
+
+        seeRecipeNextWeek(dayIndex: number) {
+            this.$emit("seeRecipeEvent", this.weeklyMenuStore.$state.nextWeek[dayIndex]);
+        },
+
         async addRecipe(dayIndex: number) {
             try {
               this.fetchRecipeDTO = {
@@ -165,40 +186,60 @@ export default {
                 recipesFetched: this.fetchRecipeDTO.recipesFetched || [],
               };
                 const response = await fetchRecipes(this.fetchRecipeDTO);
-
+                console.log(response);
                 if (response.status === 200) {
-                    const recipe = await response.data[0];
+                    const recipe = response.data[0];
+                    const ingredientsRecieved = response.data[0].ingredients;
+                    console.log(ingredientsRecieved)
+                    
+                    const ingredients = response.data[0].ingredients.map((ingredientsRecieved : Ingredient) => ({
+                    id: ingredientsRecieved.simpleGrocery.id,
+                    name: ingredientsRecieved.simpleGrocery.name,
+                    quantity: ingredientsRecieved.quantity,
+                    }));
+
                     const newRecipe: Recipe = {
                         id: recipe.id,
                         name: recipe.name,
                         url: recipe.url,
-                        ingredients: recipe.ingredients,
+                        ingredients: ingredients,
                     };
 
-                this.addRecipeWeek(dayIndex, newRecipe);
-                if (!this.fetchRecipeDTO.recipesFetched.includes(newRecipe.id)) {
-                  this.fetchRecipeDTO.recipesFetched.push(newRecipe.id);
-                }
-                }
+                    this.addRecipeWeek(dayIndex, newRecipe);
+                    if (!this.fetchRecipeDTO.recipesFetched.includes(newRecipe.id)) {
+                        this.fetchRecipeDTO.recipesFetched.push(newRecipe.id);
+                    }
+                }            
             } catch (error: any) {
                 console.log(error);
             }
         },
 
       async randomRecipesEvent() {
-        try {
+        if(this.getAmountOfRecipesNeeded() > 0) {
+            try {
+                console.log(this.getAmountOfRecipesNeeded())
           this.fetchRecipeDTO.numRecipes = this.getAmountOfRecipesNeeded();
           this.fetchRecipeDTO.refrigeratorId = this.refrigeratorStore.getSelectedRefrigerator.id;
 
           const response = await fetchRecipes(this.fetchRecipeDTO);
-
-          if (response.status === 200) {
-            const recipes = response.data.map((recipe : Recipe) => ({
+          const recipes = response.data.map((recipe : Recipe) => ({
               id: recipe.id,
               name: recipe.name,
               url: recipe.url,
+              ingredients: []
             }));
-
+          let ingredients;       
+          if (response.status === 200) {
+            for(let i = 0; i < response.data.length; i++) {
+                ingredients = response.data[i].ingredients.map((ingredientsRecieved : Ingredient) => ({
+                    id: ingredientsRecieved.simpleGrocery.id,
+                    name: ingredientsRecieved.simpleGrocery.name,
+                    quantity: ingredientsRecieved.quantity,
+                    }));
+                recipes[i].ingredients = ingredients;   
+            }
+            
 
             if (this.weeklyMenuStore.$state.chosenWeek === 1) {
               this.weeklyMenuStore.setCurrentWeekRandomly(recipes);
@@ -208,6 +249,7 @@ export default {
           }
         } catch (error: any) {
           console.log(error);
+        }
         }
       },
 
@@ -241,6 +283,26 @@ export default {
 
             }
             return recipesNeeded;
+        },
+
+        removeAllRecipes() {
+            if(this.weeklyMenuStore.$state.chosenWeek === 1 && !this.weeklyMenuStore.isCurrentWeekEmpty()) {
+                if(confirm(this.t("remove_all_this_week"))) {
+                    for(let i = 0; i < this.weeklyMenuStore.$state.currentWeek.length; i++) {
+                    this.weeklyMenuStore.$state.currentWeek[i] = null;
+                    this.weeklyMenuStore.$state.currentWeekLocks[i] = false;
+                    }
+                }
+            } else if(this.weeklyMenuStore.$state.chosenWeek === 2 && !this.weeklyMenuStore.isNextWeekEmpty()) {
+                if(confirm(this.t("remove_all_next_week"))) {
+                    for(let i = 0; i < this.weeklyMenuStore.$state.nextWeek.length; i++) {
+                    this.weeklyMenuStore.$state.nextWeek[i] = null;
+                    this.weeklyMenuStore.$state.nextWeekLocks[i] = false;
+                    } 
+                } 
+            } else {
+                    alert(this.t("no_recipes_to_delete"))
+                }
         }
     },
     components: { GrayButton, UnknownRecipe }
@@ -258,6 +320,11 @@ export default {
     overflow: hidden;
     align-items: center;
     justify-content: center;
+}
+
+.top-buttons {
+    display: flex;
+    justify-content: space-between;
 }
 
 .recepe-card {

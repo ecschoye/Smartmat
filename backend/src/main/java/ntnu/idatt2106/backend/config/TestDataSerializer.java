@@ -77,9 +77,12 @@ public class TestDataSerializer {
 
     private final BCryptPasswordEncoder passwordEncoder;
 
+    private final UnitRepository unitRepository;
+
     @PostConstruct
     public void init() throws NumberFormatException {
         serialize();
+        createUnits();
 
 
         createUser();
@@ -101,32 +104,42 @@ public class TestDataSerializer {
 
         // Add groceries without the ids from the RecipeGrocery we looked at
         List<Long> groceryIds = List.of(10L, 63L, 96L, 119L, 126L, 147L, 182L, 329L, 364L, 464L, 597L, 692L, 718L, 756L, 798L, 890L, 908L);
-        insertRecipeGroceries(refrigerator, groceryIds, 1);
+        List<Long> unitIds = List.of(1L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L);
+        insertRecipeGroceries(refrigerator, groceryIds, 1, unitIds);
 
         // Add groceries from the scenario above with their respective quantities
         List<Long> scenarioGroceryIds = List.of(95L, 153L, 798L, 870L, 320L);
         int[] quantities = {1, 3, 2, 1, 1}; // Updated quantities
-        insertRecipeGroceries(refrigerator, scenarioGroceryIds, quantities);
+        List<Long> scenarioUnitIds = List.of(2L, 1L, 3L, 2L, 1L);
+
+
+        insertRecipeGroceries(refrigerator, scenarioGroceryIds, quantities, scenarioUnitIds);
 
     }
 
-    private void insertRecipeGroceries(Refrigerator refrigerator, List<Long> groceryIds, int quantity) {
-        for (Long groceryId : groceryIds) {
-            insertRecipeGrocery(refrigerator, groceryId, quantity);
+    private void insertRecipeGroceries(Refrigerator refrigerator, List<Long> groceryIds, int quantity, List<Long> unitIds) {
+        for (int i = 0; i < groceryIds.size(); i++) {
+            Long groceryId = groceryIds.get(i);
+            Long unitId = unitIds.get(i);
+            insertRecipeGrocery(refrigerator, groceryId, quantity, unitId);
         }
     }
 
-    private void insertRecipeGroceries(Refrigerator refrigerator, List<Long> groceryIds, int[] quantities) {
+    private void insertRecipeGroceries(Refrigerator refrigerator, List<Long> groceryIds, int[] quantities, List<Long> unitIds) {
         for (int i = 0; i < groceryIds.size(); i++) {
             Long groceryId = groceryIds.get(i);
             int quantity = quantities[i];
-            insertRecipeGrocery(refrigerator, groceryId, quantity);
+            Long unitId = unitIds.get(i);
+            insertRecipeGrocery(refrigerator, groceryId, quantity, unitId);
         }
     }
 
-    private void insertRecipeGrocery(Refrigerator refrigerator, long groceryId, int quantity) {
+    private void insertRecipeGrocery(Refrigerator refrigerator, long groceryId, int quantity, long unitId) {
         Grocery grocery = groceryRepository.findById(groceryId)
                 .orElseThrow(() -> new RuntimeException("Grocery not found: " + groceryId));
+
+        Unit unit = unitRepository.findById((unitId))
+                .orElseThrow(() -> new RuntimeException("Unit not found: " + unitId));
 
         LocalDate localDate = LocalDate.now().plusDays(grocery.getGroceryExpiryDays());
         Date physicalExpireDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -138,6 +151,8 @@ public class TestDataSerializer {
                         .grocery(grocery)
                         .refrigerator(refrigerator)
                         .physicalExpireDate(physicalExpireDate)
+                        .unit(unit)
+                        .quantity(quantity)
                         .build();
                 refrigeratorGroceryRepository.save(refrigeratorGrocery);
             }
@@ -346,6 +361,30 @@ public class TestDataSerializer {
         grocery.setSubCategory(subCategory);
         grocery.setGroceryExpiryDays(subCategory.getCategoryExpiryDays());
         groceryRepository.save(grocery);
+
+    }
+
+    private void createUnits(){
+        if(unitRepository.findAll().size() == 0){
+            unitRepository.save(Unit.builder().name("l")
+                    .weight(1000)
+                    .build());
+            unitRepository.save(Unit.builder().name("kg")
+                    .weight(1000)
+                    .build());
+            unitRepository.save(Unit.builder().name("g")
+                    .weight(1)
+                    .build());
+            unitRepository.save(Unit.builder().name("dl")
+                    .weight(100)
+                    .build());
+            unitRepository.save(Unit.builder().name("ml")
+                    .weight(1)
+                    .build());
+            unitRepository.save(Unit.builder().name("hg")
+                    .weight(100)
+                    .build());
+        }
 
     }
 

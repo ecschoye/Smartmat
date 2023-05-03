@@ -8,14 +8,12 @@ import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.category.Category;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
+import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
-import ntnu.idatt2106.backend.repository.GroceryRepository;
-import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
-import ntnu.idatt2106.backend.repository.RefrigeratorRepository;
-import ntnu.idatt2106.backend.repository.SubCategoryRepository;
+import ntnu.idatt2106.backend.repository.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,6 +64,9 @@ public class GroceryServiceTest {
     @Mock
     private NotificationService notificationService;
 
+    @Mock
+    private UnitRepository unitRepository;
+
     //Testdata
     private Grocery grocery;
     private GroceryDTO customGroceryDTO;
@@ -76,14 +77,18 @@ public class GroceryServiceTest {
     private Refrigerator refrigerator;
     private RefrigeratorUser refrigeratorUser;
     private User user;
+    private Unit unit;
     private HttpServletRequest HttpRequest;
-
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
         user = new User();
         user.setId("testUserId");
         user.setEmail("testuser@test.com");
+
+        unit = Unit.builder().name("l")
+                .weight(1000)
+                .build();
 
         refrigerator = new Refrigerator();
         refrigerator.setId(1L);
@@ -108,7 +113,9 @@ public class GroceryServiceTest {
         refrigeratorGrocery = new RefrigeratorGrocery();
         refrigeratorGrocery.setGrocery(grocery);
         refrigeratorGrocery.setRefrigerator(refrigerator);
-
+        Unit unit = new Unit(1, "dl", 100);
+        refrigeratorGrocery.setUnit(unit);
+        refrigeratorGrocery.setQuantity(1);
         customGroceryDTO = new GroceryDTO();
         customGroceryDTO.setName("Name");
         customGroceryDTO.setDescription("Desc");
@@ -352,8 +359,11 @@ public class GroceryServiceTest {
         List<GroceryDTO> dtoList = new ArrayList<>();
         dtoList.add(existingGroceryDTO);
         request.setGroceryList(dtoList);
+        request.setUnitDTO(UnitDTO.builder().name("dl").id(1L).build());
+        request.setQuantity(1);
         request.setRefrigeratorId(refrigerator.getId());
 
+        when(unitRepository.findById(any())).thenReturn(Optional.ofNullable(unit));
         when(groceryService.getFridgeRole(refrigerator, any())).thenReturn(FridgeRole.SUPERUSER);
         when(groceryRepository.findById(existingGroceryDTO.getId())).thenReturn(Optional.ofNullable(grocery));
         when(refrigeratorGroceryRepository.findAllByRefrigeratorId(any())).thenReturn(groceryList);

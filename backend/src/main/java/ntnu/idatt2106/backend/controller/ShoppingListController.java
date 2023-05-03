@@ -118,12 +118,12 @@ public class ShoppingListController {
 
     @PostMapping("/edit-refrigerator-grocery/{groceryRefrigeratorShoppingListId}/{quantity}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<GroceryShoppingList> editRefrigeratorGrocery(@PathVariable("groceryRefrigeratorShoppingListId") long groceryRefrigeratorShoppingListId,
+    public ResponseEntity<SuccessResponse> editRefrigeratorGrocery(@PathVariable("groceryRefrigeratorShoppingListId") long groceryRefrigeratorShoppingListId,
                                                                    @PathVariable("quantity") int quantity,
-                                                                   HttpServletRequest httpRequest) throws SaveException, NoGroceriesFound, UserNotFoundException, UnauthorizedException {
+                                                                   HttpServletRequest httpRequest) throws SaveException, NoGroceriesFound, UserNotFoundException, UnauthorizedException, ShoppingListNotFound {
         logger.info("Received request to edit grocery item with id {}", groceryRefrigeratorShoppingListId);
-        GroceryShoppingList grocery = shoppingListService.editRefrigeratorGrocery(groceryRefrigeratorShoppingListId, quantity, httpRequest);
-        return new ResponseEntity<>(grocery, HttpStatus.OK);
+        shoppingListService.editRefrigeratorGrocery(groceryRefrigeratorShoppingListId, quantity, httpRequest);
+        return new ResponseEntity<>(new SuccessResponse("The grocery was edited successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete-grocery/{groceryListId}")

@@ -178,6 +178,7 @@ public class ShoppingListService {
         throw new SaveException("Failed to add a edit the grocery item with id " + groceryShoppingListId);
     }
 
+
     /**
      * Edit the grocery in refrigerator shopping list . It is only possible for a superuser of the refrigerator
      * assosiated with the shopping list to edit the grocery. The grocery is transferred to the shopping list when a
@@ -185,33 +186,32 @@ public class ShoppingListService {
      * @param groceryRefrigeratorShoppingListId ID to the grocery item on a refrigerator shopping list
      * @param quantity Amount of groceries
      * @param httpRequest http request
-     * @return The item on the grocery shopping list
      * @throws NoGroceriesFound if no grocery is found for the groceryShoppingListId
      * @throws UserNotFoundException if no user is found
      * @throws UnauthorizedException if the user is not a superuser in the refrigerator
      * @throws SaveException if it was not possible to save the modifications to the database
      */
-    public GroceryShoppingList editRefrigeratorGrocery(long groceryRefrigeratorShoppingListId, int quantity, HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, UnauthorizedException, SaveException {
+    public void editRefrigeratorGrocery(long groceryRefrigeratorShoppingListId, int quantity, HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, UnauthorizedException, SaveException, ShoppingListNotFound {
         RefrigeratorShoppingList refrigeratorShoppingListItem = refrigeratorShoppingListRepository.findById(groceryRefrigeratorShoppingListId)
                 .orElseThrow(() -> new NoGroceriesFound("Could not find a grocery with the given i"));
         FridgeRole fridgeRole = groceryService.getFridgeRole(refrigeratorShoppingListItem.getShoppingList().getRefrigerator(), httpRequest);
 
         if (fridgeRole == FridgeRole.SUPERUSER) {
-            GroceryShoppingList groceryShoppingList = GroceryShoppingList.builder()
-                            .shoppingList(refrigeratorShoppingListItem.getShoppingList())
-                            .grocery(refrigeratorShoppingListItem.getGrocery())
-                            .quantity(quantity)
-                            .isRequest(false)
-                            .build();
-            groceryShoppingListRepository.save(groceryShoppingList);
+            SaveGroceryRequest saveGroceryRequest = SaveGroceryRequest.builder()
+                    .groceryId(refrigeratorShoppingListItem.getGrocery().getId())
+                    .quantity(quantity)
+                    .foreignKey(refrigeratorShoppingListItem.getShoppingList().getId())
+                    .build();
+
+            saveGrocery(saveGroceryRequest, httpRequest);
             deleteRefrigeratorGrocery(groceryRefrigeratorShoppingListId, httpRequest);
-            return groceryShoppingList;
         }
         throw new SaveException("Failed to add a edit the refrigerator grocery item");
     }
 
 
-    /**
+
+        /**
      * Adds predefined grocery to the shopping list for groceries
      * @param saveGroceryRequest JSON object to save
      * @param request The http request

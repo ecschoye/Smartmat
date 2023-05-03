@@ -2,6 +2,7 @@ package ntnu.idatt2106.backend.controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,7 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.NoSuchElementException;
-import ntnu.idatt2106.backend.model.dto.RecipeDTO;
+import ntnu.idatt2106.backend.model.dto.recipe.RecipeDTO;
 import ntnu.idatt2106.backend.model.dto.recipe.FetchRecipesDTO;
 import ntnu.idatt2106.backend.service.RecipeService;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class RecipeController {
 
     @Operation(summary = "Fetch recipes based on available groceries and their expiration dates")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Recipes fetched successfully", content = @Content(schema = @Schema(implementation = RecipeDTO.class))),
+            @ApiResponse(responseCode = "200", description = "Recipes fetched successfully", content = @Content(array = @ArraySchema(schema = @Schema(implementation = RecipeDTO.class)))),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping("/fetch")

@@ -186,7 +186,7 @@ public class GroceryServiceTest {
         Mockito.when(groceryService.getFridgeRole(refrigerator, HttpRequest)).thenReturn(FridgeRole.SUPERUSER);
 
         // Execute and Verify
-        assertThrows(EntityNotFoundException.class, () -> {
+        assertThrows(NoSuchElementException.class, () -> {
             groceryService.updateRefrigeratorGrocery(refrigeratorGroceryDTO, HttpRequest);
         });
 

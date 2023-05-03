@@ -13,6 +13,7 @@ import ntnu.idatt2106.backend.model.recipe.Recipe;
 import ntnu.idatt2106.backend.model.recipe.RecipeGrocery;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
+import ntnu.idatt2106.backend.repository.recipe.RecipeRepository;
 import org.springframework.stereotype.Service;
 import ntnu.idatt2106.backend.exceptions.NoSuchElementRuntimeException;
 
@@ -27,6 +28,7 @@ public class RecipeService {
 
     private final RefrigeratorGroceryRepository refrigeratorGroceryRepository;
     private final RecipeGroceryRepository recipeGroceryRepository;
+    private final RecipeRepository recipeRepository;
 
     private final Logger logger = Logger.getLogger(RecipeService.class.getName());
 
@@ -142,7 +144,16 @@ public class RecipeService {
         }).toList();
     }
 
-
+    /**
+     * Find recipe by id
+     * @param recipeId recipe id
+     * @return the recipe
+     * @throws NoSuchElementException if no recipe
+     */
+    public Recipe getRecipeById(long recipeId) throws NoSuchElementException{
+        return recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new NoSuchElementException("Could not find recipe"));
+    }
 
 
 

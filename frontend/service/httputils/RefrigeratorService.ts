@@ -2,7 +2,6 @@ import axiosInstance from "~/service/AxiosInstance";
 import {AxiosResponse} from "axios";
 import {RefrigeratorRegisterData} from "~/types/RefrigeratorRegisterData";
 import type {Refrigerator} from "~/types/RefrigeratorType"; 
-import type {Member} from "~/types/MemberType"
 import type { MemberRequest } from "~/types/MemberRequest";
 import { RemoveMemberRequest } from "~/types/RemoveMemberRequest";
 

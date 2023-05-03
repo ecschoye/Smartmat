@@ -65,7 +65,7 @@ public class MyProfileController {
             User user = userService.findByEmail(jwtService.extractUsername(cookieService.extractTokenFromCookie(request)));
             logger.info("Recieved request to get user profile on user: "+ user.getEmail() + ".");
 
-            UserProfileDTO userProfileDTO = new UserProfileDTO(user.getName(), user.getEmail());
+            UserProfileDTO userProfileDTO = new UserProfileDTO(user.getName(), user.getEmail(), user.getFavoriteRefrigeratorId());
             return ResponseEntity.ok(userProfileDTO);
         } catch (Exception e) {
             throw new Exception(e);

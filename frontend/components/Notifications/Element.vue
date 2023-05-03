@@ -23,9 +23,12 @@
           <div class="text-center">{{notification.refrigeratorGrocery.refrigerator.name }}</div>
         </div>
         <div>
-          <button :disabled="true" class="border border-black mx-2 p-1 rounded disabled:bg-slate-300 disabled:text-slate-500">Finn oppskrift</button>
-          <button :disabled="true" class="border border-black mx-2 p-1 rounded disabled:bg-slate-300 disabled:text-slate-500">Gå til ukesmeny</button>
-          <button @click="goToFridge()" class="border border-black mx-2 p-1 rounded hover:bg-slate-400 cursor-pointer">Til kjøleskap</button>
+          <button :disabled="true" class="border border-black mx-2 p-1 rounded disabled:bg-slate-300 disabled:text-slate-500">
+            {{ t('find_recipe') }}</button>
+          <button :disabled="true" class="border border-black mx-2 p-1 rounded disabled:bg-slate-300 disabled:text-slate-500">
+            {{ t('go_to_weekly_menu') }}</button>
+          <button @click="goToFridge()" class="border border-black mx-2 p-1 rounded hover:bg-slate-400 cursor-pointer">
+            {{ t('to_refrigerator') }}</button>
         </div>
       </div>
     </div>

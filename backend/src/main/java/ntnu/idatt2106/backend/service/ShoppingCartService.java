@@ -7,6 +7,7 @@ import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTOComparator;
+import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
@@ -122,7 +123,7 @@ public class ShoppingCartService {
 
             if (groceryShoppingCart.isPresent()) {
                 logger.info("Grocery item exist already in entity for shopping cart. Increment quantity with one");
-                groceryShoppingCart.get().editQuantity(groceryRequest.getQuantity());   
+                groceryShoppingCart.get().editQuantity(groceryRequest.getQuantity());
             } else {
                 logger.info("Grocery item does not exit in shopping cart. Saving the grocery to the database");
                 Grocery grocery = groceryService.getGroceryById(groceryRequest.getGroceryId());
@@ -161,7 +162,7 @@ public class ShoppingCartService {
         List<GroceryDTO> groceries = new ArrayList<>();
         groceries.add(groceryDTO);
 
-        SaveGroceryListRequest saveGrocery = new SaveGroceryListRequest(refrigeratorId, groceries);
+        SaveGroceryListRequest saveGrocery = new SaveGroceryListRequest(refrigeratorId, groceriesUnitDTO.builder().id(1L).name("dl").build(), 1);
         for (int i = 0; i < shoppingCartItem.getQuantity(); i++) {
             groceryService.addGrocery(saveGrocery, httpRequest);
         }

@@ -42,5 +42,21 @@
   "save_userroles" : "保存用户",
   "invite_user" : "邀请用户",
   "leave_refrigerator" : "离开冰箱",
-  "remove_member" : "从冰箱中删除"
+  "remove_member" : "从冰箱中删除",
+  "remove_member_succsess" : "成功删除成员",
+  "remove_member_failed" : "无法删除成员",
+  "force_delete_alert" : "警告！如果您作为最后一个超级用户离开冰箱，那么冰箱和所有内容都将被删除。您确定要这样做吗？",
+  "user_removed_success" : "成功删除用户",
+  "user_removed_failure" : "无法删除用户，请重试",
+  "member_added_success": "成功添加成员",
+  "member_added_failure": "无法添加成员",
+  "members": "成员",
+  "your_recipes": "您的食谱",
+  "you_have_no_groceries_in_the_shopping_list" : "您的购物清单中没有杂货",
+  "you_have_no_groceries_in_the_shopping_cart" : "您的购物车中没有杂货",
+  "add_a_new_grocery": "添加新的杂货",
+  "add_a_grocery_from_the_list": "从列表中添加杂货",
+  "find_recipe": "查找食谱",
+  "go_to_weekly_menu": "前往每周菜单",
+  "to_refrigerator": "前往冰箱"
 }

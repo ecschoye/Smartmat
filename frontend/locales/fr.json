@@ -71,5 +71,21 @@
   "save_userroles" : "Enregistrer les utilisateurs",
   "invite_user" : "Inviter un utilisateur",
   "leave_refrigerator" : "Quitter le réfrigérateur",
-  "remove_member" : "Supprimer du réfrigérateur" 
+  "remove_member" : "Supprimer du réfrigérateur",
+  "remove_member_succsess": "Membre supprimé avec succès",
+  "remove_member_failed": "Impossible de supprimer le membre",
+  "force_delete_alert": "Attention! Quitter le réfrigérateur en tant que dernier super-utilisateur supprimera le réfrigérateur et tout son contenu. Êtes-vous sûr de vouloir continuer ?",
+  "user_removed_success": "Utilisateur supprimé avec succès",
+  "user_removed_failure": "Impossible de supprimer l'utilisateur, veuillez réessayer",
+  "member_added_success": "Membre ajouté avec succès",
+  "member_added_failure": "Impossible d'ajouter le membre",
+  "members": "Membres",
+  "your_recipes": "Vos recettes",
+  "you_have_no_groceries_in_the_shopping_list" : "Vous n'avez pas de produits dans la liste de courses",
+  "you_have_no_groceries_in_the_shopping_cart" : "Vous n'avez pas de produits dans le panier d'achat",
+  "add_a_new_grocery" : "Ajouter une nouvelle épicerie",
+  "add_a_grocery_from_the_list" : "Ajouter un produit de la liste",
+  "find_recipe": "Trouver une recette",
+  "go_to_weekly_menu": "Aller au menu hebdomadaire",
+  "to_refrigerator": "Au réfrigérateur"
 }

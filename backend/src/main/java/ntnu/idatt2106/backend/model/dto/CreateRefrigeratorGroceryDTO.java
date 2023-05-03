@@ -5,15 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * User profile data transfer object.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserProfileDTO {
+public class CreateRefrigeratorGroceryDTO {
 
-    private String name;
-    private String email;
-    private long favoriteRefrigeratorId;
+    private GroceryDTO groceryDTO;
+    private UnitDTO unitDTO;
+    private Integer quantity;
+
 }

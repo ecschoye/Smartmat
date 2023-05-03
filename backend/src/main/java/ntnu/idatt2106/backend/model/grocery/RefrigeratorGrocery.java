@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.Refrigerator;
+import ntnu.idatt2106.backend.model.Unit;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 
 import java.util.Date;
@@ -34,7 +35,7 @@ public class RefrigeratorGrocery {
     private Date physicalExpireDate;
 
     @NotNull
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "refrigeratorId")
     @Schema(description = "The refrigerator the grocery is in")
     private Refrigerator refrigerator;
@@ -44,6 +45,19 @@ public class RefrigeratorGrocery {
     @JoinColumn(name = "groceryId")
     @Schema(description = "Grocery in the refrigerator")
     private Grocery grocery;
+
+
+    @ManyToOne
+    @JoinColumn(name = "unitId")
+    @Schema(description = "The unit of a grocery")
+    private Unit unit;
+
+    @Column(name = "quantity")
+    @Schema(description = "THe quantity of specified units")
+    private int quantity;
+
+
+
 
     @OneToMany(mappedBy = "groceryEntity", cascade = CascadeType.REMOVE)
     private Set<GroceryNotification> groceryNotifications = new HashSet<>();

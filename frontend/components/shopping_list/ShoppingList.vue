@@ -4,8 +4,10 @@
         <div class="w-11/12  md:w-9/12 h-96 overflow-auto bg-white dark:bg-zinc-400 border-2 rounded-lg border-black relative">
             <div>
                 <div class="m-2 pl-2 pr-2 flex justify-center text-lg font-sans font-medium">
-                    <button @click.stop="selectListTab" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingListSelected}" class="pl-4 pr-4 bg-white dark:bg-zinc-300 border-2 rounded-l-lg border-black cursor-pointer hover:bg-slate-200"> Handleliste </button>
-                    <button @click.stop="selectCartTab" :class="{'hover:bg-sky-300 bg-sky-400': menuOptions.isShoppingCartSelected}" class="pl-4 pr-4 bg-white dark:bg-zinc-300 border-2 rounded-r-lg border-black cursor-pointer hover:bg-slate-200"> Handlevogn </button>
+                    <button @click.stop="selectListTab" :class="{'bg-sky-400 dark:bg-sky-900 dark:text-white': menuOptions.isShoppingListSelected, 'bg-white dark:bg-zinc-400 dark:text-white': !menuOptions.isShoppingListSelected}" class="pl-4 pr-4 border-2 rounded-l-lg border-black cursor-pointer">
+                      {{ t('shopping_list') }} </button>
+                    <button @click.stop="selectCartTab" :class="{'bg-sky-400 dark:bg-sky-900 dark:text-white': menuOptions.isShoppingCartSelected, 'bg-white dark:bg-zinc-400 dark:text-white': !menuOptions.isShoppingCartSelected}" class="pl-4 pr-4  border-2 rounded-r-lg border-black cursor-pointer">
+                      {{ t('shopping_cart') }} </button>
                 </div>
             </div>
             <div class="flex justify-center">

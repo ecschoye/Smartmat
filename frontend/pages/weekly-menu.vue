@@ -1,7 +1,7 @@
 <template>
   <div class="weekly-menu">
     <RecipeDisplay :recipe="recipe" @close-display-event="closeDisplayEvent"/>
-    <WeeklyMenuRecipePool />
+    <WeeklyMenuRecipePool @see-recipe-event="handleRecipeEvent"/>
   </div>
 </template>
 

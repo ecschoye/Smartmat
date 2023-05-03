@@ -6,8 +6,10 @@ import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTO;
+import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.service.ShoppingCartService;
+import ntnu.idatt2106.backend.service.ShoppingListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import java.util.List;
 public class ShoppingCartController {
 
     private final ShoppingCartService shoppingCartService;
+    private final ShoppingListService shoppingListService;
     private Logger logger = LoggerFactory.getLogger(ShoppingCartController.class);
 
     @PostMapping("/create/{shoppingListId}")
@@ -49,6 +52,16 @@ public class ShoppingCartController {
         logger.info("Received request to save grocery with id {} to shopping cart with id {}", groceryRequest.getGroceryId(), groceryRequest.getForeignKey());
         shoppingCartService.saveGrocery(groceryRequest, request);
         return new ResponseEntity<>(new SuccessResponse("The grocery was added successfully", HttpStatus.OK.value()), HttpStatus.OK);
+    }
+
+    @PostMapping("/transfer-shoppingList/{shoppingCartItemId}")
+    public ResponseEntity<Boolean> transferToShoppingList(@PathVariable(name = "shoppingCartItemId") long shoppingCartItemId,
+                                                          HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, SaveException, UnauthorizedException, RefrigeratorNotFoundException, ShoppingListNotFound {
+        logger.info("Received request to transfer grocery from shopping cart to shopping list");
+        GroceryShoppingCart deletedGroceryItem = shoppingCartService.deleteGrocery(shoppingCartItemId, httpRequest);
+        shoppingListService.saveGrocery(new SaveGroceryRequest(deletedGroceryItem), httpRequest);
+        logger.info("Returns transferStatus and status OK");
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
     @PostMapping("/transfer-refrigerator/{shoppingCartItemId}")

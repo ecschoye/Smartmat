@@ -86,7 +86,6 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
         methods: {
             async removeElementFromCart() {
                 // Remove the element from the cart and add it back to the list
-                /*
                 let transferStatus = await ShoppingCartService.transferGroceryToShoppingList(this.ElementDetails.id);
                 console.log(transferStatus);
                 if (transferStatus.data) {
@@ -94,7 +93,6 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 } else {
                     alert("Det oppstod en feil ved overføring av varen")
                 }
-                */
             },
             async removeElementFromList() {
                 // Remove the element from the list

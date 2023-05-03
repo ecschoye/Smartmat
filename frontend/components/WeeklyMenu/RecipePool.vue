@@ -18,7 +18,7 @@
                     <WeeklyMenuRecipeWeeklyCard @unlocked-event="unlockRecipe(getDayIndex(weekday))" 
                     @locked-event="lockRecipe(getDayIndex(weekday))" 
                     @remove-event="removeRecipe(getDayIndex(weekday))"
-                    @see-recipe-event="seeRecipeCurrentWeek(getDayIndex[weekday])"
+                    @see-recipe-event="seeRecipeCurrentWeek(getDayIndex(weekday))"
                     :recepe-info="weeklyMenuStore.$state.currentWeek[getDayIndex(weekday)]" 
                     :locked-boolean="weeklyMenuStore.$state.currentWeekLocks[getDayIndex(weekday)]" />
                 </div>
@@ -111,16 +111,18 @@ export default {
 
     const removeRecipe = (index: number) => {
       // Logic to remove a recipe from the current or next week
+      let recipeId = -1;
       if (weeklyMenuStore.chosenWeek === 1) {
+        recipeId = weeklyMenuStore.$state.currentWeek[index].id;
         weeklyMenuStore.setCurrentWeek(index, null);
         weeklyMenuStore.setCurrentWeekLock(index, false);
       } else {
+        recipeId = weeklyMenuStore.$state.nextWeek[index].id;
         weeklyMenuStore.setNextWeek(index, null);
         weeklyMenuStore.setNextWeekLock(index, false);
       }
-      let id = weeklyMenuStore.$state.currentWeek[index].id;
       //remove id from array
-      this.fetchRecipeDTO.recipesFetched = this.fetchRecipeDTO.recipesFetched.filter((element: number) => element !== id);
+      fetchRecipeDTO.recipesFetched = fetchRecipeDTO.recipesFetched.filter((element: number) => element !== recipeId);
     };
 
 

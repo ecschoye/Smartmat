@@ -328,9 +328,13 @@ public class RefrigeratorService {
      */
     public void setFavoriteRefrigeratorId(long refrigeratorId, HttpServletRequest httpServletRequest) throws UserNotFoundException, RefrigeratorNotFoundException {
         User user = getUser(extractEmail(httpServletRequest));
-        Refrigerator refrigerator = getRefrigerator(refrigeratorId);
+        long refId;
+        if(refrigeratorId >= 0){
+            refId = getRefrigerator(refrigeratorId).getId();
+        }
+        else refId = -1L;
 
-        user.setFavoriteRefrigeratorId(refrigerator.getId());
+        user.setFavoriteRefrigeratorId(refId);
         userRepository.save(user);
     }
 

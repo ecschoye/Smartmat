@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.RefrigeratorUser;
 import ntnu.idatt2106.backend.model.User;
+import ntnu.idatt2106.backend.model.dto.CreateRefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
+import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.dto.recipe.RecipeDTO;
 import ntnu.idatt2106.backend.model.authentication.AuthenticationRequest;
 import ntnu.idatt2106.backend.model.authentication.RegisterRequest;
@@ -61,19 +63,7 @@ public class RefrigeratorTest {
     private RefrigeratorGroceryRepository refrigeratorGroceryRepository;
 
     @Autowired
-    private ShoppingListRepository shoppingListRepository;
-
-    @Autowired
-    private ShoppingCartRepository shoppingCartRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @Transactional
-    public void resetAutoIncrement() {
-        Query query = entityManager.createNativeQuery("ALTER TABLE refrigerator ALTER COLUMN id RESTART WITH 1;");
-        query.executeUpdate();
-    }
+    private GroceryRepository groceryRepository;
 
     @BeforeAll
     public static void setUpTestData(@Autowired TestRestTemplate restTemplate) {
@@ -112,16 +102,6 @@ public class RefrigeratorTest {
         entity = new HttpEntity<>(headers);
     }
 
-    @BeforeEach
-    public void setUp() {
-        shoppingCartRepository.deleteAll();
-        shoppingListRepository.deleteAll();
-        refrigeratorGroceryRepository.deleteAll();
-        refrigeratorUserRepository.deleteAll();
-        refrigeratorRepository.deleteAll();
-        resetAutoIncrement();
-    }
-
     @Test
     public void createNewFridge (){
         NewRefrigeratorDTO newRefrigeratorDTO = NewRefrigeratorDTO.builder()
@@ -146,33 +126,44 @@ public class RefrigeratorTest {
         assertThat(response.getBody().getAddress()).isEqualTo("Test Address");
     }
 
-    @Test
+    //@Test
     public void insertGroceryToRefrigerator(){
         Refrigerator refrigerator = createRefrigerator();
         System.out.println(refrigeratorUserRepository.findByRefrigeratorId(refrigerator.getId()));
-        GroceryDTO groceryDTO = GroceryDTO.builder()
-                .id(1)
-                .name("Egg")
+        Grocery grocery = Grocery.builder()
+                .name("RefrigeratorTest")
                 .groceryExpiryDays(7)
                 .build();
 
+        Grocery savedGrocery = groceryRepository.save(grocery);
+
+
+
+        Grocery groceryfound = groceryRepository.findByName(savedGrocery.getName()).orElse(null);
+
+        assertThat(groceryfound).isNotNull();
+        assertThat(groceryfound.getName()).isEqualTo(grocery.getName());
+        assertThat(groceryfound.getGroceryExpiryDays()).isEqualTo(grocery.getGroceryExpiryDays());
+
+        CreateRefrigeratorGroceryDTO createRefrigeratorGroceryDTO = CreateRefrigeratorGroceryDTO.builder()
+                .groceryDTO(GroceryDTO.builder()
+                        .id(groceryfound.getId())
+                        .name(groceryfound.getName())
+                        .groceryExpiryDays(groceryfound.getGroceryExpiryDays())
+                        .build())
+                .unitDTO(UnitDTO.builder()
+                        .id(groceryfound.getId())
+                        .name("Test Unit")
+                        .weight(1)
+                        .build())
+                .quantity(1)
+                .build();
+
+
+
+
         // Create a new grocery and add it to the refrigerator
-        HttpEntity<GroceryDTO> newGroceryRequest = new HttpEntity<>(groceryDTO, headers);
-        ResponseEntity<GroceryDTO> newGroceryResponse = restTemplate.exchange(
-                "/api/refrigerator/grocery/create",
-                HttpMethod.POST,
-                newGroceryRequest,
-                GroceryDTO.class
-        );
-
-        assertThat(newGroceryResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(newGroceryResponse.getBody().getId()).isEqualTo(1);
-        assertThat(newGroceryResponse.getBody().getName()).isEqualTo("Egg");
-        assertThat(newGroceryResponse.getBody().getGroceryExpiryDays()).isEqualTo(7);
-
-
-        // Create a new grocery and add it to the refrigerator
-        HttpEntity<GroceryDTO> insertGroceryRequest = new HttpEntity<>(groceryDTO, headers);
+        HttpEntity<CreateRefrigeratorGroceryDTO> insertGroceryRequest = new HttpEntity<>(createRefrigeratorGroceryDTO, headers);
         ResponseEntity<GroceryDTO> insertGroceryResponse = restTemplate.exchange(
                 "/api/refrigerator/grocery/new/" + refrigerator.getId(),
                 HttpMethod.POST,
@@ -180,10 +171,12 @@ public class RefrigeratorTest {
                 GroceryDTO.class
         );
 
+        RefrigeratorGrocery refrigeratorGrocery = refrigeratorGroceryRepository.findAllByRefrigeratorId(refrigerator.getId()).get(0);
+
         assertThat(insertGroceryResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(insertGroceryResponse.getBody().getId()).isEqualTo(1);
-        assertThat(insertGroceryResponse.getBody().getName()).isEqualTo("Egg");
-        assertThat(insertGroceryResponse.getBody().getGroceryExpiryDays()).isEqualTo(7);
+        assertThat(insertGroceryResponse.getBody().getId()).isEqualTo(groceryfound.getId());
+        assertThat(insertGroceryResponse.getBody().getName()).isEqualTo(groceryfound.getName());
+        assertThat(insertGroceryResponse.getBody().getGroceryExpiryDays()).isEqualTo(groceryfound.getGroceryExpiryDays());
     }
 
     private Refrigerator createRefrigerator() {

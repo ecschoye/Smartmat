@@ -196,11 +196,10 @@ public class RecipeGroceryIntegrationTest{
                 .groceryExpiryDays(7)
                 .build();
 
+        // insert grocery into database
+        Grocery createdGrocery = groceryRepository.save(grocery);
 
 
-
-        //fetch grocery
-        Grocery savedGrocery = groceryRepository.save(grocery);
 
         Grocery groceryfound = groceryRepository.findByName("RecipeGroceryIntegrationTestEgg1").orElse(null);
 

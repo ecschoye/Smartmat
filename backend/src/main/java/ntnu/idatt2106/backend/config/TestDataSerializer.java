@@ -160,8 +160,6 @@ public class TestDataSerializer {
 
 
 
-
-
     private void createRefrigerator() {
         String name = "Test Refrigerator";
         String address = "Test Address";

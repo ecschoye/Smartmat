@@ -216,6 +216,7 @@ export default {
       async randomRecipesEvent() {
         if(this.getAmountOfRecipesNeeded() > 0) {
             try {
+                console.log(this.getAmountOfRecipesNeeded())
           this.fetchRecipeDTO.numRecipes = this.getAmountOfRecipesNeeded();
           this.fetchRecipeDTO.refrigeratorId = this.refrigeratorStore.getSelectedRefrigerator.id;
 
@@ -287,12 +288,14 @@ export default {
                 if(confirm(this.t("remove_all_this_week"))) {
                     for(let i = 0; i < this.weeklyMenuStore.$state.currentWeek.length; i++) {
                     this.weeklyMenuStore.$state.currentWeek[i] = null;
+                    this.weeklyMenuStore.$state.currentWeekLocks[i] = false;
                     }
                 }
             } else if(this.weeklyMenuStore.$state.chosenWeek === 2 && !this.weeklyMenuStore.isNextWeekEmpty()) {
                 if(confirm(this.t("remove_all_next_week"))) {
                     for(let i = 0; i < this.weeklyMenuStore.$state.nextWeek.length; i++) {
                     this.weeklyMenuStore.$state.nextWeek[i] = null;
+                    this.weeklyMenuStore.$state.nextWeekLocks[i] = false;
                     } 
                 } 
             } else {

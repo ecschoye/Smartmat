@@ -122,7 +122,7 @@ public class ShoppingCartService {
 
             if (groceryShoppingCart.isPresent()) {
                 logger.info("Grocery item exist already in entity for shopping cart. Increment quantity with one");
-                groceryShoppingCart.get().editQuantity(groceryRequest.getQuantity());
+                groceryShoppingCart.get().editQuantity(groceryRequest.getQuantity());   
             } else {
                 logger.info("Grocery item does not exit in shopping cart. Saving the grocery to the database");
                 Grocery grocery = groceryService.getGroceryById(groceryRequest.getGroceryId());

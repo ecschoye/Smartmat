@@ -56,11 +56,9 @@
 <script lang="ts">
 import { useWeeklyMenuStore } from '~/store/WeeklyMenuStore';
 import { Recipe } from '~/types/RecipeType';
-import GrayButton from '../Button/GrayButton.vue';
 import UnknownRecipe from './UnknownRecipe.vue';
 import { fetchRecipes } from '~/service/httputils/RecipeService';
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
-import { number } from '@intlify/core-base';
 import {FetchRecipeDTO} from "~/types/FetchRecipeDTO";
 import { Ingredient } from "~/types/IngredientType"
 import type { Unit } from '~/types/UnitType';
@@ -336,7 +334,7 @@ export default {
                 }
         }
     },
-    components: { GrayButton, UnknownRecipe }
+    components: { UnknownRecipe }
 }
 
 </script>

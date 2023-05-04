@@ -26,7 +26,7 @@
                                 @prompt-refrigerator="promptRefrigerator()">
                             </ShoppingListCategory>
                         </div>
-                        <div v-if="refrigeratorSuggestions !== null && refrigeratorSuggestions.length !== 0 && refrigeratorSuggestions[0].id !== null | undefined">
+                        <div v-if="refrigeratorSuggestions !== null && refrigeratorSuggestions.length !== 0">
                             <RefrigeratorGroceries
                                 :ShoppingListId="shoppingListId"
                                 :CategoryListItems="refrigeratorSuggestions"

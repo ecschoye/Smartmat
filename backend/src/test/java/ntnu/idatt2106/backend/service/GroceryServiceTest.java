@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.category.Category;
+import ntnu.idatt2106.backend.model.dto.DeleteRefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.UnitDTO;
@@ -23,13 +24,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,7 +78,7 @@ public class GroceryServiceTest {
     private RefrigeratorUser refrigeratorUser;
     private User user;
     private Unit unit;
-    private HttpServletRequest HttpRequest;
+    private HttpServletRequest httpRequest;
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -130,7 +128,7 @@ public class GroceryServiceTest {
         groceryList.add(refrigeratorGrocery);
         groceryDTOList.add(new RefrigeratorGroceryDTO(refrigeratorGrocery));
 
-        HttpRequest = mock(HttpServletRequest.class);
+        httpRequest = mock(HttpServletRequest.class);
     }
 
     @Test
@@ -152,11 +150,11 @@ public class GroceryServiceTest {
 
         Mockito.when(refrigeratorGroceryRepository.findById(refrigeratorGroceryDTO.getId())).thenReturn(Optional.of(refrigeratorGrocery));
         Mockito.when(jwtService.extractClaim(token, Claims::getSubject)).thenReturn(expectedEmail);
-        Mockito.when(cookieService.extractTokenFromCookie(HttpRequest)).thenReturn(token);
-        Mockito.when(groceryService.getFridgeRole(refrigerator, HttpRequest)).thenReturn(FridgeRole.SUPERUSER);
+        Mockito.when(cookieService.extractTokenFromCookie(httpRequest)).thenReturn(token);
+        Mockito.when(groceryService.getFridgeRole(refrigerator, httpRequest)).thenReturn(FridgeRole.SUPERUSER);
 
         // Execute
-        groceryService.updateRefrigeratorGrocery(refrigeratorGroceryDTO, HttpRequest);
+        groceryService.updateRefrigeratorGrocery(refrigeratorGroceryDTO, httpRequest);
 
         // Verify
         verify(notificationService, times(1)).deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);
@@ -182,12 +180,12 @@ public class GroceryServiceTest {
 
         Mockito.when(refrigeratorGroceryRepository.findById(refrigeratorGroceryDTO.getId())).thenReturn(Optional.empty());
         Mockito.when(jwtService.extractClaim(token, Claims::getSubject)).thenReturn(expectedEmail);
-        Mockito.when(cookieService.extractTokenFromCookie(HttpRequest)).thenReturn(token);
-        Mockito.when(groceryService.getFridgeRole(refrigerator, HttpRequest)).thenReturn(FridgeRole.SUPERUSER);
+        Mockito.when(cookieService.extractTokenFromCookie(httpRequest)).thenReturn(token);
+        Mockito.when(groceryService.getFridgeRole(refrigerator, httpRequest)).thenReturn(FridgeRole.SUPERUSER);
 
         // Execute and Verify
         assertThrows(NoSuchElementException.class, () -> {
-            groceryService.updateRefrigeratorGrocery(refrigeratorGroceryDTO, HttpRequest);
+            groceryService.updateRefrigeratorGrocery(refrigeratorGroceryDTO, httpRequest);
         });
 
         verify(notificationService, times(0)).deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);
@@ -212,12 +210,12 @@ public class GroceryServiceTest {
 
         Mockito.when(refrigeratorGroceryRepository.findById(refrigeratorGroceryDTO.getId())).thenReturn(Optional.of(refrigeratorGrocery));
         Mockito.when(jwtService.extractClaim(token, Claims::getSubject)).thenReturn(expectedEmail);
-        Mockito.when(cookieService.extractTokenFromCookie(HttpRequest)).thenReturn(token);
-        Mockito.when(groceryService.getFridgeRole(refrigerator, HttpRequest)).thenReturn(FridgeRole.USER);
+        Mockito.when(cookieService.extractTokenFromCookie(httpRequest)).thenReturn(token);
+        Mockito.when(groceryService.getFridgeRole(refrigerator, httpRequest)).thenReturn(FridgeRole.USER);
 
         // Execute and Verify
         assertThrows(UnauthorizedException.class, () -> {
-            groceryService.updateRefrigeratorGrocery(refrigeratorGroceryDTO, HttpRequest);
+            groceryService.updateRefrigeratorGrocery(refrigeratorGroceryDTO, httpRequest);
         });
 
         verify(notificationService, times(0)).deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);
@@ -241,11 +239,11 @@ public class GroceryServiceTest {
 
         Mockito.when(refrigeratorGroceryRepository.findById(refrigeratorGroceryDTO.getId())).thenReturn(Optional.of(refrigeratorGrocery));
         Mockito.when(jwtService.extractClaim(token, Claims::getSubject)).thenReturn(expectedEmail);
-        Mockito.when(cookieService.extractTokenFromCookie(HttpRequest)).thenReturn(token);
-        Mockito.when(groceryService.getFridgeRole(refrigerator, HttpRequest)).thenReturn(FridgeRole.SUPERUSER);
+        Mockito.when(cookieService.extractTokenFromCookie(httpRequest)).thenReturn(token);
+        Mockito.when(groceryService.getFridgeRole(refrigerator, httpRequest)).thenReturn(FridgeRole.SUPERUSER);
 
         // Execute
-        groceryService.updateRefrigeratorGrocery(refrigeratorGroceryDTO, HttpRequest);
+        groceryService.updateRefrigeratorGrocery(refrigeratorGroceryDTO, httpRequest);
 
         // Verify
 
@@ -336,7 +334,7 @@ public class GroceryServiceTest {
         when(refrigeratorGroceryRepository.findById(any())).thenReturn(Optional.of(refrigeratorGrocery));
         when(refrigeratorService.getFridgeRole(any(), any())).thenReturn(FridgeRole.SUPERUSER);
 
-        groceryService.removeRefrigeratorGrocery(1L, HttpRequest);
+        groceryService.removeRefrigeratorGrocery(1L, httpRequest);
 
         verify(refrigeratorGroceryRepository, times(1)).deleteById(1L);
     }
@@ -345,7 +343,7 @@ public class GroceryServiceTest {
     public void removeRefrigeratorGrocery_EntityNotFound() {
         when(refrigeratorGroceryRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(EntityNotFoundException.class, () -> groceryService.removeRefrigeratorGrocery(1L, HttpRequest));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> groceryService.removeRefrigeratorGrocery(1L, httpRequest));
 
         verify(refrigeratorGroceryRepository, never()).deleteById(1L);
     }
@@ -359,7 +357,7 @@ public class GroceryServiceTest {
         when(refrigeratorGroceryRepository.findById(any())).thenReturn(Optional.of(refrigeratorGrocery));
         when(refrigeratorService.getFridgeRole(any(Refrigerator.class), eq(email))).thenReturn(FridgeRole.USER);
 
-        Assertions.assertThrows(UnauthorizedException.class, () -> groceryService.removeRefrigeratorGrocery(refrigeratorGrocery.getId(), HttpRequest));
+        Assertions.assertThrows(UnauthorizedException.class, () -> groceryService.removeRefrigeratorGrocery(refrigeratorGrocery.getId(), httpRequest));
     }
 
     @Test
@@ -380,8 +378,8 @@ public class GroceryServiceTest {
         when(refrigeratorRepository.findById(any())).thenReturn(Optional.ofNullable(refrigerator));
         when(refrigeratorService.getRefrigerator(refrigerator.getId())).thenReturn(refrigerator);
 
-        groceryService.addGrocery(request, HttpRequest);
-        int result = groceryService.getGroceriesByRefrigerator(refrigerator.getId(), HttpRequest).size();
+        groceryService.addGrocery(request, httpRequest);
+        int result = groceryService.getGroceriesByRefrigerator(refrigerator.getId(), httpRequest).size();
 
         Assertions.assertEquals(dtoList.size(), result);
     }

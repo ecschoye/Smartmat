@@ -70,7 +70,7 @@ test_frontend:
   image: node:latest
   script:
     - cd frontend
-    - npm ci
+    - npm ci --force
     - npm run vitest
   artifacts:
     when: always

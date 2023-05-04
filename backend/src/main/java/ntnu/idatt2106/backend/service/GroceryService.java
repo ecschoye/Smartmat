@@ -333,8 +333,6 @@ public class GroceryService {
         return null;
     }
 
-
-
     public void updateRefrigeratorGrocery(RefrigeratorGroceryDTO refrigeratorGroceryDTO, HttpServletRequest request) throws UserNotFoundException, UnauthorizedException, NotificationException, NoSuchElementException {
         Optional<RefrigeratorGrocery> oldGrocery = refrigeratorGroceryRepository.findById(refrigeratorGroceryDTO.getId());
         if(oldGrocery.isEmpty()){

@@ -108,7 +108,6 @@ import { ShoppingListElementType } from "~/types/ShoppingListElement";
                     deleteResponse = await ShoppingListService.removeRefrigeratorGroceryFromShoppingList(this.ElementDetails.id);
                 }
                 this.$emit('updateList')
-                console.log(deleteResponse);
                 if (deleteResponse.data) {
                     //alert("Varen ble vellykket slettet")
                 } else {
@@ -143,14 +142,14 @@ import { ShoppingListElementType } from "~/types/ShoppingListElement";
                     alert("Det oppstod en feil ved overføring av varen")
                 }
             },
-            updateGrocery(newQuantity: number) {
+            async updateGrocery(newQuantity: number) {
                 this.editElement = false
                 this.ElementDetails.quantity = newQuantity
                 let quantity = newQuantity
                 if (!this.ElementDetails.isFromRefrigerator) {
-                    ShoppingListService.updateGrocery(this.ElementDetails.id, quantity)
+                    await ShoppingListService.updateGrocery(this.ElementDetails.id, quantity)
                 } else {
-                    ShoppingListService.updateRefrigeratorGrocery(this.ElementDetails.id, quantity);
+                    await ShoppingListService.updateRefrigeratorGrocery(this.ElementDetails.id, quantity);
                 }
                 this.$emit('updateList')
             }

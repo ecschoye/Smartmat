@@ -1,16 +1,28 @@
 <template>
     <div class="w-4/5">
         <canvas ref="chart"></canvas>
-        <div class="flex flex-row justify-center p-5 font-bold">
-            <div class="w-80 bg-zinc-200 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
-               <h1 class="flex justify-center text-xl mb-3"> Total Food Eaten </h1>
-               <h3 class="flex justify-center text-green-custom text-4xl"> {{ totalFoodEaten }} KG </h3> 
-               <h3 class="flex justify-center text-green-custom text-xl"> {{ getTotalFoodEatenPercentage() }} % </h3> 
+        <div class="sm:flex hidden flex flex-row justify-center p-5 font-bold">
+            <div class="w-80 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
+              <h1 class="flex justify-center text-xl mb-3"> {{t('total_food_eaten')}} </h1>
+              <h3 class="flex justify-center text-green-custom text-4xl"> {{ totalFoodEaten / 1000 }} KG </h3> 
+              <h3 class="flex justify-center text-green-custom text-xl"> {{ getTotalFoodEatenPercentage() }} % </h3> 
             </div>
-            <div class="w-80 bg-zinc-200 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
-                <h1 class="flex justify-center text-xl mb-3"> Total Food Wasted </h1>
-               <h3 class="flex justify-center text-red-400 text-4xl"> {{ totalFoodWaste }} KG </h3> 
-               <h3 class="flex justify-center text-red-400 text-xl"> {{ getTotalFoodWastePercentage() }} % </h3> 
+            <div class="w-80 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
+              <h1 class="flex justify-center text-xl mb-3"> {{t('total_food_wasted')}} </h1>
+              <h3 class="flex justify-center text-red-400 text-4xl"> {{ totalFoodWaste / 1000 }} KG </h3> 
+              <h3 class="flex justify-center text-red-400 text-xl"> {{ getTotalFoodWastePercentage() }} % </h3> 
+            </div>
+        </div>
+        <div class="sm:hidden flex flex-col justify-center p-5 font-bold">
+            <div class="w-80 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
+              <h1 class="flex justify-center text-xl mb-3"> {{t('total_food_eaten')}} </h1>
+              <h3 class="flex justify-center text-green-custom text-4xl"> {{ totalFoodEaten / 1000 }} KG </h3> 
+              <h3 class="flex justify-center text-green-custom text-xl"> {{ getTotalFoodEatenPercentage() }} % </h3> 
+            </div>
+            <div class="w-80 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
+              <h1 class="flex justify-center text-xl mb-3"> {{t('total_food_wasted')}} </h1>
+              <h3 class="flex justify-center text-red-400 text-4xl"> {{ totalFoodWaste / 1000 }} KG </h3> 
+              <h3 class="flex justify-center text-red-400 text-xl"> {{ getTotalFoodWastePercentage() }} % </h3> 
             </div>
         </div>
     </div>    
@@ -19,75 +31,17 @@
   <script lang="ts">
   import Chart from 'chart.js/auto';
   import StatsService from '~/service/httputils/StatsService';
+  import { useRefrigeratorStore } from '~/store/refrigeratorStore';
+  import { Refrigerator } from '~/types/RefrigeratorType';
   
   export default {
     data() {
       return {
-        statMonths: [
-          {
-            name: "January, 2023",
-            foodEaten: 3,
-            foodWaste: 2
-          },
-          {
-            name: "February, 2023",
-            foodEaten: 7,
-            foodWaste: 5
-          },
-          {
-            name: "March, 2023",
-            foodEaten: 5,
-            foodWaste: 4
-          },
-          {
-            name: "April, 2023",
-            foodEaten: 6,
-            foodWaste: 4
-          },
-          {
-            name: "May, 2023",
-            foodEaten: 4,
-            foodWaste: 3
-          },
-          {
-            name: "June, 2023",
-            foodEaten: 5,
-            foodWaste: 4
-          },
-          {
-            name: "July, 2023",
-            foodEaten: 3,
-            foodWaste: 2
-          },
-          {
-            name: "August, 2023",
-            foodEaten: 6,
-            foodWaste: 3
-          },
-          {
-            name: "September, 2023",
-            foodEaten: 5,
-            foodWaste: 3
-          },
-          {
-            name: "October, 2023",
-            foodEaten: 5,
-            foodWaste: 2
-          },
-          {
-            name: "November, 2023",
-            foodEaten: 4,
-            foodWaste: 3
-          },
-          {
-            name: "December, 2023",
-            foodEaten: 5,
-            foodWaste: 2
-          }
-        ] as StatMonth[],
+        statMonths: [] as StatMonth[],
         totalFoodEaten: 0,
         totalFoodWaste: 0,
         totalFood: 0,
+        refrigeratorId: -1,
         chart: null as any,
       };
     },
@@ -99,20 +53,20 @@
         this.chart = new Chart(this.$refs.chart, {
           type: 'bar',
           data: {
-            labels: this.statMonths.map((month) => String(month.name)),
+            labels: this.statMonths.map((month) => String(month.monthName)),
             datasets: [
               {
-                label: 'Food Eaten',
+                label: this.t('food_eaten'),
                 backgroundColor: '#31C48D',
-                data: this.statMonths.map((month) => Number(month.foodEaten)),
+                data: this.statMonths.map((month) => Number(month.foodEaten/1000)),
                 borderColor: 'black',
                 borderWidth: 1,
                 borderRadius: 15,
               },
               {
-                label: 'Food Wasted',
+                label: this.t('food_wasted'),
                 backgroundColor: '#cc1244',
-                data: this.statMonths.map((month) => Number(month.foodWaste)),
+                data: this.statMonths.map((month) => Number(month.foodWaste/1000)),
                 borderColor: 'black',
                 borderWidth: 1,
                 borderRadius: 15,
@@ -133,9 +87,20 @@
         });
       },
       async fetchData() {
-        //const response = await StatsService.getStatsData()
-        //this.statMonths = response.data;
+        try {
+          this.statMonths = []
+          let responseStatMonths = await StatsService.getStatsData(this.refrigeratorId);
+          if (responseStatMonths.data.length > 0) {
+              responseStatMonths.data.forEach((statMonth: StatMonth) => {
+                this.statMonths.push(statMonth);
+              }); 
+          }
+          } catch (error) {
+              console.error(error);
+              this.statMonths = [];
+          }
         this.createChart();
+        this.calculateTotalFoodStats();
       },
       calculateTotalFoodStats() {
             this.statMonths.forEach((month) => {
@@ -152,8 +117,18 @@
       }
     },
     mounted() {
+      const refrigeratorStore = useRefrigeratorStore();
+      const fridge : Refrigerator | null = refrigeratorStore.getSelectedRefrigerator;
+      if (fridge !== null) {
+        this.refrigeratorId = fridge.id;
+      }
       this.fetchData();
-      this.calculateTotalFoodStats();
+    },
+    setup() {
+      const { t } = useI18n();
+      return {
+        t
+      };
     },
     destroyed() {
       if (this.chart) {

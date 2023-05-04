@@ -72,7 +72,6 @@ function loadGrocery(){
     setSelected(props.grocery.unit);
     selectedQuantity.value = props.grocery.quantity;
     allowedMax.value = props.grocery.quantity;
-    console.log(allowedMax.value);
   }
 }
 

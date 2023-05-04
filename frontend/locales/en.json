@@ -117,5 +117,7 @@
   "add" : "Add",
   "not_in_refrigerator" : "Not In Refrigerator",
   "in_refrigerator" : " In Refrigerator",
+  "add_grocery" : "Add Grocery",
+  "cancel" : "Cancel",
   "add_recipe_to_weekly_menu" : "Add recipe to weekly menu"
 }

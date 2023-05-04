@@ -29,11 +29,11 @@
 
 <script setup lang="ts">
 import {getUserData} from "~/service/httputils/authentication/AuthenticationService";
-import type { User } from "@/types/UserType";
+import type { User } from "~/types/UserType";
 import { onMounted, ref } from 'vue';
 import { useUserStore } from "~/store/userStore";
-import axiosInstance from "@/service/AxiosInstance";
-import BaseInput from "@/components/Form/BaseInput.vue";
+import axiosInstance from "~/service/AxiosInstance";
+import BaseInput from "~/components/Form/BaseInput.vue";
 import { AxiosError } from "axios";
 const { t } = useI18n();
 

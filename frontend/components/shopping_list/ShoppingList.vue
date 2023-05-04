@@ -22,7 +22,8 @@
                                 :key="category.id"
                                 :CategoryDetails="category"
                                 :ShoppingListId="shoppingListId"
-                                @updateList="loadCategories">
+                                @updateList="loadCategories"
+                                @prompt-refrigerator="promptRefrigerator()">
                             </ShoppingListCategory>
                         </div>
                         <div v-if="refrigeratorSuggestions !== null && refrigeratorSuggestions.length !== 0">
@@ -45,7 +46,8 @@
                             v-for="element in shoppingCart"
                             :key="element.id"
                             :ElementDetails=element
-                            @updateList="loadShoppingCart">
+                            @updateList="loadShoppingCart"
+                            @prompt-refrigerator="promptRefrigerator()">
                         </ShoppingListElement>
                         <div class="p-2 flex justify-end absolute bottom-0 right-0">
                             <button @click.stop="addAllElementsToRefrigerator" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-300 bg-sky-400"> {{ t('put_everything_in_the_refrigerator') }} </button>
@@ -78,7 +80,6 @@
 import ShoppingListService from "~/service/httputils/ShoppingListService";
 import ShoppingCartService from "~/service/httputils/ShoppingCartService";
 import ShoppingListElement from "./ShoppingListElement.vue";
-import AddNewElement from "./AddNewElement.vue";
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
 import { Unit } from "~/types/UnitType";
@@ -125,6 +126,9 @@ import { ResponseGrocery } from"~/types/ResponseGrocery"
     },
     
     methods: {
+        promptRefrigerator(){
+                this.$emit('prompt-refrigerator');
+            },
         async addGroceryToShoppingList() {
             if(this.grocery.id && this.unit.id && this.quantity > 0){
                 const grocery: SaveGrocery = { groceryId: this.grocery.id, quantity: this.quantity, foreignKey: this.shoppingListId, unitDTO : this.unit};
@@ -132,6 +136,11 @@ import { ResponseGrocery } from"~/types/ResponseGrocery"
 
                 if (responseStatus.status !== 200) {
                     alert("Det oppstod en feil ved overføring av varen til handlelisten")
+                }
+                else{
+                    this.loadCategories();
+                    this.loadShoppingCart();
+                    this.loadSuggestionsFromRefrigerator();
                 }
             }
         },
@@ -174,14 +183,12 @@ import { ResponseGrocery } from"~/types/ResponseGrocery"
             try {
                 this.shoppingCart = []
                 let responseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);
-                console.log(responseCart)
                 if (responseCart.data.length > 0) {
                     responseCart.data.forEach((element: ResponseGrocery) => {
                         let object: ShoppingListElementType = { id: element.id, description: element.description, quantity: element.quantity,unitDTO : element.unitDTO, subCategoryName: element.subCategoryName, isAddedToCart: true, isSuggested: false, isFromRefrigerator: false };
                         this.shoppingCart.push(object);
                     }); 
                 }
-                console.log(this.shoppingCart);
             } catch (error) {
                 console.error(error);
                 this.shoppingCart = [];
@@ -220,12 +227,11 @@ import { ResponseGrocery } from"~/types/ResponseGrocery"
                     quantity : element.quantity,
                     foreignKey : -1,
                 })
-            });
-            
+            });            
             let transferStatus = await ShoppingCartService.transferAllToRefrigerator(groceries);
             this.loadShoppingCart()
             if (transferStatus.status == 200) {
-                //alert("Varen ble vellykket overført")
+                this.$emit('prompt-refrigerator');
             } else {
                 alert("Det oppstod en feil ved overføring av varen")
             }
@@ -235,6 +241,6 @@ import { ResponseGrocery } from"~/types/ResponseGrocery"
             this.loadCategories()
         }
     },
-    components: { AddNewElement, RefrigeratorGroceries }
+    components: { RefrigeratorGroceries }
 })
 </script>

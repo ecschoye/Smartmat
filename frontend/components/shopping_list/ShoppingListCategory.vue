@@ -17,7 +17,8 @@
                 v-for="element in categoryListItems"
                 :key="element.id"
                 :ElementDetails="element"
-                @updateList="loadShoppingListCategories">
+                @updateList="loadShoppingListCategories"
+                @prompt-refrigerator="promptRefrigerator()">
             </ShoppingListElement>
         </div>
     </div>
@@ -53,6 +54,9 @@ import { ResponseGrocery } from "~/types/ResponseGrocery";
             this.loadSuggestions()
         },
         methods: {
+            promptRefrigerator(){
+                this.$emit('prompt-refrigerator');
+            },
             async loadShoppingList() {
                 try {
                     let response = await ShoppingListService.getGroceriesFromCategorizedShoppingList(this.ShoppingListId, this.CategoryDetails.id)

@@ -92,6 +92,7 @@ import { ShoppingListElementType } from "~/types/ShoppingListElement";
                 let transferStatus = await ShoppingCartService.transferGroceryToShoppingList(this.ElementDetails.id);
                 console.log(transferStatus);
                 if (transferStatus.data) {
+                    this.$emit('prompt-refrigerator');
                     //alert("Varen ble vellykket lagt tilbake i handlelisten")
                 } else {
                     alert("Det oppstod en feil ved overføring av varen")
@@ -121,6 +122,7 @@ import { ShoppingListElementType } from "~/types/ShoppingListElement";
                 }
                 this.$emit('updateList')            
                 if (transferStatus.status == 200) {
+                    this.$emit('prompt-refrigerator');
                     //alert("Varen ble vellykket overført")
                 } else {
                     alert("Det oppstod en feil ved overføring av varen")

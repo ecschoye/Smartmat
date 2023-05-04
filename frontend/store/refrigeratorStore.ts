@@ -67,7 +67,7 @@ export const useRefrigeratorStore = defineStore('refrigerator', {
             this.selectedGrocery = null;
         },
         deleteRefrigerator(refrigerator: Refrigerator) {
-            const index = this.refrigerators.findIndex(r => r.id === refrigerator);
+            const index = this.refrigerators.findIndex(r => r.id === refrigerator.id);
             if (index !== -1) {
                 this.refrigerators.splice(index, 1);
                 console.log("after delete")

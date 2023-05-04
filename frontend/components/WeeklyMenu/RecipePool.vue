@@ -1,7 +1,7 @@
 <template>
     <div class="top-buttons">
-        <button class="random-button" @click="randomRecipesEvent">{{ $t("generate_random_recipes") }}</button>
-        <button class="random-button" @click="removeAllRecipes">{{ $t("remove_all_recipes") }}</button>
+        <ButtonGreenButton width="300px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="randomRecipesEvent" :label="$t('generate_random_recipes')"></ButtonGreenButton>
+        <ButtonGreenButton width="300px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="removeAllRecipes" :label="$t('remove_all_recipes')"></ButtonGreenButton>
     </div>
     <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title">{{ $t("current_week") }}</h1>
     <h1 v-else class="title">{{ $t("next_week") }}</h1>
@@ -47,8 +47,8 @@
     </div>
 
     <div class="navigation-buttons">
-      <button @click="goToPreviousWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 1" class="week-button">{{ $t("current_week") }}</button>
-      <button @click="goToNextWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 2" class="week-button">{{ $t("next_week") }}</button>
+        <ButtonGreenButton width="100px" height="30px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="goToPreviousWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 1" :label="$t('current_week')"></ButtonGreenButton>
+        <ButtonGreenButton width="100px" height="30px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="goToNextWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 2" :label="$t('next_week')"></ButtonGreenButton>
     </div>
     
 </template>

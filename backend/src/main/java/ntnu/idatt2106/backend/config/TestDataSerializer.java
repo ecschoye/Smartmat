@@ -199,16 +199,17 @@ public class TestDataSerializer {
 
     private void createRecipeGroceries() {
         // An array of recipe names
-        String[] recipeNames = {"Eggerøre", "Ostesmørbrød", "Pølse i brød"};
+        String[] recipeNames = {"Eggerøre", "Ostesmørbrød", "Pølse i brød", "Fisk"};
 
         // An array of grocery names
-        long[] groceryNames = {153, 95, 798, 870, 320};
+        long[] groceryNames = {153, 95, 798, 870, 320, 517};
 
         // An array of quantities for each recipe-grocery pair
         int[][] quantities = {
-                {1, 0, 0, 0, 0}, // Eggerøre needs one of 153
-                {0, 2, 1, 0, 0}, // Ostesmørbrød needs two of 95 and one of 79
-                {0, 0, 0, 1, 1}  // Pølse i brød needs one of 870 and one of 320
+                {1, 0, 0, 0, 0, 0}, // Eggerøre needs one of 153
+                {0, 2, 1, 0, 0, 0}, // Ostesmørbrød needs two of 95 and one of 79
+                {0, 0, 0, 1, 1, 0},  // Pølse i brød needs one of 870 and one of 320
+                {0, 0, 0, 0, 0, 1}
         };
 
         for (int i = 0; i < recipeNames.length; i++) {
@@ -255,15 +256,17 @@ public class TestDataSerializer {
 
 
     private void createRecipes() {
-        String[] recipeNames = {"Eggerøre", "Ostesmørbrød", "Pølse i brød"};
+        String[] recipeNames = {"Eggerøre", "Ostesmørbrød", "Pølse i brød", "Fisk"};
         String[] recipeUrls = {
                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsP-2AGz4oV39TsB-8_Fq2gtuPhdY2a9bg-g&usqp=CAU",
                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT63fKEnYFM1G0UdBFjhPYRjtPKEiooGZU7kA&usqp=CAU",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwZNzTD7pUbIO7zEnTSKwZgv0dOvyHiD5B8Q&usqp=CAU"
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwZNzTD7pUbIO7zEnTSKwZgv0dOvyHiD5B8Q&usqp=CAU",
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAxgCKGhsBcpqf4EsCZ-i2A9VbcFnqajJv5w&usqp=CAU"
         };
         RecipeCategory[] categories = {
                 getRecipeCategoryByName("Breakfast"),
                 getRecipeCategoryByName("Lunch"),
+                getRecipeCategoryByName("Dinner"),
                 getRecipeCategoryByName("Dinner")
         };
 

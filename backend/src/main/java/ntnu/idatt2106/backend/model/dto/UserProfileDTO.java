@@ -2,6 +2,7 @@ package ntnu.idatt2106.backend.model.dto;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,9 +12,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UserProfileDTO {
 
     private String name;
     private String email;
-    private long favoriteRefrigeratorId;
+    private Long favoriteRefrigeratorId;
 }

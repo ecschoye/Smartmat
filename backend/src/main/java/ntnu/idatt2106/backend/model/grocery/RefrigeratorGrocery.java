@@ -46,8 +46,7 @@ public class RefrigeratorGrocery {
     @JoinColumn(name = "groceryId")
     @Schema(description = "Grocery in the refrigerator")
     private Grocery grocery;
-
-
+    
     @ManyToOne
     @JoinColumn(name = "unitId")
     @Schema(description = "The unit of a grocery")
@@ -57,9 +56,6 @@ public class RefrigeratorGrocery {
     @Column(name = "quantity")
     @Schema(description = "THe quantity of specified units")
     private int quantity;
-
-
-
 
     @OneToMany(mappedBy = "groceryEntity", cascade = CascadeType.REMOVE)
     private Set<GroceryNotification> groceryNotifications = new HashSet<>();

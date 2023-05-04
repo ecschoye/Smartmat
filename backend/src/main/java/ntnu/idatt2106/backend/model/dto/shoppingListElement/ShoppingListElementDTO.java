@@ -1,5 +1,6 @@
 package ntnu.idatt2106.backend.model.dto.shoppingListElement;
 
+import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 
 public class ShoppingListElementDTO {
@@ -7,6 +8,7 @@ public class ShoppingListElementDTO {
     private long groceryId;
     private String description;
     private int quantity;
+    private UnitDTO unitDTO;
     private String categoryName;
     private boolean requested;
     public ShoppingListElementDTO(GroceryShoppingList element) {
@@ -14,6 +16,7 @@ public class ShoppingListElementDTO {
         this.groceryId = element.getGrocery().getId();
         this.description = element.getGrocery().getDescription();
         this.quantity = element.getQuantity();
+        this.unitDTO = new UnitDTO(element.getUnit());
         this.categoryName = element.getGrocery().getSubCategory().getCategory().getName();
         this.requested = element.isRequest();
     }
@@ -32,6 +35,10 @@ public class ShoppingListElementDTO {
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public UnitDTO getUnitDTO() {
+        return unitDTO;
     }
 
     public String getCategoryName() {

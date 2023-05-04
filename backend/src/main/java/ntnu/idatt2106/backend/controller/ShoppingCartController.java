@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,8 +57,9 @@ public class ShoppingCartController {
     }
 
     @PostMapping("/transfer-shoppingList/{shoppingCartItemId}")
+    @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
     public ResponseEntity<Boolean> transferToShoppingList(@PathVariable(name = "shoppingCartItemId") long shoppingCartItemId,
-                                                          HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, SaveException, UnauthorizedException, RefrigeratorNotFoundException, ShoppingListNotFound {
+                                                          HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, SaveException, UnauthorizedException, ShoppingListNotFound {
         logger.info("Received request to transfer grocery from shopping cart to shopping list");
         GroceryShoppingCart deletedGroceryItem = shoppingCartService.deleteGrocery(shoppingCartItemId, httpRequest);
         shoppingListService.saveGrocery(new SaveGroceryRequest(deletedGroceryItem), httpRequest);

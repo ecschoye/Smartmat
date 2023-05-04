@@ -13,6 +13,7 @@ import ntnu.idatt2106.backend.model.recipe.Recipe;
 import ntnu.idatt2106.backend.model.recipe.RecipeGrocery;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
+import ntnu.idatt2106.backend.repository.recipe.RecipeRepository;
 import org.springframework.stereotype.Service;
 import ntnu.idatt2106.backend.exceptions.NoSuchElementRuntimeException;
 
@@ -31,6 +32,8 @@ public class RecipeService {
     private final Logger logger = Logger.getLogger(RecipeService.class.getName());
 
     private static int lastDuplicateIndex = 0;
+
+    private final RecipeRepository recipeRepository;
 
 
     /**
@@ -142,16 +145,8 @@ public class RecipeService {
         }).toList();
     }
 
-
-
-
-
-
-
-
-
-
-    /*public List<RecipeDTO> convertToDTOs(List<Recipe> recipes) {
-        return recipes.stream().map(RecipeDTO::new).toList();
-    }*/
+    public List<RecipeDTO> getAllRecipes() {
+        List<Recipe> recipes = recipeRepository.findAll();
+        return convertToDTOs(recipes);
+    }
 }

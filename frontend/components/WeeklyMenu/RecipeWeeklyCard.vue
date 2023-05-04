@@ -19,17 +19,20 @@
       <div class="h-40 dark:hidden bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(49,196,141,0) 90%, rgba(49,196,141,1) 100%), url(${recepeInfo.url})` }"></div>
       <div class="h-40 hidden dark:block bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(39,39,42,0) 95%, rgba(39,39,42,1) 100%), url(${recepeInfo.url})` }"></div>
       </div>
-      <div class="recipe-info">
+      <div class="recipe-info mt-10">
         <div>
           <h3 class="recepe-title">{{ recepeInfo.name }}</h3>
         </div>
-        <div class="recipe-choices">
-          <select @change="handleOptionChange" v-model="selectedOption">
-            <option value="" disabled selected hidden>{{ $t("options") }}</option>
-            <option value="option1">{{ $t("view_ingredients") }}</option>
-            <option value="option2">{{ $t("see_recipe") }}</option>
-            <option value="option3">{{ $t("remove") }}</option>
-          </select>
+        <div class="recipe-choices flex flex-col space-y-2">
+          <button @click="handleOptionChange('option1')" class="border-2 bg-light-color border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black font-bold items-center px-4 rounded transform hover:scale-100 py-1 px-2 rounded text-sm w-full">
+            {{ $t("view_ingredients") }}
+          </button>
+          <button @click="handleOptionChange('option2')" class="border-2 bg-light-color border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black font-bold items-center px-4 rounded transform hover:scale-100 py-1 px-2 rounded text-sm w-full">
+            {{ $t("see_recipe") }}
+          </button>
+          <button @click="handleOptionChange('option3')" class="border-2 bg-light-color border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black font-bold items-center px-4 rounded transform hover:scale-100 py-1 px-2 rounded text-sm w-full">
+            {{ $t("remove") }}
+          </button>
         </div>
       </div>
     </div>
@@ -108,8 +111,8 @@
 <style>
  .Recipe-card-wrapper {
   position: relative;
-  width: 160px;
-  height: 260px;
+  width: 225px;
+  height: 350px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   z-index: 1;
@@ -121,7 +124,6 @@
     transition: 0.3s ease;
     background-size: 1%;
     border-radius: 14px;
-    box-shadow: 9px 9px 18px #e6e6e6, -9px -9px 18px var(on-hover);
     cursor: pointer;
   }
 

@@ -307,6 +307,13 @@ export default {
   }
 }
 
+definePageMeta({
+  "requiresAuth": true,
+  middleware: [
+    'auth',
+  ],
+})
+
 </script>
 
 

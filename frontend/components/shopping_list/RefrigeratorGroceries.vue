@@ -16,7 +16,9 @@
             <ShoppingListElement
                 v-for="element in CategoryListItems"
                 :key="element.id"
-                :ElementDetails="element">
+                :ElementDetails="element"
+                @updateList="updateList()"
+                >
             </ShoppingListElement>
         </div>
     </div>
@@ -38,6 +40,11 @@ import { ShoppingListElementType } from '~/types/ShoppingListElement';
         data() {
             return {
                 isCategoryExpanded: false,
+            }
+        },
+        methods: {
+            updateList(){
+                this.$emit('updateList')
             }
         }
     })

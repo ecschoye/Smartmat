@@ -25,7 +25,7 @@
 
           <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
             <div class="max-h-64 overflow-y-scroll">
-              <HeadlessListboxOptions class=" absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-b-md bg-green-color dark:bg-zinc-600 py-0 text-base  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+              <HeadlessListboxOptions class=" absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-b-md bg-light-color dark:bg-zinc-600 py-0 text-base  shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                 <HeadlessListboxOption as="template" v-for="fridge in refrigerators" :key="fridge.id" :value="fridge" v-slot="{ active, selected }" @click ="setSelected(fridge)">
                   <li :class="[active ? 'bg-emerald-400 dark:bg-green-500 text-white' : 'text-gray-900  dark:text-white', 'relative cursor-default select-none py-2 pl-1 pr-4','hover:cursor-pointer']">
                     <span @click="goToAdministrateFridgePage(fridge)" :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 right-0 flex items-center pr-1']">

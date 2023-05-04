@@ -1,5 +1,5 @@
 <template>
-<header class="navbar-light-color dark:navbar-dark-color border-b-4 dark:border-black" style="min-width:360px; max-height: 96px;">
+<header class="navbar-light-color dark:navbar-dark-color dark:border-black" style="min-width:360px; max-height: 96px;">
   <nav class="mx-auto flex max-w-7xl items-center p-6 lg:px-8" aria-label="Global">
     <NuxtLink sm:hidden to="/" class="-m-1.5 p-1.5 mr-4 hidden pointer-events-none sm:block sm:pointer-events-auto">
       <span class="sr-only">SmartMat</span>
@@ -10,7 +10,7 @@
       <NuxtLink to="/" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('home')}}</NuxtLink>
       <NuxtLink to="/weekly-menu" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('weekly_menu')}}</NuxtLink>
       <NuxtLink to="/recipe-list" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('recipes')}}</NuxtLink>
-      <NuxtLink to="/" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('statistics')}}</NuxtLink>
+      <NuxtLink to="/stats" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('statistics')}}</NuxtLink>
     </div>
     <div class="flex flex-1 space-x-2 items-center justify-end">
       <FridgeSelector v-if="loggedIn"/>

@@ -3,25 +3,33 @@
     <h1 class="text-6xl text-black dark:text-white">{{t('recipes')}}</h1>
   </div>
   <div>
-    <RecipeCatalog
-    @see-recipe-event="seeRecipe"/>
+    <RecipeDisplay :recipe="recipe" @close-display-event="closeDisplayEvent"/>
+    <RecipeCatalog @see-recipe-event="handleRecipeEvent"/>
   </div>
 </template>
 
 <script lang="ts">
-import RecipeCatalog from "~/components/Recipe/RecipeCatalog.vue";
 import { Recipe } from "~/types/RecipeType";
 export default {
   setup() {
     const { t } = useI18n();
     return {t}
   },
-
+  data() {
+      return {
+        overlay : true,
+        recipe : null as Recipe | null
+      };
+  },
   methods: {
-    seeRecipe(recipe : Recipe) {
-      console.log(recipe);
+      handleRecipeEvent(recipe : Recipe) {
+        console.log(recipe)
+        this.recipe = recipe
+      },
+      closeDisplayEvent(){
+        this.recipe = null;
+      }
     }
-  }
 }
 
 

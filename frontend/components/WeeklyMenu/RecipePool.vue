@@ -5,9 +5,9 @@
     </div>
     <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title">{{ $t("current_week") }}</h1>
     <h1 v-else class="title">{{ $t("next_week") }}</h1>
-    <div class="recepe-pool" v-if="weeklyMenuStore.$state.chosenWeek === 1">
-        <div v-for="weekday in activeWeekdays" :key="weekday" class="recepe-card">
-            <div class="recepe-content">
+    <div class="recipe-pool" v-if="weeklyMenuStore.$state.chosenWeek === 1">
+        <div v-for="weekday in activeWeekdays" :key="weekday" class="recipe-card">
+            <div class="recipe-content">
                 <div class="weekday">
                     {{ weekday }}
                 </div>
@@ -25,9 +25,9 @@
             </div>
         </div>
     </div>
-    <div class="recepe-pool" v-else>
-        <div v-for="weekday in Weekdays" :key="weekday" class="recepe-card">
-            <div class="recepe-content">
+    <div class="recipe-pool" v-else>
+        <div v-for="weekday in Weekdays" :key="weekday" class="recipe-card">
+            <div class="recipe-content">
                 <div class="weekday">
                     {{ weekday }}
                 </div>
@@ -56,11 +56,9 @@
 <script lang="ts">
 import { useWeeklyMenuStore } from '~/store/WeeklyMenuStore';
 import { Recipe } from '~/types/RecipeType';
-import GrayButton from '../Button/GrayButton.vue';
 import UnknownRecipe from './UnknownRecipe.vue';
 import { fetchRecipes } from '~/service/httputils/RecipeService';
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
-import { number } from '@intlify/core-base';
 import {FetchRecipeDTO} from "~/types/FetchRecipeDTO";
 import { Ingredient } from "~/types/IngredientType"
 import type { Unit } from '~/types/UnitType';
@@ -253,11 +251,10 @@ export default {
                 const ingredients : Ingredient[] = []; 
                 for(let j = 0; j < response.data[i].ingredients.length; j++){
                     const ingredientDTO = response.data[i].ingredients[j]; 
-
                     const unit : Unit = {
-                        id : ingredientDTO.id,
-                        name : ingredientDTO.name,
-                        weight : ingredientDTO.weight
+                        id : ingredientDTO.unit.id,
+                        name : ingredientDTO.unit.name,
+                        weight : ingredientDTO.unit.weight
                     }
 
                     const ingredient : Ingredient = {
@@ -336,14 +333,14 @@ export default {
                 }
         }
     },
-    components: { GrayButton, UnknownRecipe }
+    components: { UnknownRecipe }
 }
 
 </script>
 
 <style>
 
-.recepe-pool {
+.recipe-pool {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
@@ -358,7 +355,7 @@ export default {
     justify-content: space-between;
 }
 
-.recepe-card {
+.recipe-card {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
@@ -366,7 +363,7 @@ export default {
     overflow: hidden;
 }
 
-.recepe-content {
+.recipe-content {
     display: flex;
     flex-direction: column;
     align-items: center;

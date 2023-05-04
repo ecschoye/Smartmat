@@ -106,7 +106,7 @@ public class GroceryController {
     public ResponseEntity<?> eatRefrigeratorGrocery(@RequestBody DeleteRefrigeratorGroceryDTO dto, HttpServletRequest httpServletRequest) throws Exception {
         try{
             logger.info("Received request to eat refrigeratorGrocery: " + dto.getRefrigeratorGroceryDTO().getId());
-            RefrigeratorGrocery grocery = groceryService.useRefrigeratorGrocery(dto, httpServletRequest);
+            RefrigeratorGrocery grocery = groceryService.eatRefrigeratorGrocery(dto, httpServletRequest);
             if(grocery != null){
                 logger.info("All of grocery consumed, sending refrigeratorGrocery to shopping list");
                 shoppingListService.saveGroceryToSuggestionForRefrigerator(grocery.getGrocery().getId(),
@@ -137,7 +137,7 @@ public class GroceryController {
     public ResponseEntity<?> trashRefrigeratorGrocery(@RequestBody DeleteRefrigeratorGroceryDTO dto, HttpServletRequest httpServletRequest) throws Exception {
         try{
             logger.info("Received request to trash refrigeratorGrocery: " + dto.getRefrigeratorGroceryDTO().getId());
-            RefrigeratorGrocery grocery = groceryService.useRefrigeratorGrocery(dto, httpServletRequest);
+            RefrigeratorGrocery grocery = groceryService.trashRefrigeratorGrocery(dto, httpServletRequest);
             if(grocery != null){
                 logger.info("All of grocery trashed, sending refrigeratorGrocery to shopping list");
                 shoppingListService.saveGroceryToSuggestionForRefrigerator(grocery.getGrocery().getId(),

@@ -50,6 +50,7 @@ public class GroceryService {
     private final RefrigeratorService refrigeratorService;
     private final NotificationService notificationService;
     private final UnitService unitService;
+    private final GroceryHistoryService groceryHistoryService;
 
     //TODO:following line is temporary
     private final UnitRepository unitRepository;
@@ -284,6 +285,28 @@ public class GroceryService {
             throw new NoGroceriesFound("Could not find any groceries");
         }
         return groceries.stream().map(GroceryDTO::new).sorted(new GroceryDTOComparator()).collect(Collectors.toList());
+    }
+
+    public RefrigeratorGrocery eatRefrigeratorGrocery(DeleteRefrigeratorGroceryDTO dto, HttpServletRequest request) throws Exception {
+        Optional<RefrigeratorGrocery> grocery = refrigeratorGroceryRepository.findById(dto.getRefrigeratorGroceryDTO().getId());
+        RefrigeratorGrocery result = useRefrigeratorGrocery(dto, request);
+        if(grocery.isEmpty()){
+            throw new NoSuchElementException("Could not find grocery with id: " + dto.getRefrigeratorGroceryDTO().getId());
+        }
+        logger.info("Creating history object");
+        groceryHistoryService.newGroceryHistory(grocery.get(), dto.getQuantity(), dto.getUnitDTO(), false);
+        return result;
+    }
+
+    public RefrigeratorGrocery trashRefrigeratorGrocery(DeleteRefrigeratorGroceryDTO dto, HttpServletRequest request) throws Exception {
+        Optional<RefrigeratorGrocery> grocery = refrigeratorGroceryRepository.findById(dto.getRefrigeratorGroceryDTO().getId());
+        RefrigeratorGrocery result = useRefrigeratorGrocery(dto, request);
+        if(grocery.isEmpty()){
+            throw new NoSuchElementException("Could not find grocery with id: " + dto.getRefrigeratorGroceryDTO().getId());
+        }
+        logger.info("Creating history object");
+        groceryHistoryService.newGroceryHistory(grocery.get(),dto.getQuantity(), dto.getUnitDTO(), true);
+        return result;
     }
 
     public RefrigeratorGrocery useRefrigeratorGrocery(DeleteRefrigeratorGroceryDTO dto, HttpServletRequest request) throws Exception {

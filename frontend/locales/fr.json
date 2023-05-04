@@ -128,5 +128,10 @@
   "who_is_smart_mat_for_response": "SmartMat est une application qui convient particulièrement aux ménages qui souhaitent réduire le gaspillage alimentaire, économiser de l'argent et prendre soin de l'environnement. Avec l'application SmartMat, les utilisateurs peuvent facilement planifier et organiser leurs repas de manière plus efficace.",
   "your_recipes" : "Vos recettes",
   "you_have_no_groceries_in_the_shopping_cart" : "Il n'y a pas d'épicerie dans le panier d'achat",
-  "you_have_no_groceries_in_the_shopping_list" : "Il n'y a pas d'épicerie dans la liste d'achats"
+  "you_have_no_groceries_in_the_shopping_list" : "Il n'y a pas d'épicerie dans la liste d'achats",
+  "not_in_refrigerator": "Pas dans le réfrigérateur",
+  "in_refrigerator": "Dans le réfrigérateur",
+  "add_grocery": "Ajouter des courses",
+  "cancel": "Annuler",
+  "add_recipe_to_weekly_menu": "Ajouter la recette au menu hebdomadaire"
 }

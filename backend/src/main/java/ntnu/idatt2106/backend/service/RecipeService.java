@@ -138,7 +138,7 @@ public class RecipeService {
                                 .findFirstByRecipeAndGrocery(recipe, groceryForSearch)
                                 .orElseThrow(() -> new NoSuchElementRuntimeException("No matching RecipeGrocery found."));
 
-                        return new IngredientDTO(grocery, recipeGrocery.getQuantity());
+                        return new IngredientDTO(grocery, recipeGrocery.getQuantity(), recipeGrocery.getUnit());
                     })
                     .collect(Collectors.toList());
 

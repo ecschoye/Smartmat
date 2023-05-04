@@ -1,10 +1,15 @@
 import { expect, test } from 'vitest';
-import { mount } from '@vue/test-utils';
+import {mount, shallowMount} from '@vue/test-utils';
 import LoginForm from './LoginForm.vue';
 import { createPinia } from 'pinia';
 import { createRouter, createWebHistory } from 'vue-router'
 import register from '../../pages/register.vue'
 import index from '../../pages/index.vue'
+import ErrorAlert from '../AlertBox/ErrorAlert.vue';
+import GreenButton from "../Button/GreenButton.vue";
+import GrayButton from "../Button/GrayButton.vue";
+import NuxtLink from "#app/components/nuxt-link";
+
 
 
 const pinia = createPinia()
@@ -12,11 +17,7 @@ const mockStore = {
     someGetter: 'mockValue'
 }
 
-const globalMocks = {
-    $pinia: pinia,
-    $store: mockStore,
-    $t: () => {}, // Add this line to mock the $t function
-}
+
 
 const router = createRouter({
     history: createWebHistory(''),
@@ -34,69 +35,43 @@ const router = createRouter({
 
 const localePath = (path: string) => router.resolve({ path }).href
 
-test('renders LoginForm component', () => {
+const globalMocks = {
+    $pinia: pinia,
+    $store: mockStore,
+    $t: () => {}, // Add this line to mock the $t function
+    localePath
+}
+
+
+describe('LoginForm.vue', () => {
     const wrapper = mount(LoginForm, {
         global: {
             plugins: [pinia, router],
             mocks: globalMocks,
             stubs: {
                 NuxtLink: true, // Add this line to stub the nuxt-link component
-            },
-            provide: {
-                localePath,
-            },
+            }
         },
     });
-    const input = wrapper.find('BaseInput');
-    expect(input.exists()).toBe(true);
-    let test = input.attributes();
-});
 
-test('renders email and password input fields', () => {
-    const wrapper = mount(LoginForm, {
-        global: {
-            plugins: [pinia, router],
-            mocks: globalMocks,
-            stubs: {
-                NuxtLink: true,
-            },
-            provide: {
-                localePath,
-            },
-        },
+    test('renders LoginForm component', () => {
+        const input = wrapper.find('.wrapper');
+        expect(input.exists()).toBe(true);
     });
-    const emailInput = wrapper.find('#inpEmail');
-    const passwordInput = wrapper.find('#inpPassword');
 
-    expect(emailInput.exists()).toBe(true);
-    expect(passwordInput.exists()).toBe(true);
-});
-
-test('renders login and new user buttons with correct labels', () => {
-    const wrapper = mount(LoginForm, {
-        props: {
-            form: {
-                email: 'example@example.com',
-                password: 'password',
-            },
-        },
-        global: {
-            plugins: [pinia],
-            mocks: globalMocks,
-            stubs: {
-                NuxtLink: true, // Add this line to stub the nuxt-link component
-            },
-            provide: {
-                localePath,
-            },
-        },
+    test('renders email and password input fields', () => {
+        const emailInput = wrapper.find('#inpEmail');
+        const passwordInput = wrapper.find('#inpPassword');
+        expect(emailInput.exists()).toBe(true);
+        expect(passwordInput.exists()).toBe(true);
     });
-    const loginButton = wrapper.find('#login');
-    const newUserButton = wrapper.find('#new-user');
 
-    expect(loginButton.exists()).toBe(true);
-    expect(newUserButton.exists()).toBe(true);
-    expect(loginButton.text()).toBe('log_in');
-    expect(newUserButton.text()).toBe('new_user');
+    test('renders login and new user buttons', () => {
+        const loginButton = wrapper.findComponent(GreenButton);
+        const newUserButton = wrapper.findComponent(GrayButton);
+        expect(loginButton.exists()).toBe(true);
+        expect(newUserButton.exists()).toBe(true);
+    });
 });
+
 

@@ -48,7 +48,11 @@ export default defineComponent({
     disabled : {
       type: Boolean, 
       required: false 
-    }
+    },
+    form: {
+      type: Object,
+      required: false,
+    },
   },
   methods : {
     updateInitiatedValue(){

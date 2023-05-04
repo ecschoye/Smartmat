@@ -105,6 +105,8 @@
   "thursday" : "Thursday",
   "total_food_eaten": "Total Food Eaten",
   "total_food_wasted": "Total Food Wasted",
+  "to_refrigerator": "To refrigerator",
+  "norwegian_average": "Norwegian Average",
   "tuesday" : "Tuesday",
   "unfavorited_failure" : "Refrigerator could not be unfavorited",
   "unfavorited_success" : "Refrigerator was unfavorited",

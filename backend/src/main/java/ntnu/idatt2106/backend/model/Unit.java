@@ -31,6 +31,4 @@ public class Unit {
     @Column(name = "weight")
     @Schema(description = "The weight of one unit in grams")
     private int weight;
-
-
 }

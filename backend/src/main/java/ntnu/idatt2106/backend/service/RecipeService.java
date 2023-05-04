@@ -28,12 +28,11 @@ public class RecipeService {
 
     private final RefrigeratorGroceryRepository refrigeratorGroceryRepository;
     private final RecipeGroceryRepository recipeGroceryRepository;
+    private final RecipeRepository recipeRepository;
 
     private final Logger logger = Logger.getLogger(RecipeService.class.getName());
 
     private static int lastDuplicateIndex = 0;
-
-    private final RecipeRepository recipeRepository;
 
 
     /**
@@ -51,7 +50,6 @@ public class RecipeService {
 
         // First fetch all groceries the user has in fridge
         List<RefrigeratorGrocery> allGroceries = refrigeratorGroceryRepository.findAllByRefrigeratorId(refrigeratorId);
-
 
         if (allGroceries.isEmpty()) {
             throw new NoSuchElementException("No groceries found for the given refrigerator ID.");
@@ -140,13 +138,33 @@ public class RecipeService {
                                 .findFirstByRecipeAndGrocery(recipe, groceryForSearch)
                                 .orElseThrow(() -> new NoSuchElementRuntimeException("No matching RecipeGrocery found."));
 
-                        return new IngredientDTO(grocery, recipeGrocery.getQuantity());
+                        return new IngredientDTO(grocery, recipeGrocery.getQuantity(), recipeGrocery.getUnit());
                     })
                     .collect(Collectors.toList());
 
             recipeDTO.setIngredients(ingredients);
             return recipeDTO;
         }).toList();
+    }
+
+    /**
+     * Find recipe by id
+     * @param recipeId recipe id
+     * @return the recipe
+     * @throws NoSuchElementException if no recipe
+     */
+    public Recipe getRecipeById(long recipeId) throws NoSuchElementException{
+        return recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new NoSuchElementException("Could not find recipe"));
+    }
+
+    /**
+     * Find all ingredients in a recipe
+     * @param recipe the recipe
+     * @return ingredients list of RecipeGrocery
+     */
+    public List<RecipeGrocery> getIngredientsByRecipe(Recipe recipe) {
+        return recipeGroceryRepository.findAllByRecipe(recipe);
     }
 
     public List<RecipeDTO> getAllRecipes() {

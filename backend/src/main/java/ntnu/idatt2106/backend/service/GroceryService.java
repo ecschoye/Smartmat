@@ -13,6 +13,7 @@ import ntnu.idatt2106.backend.model.dto.shoppingListElement.GroceryDTOComparator
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
+import ntnu.idatt2106.backend.model.recipe.RecipeGrocery;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.repository.GroceryRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
@@ -49,6 +50,7 @@ public class GroceryService {
     private final RefrigeratorService refrigeratorService;
     private final NotificationService notificationService;
     private final UnitService unitService;
+    private final GroceryHistoryService groceryHistoryService;
 
     //TODO:following line is temporary
     private final UnitRepository unitRepository;
@@ -201,6 +203,36 @@ public class GroceryService {
     }
 
     /**
+     * Method for fetching groceries from refrigerator
+     * that matches a recipes groceris
+     *
+     * @param recipeGroceries RecipeGroceries in recipe
+     * @param refrigeratorId Refrigerator ID
+     * @return Map binding grocery id to refrigeratorGroceryDTO
+     */
+    public HashMap<Long,RefrigeratorGroceryDTO> getIngredientsInRefrigerator(List<RecipeGrocery> recipeGroceries, long refrigeratorId) {
+        HashMap<Long,RefrigeratorGroceryDTO> result = new HashMap<Long, RefrigeratorGroceryDTO>();
+        List<RefrigeratorGrocery> refrigeratorGroceries = refrigeratorGroceryRepository.findAllByRefrigeratorId(refrigeratorId);
+        for (RecipeGrocery recipeGrocery : recipeGroceries) {
+            long groceryId = recipeGrocery.getId();
+            for(RefrigeratorGrocery refrigeratorGrocery : refrigeratorGroceries){
+                if(refrigeratorGrocery.getGrocery().getId() == groceryId){
+                    if(result.containsKey(groceryId)){
+                        RefrigeratorGroceryDTO existingDTO = result.get(groceryId);
+                        if(existingDTO.getUnit().equals(refrigeratorGrocery.getUnit())){
+                            existingDTO.setQuantity(existingDTO.getQuantity() + refrigeratorGrocery.getQuantity());
+                        }
+                        result.put(groceryId, existingDTO);
+                    }else{
+                        result.put(groceryId, new RefrigeratorGroceryDTO(refrigeratorGrocery));
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * Removes a refrigeratorGrocery by id
      *
      * @param refrigeratorGroceryId id
@@ -253,6 +285,28 @@ public class GroceryService {
             throw new NoGroceriesFound("Could not find any groceries");
         }
         return groceries.stream().map(GroceryDTO::new).sorted(new GroceryDTOComparator()).collect(Collectors.toList());
+    }
+
+    public RefrigeratorGrocery eatRefrigeratorGrocery(DeleteRefrigeratorGroceryDTO dto, HttpServletRequest request) throws Exception {
+        Optional<RefrigeratorGrocery> grocery = refrigeratorGroceryRepository.findById(dto.getRefrigeratorGroceryDTO().getId());
+        RefrigeratorGrocery result = useRefrigeratorGrocery(dto, request);
+        if(grocery.isEmpty()){
+            throw new NoSuchElementException("Could not find grocery with id: " + dto.getRefrigeratorGroceryDTO().getId());
+        }
+        logger.info("Creating history object");
+        groceryHistoryService.newGroceryHistory(grocery.get(), dto.getQuantity(), dto.getUnitDTO(), false);
+        return result;
+    }
+
+    public RefrigeratorGrocery trashRefrigeratorGrocery(DeleteRefrigeratorGroceryDTO dto, HttpServletRequest request) throws Exception {
+        Optional<RefrigeratorGrocery> grocery = refrigeratorGroceryRepository.findById(dto.getRefrigeratorGroceryDTO().getId());
+        RefrigeratorGrocery result = useRefrigeratorGrocery(dto, request);
+        if(grocery.isEmpty()){
+            throw new NoSuchElementException("Could not find grocery with id: " + dto.getRefrigeratorGroceryDTO().getId());
+        }
+        logger.info("Creating history object");
+        groceryHistoryService.newGroceryHistory(grocery.get(),dto.getQuantity(), dto.getUnitDTO(), true);
+        return result;
     }
 
     public RefrigeratorGrocery useRefrigeratorGrocery(DeleteRefrigeratorGroceryDTO dto, HttpServletRequest request) throws Exception {

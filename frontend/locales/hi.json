@@ -58,5 +58,9 @@
   "add_a_grocery_from_the_list" : "सूची से एक ग्रोसरी जोड़ें",
   "find_recipe": "रेसिपी ढूंढें",
   "go_to_weekly_menu": "साप्ताहिक मेनू पर जाएं",
-  "to_refrigerator": "रेफ्रिजरेटर में"
+  "to_refrigerator": "रेफ्रिजरेटर में",
+  "total_food_eaten": "कुल खाद्य सामग्री खाई गई",
+  "total_food_wasted": "कुल खाद्य सामग्री बर्बाद हुई",
+  "food_eaten": "खाद्य सामग्री खाई गई",
+  "food_wasted": "खाद्य सामग्री बर्बाद हुई"
 }

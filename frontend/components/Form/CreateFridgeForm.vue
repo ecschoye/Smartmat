@@ -151,7 +151,7 @@ const sendForm = async () => {
 
 @media (max-width: 768px) {
   .form {
-    width: 370px;
+    width: 350px;
   }
 }
 

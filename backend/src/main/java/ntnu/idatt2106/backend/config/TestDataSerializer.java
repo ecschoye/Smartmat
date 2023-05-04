@@ -1,6 +1,7 @@
 package ntnu.idatt2106.backend.config;
 
 import jakarta.annotation.PostConstruct;
+import jnr.constants.platform.Local;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
@@ -19,6 +20,7 @@ import ntnu.idatt2106.backend.repository.*;
 import ntnu.idatt2106.backend.repository.recipe.RecipeCategoryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeRepository;
+import ntnu.idatt2106.backend.service.GroceryHistoryService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -79,6 +81,7 @@ public class TestDataSerializer {
 
     private final UnitRepository unitRepository;
 
+    private final GroceryHistoryRepository groceryHistoryRepository;
     @PostConstruct
     public void init() throws NumberFormatException {
         serialize();
@@ -94,6 +97,7 @@ public class TestDataSerializer {
         createRecipeCategories();
         createRecipes();
         createRecipeGroceries();
+        createGroceryHistory();
     }
 
 
@@ -106,12 +110,10 @@ public class TestDataSerializer {
         List<Long> groceryIds = List.of(10L, 63L, 96L, 119L, 126L, 147L, 182L, 329L, 364L, 464L, 597L, 692L, 718L, 756L, 798L, 890L, 908L);
         List<Long> unitIds = List.of(1L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L);
         insertRecipeGroceries(refrigerator, groceryIds, 1, unitIds);
-
         // Add groceries from the scenario above with their respective quantities
-        List<Long> scenarioGroceryIds = List.of(95L, 153L, 798L, 870L, 320L);
-        int[] quantities = {1, 3, 2, 1, 1}; // Updated quantities
-        List<Long> scenarioUnitIds = List.of(2L, 1L, 3L, 2L, 1L);
-
+        List<Long> scenarioGroceryIds = List.of(153L, 133L, 681L, 713L, 1945L, 1082L,95L, 153L, 798L, 870L, 320L,730L, 450L, 1534L, 1273L, 56L,154L, 1534L, 1475L, 1955L, 682L);
+        int[] quantities = {120, 250, 150, 2, 8, 18,1, 3, 2, 1, 1,400, 400, 9, 200, 3,180, 250, 4, 1, 3}; // Updated quantities
+        List<Long> scenarioUnitIds = List.of(3L, 3L, 3L, 4L, 3L, 3L,2L, 1L, 3L, 2L, 1L,3L, 3L, 3L, 3L, 4L,3L, 3L, 4L, 4L, 4L);
 
         insertRecipeGroceries(refrigerator, scenarioGroceryIds, quantities, scenarioUnitIds);
 
@@ -158,6 +160,32 @@ public class TestDataSerializer {
         }
     }
 
+    private void createGroceryHistory() {
+        Refrigerator refrigerator = refrigeratorRepository.findByName("Test Refrigerator")
+                .orElseThrow(() -> new RuntimeException("Refrigerator not found: Test Refrigerator"));
+
+        Random random = new Random();
+        for (int i = 1; i <= 12; i++) {
+            LocalDate date = LocalDate.now().minusMonths(i);
+
+            for (int j = 0; j < 25; j++) {
+                int weight = (j + 1) * 100;
+                boolean wasTrashed = random.nextDouble() <= 0.2;
+
+                groceryHistoryRepository.save(GroceryHistory.builder()
+                        .weightInGrams(weight)
+                        .wasTrashed(wasTrashed)
+                        .refrigerator(refrigerator)
+                        .dateConsumed(date)
+                        .build());
+            }
+        }
+    }
+
+
+
+
+
 
 
     private void createRefrigerator() {
@@ -199,33 +227,48 @@ public class TestDataSerializer {
 
     private void createRecipeGroceries() {
         // An array of recipe names
-        String[] recipeNames = {"Eggerøre", "Ostesmørbrød", "Pølse i brød", "Fisk"};
+        String[] recipeNames = {"Kremet pasta med laks", "Enkel sjokoladekake", "Grove vafler", "Hjemmelaget knekkebrød", "Protein-scones med cottage cheese"};
 
-        // An array of grocery names
-        long[] groceryNames = {153, 95, 798, 870, 320, 517};
+        HashMap<String, long[]> ingredientGroceries = new HashMap<>();
+        HashMap<String, int[]> ingredientQuantities = new HashMap<>();
+        HashMap<String, long[]> ingredientUnits = new HashMap<>();
 
-        // An array of quantities for each recipe-grocery pair
-        int[][] quantities = {
-                {1, 0, 0, 0, 0, 0}, // Eggerøre needs one of 153
-                {0, 2, 1, 0, 0, 0}, // Ostesmørbrød needs two of 95 and one of 79
-                {0, 0, 0, 1, 1, 0},  // Pølse i brød needs one of 870 and one of 320
-                {0, 0, 0, 0, 0, 1}
-        };
+        ingredientGroceries.put(recipeNames[0], new long[]{730L, 450L, 1534L, 1273L, 56L} ); // Grocery ID
+        ingredientQuantities.put(recipeNames[0], new int[]{400, 400, 9, 200, 3} );    // Quantites
+        ingredientUnits.put(recipeNames[0], new long[]{3L, 3L, 3L, 3L, 4L} );         // Unit
+
+        ingredientGroceries.put(recipeNames[1], new long[]{154L, 1534L, 1475L, 1955L, 682L} ); // Grocery ID
+        ingredientQuantities.put(recipeNames[1], new int[]{180, 250, 4, 1, 3} );    // Quantites
+        ingredientUnits.put(recipeNames[1], new long[]{3L, 3L, 4L, 4L, 4L} );         // Unit
+
+        ingredientGroceries.put(recipeNames[2], new long[]{1534L, 153L, 1475L, 22L, 682L, 681L, 1444L, 1945L} ); // Grocery ID
+        ingredientQuantities.put(recipeNames[2], new int[]{36, 120, 18, 6, 2, 2, 6, 3} );    // Quantites
+        ingredientUnits.put(recipeNames[2], new long[]{3L, 3L, 3L, 4L, 4L, 4L, 3L, 3L} );         // Unit
+
+        ingredientGroceries.put(recipeNames[3], new long[]{681L, 714L, 1082L, 1081L, 1059L, 1617L} ); // Grocery ID
+        ingredientQuantities.put(recipeNames[3], new int[]{4,4,2,1,1,5,7} );    // Quantites
+        ingredientUnits.put(recipeNames[3], new long[]{4L,4L,4L,4L,4L,3L,4L} );         // Unit
+
+        ingredientGroceries.put(recipeNames[4], new long[]{153L, 133L, 681L, 713L, 1945L, 1082L} ); // Grocery ID
+        ingredientQuantities.put(recipeNames[4], new int[]{120, 250, 150, 2, 8, 18} );    // Quantites
+        ingredientUnits.put(recipeNames[4], new long[]{3L, 3L, 3L, 4L, 3L, 3L} );         // Unit
 
         for (int i = 0; i < recipeNames.length; i++) {
             Recipe recipe = getRecipeByName(recipeNames[i]);
+            long[] groceryIds = ingredientGroceries.get(recipeNames[i]);
+            int[] quantities = ingredientQuantities.get(recipeNames[i]);
+            long[] units = ingredientUnits.get(recipeNames[i]);
 
-            for (int j = 0; j < groceryNames.length; j++) {
-                if (quantities[i][j] > 0) {
-                    Grocery grocery = getGroceryById(groceryNames[j]);
-
-                    if (!recipeGroceryRepository.existsByRecipeAndGrocery(recipe, grocery)) {
-                        recipeGroceryRepository.save(RecipeGrocery.builder()
-                                .recipe(recipe)
-                                .grocery(grocery)
-                                .quantity(quantities[i][j])
-                                .build());
-                    }
+            for (int k = 0; k < groceryIds.length; k++) {
+                Grocery grocery = getGroceryById(groceryIds[k]);
+                Unit unit = getUnitById(units[k]);
+                if (!recipeGroceryRepository.existsByRecipeAndGrocery(recipe, grocery)) {
+                    recipeGroceryRepository.save(RecipeGrocery.builder()
+                            .recipe(recipe)
+                            .grocery(grocery)
+                            .unit(unit)
+                            .quantity(quantities[k])
+                            .build());
                 }
             }
         }
@@ -238,6 +281,11 @@ public class TestDataSerializer {
 
     private Grocery getGroceryById(long id) {
         return groceryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Grocery not found: " + id));
+    }
+
+    private Unit getUnitById(long id) {
+        return unitRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Grocery not found: " + id));
     }
 
@@ -256,18 +304,20 @@ public class TestDataSerializer {
 
 
     private void createRecipes() {
-        String[] recipeNames = {"Eggerøre", "Ostesmørbrød", "Pølse i brød", "Fisk"};
+        String[] recipeNames = {"Kremet pasta med laks", "Enkel sjokoladekake", "Grove vafler", "Hjemmelaget knekkebrød", "Protein-scones med cottage cheese"};
         String[] recipeUrls = {
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsP-2AGz4oV39TsB-8_Fq2gtuPhdY2a9bg-g&usqp=CAU",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT63fKEnYFM1G0UdBFjhPYRjtPKEiooGZU7kA&usqp=CAU",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwZNzTD7pUbIO7zEnTSKwZgv0dOvyHiD5B8Q&usqp=CAU",
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAxgCKGhsBcpqf4EsCZ-i2A9VbcFnqajJv5w&usqp=CAU"
+                "https://www.tine.no/_/recipeimage/w_1600%2Ch_900%2Cc_fill%2Cx_2244%2Cy_1262%2Cg_xy_center/recipeimage/gojg6eaiym9ehbhd2b8l.jpg",
+                "https://www.tine.no/_/recipeimage/w_1600%2Ch_900%2Cc_fill%2Cx_1500%2Cy_1000%2Cg_xy_center/recipeimage/317652.jpg",
+                "https://www.tine.no/_/recipeimage/w_1600%2Ch_900%2Cc_fill%2Cx_1500%2Cy_1000%2Cg_xy_center/recipeimage/378532.jpg",
+                "https://www.tine.no/_/recipeimage/w_1600%2Ch_900%2Cc_fill%2Cx_1500%2Cy_1097%2Cg_xy_center/recipeimage/357942.jpg",
+                "https://www.tine.no/_/recipeimage/w_1600%2Ch_900%2Cc_fill%2Cx_1500%2Cy_937%2Cg_xy_center/recipeimage/427018.jpg"
         };
         RecipeCategory[] categories = {
-                getRecipeCategoryByName("Breakfast"),
-                getRecipeCategoryByName("Lunch"),
                 getRecipeCategoryByName("Dinner"),
-                getRecipeCategoryByName("Dinner")
+                getRecipeCategoryByName("Dessert"),
+                getRecipeCategoryByName("Dinner"),
+                getRecipeCategoryByName("Lunch"),
+                getRecipeCategoryByName("Lunch"),
         };
 
         for (int i = 0; i < recipeNames.length; i++) {

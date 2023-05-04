@@ -11,18 +11,18 @@ import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
-import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -102,7 +102,7 @@ public class ShoppingCartService {
             throw new NoGroceriesFound("Could not find any groceries for shopping cart id " + shoppingCartId);
         }
         return groceries.stream().map(ShoppingCartElementDTO::new).
-                sorted(new ShoppingCartElementDTOComparator()).collect(Collectors.toList());
+                sorted(new ShoppingCartElementDTOComparator()).toList();
     }
 
     /**
@@ -176,6 +176,7 @@ public class ShoppingCartService {
      * @throws RefrigeratorNotFoundException If no refrigerator was found
      * @throws NoGroceriesFound If no groceries was found in the shopping cart
      */
+    @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
     public void transferGroceryToRefrigerator(long shoppingCartItemId, HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, SaveException, UnauthorizedException, RefrigeratorNotFoundException {
         GroceryShoppingCart shoppingCartItem = groceryShoppingCartRepository.findById(shoppingCartItemId)
                         .orElseThrow(() -> new NoGroceriesFound("Could not find shopping cart item"));
@@ -202,6 +203,7 @@ public class ShoppingCartService {
      * @throws RefrigeratorNotFoundException If no refrigerator was found
      * @throws NoGroceriesFound If no groceries was found in the shopping cart
      */
+    @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
     public void transferAllGroceriesToRefrigerator(long[] groceryIds, HttpServletRequest httpRequest) throws UserNotFoundException, SaveException, UnauthorizedException, RefrigeratorNotFoundException, NoGroceriesFound {
         for (long groceryId:groceryIds) {
             transferGroceryToRefrigerator(groceryId, httpRequest);

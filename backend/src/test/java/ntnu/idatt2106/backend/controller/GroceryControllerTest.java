@@ -1,13 +1,11 @@
 package ntnu.idatt2106.backend.controller;
 
-import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.SubCategory;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
-import ntnu.idatt2106.backend.model.dto.response.ErrorResponse;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
@@ -17,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +24,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 class GroceryControllerTest {
@@ -47,10 +42,13 @@ class GroceryControllerTest {
     private RefrigeratorGroceryRepository refrigeratorGroceryRepository;
 
     @Mock
-    private ShoppingListService shoppingListService;
+    private ShoppingListServiceTest shoppingListServiceTest;
 
     @Mock
     private NotificationService notificationService;
+
+    @Mock
+    private ShoppingListService shoppingListService;
 
     @InjectMocks
     private GroceryController groceryController;

@@ -1,19 +1,35 @@
 <template>
     <div class="w-4/5">
         <canvas ref="chart"></canvas>
-        <div class="sm:flex hidden flex flex-row justify-center p-5 font-bold">
-            <div class="w-80 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
+        <div class="md:flex hidden flex flex-row justify-center p-5 font-bold">
+            <div class="w-80 h-48 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl pt-10 m-5">
               <h1 class="flex justify-center text-xl mb-3"> {{t('total_food_eaten')}} </h1>
-              <h3 class="flex justify-center text-green-custom text-4xl"> {{ totalFoodEaten / 1000 }} KG </h3> 
+              <h3 class="flex justify-center text-green-custom text-3xl"> {{ totalFoodEaten / 1000 }} KG </h3> 
               <h3 class="flex justify-center text-green-custom text-xl"> {{ getTotalFoodEatenPercentage() }} % </h3> 
             </div>
-            <div class="w-80 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
+            <div class="w-80 h-48 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl pt-10 m-5">
               <h1 class="flex justify-center text-xl mb-3"> {{t('total_food_wasted')}} </h1>
-              <h3 class="flex justify-center text-red-400 text-4xl"> {{ totalFoodWaste / 1000 }} KG </h3> 
+              <h3 class="flex justify-center text-red-400 text-3xl"> {{ totalFoodWaste / 1000 }} KG </h3> 
               <h3 class="flex justify-center text-red-400 text-xl"> {{ getTotalFoodWastePercentage() }} % </h3> 
+            </div>
+            <div class="w-80 h-48 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl pt-10 m-5">
+              <div v-if="!showInfo">
+                <h1 class="flex justify-center text-xl mb-3"> {{t('norwegian_average')}} </h1>
+                <h3 class="flex justify-center text-red-400 text-3xl"> 160 KG </h3> 
+                <div class="flex justify-center">
+                  <button @click="showInfo = true" class="w-12 border-2 border-black dark:border-white rounded-3xl text-xl font-serif m-2">i</button>
+                </div>
+              </div>
+              <div v-else>
+                <a href="https://www.matprat.no/artikler/matsvinn/hvorfor-kaster-vi-mat/" target="_blank" class="flex justify-center text-xl"> MatPrat (2022) </a> 
+                <h3 class="text-base text-center text-slate-400"> Based on an average norwegian household (4 pers)</h3>
+                <div class="flex justify-center">
+                  <button @click="showInfo = false" class="w-12 border-2 border-red-400 rounded-3xl text-xl text-red-400 font-mono m-2">X</button>
+                </div>
+              </div>
             </div>
         </div>
-        <div class="sm:hidden flex flex-col justify-center p-5 font-bold">
+        <div class="md:hidden flex flex-col justify-center p-5 font-bold">
             <div class="w-80 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
               <h1 class="flex justify-center text-xl mb-3"> {{t('total_food_eaten')}} </h1>
               <h3 class="flex justify-center text-green-custom text-4xl"> {{ totalFoodEaten / 1000 }} KG </h3> 
@@ -23,6 +39,22 @@
               <h1 class="flex justify-center text-xl mb-3"> {{t('total_food_wasted')}} </h1>
               <h3 class="flex justify-center text-red-400 text-4xl"> {{ totalFoodWaste / 1000 }} KG </h3> 
               <h3 class="flex justify-center text-red-400 text-xl"> {{ getTotalFoodWastePercentage() }} % </h3> 
+            </div>
+            <div class="w-80 h-48 max-h-56 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
+              <div v-if="!showInfo">
+                <h1 class="flex justify-center text-xl mb-3"> {{t('norwegian_average')}} </h1>
+                <h3 class="flex justify-center text-red-400 text-4xl"> 160 KG </h3> 
+                <div class="flex justify-center">
+                  <button @click="showInfo = true" class="w-12 border-2 border-black dark:border-white rounded-3xl text-xl font-serif m-2">i</button>
+                </div>
+              </div>
+              <div v-else>
+                <a href="https://www.matprat.no/artikler/matsvinn/hvorfor-kaster-vi-mat/" target="_blank" class="flex justify-center text-xl mb-1"> MatPrat (2022) </a> 
+                <h3 class="text-base text-center text-slate-400"> Based on an average norwegian household (4 pers)</h3>
+                <div class="flex justify-center">
+                  <button @click="showInfo = false" class="w-12 border-2 border-red-400 rounded-3xl text-xl text-red-400 font-mono m-2">X</button>
+                </div>
+              </div>
             </div>
         </div>
     </div>    
@@ -42,6 +74,7 @@
         totalFoodWaste: 0,
         totalFood: 0,
         refrigeratorId: -1,
+        showInfo: false,
         chart: null as any,
       };
     },

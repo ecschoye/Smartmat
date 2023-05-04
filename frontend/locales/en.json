@@ -98,6 +98,7 @@
   "total_food_wasted": "Total Food Wasted",
   "food_eaten": "Food Eaten",
   "food_wasted": "Food Wasted",
+  "norwegian_average": "Norwegian Average",
   "generate_random_recipes" : "Generate random recipes based on groceries in your fridge",
   "remove_all_recipes" : "Remove all recipes",
   "current_week" : "Current week",

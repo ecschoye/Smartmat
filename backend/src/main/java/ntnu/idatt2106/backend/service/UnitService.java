@@ -16,7 +16,7 @@ public class UnitService {
     private final UnitRepository unitRepository;
 
 
-    public RefrigeratorGrocery convertGrocery(RefrigeratorGrocery refrigeratorGrocery, long unitId){
+    public RefrigeratorGrocery convertGrocery(RefrigeratorGrocery refrigeratorGrocery, Long unitId){
         Optional<Unit> newUnit = unitRepository.findById(unitId);
         if(newUnit.isEmpty()){
             throw new EntityNotFoundException("Could not find unit with unitId" + unitId);

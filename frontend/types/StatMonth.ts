@@ -1,5 +1,5 @@
 interface StatMonth {
-    name: string;
+    monthName: string;
     foodEaten: number;
     foodWaste: number;
   }

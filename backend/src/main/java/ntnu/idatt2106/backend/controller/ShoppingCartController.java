@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
+import ntnu.idatt2106.backend.model.dto.CreateRefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTO;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
@@ -50,7 +51,7 @@ public class ShoppingCartController {
 
 
     @PostMapping("/add-grocery")
-    public ResponseEntity<SuccessResponse> saveGroceryToShoppingCart(@RequestBody SaveGroceryRequest groceryRequest, HttpServletRequest request) throws UnauthorizedException, ShoppingCartNotFound, UserNotFoundException, SaveException {
+    public ResponseEntity<SuccessResponse> saveGroceryToShoppingCart(@RequestBody SaveGroceryRequest groceryRequest, HttpServletRequest request) throws UnauthorizedException, ShoppingCartNotFound, UserNotFoundException, SaveException, NoSuchElementException {
         logger.info("Received request to save grocery with id {} to shopping cart with id {}", groceryRequest.getGroceryId(), groceryRequest.getForeignKey());
         shoppingCartService.saveGrocery(groceryRequest, request);
         return new ResponseEntity<>(new SuccessResponse("The grocery was added successfully", HttpStatus.OK.value()), HttpStatus.OK);
@@ -59,7 +60,7 @@ public class ShoppingCartController {
     @PostMapping("/transfer-shoppingList/{shoppingCartItemId}")
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
     public ResponseEntity<Boolean> transferToShoppingList(@PathVariable(name = "shoppingCartItemId") long shoppingCartItemId,
-                                                          HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, SaveException, UnauthorizedException, ShoppingListNotFound {
+                                                          HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, SaveException, UnauthorizedException, RefrigeratorNotFoundException, ShoppingListNotFound, NoSuchElementException {
         logger.info("Received request to transfer grocery from shopping cart to shopping list");
         GroceryShoppingCart deletedGroceryItem = shoppingCartService.deleteGrocery(shoppingCartItemId, httpRequest);
         shoppingListService.saveGrocery(new SaveGroceryRequest(deletedGroceryItem), httpRequest);
@@ -68,20 +69,19 @@ public class ShoppingCartController {
     }
 
     @PostMapping("/transfer-refrigerator/{shoppingCartItemId}")
-    public ResponseEntity<Boolean> transferToRefrigerator(@PathVariable(name = "shoppingCartItemId") long shoppingCartItemId,
+    public ResponseEntity<Boolean> transferToRefrigerator(@PathVariable(name = "shoppingCartItemId") long shoppingCartItemId, @RequestBody CreateRefrigeratorGroceryDTO dto,
                                                              HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, SaveException, UnauthorizedException, RefrigeratorNotFoundException {
         logger.info("Received request to transfer grocery to refrigerator");
-        shoppingCartService.transferGroceryToRefrigerator(shoppingCartItemId, httpRequest);//throws error if the transfer was unsuccessful
+        shoppingCartService.transferGroceryToRefrigerator(shoppingCartItemId, httpRequest, dto);//throws error if the transfer was unsuccessful
 
         logger.info("Returns transferStatus and status OK");
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
-    @PostMapping("all/transfer-refrigerator/{groceryIds}")
-    public ResponseEntity<Boolean> transferAllToRefrigerator(@PathVariable(name = "groceryIds") long[] groceryIds,
-                                                          HttpServletRequest httpRequest) throws UserNotFoundException, NoGroceriesFound, SaveException, UnauthorizedException, RefrigeratorNotFoundException {
+    @PostMapping("all/transfer-refrigerator/")
+    public ResponseEntity<Boolean> transferAllToRefrigerator(@RequestBody SaveGroceryRequest[] request, HttpServletRequest httpRequest) throws UserNotFoundException, NoGroceriesFound, SaveException, UnauthorizedException, RefrigeratorNotFoundException {
         logger.info("Received request to transfer groceries to refrigerator");
-        shoppingCartService.transferAllGroceriesToRefrigerator(groceryIds, httpRequest);
+        shoppingCartService.transferAllGroceriesToRefrigerator(request, httpRequest);
 
         logger.info("Returns transferStatus and status OK");
         return new ResponseEntity<>(true, HttpStatus.OK);

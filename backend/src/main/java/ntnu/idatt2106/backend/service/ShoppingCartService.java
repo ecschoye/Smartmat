@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.*;
+import ntnu.idatt2106.backend.model.dto.CreateRefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTOComparator;
@@ -31,6 +32,7 @@ public class ShoppingCartService {
     private final ShoppingListRepository shoppingListRepository;
     private final GroceryShoppingCartRepository groceryShoppingCartRepository;
     private final GroceryService groceryService;
+    private final UnitRepository unitRepository;
 
     private Logger logger = LoggerFactory.getLogger(ShoppingCartService.class);
 
@@ -114,7 +116,7 @@ public class ShoppingCartService {
      * @exception UnauthorizedException If the user is not authorized
      * @exception SaveException If error while saving
      */
-    public void saveGrocery(SaveGroceryRequest groceryRequest, HttpServletRequest httpRequest) throws UnauthorizedException, ShoppingCartNotFound, UserNotFoundException, SaveException {
+    public void saveGrocery(SaveGroceryRequest groceryRequest, HttpServletRequest httpRequest) throws UnauthorizedException, ShoppingCartNotFound, UserNotFoundException, SaveException, NoSuchElementException {
         ShoppingCart shoppingCart = getShoppingCartById(groceryRequest.getForeignKey());
         FridgeRole fridgeRole = groceryService.getFridgeRole(shoppingCart.getShoppingList().getRefrigerator(), httpRequest);
 
@@ -128,10 +130,12 @@ public class ShoppingCartService {
             } else {
                 logger.info("Grocery item does not exit in shopping cart. Saving the grocery to the database");
                 Grocery grocery = groceryService.getGroceryById(groceryRequest.getGroceryId());
+                Unit unit = unitRepository.findById(groceryRequest.getUnitDTO().getId()).orElseThrow(() -> new NoSuchElementException("Could not find specified unit"));
                 groceryShoppingCart = Optional.of(GroceryShoppingCart.builder()
                         .grocery(grocery)
                         .shoppingCart(shoppingCart)
                         .quantity(groceryRequest.getQuantity())
+                        .unit(unit)
                         .build());
             }
 
@@ -177,7 +181,7 @@ public class ShoppingCartService {
      * @throws NoGroceriesFound If no groceries was found in the shopping cart
      */
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void transferGroceryToRefrigerator(long shoppingCartItemId, HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, SaveException, UnauthorizedException, RefrigeratorNotFoundException {
+    public void transferGroceryToRefrigerator(long shoppingCartItemId, HttpServletRequest httpRequest, CreateRefrigeratorGroceryDTO dto) throws NoGroceriesFound, UserNotFoundException, SaveException, UnauthorizedException, RefrigeratorNotFoundException {
         GroceryShoppingCart shoppingCartItem = groceryShoppingCartRepository.findById(shoppingCartItemId)
                         .orElseThrow(() -> new NoGroceriesFound("Could not find shopping cart item"));
 
@@ -186,16 +190,13 @@ public class ShoppingCartService {
         List<GroceryDTO> groceries = new ArrayList<>();
         groceries.add(groceryDTO);
 
-        SaveGroceryListRequest saveGrocery = new SaveGroceryListRequest(refrigeratorId, groceries, UnitDTO.builder().id(1L).name("dl").build(), 1);
-        for (int i = 0; i < shoppingCartItem.getQuantity(); i++) {
+        SaveGroceryListRequest saveGrocery = new SaveGroceryListRequest(refrigeratorId, groceries, dto.getUnitDTO(), dto.getQuantity());
             groceryService.addGrocery(saveGrocery, httpRequest);
-        }
         groceryShoppingCartRepository.delete(shoppingCartItem);
     }
 
     /**
      * Transfers all groceries from the shopping cart to the refrigerator
-     * @param groceryIds Array with grocery ids to transfer
      * @param httpRequest http request
      * @throws UserNotFoundException If the user is not found
      * @throws SaveException If there occurred an error while saving
@@ -204,9 +205,16 @@ public class ShoppingCartService {
      * @throws NoGroceriesFound If no groceries was found in the shopping cart
      */
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void transferAllGroceriesToRefrigerator(long[] groceryIds, HttpServletRequest httpRequest) throws UserNotFoundException, SaveException, UnauthorizedException, RefrigeratorNotFoundException, NoGroceriesFound {
-        for (long groceryId:groceryIds) {
-            transferGroceryToRefrigerator(groceryId, httpRequest);
+    public void transferAllGroceriesToRefrigerator(SaveGroceryRequest[] request, HttpServletRequest httpRequest) throws UserNotFoundException, SaveException, UnauthorizedException, RefrigeratorNotFoundException, NoGroceriesFound {
+        for (SaveGroceryRequest grocery : request) {
+            CreateRefrigeratorGroceryDTO dto = CreateRefrigeratorGroceryDTO.builder()
+                    .groceryDTO(GroceryDTO.builder()
+                            .id(grocery.getGroceryId())
+                            .build())
+                    .quantity(grocery.getQuantity())
+                    .unitDTO(grocery.getUnitDTO())
+                    .build();
+            transferGroceryToRefrigerator(grocery.getGroceryId(), httpRequest, dto);
         }
     }
 }

@@ -1,5 +1,5 @@
 <template>
-<header class="navbar-light-color dark:navbar-dark-color border-b-4 dark:border-black" style="min-width:360px; max-height: 96px;">
+<header class="navbar-light-color dark:navbar-dark-color dark:border-black" style="min-width:360px; max-height: 96px;">
   <nav class="mx-auto flex max-w-7xl items-center p-6 lg:px-8" aria-label="Global">
     <NuxtLink sm:hidden to="/" class="-m-1.5 p-1.5 mr-4 hidden pointer-events-none sm:block sm:pointer-events-auto">
       <span class="sr-only">SmartMat</span>

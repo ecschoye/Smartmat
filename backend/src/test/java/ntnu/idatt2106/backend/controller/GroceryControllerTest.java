@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.SubCategory;
+import ntnu.idatt2106.backend.model.Unit;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
@@ -91,7 +92,7 @@ class GroceryControllerTest {
     }
 
     @Test
-    void removeRefrigeratorGrocery_validInput_removesGrocery() throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException, SaveException, ShoppingListNotFound {
+    void removeRefrigeratorGrocery_validInput_removesGrocery() throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException, SaveException, ShoppingListNotFound, NoSuchElementException {
         // Arrange
         long refrigeratorGroceryId = 1L;
         RefrigeratorGrocery refrigeratorGrocery = new RefrigeratorGrocery();
@@ -99,6 +100,7 @@ class GroceryControllerTest {
         refrigeratorGrocery.setGrocery(new Grocery(1L, "Milk", 1, "Description", new SubCategory()));
         refrigeratorGrocery.setPhysicalExpireDate(LocalDate.now());
         refrigeratorGrocery.setRefrigerator(new Refrigerator(1, "test", "ntnu"));
+        refrigeratorGrocery.setUnit(Unit.builder().id(1L).name("dl").build());
         when(groceryService.getRefrigeratorGroceryById(refrigeratorGroceryId)).thenReturn(refrigeratorGrocery);
         // Act
         ResponseEntity<SuccessResponse> responseEntity = groceryController.removeRefrigeratorGrocery(refrigeratorGroceryId, httpServletRequest);

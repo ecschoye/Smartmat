@@ -294,7 +294,7 @@ public class GroceryService {
             throw new NoSuchElementException("Could not find grocery with id: " + dto.getRefrigeratorGroceryDTO().getId());
         }
         logger.info("Creating history object");
-        groceryHistoryService.newGroceryHistory(grocery.get(), false);
+        groceryHistoryService.newGroceryHistory(grocery.get(), dto.getQuantity(), dto.getUnitDTO(), false);
         return result;
     }
 
@@ -305,7 +305,7 @@ public class GroceryService {
             throw new NoSuchElementException("Could not find grocery with id: " + dto.getRefrigeratorGroceryDTO().getId());
         }
         logger.info("Creating history object");
-        groceryHistoryService.newGroceryHistory(grocery.get(), true);
+        groceryHistoryService.newGroceryHistory(grocery.get(),dto.getQuantity(), dto.getUnitDTO(), true);
         return result;
     }
 

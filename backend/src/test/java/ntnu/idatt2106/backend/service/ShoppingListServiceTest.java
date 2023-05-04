@@ -2,10 +2,11 @@ package ntnu.idatt2106.backend.service;
 
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.Refrigerator;
-import ntnu.idatt2106.backend.model.ShoppingCart;
 import ntnu.idatt2106.backend.model.ShoppingList;
 import ntnu.idatt2106.backend.model.SubCategory;
+import ntnu.idatt2106.backend.model.Unit;
 import ntnu.idatt2106.backend.model.category.Category;
+import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
@@ -16,6 +17,7 @@ import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.repository.GroceryShoppingListRepository;
 import ntnu.idatt2106.backend.repository.RefrigeratorShoppingListRepository;
 import ntnu.idatt2106.backend.repository.ShoppingListRepository;
+import ntnu.idatt2106.backend.repository.UnitRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 public class ShoppingListServiceTest {
@@ -49,6 +52,8 @@ public class ShoppingListServiceTest {
     private GroceryService groceryService;
     @Mock
     private ShoppingCartService shoppingCartService;
+    @Mock
+    private UnitRepository unitRepository;
 
     @InjectMocks
     private ShoppingListService shoppingListService;
@@ -146,7 +151,7 @@ public class ShoppingListServiceTest {
         List<GroceryShoppingList> groceries = new ArrayList<>();
 
 
-        groceries.add(GroceryShoppingList.builder().grocery(grocery1).shoppingList(new ShoppingList()).quantity(1).isRequest(false).build());
+        groceries.add(GroceryShoppingList.builder().grocery(grocery1).unit(Unit.builder().id(1L).name("dl").build()).shoppingList(new ShoppingList()).quantity(1).isRequest(false).build());
         when(groceryShoppingListRepository.findByShoppingListId(shoppingListId, isRequested)).thenReturn(groceries);
 
 
@@ -175,7 +180,7 @@ public class ShoppingListServiceTest {
         List<GroceryShoppingList> groceries = new ArrayList<>();
 
 
-        groceries.add(GroceryShoppingList.builder().grocery(grocery1).shoppingList(new ShoppingList()).quantity(1).isRequest(true).build());
+        groceries.add(GroceryShoppingList.builder().grocery(grocery1).unit(Unit.builder().id(1L).name("dl").build()).shoppingList(new ShoppingList()).quantity(1).isRequest(true).build());
         when(groceryShoppingListRepository.findByShoppingListId(shoppingListId, isRequested)).thenReturn(groceries);
 
         List<ShoppingListElementDTO> result = shoppingListService.getGroceries(shoppingListId, isRequested);
@@ -230,7 +235,7 @@ public class ShoppingListServiceTest {
         List<GroceryShoppingList> groceries = new ArrayList<>();
 
 
-        groceries.add(GroceryShoppingList.builder().grocery(grocery1).shoppingList(new ShoppingList()).quantity(1).isRequest(false).build());
+        groceries.add(GroceryShoppingList.builder().grocery(grocery1).unit(Unit.builder().id(1L).name("dl").build()).shoppingList(new ShoppingList()).quantity(1).isRequest(false).build());
         when(groceryShoppingListRepository.findByShoppingListIdAndCategoryId(shoppingListId, category.getId(), isRequested)).thenReturn(groceries);
 
 
@@ -266,7 +271,7 @@ public class ShoppingListServiceTest {
         List<GroceryShoppingList> groceries = new ArrayList<>();
 
 
-        groceries.add(GroceryShoppingList.builder().grocery(grocery1).shoppingList(new ShoppingList()).quantity(1).isRequest(false).build());
+        groceries.add(GroceryShoppingList.builder().grocery(grocery1).unit(Unit.builder().id(1L).name("dl").build()).shoppingList(new ShoppingList()).quantity(1).isRequest(false).build());
         when(groceryShoppingListRepository.findByShoppingListIdAndCategoryId(shoppingListId, category.getId(), isRequested)).thenReturn(groceries);
 
 
@@ -305,7 +310,7 @@ public class ShoppingListServiceTest {
         List<RefrigeratorShoppingList> groceries = new ArrayList<>();
 
 
-        groceries.add(RefrigeratorShoppingList.builder().grocery(grocery1).shoppingList(new ShoppingList()).quantity(1).build());
+        groceries.add(RefrigeratorShoppingList.builder().grocery(grocery1).unit(Unit.builder().id(1L).name("dl").build()).shoppingList(new ShoppingList()).quantity(1).build());
         when(refrigeratorShoppingListRepository.findByShoppingListId(shoppingListId)).thenReturn(groceries);
 
 
@@ -395,12 +400,10 @@ public class ShoppingListServiceTest {
         assertThrows(SaveException.class, () -> shoppingListService.editGrocery(groceryShoppingListId, quantity, httpRequest));
     }
 
-    //todo: test editRefrigeratorGrocery
-
-    @DisplayName("saveGrocery saves a grocery item as a new item marked as requested when it does not exists a correspondent grocery")
+    @DisplayName("saveGrocery saves a grocery item as a new item when it does not exists a correspondent grocery")
     @ParameterizedTest(name = "when is requested is set to {0}")
     @ValueSource(booleans = {true, false})
-    void saveGrocery_saves_a_grocery_item_as_a_new_item_marked_as_requested_when_it_does_not_exists_a_correspondent_grocery(boolean isRequested) throws UserNotFoundException, UnauthorizedException, SaveException, ShoppingListNotFound {
+    void saveGrocery_saves_a_grocery_item_as_a_new_item_when_it_does_not_exists_a_correspondent_grocery(boolean isRequested) throws UserNotFoundException, UnauthorizedException, SaveException, ShoppingListNotFound {
         SubCategory subCategory = new SubCategory();
         subCategory.setCategory(new Category());
         Refrigerator refrigerator = Refrigerator.builder()
@@ -430,6 +433,7 @@ public class ShoppingListServiceTest {
                         .groceryId(grocery1.getId())
                         .quantity(1)
                         .foreignKey(shoppingList.getId())
+                        .unitDTO(new UnitDTO((Unit.builder().id(1L).name("dl").build())))
                         .build();
 
         when(shoppingListRepository.findById(shoppingList.getId())).thenReturn(Optional.of(shoppingList));
@@ -437,16 +441,17 @@ public class ShoppingListServiceTest {
         when(groceryShoppingListRepository.findByGroceryIdAndShoppingListId(grocery1.getId(), shoppingList.getId())).thenReturn(Optional.empty());
         when(groceryService.getFridgeRole(shoppingList.getRefrigerator(), httpRequest)).thenReturn(FridgeRole.USER);
         when(groceryShoppingListRepository.save(groceryShoppingListItem)).thenReturn(groceryShoppingListItem);
+        when(unitRepository.findById(anyLong())).thenReturn(Optional.ofNullable(Unit.builder().id(1L).name("dl").build()));
 
         assertDoesNotThrow(() -> {
             shoppingListService.saveGrocery(saveGroceryRequest, httpRequest);
         });
     }
 
-    @DisplayName("saveGrocery saves a grocery item as a new item marked as requested when it does exists a correspondent grocery")
+    @DisplayName("saveGrocery saves a grocery item as a new item when it does exists a correspondent grocery")
     @ParameterizedTest(name = "when is requested is set to {0}")
     @ValueSource(booleans = {true, false})
-    void saveGrocery_saves_a_grocery_item_as_a_new_item_marked_as_requested_when_it_does_t_exists_a_correspondent_grocery(boolean isRequested) throws UserNotFoundException, UnauthorizedException, SaveException, ShoppingListNotFound {
+    void saveGrocery_saves_a_grocery_item_as_a_new_item_when_it_does_t_exists_a_correspondent_grocery(boolean isRequested) throws UserNotFoundException, UnauthorizedException, SaveException, ShoppingListNotFound {
         SubCategory subCategory = new SubCategory();
         subCategory.setCategory(new Category());
         Refrigerator refrigerator = Refrigerator.builder()
@@ -514,6 +519,7 @@ public class ShoppingListServiceTest {
                 .shoppingList(shoppingList)
                 .grocery(grocery1)
                 .quantity(2)
+                .unit(Unit.builder().id(1L).name("l").build())
                 .build();
 
         when(shoppingListRepository.findByRefrigeratorId(shoppingList.getRefrigerator().getId())).thenReturn(Optional.of(shoppingList));
@@ -522,7 +528,7 @@ public class ShoppingListServiceTest {
         when(refrigeratorShoppingListRepository.save(refrigeratorShoppingList)).thenReturn(refrigeratorShoppingList);
 
         assertDoesNotThrow(() -> {
-            shoppingListService.saveGroceryToSuggestionForRefrigerator(grocery1.getId(), shoppingList.getRefrigerator().getId(), httpRequest);
+            shoppingListService.saveGroceryToSuggestionForRefrigerator(grocery1.getId(), shoppingList.getRefrigerator().getId(), refrigeratorShoppingList.getUnit().getId(), refrigeratorShoppingList.getQuantity(), httpRequest);
         });
     }
 
@@ -552,21 +558,23 @@ public class ShoppingListServiceTest {
                 .shoppingList(shoppingList)
                 .grocery(grocery1)
                 .quantity(2)
+                .unit(Unit.builder().build())
                 .build();
 
         when(shoppingListRepository.findByRefrigeratorId(shoppingList.getRefrigerator().getId())).thenReturn(Optional.of(shoppingList));
         when(refrigeratorShoppingListRepository.findByGroceryIdAndShoppingListId(grocery1.getId(), shoppingList.getId())).thenReturn(Optional.empty());
         when(groceryService.getFridgeRole(shoppingList.getRefrigerator(), httpRequest)).thenReturn(FridgeRole.SUPERUSER);
         when(refrigeratorShoppingListRepository.save(refrigeratorShoppingList)).thenReturn(refrigeratorShoppingList);
+        when(unitRepository.findById(anyLong())).thenReturn(Optional.ofNullable(Unit.builder().id(1L).build()));
 
         assertDoesNotThrow(() -> {
-            shoppingListService.saveGroceryToSuggestionForRefrigerator(grocery1.getId(), shoppingList.getRefrigerator().getId(), httpRequest);
+            shoppingListService.saveGroceryToSuggestionForRefrigerator(grocery1.getId(), shoppingList.getRefrigerator().getId(), refrigeratorShoppingList.getUnit().getId(), refrigeratorShoppingList.getQuantity(), httpRequest);
         });
     }
 
     @Test
     @DisplayName("Throws deleteGrocery NoGroceriesFound when it is not any groceries with the given id in the database")
-    void throws_getGroceries_NoGroceriesFound_when_it_is_no_groceries_with_the_given_id_in_the_database() {
+    void throws_deleteGrocery_NoGroceriesFound_when_it_is_no_groceries_with_the_given_id_in_the_database() {
         long groceryListId = 1L;
         when(groceryShoppingListRepository.findById(groceryListId)).thenReturn(Optional.empty());
 
@@ -800,6 +808,7 @@ public class ShoppingListServiceTest {
                 .grocery(grocery1)
                 .shoppingList(shoppingList)
                 .quantity(1)
+                .unit(Unit.builder().id(1L).name("dl").build())
                 .isRequest(false)
                 .build();
 
@@ -880,6 +889,7 @@ public class ShoppingListServiceTest {
                 .grocery(grocery1)
                 .shoppingList(shoppingList)
                 .quantity(1)
+                .unit(Unit.builder().id(1L).name("dl").build())
                 .build();
 
         when(refrigeratorShoppingListRepository.findById(groceryListId)).thenReturn(Optional.of(refrigeratorShoppingList));
@@ -887,6 +897,4 @@ public class ShoppingListServiceTest {
 
         assertDoesNotThrow(() -> shoppingListService.transferRefrigeratorGroceryToCart(groceryListId, httpRequest));
     }
-
-
 }

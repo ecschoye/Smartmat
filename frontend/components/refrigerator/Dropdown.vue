@@ -2,6 +2,7 @@
   <div class="h-80 w-full py-6 flex flex-col items-center dark:bg-zinc-400 sm:py-6 overflow-hidden">
     <div class="w-full flex justify-center">
       <input
+          autocomplete="off"
           @click="open = !open"
           type="search"
           id="input"

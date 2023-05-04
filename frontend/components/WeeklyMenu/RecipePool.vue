@@ -199,8 +199,6 @@ export default {
                     const ingredients : Ingredient[] = []; 
                     for(let j = 0; j < response.data[0].ingredients.length; j++){
                         const ingredientDTO = response.data[0].ingredients[j]; 
-                        console.log("Yo")
-                        console.log(ingredientDTO)
                         const unit : Unit = {
                             id : ingredientDTO.unit.id,
                             name : ingredientDTO.unit.name,

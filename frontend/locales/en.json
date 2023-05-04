@@ -115,5 +115,7 @@
   "add_recipe_to_day" : "Add a recipe",
   "amount" : "Amount", 
   "add" : "Add",
+  "not_in_refrigerator" : "Not In Refrigerator",
+  "in_refrigerator" : " In Refrigerator",
   "add_recipe_to_weekly_menu" : "Add recipe to weekly menu"
 }

@@ -4,6 +4,7 @@ package ntnu.idatt2106.backend.model.recipe;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import jakarta.persistence.*;
+import ntnu.idatt2106.backend.model.Unit;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 
 @Data
@@ -32,4 +33,9 @@ public class RecipeGrocery {
     @Column(name = "quantity", nullable = false)
     @Schema(description = "The quantity of the grocery item in the recipe")
     private int quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "unitId")
+    @Schema(description = "The unit of a grocery")
+    private Unit unit;
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-center mt-10 text-black dark:text-white">
-    <h1 class="text-6xl text-green-custom">{{t('recipes')}}</h1>
+    <h1 class="text-6xl text-black dark:text-white">{{t('recipes')}}</h1>
   </div>
   <div>
     <RecipeCatalog

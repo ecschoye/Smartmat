@@ -27,3 +27,6 @@ dist
 /cypress/screenshots
 /cypress/videos
 
+
+# vitest
+coverage

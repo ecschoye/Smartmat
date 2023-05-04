@@ -107,7 +107,7 @@ public class TestDataSerializer {
                 .orElseThrow(() -> new RuntimeException("Refrigerator not found: Test Refrigerator"));
 
         // Add groceries without the ids from the RecipeGrocery we looked at
-        List<Long> groceryIds = List.of(10L, 63L, 96L, 119L, 126L, 147L, 182L, 329L, 364L, 464L, 597L, 692L, 718L, 756L, 798L, 890L, 908L);
+        List<Long> groceryIds = List.of(22L, 63L, 96L, 119L, 126L, 147L, 182L, 329L, 364L, 464L, 597L, 692L, 718L, 756L, 798L, 890L, 908L);
         List<Long> unitIds = List.of(1L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L);
         insertRecipeGroceries(refrigerator, groceryIds, 1, unitIds);
         // Add groceries from the scenario above with their respective quantities

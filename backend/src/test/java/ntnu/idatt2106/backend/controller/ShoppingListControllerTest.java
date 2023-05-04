@@ -6,6 +6,7 @@ import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.ShoppingList;
 import ntnu.idatt2106.backend.model.SubCategory;
+import ntnu.idatt2106.backend.model.Unit;
 import ntnu.idatt2106.backend.model.category.Category;
 import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
@@ -81,11 +82,17 @@ public class ShoppingListControllerTest {
                 .id(1L)
                 .refrigerator(refrigerator)
                 .build();
+        Unit unit = Unit.builder()
+                .id(1L)
+                .name("Milk")
+                .weight(1000)
+                .build();
         GroceryShoppingList groceryShoppingList = GroceryShoppingList.builder()
                 .grocery(grocery)
                 .shoppingList(shoppingList)
                 .quantity(1)
                 .isRequest(false)
+                .unit(unit)
                 .build();
 
         List<ShoppingListElementDTO> expectedGroceries = new ArrayList<>();

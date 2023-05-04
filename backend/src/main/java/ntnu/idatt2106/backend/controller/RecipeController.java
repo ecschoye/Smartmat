@@ -65,5 +65,23 @@ public class RecipeController {
         return ResponseEntity.ok(recipes);
     }
 
+    @Operation(summary = "Get all recipes")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "All recipes retrieved successfully", content = @Content(array = @ArraySchema(schema = @Schema(implementation = RecipeDTO.class)))),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/all")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getAllRecipes() throws NoSuchElementException {
+        logger.info("Received request to get all recipes");
+        List<RecipeDTO> allRecipes = recipeService.getAllRecipes();
+        if (allRecipes.isEmpty()) {
+            throw new NoSuchElementException("No recipes found");
+        }
+
+        return ResponseEntity.ok(allRecipes);
+    }
+
+
 
 }

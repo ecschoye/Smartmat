@@ -7,7 +7,7 @@ export default defineConfig({
         environment: 'jsdom',
         globals: true,
         coverage: {
-            provider: 'istanbul',
+            provider: 'c8'
         }
     },
     resolve: {
@@ -15,4 +15,5 @@ export default defineConfig({
             '~': __dirname,
         },
     },
+    logLevel: 'warn',
 })

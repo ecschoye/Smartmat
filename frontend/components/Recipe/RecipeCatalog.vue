@@ -8,12 +8,12 @@
       </div>
     </div>
   </div>
-  <div class="flex flex-wrap justify-center w-3/4 mx-auto" v-if="data.length > 0">
+  <div class="flex flex-wrap justify-center w-3/4 mx-auto" v-if="recipesPage.length > 0">
     <RecipeCard
-        v-for="recipe in displayedRecipes"
+        v-for="recipe in recipesPage"
         :key="recipe.id"
-        :recipe_name="recipe.name"
-        :image_url="recipe.url"
+        :recipe-info="recipe"
+        @see-recipe-event="seeRecipeNextWeek"
         class="w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 py-2 mr-2 sm:mr-0" />
   </div>
   <div class="flex justify-center my-4 pb-5" v-if="pageCount > 1">
@@ -22,85 +22,147 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 import {fetchRecipes } from "~/service/httputils/RecipeService";
 import { useRefrigeratorStore } from "~/store/refrigeratorStore";
 import {onMounted} from "vue";
 import {integer} from "vscode-languageserver-types";
 import { fetchAllRecipes} from "~/service/httputils/RecipeService";
+import { useWeeklyMenuStore } from "~/store/WeeklyMenuStore";
+import { Ingredient } from "~/types/IngredientType";
+import { Unit } from "~/types/UnitType";
+import { Recipe } from "~/types/RecipeType";
 
-
-const { t } = useI18n();
-const refrigeratorStore = useRefrigeratorStore();
-
-interface Recipe {
-  id: number;
-  name: string;
-  image_url: string;
-}
-
-const searchTerm = ref("");
-const currentPage = ref(1);
-const pageSize = 12;
-let data = [] as Array<Recipe>;
-
-
-const recipesPage = ref<Recipe[]>([]);
-const errorMessage = ref('');
-const catchError = ref(false);
-
-const filteredRecipes = computed(() =>
-    recipesPage.value.filter((recipe) =>
-        recipe.name.toLowerCase().includes(searchTerm.value.toLowerCase())
-    )
-);
-
-const displayedRecipes = computed(() => {
-  const start = (currentPage.value - 1) * pageSize;
-  const end = start + pageSize;
-  return filteredRecipes.value.slice(start, end);
-});
-
-const fetchRecipeDTO = reactive({
-  refrigeratorId: 0,
-  numRecipes: 0,
-  recipesFetched: [] as Array<integer>
-})
-
-const pageCount = computed(() => Math.ceil(filteredRecipes.value.length / pageSize));
-
-function previousPage(): void {
-  currentPage.value--;
-
-  console.log('previousPage called');
-  window.scrollTo(0, 0);
-}
-
-function nextPage(): void {
-  currentPage.value++;
-  window.scrollTo(0, 0);
-}
-
-const loadRecipes = async () => {
-  try {
-    fetchRecipeDTO.refrigeratorId = refrigeratorStore.getSelectedRefrigerator!.id;
-    fetchRecipeDTO.numRecipes = -1;
-    fetchRecipeDTO.recipesFetched = [];
-    const response = await fetchAllRecipes();
-    if (response.status === 200) {
-      console.log(response.data);
-      data = response.data;
-      recipesPage.value = data;
+export default {
+  data (){
+    return {
+      recipesPage :[] as Recipe[] | null
     }
-  } catch (error: any) {
-    errorMessage.value = error.response.data || 'An error occurred.';
-    catchError.value = true;
-  }
-};
+  },
+  watch: {
+    recipesPage(){
+      console.log(this.recipesPage); 
+    }
+  },
+  setup() {
+    const { t } = useI18n();
+    const refrigeratorStore = useRefrigeratorStore();
 
-onMounted(() => {
-  loadRecipes();
-});
+
+
+    const searchTerm = ref("");
+    const currentPage = ref(1);
+    const pageSize = 12;
+    let data = [] as Array<Recipe>;
+    const weeklyMenuStore = useWeeklyMenuStore();
+
+
+    const errorMessage = ref('');
+    const catchError = ref(false);
+
+    /*
+    const filteredRecipes = computed(() =>
+        recipesPage.value.filter((recipe) =>
+            recipe.name.toLowerCase().includes(searchTerm.value.toLowerCase())
+        )
+    );
+
+    const displayedRecipes = computed(() => {
+      const start = (currentPage.value - 1) * pageSize;
+      const end = start + pageSize;
+      return filteredRecipes.value.slice(start, end);
+    });
+
+    const pageCount = computed(() => Math.ceil(filteredRecipes.value.length / pageSize));
+
+    function previousPage(): void {
+      currentPage.value--;
+
+      console.log('previousPage called');
+      window.scrollTo(0, 0);
+    }
+
+    function nextPage(): void {
+      currentPage.value++;
+      window.scrollTo(0, 0);
+    }*/
+
+    
+
+    return {
+      refrigeratorStore,
+      t,
+      searchTerm,
+      currentPage,
+      pageSize,
+      data,
+      weeklyMenuStore,
+      //recipesPage,
+      errorMessage,
+      catchError,
+      //filteredRecipes,
+      //displayedRecipes,
+      //pageCount,
+      //previousPage,
+      //nextPage,
+    }
+    },
+
+    methods: {
+      async loadRecipes() {
+      try {
+              const response = await fetchAllRecipes();
+              
+              const recipes = response.data.map((recipe : Recipe) => ({
+                  id: recipe.id,
+                  name: recipe.name,
+                  url: recipe.url,
+                  ingredients: []
+                }));
+                    
+              if (response.status === 200) {
+                for(let i = 0; i < recipes.length; i++) {
+                    const ingredients : Ingredient[] = []; 
+                    for(let j = 0; j < response.data[i].ingredients.length; j++){
+                        const ingredientDTO = response.data[i].ingredients[j]; 
+
+                        const unit : Unit = {
+                            id : ingredientDTO.id,
+                            name : ingredientDTO.name,
+                            weight : ingredientDTO.weight
+                        }
+
+                        const ingredient : Ingredient = {
+                            id: ingredientDTO.simpleGrocery.id,
+                            name: ingredientDTO.simpleGrocery.name,
+                            quantity: ingredientDTO.quantity,
+                            unit : unit
+                        }
+
+                        ingredients.push(ingredient); 
+                    }
+                    recipes[i].ingredients = ingredients;
+                }
+                this.recipesPage = recipes;  
+                console.log(this.recipesPage)
+              }
+      } catch (error: any) {
+        this.errorMessage = error.response.data || 'An error occurred.';
+        this.catchError = true;
+      }
+    },
+
+    seeRecipeNextWeek(recipe : Recipe) {
+      this.$emit("seeRecipeEvent", recipe)
+    }
+    },
+    mounted() {
+      this.loadRecipes();
+      console.log(this.recipesPage)
+    }
+}
+
+
 
 </script>
 

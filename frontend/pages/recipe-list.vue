@@ -3,14 +3,29 @@
     <h1 class="text-6xl text-green-custom">{{t('recipes')}}</h1>
   </div>
   <div>
-    <RecipeCatalog/>
+    <RecipeCatalog
+    @see-recipe-event="seeRecipe"/>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 import RecipeCatalog from "~/components/Recipe/RecipeCatalog.vue";
+import { Recipe } from "~/types/RecipeType";
+export default {
+  setup() {
+    const { t } = useI18n();
+    return {t}
+  },
 
-const { t } = useI18n();
+  methods: {
+    seeRecipe(recipe : Recipe) {
+      console.log(recipe);
+    }
+  }
+}
+
+
+
 
 definePageMeta({
   "requiresAuth": true,

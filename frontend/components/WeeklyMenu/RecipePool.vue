@@ -12,7 +12,7 @@
                     {{ weekday }}
                 </div>
                 <div v-if="weeklyMenuStore.$state.currentWeek[getDayIndex(weekday)] === null">
-                    <UnknownRecipe @add-recipe-event="addRecipe(getDayIndex(weekday))"/>
+                    <UnknownRecipe @add-recipe-event="findNewRecipe(getDayIndex(weekday))"/>
                 </div>
                 <div v-else>
                     <WeeklyMenuRecipeWeeklyCard @unlocked-event="unlockRecipe(getDayIndex(weekday))" 
@@ -32,7 +32,7 @@
                     {{ weekday }}
                 </div>
                 <div v-if="weeklyMenuStore.$state.nextWeek[getDayIndex(weekday)] === null">
-                    <UnknownRecipe @add-recipe-event="addRecipe(getDayIndex(weekday))"/>
+                    <UnknownRecipe @add-recipe-event="findNewRecipe(getDayIndex(weekday))"/>
                 </div>
                 <div v-else>
                     <WeeklyMenuRecipeWeeklyCard @unlocked-event="unlockRecipe(getDayIndex(weekday))" 
@@ -177,6 +177,11 @@ export default {
 
         seeRecipeNextWeek(dayIndex: number) {
             this.$emit("seeRecipeEvent", this.weeklyMenuStore.$state.nextWeek[dayIndex]);
+        },
+
+        findNewRecipe(dayIndex: number) {
+            this.weeklyMenuStore.$state.currentChosenIndex = dayIndex;
+            this.$router.push("/recipe-list");
         },
 
         async addRecipe(dayIndex: number) {

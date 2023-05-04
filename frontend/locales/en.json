@@ -114,5 +114,6 @@
   "no_recipes_to_delete" : "There are no recipes to remove",
   "add_recipe_to_day" : "Add a recipe",
   "amount" : "Amount", 
-  "add" : "Add"
+  "add" : "Add",
+  "add_recipe_to_weekly_menu" : "Add recipe to weekly menu"
 }

@@ -15,3 +15,7 @@ export const fetchRecipes = async (fetchRecipeDTO: FetchRecipeDTO): Promise<Axio
         },
     });
 }
+
+export const fetchAllRecipes = async (): Promise<AxiosResponse> => {
+    return axiosInstance.get('/api/recipe/all');
+}

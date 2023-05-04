@@ -27,6 +27,7 @@ import {fetchRecipes } from "~/service/httputils/RecipeService";
 import { useRefrigeratorStore } from "~/store/refrigeratorStore";
 import {onMounted} from "vue";
 import {integer} from "vscode-languageserver-types";
+import { fetchAllRecipes} from "~/service/httputils/RecipeService";
 
 
 const { t } = useI18n();
@@ -85,7 +86,7 @@ const loadRecipes = async () => {
     fetchRecipeDTO.refrigeratorId = refrigeratorStore.getSelectedRefrigerator!.id;
     fetchRecipeDTO.numRecipes = -1;
     fetchRecipeDTO.recipesFetched = [];
-    const response = await fetchRecipes(fetchRecipeDTO);
+    const response = await fetchAllRecipes();
     if (response.status === 200) {
       console.log(response.data);
       data = response.data;

@@ -3,10 +3,10 @@
   <div class="edit-container border-2 bg-slate-100 border-[#31C48D]/60 dark:border-2 dark:border-white w-5/6 h-fit-content md:w-1/3 mt-2 mx-auto form-light-color dark:form-dark-color">
     <div class="user-details ">
       <div class="form-group w-full">
-        <BaseInput id="inpName" class="input-container" type="text" :label="$t('name')" v-model="user.name"/>
+        <BaseInput :cut-width="'50px'" id="inpName" class="input-container" type="text" :label="$t('name')" v-model="user.name"/>
       </div>
       <div class="form-group w-full">
-        <BaseInput id="inpEmail" class="input-container" type="text" :label="$t('email')" v-model="user.email"/>
+        <BaseInput :cut-width="'55px'" id="inpEmail" class="input-container" type="text" :label="$t('email')" v-model="user.email"/>
       </div>
       <div class="button-wrapper">
         <NuxtLink :to="localePath('/my-profile')">

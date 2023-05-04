@@ -24,4 +24,8 @@ public interface RecipeGroceryRepository extends JpaRepository<RecipeGrocery, Lo
     List<GroceryInfoDTO> findGroceryInfoByRecipe(Recipe recipe);
 
     Optional<RecipeGrocery> findFirstByRecipeAndGrocery(Recipe recipe, Grocery grocery);
+
+    Optional<RecipeGrocery> findByRecipeId(long id);
+
+    List<RecipeGrocery> findAllByGroceryNameIn(List<String> collect);
 }

@@ -29,7 +29,9 @@
                         <div v-if="refrigeratorSuggestions !== null && refrigeratorSuggestions.length !== 0">
                             <RefrigeratorGroceries
                                 :ShoppingListId="shoppingListId"
-                                :CategoryListItems="refrigeratorSuggestions">
+                                :CategoryListItems="refrigeratorSuggestions"
+                                @updateList="loadLists()"
+                                >
                             </RefrigeratorGroceries>
                         </div>
                     </div>
@@ -184,7 +186,7 @@ import { ResponseGrocery } from"~/types/ResponseGrocery"
                 this.shoppingCart = []
                 let responseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);
                 if (responseCart.data.length > 0) {
-                    responseCart.data.forEach((element: ResponseGrocery) => {
+                     responseCart.data.forEach((element: ResponseGrocery) => {
                         let object: ShoppingListElementType = { id: element.id, description: element.description, quantity: element.quantity,unitDTO : element.unitDTO, subCategoryName: element.subCategoryName, isAddedToCart: true, isSuggested: false, isFromRefrigerator: false };
                         this.shoppingCart.push(object);
                     }); 
@@ -197,11 +199,15 @@ import { ResponseGrocery } from"~/types/ResponseGrocery"
         async loadSuggestionsFromRefrigerator() {
                 try {
                     let responseSuggestions = await ShoppingListService.getSuggestedGroceriesFromRefrigerator(this.shoppingListId);
+                    console.log(responseSuggestions);
                     if (responseSuggestions.data.length > 0) {
                         responseSuggestions.data.forEach((element : ResponseGrocery) => {
                             let object : ShoppingListElementType = { id: element.id, description: element.description, quantity: element.quantity, unitDTO : element.unitDTO, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true, isFromRefrigerator: true };
                             this.refrigeratorSuggestions.push(object);
                         });
+                    }
+                    else{
+                        this.refrigeratorSuggestions = [];
                     }
                 } catch (error) {
                     console.error(error)

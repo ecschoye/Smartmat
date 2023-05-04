@@ -12,6 +12,7 @@ import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.recipe.Recipe;
 import ntnu.idatt2106.backend.model.recipe.RecipeGrocery;
 import ntnu.idatt2106.backend.repository.RefrigeratorGroceryRepository;
+import ntnu.idatt2106.backend.repository.recipe.RecipeCategoryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeRepository;
 import org.springframework.stereotype.Service;
@@ -170,5 +171,8 @@ public class RecipeService {
     public List<RecipeDTO> getAllRecipes() {
         List<Recipe> recipes = recipeRepository.findAll();
         return convertToDTOs(recipes);
+    }
+
+    public void setRecipeCategoryRepository(RecipeCategoryRepository recipeCategoryRepository) {
     }
 }

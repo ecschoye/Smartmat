@@ -6,6 +6,9 @@ export default defineConfig({
     test: {
         environment: 'jsdom',
         globals: true,
+        coverage: {
+            provider: 'istanbul',
+        }
     },
     resolve: {
         alias: {

@@ -22,14 +22,14 @@
         </button>
       </div>
       <div class="hidden lg:inline-flex items-center">
-        <NuxtLink v-if="loggedInStatus" href="/notifications" title="Varslinger" class="-m-1.5 p-1.5 text-sm font-semibold leading-6 text-gray-900">
+        <NuxtLink v-if="loggedInStatus" href="/notifications" title="Varslinger" class="-ml-4 mr-8 p-1.5 text-sm font-semibold leading-6 text-gray-900">
           <span class="sr-only">Varslinger</span>
           <img v-if = "notificationStore.getNotifications.length > 0" class="h-8 w-auto" src="../assets/icons/bell-not.png" alt="">
           <img v-else class="h-8 w-auto hover:transform hover:scale-125" src="../assets/icons/bell.png" alt="">
         </NuxtLink>
         <HeadlessMenu v-if="loggedInStatus" as="div" class="relative inline-block text-left">
           <div>
-            <HeadlessMenuButton title="Kontovalg og innstillinger" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-green-color ring-1 ring-gray-300 dark:ring-zinc-600 dark:bg-zinc-600 px-3 py-2 text-sm font-semibold text-gray-900" >
+            <HeadlessMenuButton title="Profil og innstillinger" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-light-color ring-1 ring-gray-300 dark:ring-zinc-600 dark:bg-zinc-600 px-3 py-2 text-sm font-semibold text-gray-900" >
               <img class="h-8 w-auto hover:transform hover:scale-125" src="../assets/icons/profile.png" alt="">
             </HeadlessMenuButton>
           </div>

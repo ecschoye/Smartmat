@@ -106,12 +106,10 @@ public class TestDataSerializer {
         List<Long> groceryIds = List.of(10L, 63L, 96L, 119L, 126L, 147L, 182L, 329L, 364L, 464L, 597L, 692L, 718L, 756L, 798L, 890L, 908L);
         List<Long> unitIds = List.of(1L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L);
         insertRecipeGroceries(refrigerator, groceryIds, 1, unitIds);
-
         // Add groceries from the scenario above with their respective quantities
-        List<Long> scenarioGroceryIds = List.of(95L, 153L, 798L, 870L, 320L);
-        int[] quantities = {1, 3, 2, 1, 1}; // Updated quantities
-        List<Long> scenarioUnitIds = List.of(2L, 1L, 3L, 2L, 1L);
-
+        List<Long> scenarioGroceryIds = List.of(153L, 133L, 681L, 713L, 1945L, 1082L,95L, 153L, 798L, 870L, 320L,730L, 450L, 1534L, 1273L, 56L,154L, 1534L, 1475L, 1955L, 682L);
+        int[] quantities = {120, 250, 150, 2, 8, 18,1, 3, 2, 1, 1,400, 400, 9, 200, 3,180, 250, 4, 1, 3}; // Updated quantities
+        List<Long> scenarioUnitIds = List.of(3L, 3L, 3L, 4L, 3L, 3L,2L, 1L, 3L, 2L, 1L,3L, 3L, 3L, 3L, 4L,3L, 3L, 4L, 4L, 4L);
 
         insertRecipeGroceries(refrigerator, scenarioGroceryIds, quantities, scenarioUnitIds);
 

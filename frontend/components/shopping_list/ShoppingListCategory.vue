@@ -17,7 +17,8 @@
                 v-for="element in categoryListItems"
                 :key="element.id"
                 :ElementDetails="element"
-                @updateList="loadShoppingListCategories">
+                @updateList="loadShoppingListCategories"
+                @prompt-refrigerator="promptRefrigerator()">
             </ShoppingListElement>
         </div>
     </div>
@@ -25,6 +26,9 @@
 
 <script lang="ts">
 import ShoppingListService from "~/service/httputils/ShoppingListService";
+import { ShoppingListElementType } from "~/types/ShoppingListElement";
+import { ResponseGrocery } from "~/types/ResponseGrocery";
+
     export default defineComponent({
         props:{
             CategoryDetails: {
@@ -39,7 +43,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
         data() {
             return {
                 isCategoryExpanded: false,
-                categoryListItems: [] as ShoppingListElement[],
+                categoryListItems: [] as ShoppingListElementType[],
             }
         },
         async mounted() {   
@@ -50,11 +54,14 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
             this.loadSuggestions()
         },
         methods: {
+            promptRefrigerator(){
+                this.$emit('prompt-refrigerator');
+            },
             async loadShoppingList() {
                 try {
                     let response = await ShoppingListService.getGroceriesFromCategorizedShoppingList(this.ShoppingListId, this.CategoryDetails.id)
                     response.data.forEach((element: ResponseGrocery) => {
-                        let object:ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: false, isFromRefrigerator: false };
+                        let object:ShoppingListElementType = { id: element.id, description: element.description, quantity: element.quantity,unitDTO : element.unitDTO , subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: false, isFromRefrigerator: false };
                         this.categoryListItems.push(object);
                     });
                 } catch (error) {
@@ -66,7 +73,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                     let responseSuggestions = await ShoppingListService.getRequestedGroceriesInCategories(this.ShoppingListId, this.CategoryDetails.id);
                     if (responseSuggestions.data.length > 0) {
                         responseSuggestions.data.forEach((element: ResponseGrocery) => {
-                            let object: ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true, isFromRefrigerator: false };
+                            let object: ShoppingListElementType = { id: element.id, description: element.description, quantity: element.quantity, unitDTO : element.unitDTO, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true, isFromRefrigerator: false };
                             this.categoryListItems.push(object);
                         });
                     }

@@ -33,7 +33,7 @@ export const getGroceriesDTOs = async () : Promise<AxiosResponse> => {
 
 export const deleteGrocery = async (grocery : GroceryEntity) : Promise<AxiosResponse> => {
     const refrigeratorGroceryId = grocery.id;
-    return axiosInstance.delete(`/api/refrigerator/grocery/remove/${refrigeratorGroceryId}`);
+    return axiosInstance.delete("/api/refrigerator/grocery/remove");
 } 
 
 export const eatGrocery = async (grocery : GroceryEntity, unit :  Unit, quantity : number) : Promise<AxiosResponse> =>{

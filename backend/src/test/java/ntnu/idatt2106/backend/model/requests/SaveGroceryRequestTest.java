@@ -3,6 +3,8 @@ package ntnu.idatt2106.backend.model.requests;
 import ntnu.idatt2106.backend.model.ShoppingCart;
 import ntnu.idatt2106.backend.model.ShoppingList;
 import ntnu.idatt2106.backend.model.SubCategory;
+import ntnu.idatt2106.backend.model.Unit;
+import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
@@ -20,6 +22,11 @@ public class SaveGroceryRequestTest {
     private SubCategory SUB_CATEGORY = new SubCategory();
     private final long FOREIGN_KEY = 1L;
     private final int QUANTITY = 10;
+    private final Unit UNIT = Unit.builder()
+            .name("dl")
+            .id(1)
+            .weight(100)
+            .build();
 
     @BeforeEach
     public void setup(){
@@ -53,6 +60,7 @@ public class SaveGroceryRequestTest {
                 .grocery(grocery)
                 .quantity(QUANTITY)
                 .shoppingList(new ShoppingList())
+                .unit(UNIT)
                 .build();
 
         SaveGroceryRequest request = new SaveGroceryRequest(listItem);
@@ -76,6 +84,7 @@ public class SaveGroceryRequestTest {
                 .grocery(grocery)
                 .shoppingCart(new ShoppingCart())
                 .quantity(QUANTITY)
+                .unit(UNIT)
                 .build();
 
         SaveGroceryRequest request = new SaveGroceryRequest(listItem);
@@ -88,9 +97,9 @@ public class SaveGroceryRequestTest {
 
     @Test
     public void testEquals() {
-        SaveGroceryRequest cart1 = new SaveGroceryRequest(1L, 1, 1L);
-        SaveGroceryRequest cart2 = new SaveGroceryRequest(1L, 1, 1L);
-        SaveGroceryRequest cart3 = new SaveGroceryRequest(2L, 2, 2L);
+        SaveGroceryRequest cart1 = new SaveGroceryRequest(1L, 1, UnitDTO.builder().build(),1L);
+        SaveGroceryRequest cart2 = new SaveGroceryRequest(1L, 1, UnitDTO.builder().build(), 1L);
+        SaveGroceryRequest cart3 = new SaveGroceryRequest(2L, 2, UnitDTO.builder().build(), 2L);
 
         assertEquals(cart1, cart2); // Test if two shopping carts with the same ID are equal
         assertNotEquals(cart1, cart3); // Test if two shopping carts with different IDs are not equal
@@ -98,9 +107,9 @@ public class SaveGroceryRequestTest {
 
     @Test
     public void testHashCode() {
-        SaveGroceryRequest cart1 = new SaveGroceryRequest(1L, 1, 1L);
-        SaveGroceryRequest cart2 = new SaveGroceryRequest(1L, 1, 1L);
-        SaveGroceryRequest cart3 = new SaveGroceryRequest(2L, 2, 2L);
+        SaveGroceryRequest cart1 = new SaveGroceryRequest(1L, 1, UnitDTO.builder().build(), 1L);
+        SaveGroceryRequest cart2 = new SaveGroceryRequest(1L, 1, UnitDTO.builder().build(), 1L);
+        SaveGroceryRequest cart3 = new SaveGroceryRequest(2L, 2, UnitDTO.builder().build(), 2L);
 
         assertEquals(cart1.hashCode(), cart2.hashCode()); // Test if two shopping carts with the same ID have the same hash code
         assertNotEquals(cart1.hashCode(), cart3.hashCode()); // Test if two shopping carts with different IDs have different hash codes
@@ -125,9 +134,10 @@ public class SaveGroceryRequestTest {
                 .groceryId(1)
                 .foreignKey(3)
                 .quantity(1)
+                .unitDTO(UnitDTO.builder().build())
                 .build();
 
-        String expected = "SaveGroceryRequest(groceryId=1, quantity=1, foreignKey=3)";
+        String expected = "SaveGroceryRequest(groceryId=1, quantity=1, unitDTO=UnitDTO(id=null, name=null, weight=null), foreignKey=3)";
         assertEquals(expected, request.toString());
     }
 }

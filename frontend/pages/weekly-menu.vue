@@ -33,6 +33,6 @@ definePageMeta({
 })
 </script>
 
-<style>
+<style scoped>
 
 </style>

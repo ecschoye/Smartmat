@@ -22,13 +22,16 @@
                                 :key="category.id"
                                 :CategoryDetails="category"
                                 :ShoppingListId="shoppingListId"
-                                @updateList="loadCategories">
+                                @updateList="loadCategories"
+                                @prompt-refrigerator="promptRefrigerator()">
                             </ShoppingListCategory>
                         </div>
                         <div v-if="refrigeratorSuggestions !== null && refrigeratorSuggestions.length !== 0">
                             <RefrigeratorGroceries
                                 :ShoppingListId="shoppingListId"
-                                :CategoryListItems="refrigeratorSuggestions">
+                                :CategoryListItems="refrigeratorSuggestions"
+                                @updateList="loadLists()"
+                                >
                             </RefrigeratorGroceries>
                         </div>
                     </div>
@@ -45,7 +48,8 @@
                             v-for="element in shoppingCart"
                             :key="element.id"
                             :ElementDetails=element
-                            @updateList="loadShoppingCart">
+                            @updateList="loadShoppingCart"
+                            @prompt-refrigerator="promptRefrigerator()">
                         </ShoppingListElement>
                         <div class="p-2 flex justify-end absolute bottom-0 right-0">
                             <button @click.stop="addAllElementsToRefrigerator" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-300 bg-sky-400"> {{ t('put_everything_in_the_refrigerator') }} </button>
@@ -54,10 +58,16 @@
                 </div>
             </div>
         </div>
-      <div v-if="addNewElementSelected" class="w-4/5 md:w-2/5 h-96 p-1 overflow-auto bg-white border-2 rounded-lg border-black absolute">
-        <AddNewElement
-            :shoppingListId="shoppingListId"
-        />
+      <div v-if="addNewElementSelected" class="w-4/5 md:w-2/5 h-96 p-1 bg-white border-2 rounded-lg border-black absolute">
+        <div>
+            <RefrigeratorDropdown @update-value="(payload) => {grocery = payload}" />
+            <div class="flex justify-center h-full">
+                <RefrigeratorSelectUnit  @unit-set="({unit, quantity}) => setUnit(unit, quantity)" />
+                <button @click="addGroceryToShoppingList()" class="h-10 w-10 align-middle mx-3 p-1">
+                        <img class="block" src="../../assets/icons/add.png" alt="add">
+                </button>
+            </div>
+        </div>
         <div class="p-2 flex justify-end sticky -bottom-2 right-0">
           <button @click.stop="addNewElementSelected = false" class="hover:bg-sky-200 bg-sky-300 border-2 rounded-full border-black h-8 w-8">
             <img src="../../assets/icons/close.png" alt="Close">
@@ -72,9 +82,13 @@
 import ShoppingListService from "~/service/httputils/ShoppingListService";
 import ShoppingCartService from "~/service/httputils/ShoppingCartService";
 import ShoppingListElement from "./ShoppingListElement.vue";
-import AddNewElement from "./AddNewElement.vue";
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
+import { Unit } from "~/types/UnitType";
+import { SaveGrocery } from "~/types/SaveGrocery";
+import { Grocery } from "~/types/GroceryType";
+import { ShoppingListElementType } from "~/types/ShoppingListElement";
+import { ResponseGrocery } from"~/types/ResponseGrocery"
     export default defineComponent({
     props: {
         refrigeratorId: {
@@ -93,16 +107,18 @@ import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
             shoppingListId: -1,
             shoppingCartId: -1,
             categoryList: [] as ShoppingListCategory[],
-            shoppingCart: [] as ShoppingListElement[],
-            refrigeratorSuggestions: [] as ShoppingListElement[]
-        };
+            shoppingCart: [] as ShoppingListElementType[],
+            refrigeratorSuggestions: [] as ShoppingListElementType[],
+            unit : {} as Unit,
+            quantity : -1,
+            grocery : {} as Grocery,
+               };
     },
     mounted() {
         const refrigeratorStore = useRefrigeratorStore();
         if (refrigeratorStore.getSelectedRefrigerator !== null) {
             this.refrigeratorId = refrigeratorStore.getSelectedRefrigerator.id
         }
-        console.log("REF_ID: " + this.refrigeratorId)
         this.loadLists();
     },
     setup() {
@@ -112,6 +128,30 @@ import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
     },
     
     methods: {
+        promptRefrigerator(){
+                this.$emit('prompt-refrigerator');
+            },
+        async addGroceryToShoppingList() {
+            if(this.grocery.id && this.unit.id && this.quantity > 0){
+                const grocery: SaveGrocery = { groceryId: this.grocery.id, quantity: this.quantity, foreignKey: this.shoppingListId, unitDTO : this.unit};
+                let responseStatus = await ShoppingListService.saveGroceryToShoppingList(grocery);
+
+                if (responseStatus.status !== 200) {
+                    alert("Det oppstod en feil ved overføring av varen til handlelisten")
+                }
+                else{
+                    this.loadCategories();
+                    this.loadShoppingCart();
+                    this.loadSuggestionsFromRefrigerator();
+                }
+            }
+        },
+        setUnit(newUnit : Unit, newQuantity : number){
+            if(newUnit && newQuantity){
+                this.unit = newUnit;
+                this.quantity = newQuantity;
+            }
+        },
         async loadLists() {
             //create/load shopping list
             let responseListId = await ShoppingListService.createShoppingList(this.refrigeratorId);
@@ -146,8 +186,8 @@ import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
                 this.shoppingCart = []
                 let responseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);
                 if (responseCart.data.length > 0) {
-                    responseCart.data.forEach((element: ResponseGrocery) => {
-                        let object: ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true, isSuggested: false, isFromRefrigerator: false };
+                     responseCart.data.forEach((element: ResponseGrocery) => {
+                        let object: ShoppingListElementType = { id: element.id, description: element.description, quantity: element.quantity,unitDTO : element.unitDTO, subCategoryName: element.subCategoryName, isAddedToCart: true, isSuggested: false, isFromRefrigerator: false };
                         this.shoppingCart.push(object);
                     }); 
                 }
@@ -159,11 +199,15 @@ import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
         async loadSuggestionsFromRefrigerator() {
                 try {
                     let responseSuggestions = await ShoppingListService.getSuggestedGroceriesFromRefrigerator(this.shoppingListId);
+                    console.log(responseSuggestions);
                     if (responseSuggestions.data.length > 0) {
-                        responseSuggestions.data.forEach((element: ResponseGrocery) => {
-                            let object: ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true, isFromRefrigerator: true };
+                        responseSuggestions.data.forEach((element : ResponseGrocery) => {
+                            let object : ShoppingListElementType = { id: element.id, description: element.description, quantity: element.quantity, unitDTO : element.unitDTO, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true, isFromRefrigerator: true };
                             this.refrigeratorSuggestions.push(object);
                         });
+                    }
+                    else{
+                        this.refrigeratorSuggestions = [];
                     }
                 } catch (error) {
                     console.error(error)
@@ -181,15 +225,19 @@ import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
         },
         async addAllElementsToRefrigerator() {
             // Add an element from the shoppingCart to the Refrigerator
-            let groceryIds: Number[] = [];
-            this.shoppingCart.forEach((element: ShoppingListElement) => {
-                groceryIds.push(element.id);
-            })
-            
-            let transferStatus = await ShoppingCartService.tranferAllToRefrigerator(groceryIds);
+            let groceries : SaveGrocery[] = [];
+            this.shoppingCart.forEach((element: ShoppingListElementType) => {
+                groceries.push({
+                    groceryId : element.id,
+                    unitDTO : element.unitDTO,
+                    quantity : element.quantity,
+                    foreignKey : -1,
+                })
+            });            
+            let transferStatus = await ShoppingCartService.transferAllToRefrigerator(groceries);
             this.loadShoppingCart()
             if (transferStatus.status == 200) {
-                //alert("Varen ble vellykket overført")
+                this.$emit('prompt-refrigerator');
             } else {
                 alert("Det oppstod en feil ved overføring av varen")
             }
@@ -199,6 +247,6 @@ import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
             this.loadCategories()
         }
     },
-    components: { AddNewElement, RefrigeratorGroceries }
+    components: { RefrigeratorGroceries }
 })
 </script>

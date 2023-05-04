@@ -1,7 +1,7 @@
 <template>
     <div class = "flex h-4/5 w-full">
         <RefrigeratorNew v-if="toggleCreate" @toggle="(payload) => onToggleCreate(payload)" />
-        <RefrigeratorDisplay v-else @emit-date="(payload) => updateGrocery(payload)" @toggle-create="(payload) => onToggleCreate(payload)" :refrigerator="refrigeratorStore.getSelectedRefrigerator" class="font-mono" @group-closed="togglePos(false)" :groceries="groceries" @popup-height="(payload) => setPos(payload)" />
+        <RefrigeratorDisplay v-else @emit-date="(payload) => updateGrocery(payload)" @toggle-create="(payload) => onToggleCreate(payload)" :refrigerator="refrigeratorStore.getSelectedRefrigerator" class="font-mono" @group-closed="togglePos(false)" :groceries="groceries.groceries" @popup-height="(payload) => setPos(payload)" />
             <div>
             <Transition>
                 <RefrigeratorEditGrocery @delete-grocery="reload()" :pos="position" v-if="toggle" @toggle-options="togglePos(false)"/>
@@ -32,7 +32,6 @@ async function onToggleCreate(payload : boolean){
     loadGroceries();
 }
 
-
 const toggleCreate = ref(false);
 
 function togglePos(inp : boolean){
@@ -46,16 +45,18 @@ function setPos(payload: number) {
   position.value = payload;
 }
 
-let groceries = ref<GroceryEntity[]>([]);
+const groceries = reactive({
+  groceries: [] as GroceryEntity[]
+});
 
 watch(() => refrigeratorStore.getSelectedRefrigerator, () => {
   loadGroceries();
 });
 
 function updateGrocery(grocery : GroceryEntity){
-    const index = groceries.value.findIndex(search => search.id === grocery.id);
+    const index = groceries.groceries.findIndex(search => search.id === grocery.id);
     if(index !== -1){
-        groceries.value[index] = grocery;
+        groceries.groceries[index] = grocery;
     }
 }
 
@@ -81,10 +82,9 @@ async function loadGroceries(){
         if(fridge !== null){
             const response = await getGroceriesByFridge(fridge.id);
 
-            groceries.value = response.data;
+            groceries.groceries = response.data;
 
-
-            groceries.value.forEach((grocery) => {
+            groceries.groceries.forEach((grocery) => {
                 if(!(grocery.physicalExpireDate instanceof Date)){
                     grocery.physicalExpireDate = new Date(grocery.physicalExpireDate);
                 }
@@ -96,11 +96,13 @@ async function loadGroceries(){
         console.log(error);
     }
 }
-
 onMounted(() => {
     loadGroceries();
 }) 
 
+defineExpose({
+  loadGroceries
+})
 
 </script>
 

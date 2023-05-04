@@ -16,13 +16,16 @@
             <ShoppingListElement
                 v-for="element in CategoryListItems"
                 :key="element.id"
-                :ElementDetails="element">
+                :ElementDetails="element"
+                @updateList="updateList()"
+                >
             </ShoppingListElement>
         </div>
     </div>
 </template>
 
 <script lang="ts">
+import { ShoppingListElementType } from '~/types/ShoppingListElement';
     export default defineComponent({
         props:{
             ShoppingListId: {
@@ -30,13 +33,18 @@
                 required: true
             },
             CategoryListItems: {
-                type: Array as () => ShoppingListElement[],
+                type: Array as () => ShoppingListElementType[],
                 require: true
             }
         },
         data() {
             return {
                 isCategoryExpanded: false,
+            }
+        },
+        methods: {
+            updateList(){
+                this.$emit('updateList')
             }
         }
     })

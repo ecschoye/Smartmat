@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-row">
-    <div class="w-full mx-5">
+  <div class="flex flex-row justify-center">
+    <div class="mx-5">
       <input class="p-2 w-16 rounded-xl text-center rounded-sm shadow font-thin focus:outline-none focus:shadow-lg focus:shadow-slate-200 duration-100 shadow-gray-300"
              type="number"
              :placeholder="$t('amount')"
@@ -11,8 +11,7 @@
              pattern="^\d+$"
              onkeypress="return /\d/.test(String.fromCharCode(event.keyCode));" />
     </div>
-
-    <div class="flex flex-row items-center justify-center dark:bg-zinc-400">
+    <div class="dark:bg-zinc-400">
       <div class="w-full justify-center flex">
         <template v-for="(unit, index) in units">
           <input type="radio"

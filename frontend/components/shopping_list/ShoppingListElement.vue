@@ -2,7 +2,7 @@
     <div class="items stretch text-sm">
         <div :class="{'text-blue-800 font-bold': isElementSuggested}" class="ml-4 p-2 w-3/5 flex absolute left-0">
             <h3 class="mr-2 truncate break-words"> {{ ElementDetails.description }} </h3>
-            <h5 class="mr-2"> ({{ ElementDetails.quantity }})</h5>
+            <h5 class="mr-2"> ({{ ElementDetails.quantity }} {{ ElementDetails.unitDTO.name }})</h5>
         </div>
         <div class="p-2 flex justify-end absolute right-0">
             <div v-if="isElementSuggested">
@@ -63,10 +63,11 @@
 <script lang="ts">
 import ShoppingCartService from "~/service/httputils/ShoppingCartService";
 import ShoppingListService from "~/service/httputils/ShoppingListService";
+import { ShoppingListElementType } from "~/types/ShoppingListElement";
     export default defineComponent({
         props:{
             ElementDetails: {
-                type: Object as () => ShoppingListElement,
+                type: Object as () => ShoppingListElementType,
                 required: true,
             }
         },
@@ -75,13 +76,15 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 isElementAddedToCart:false,
                 isElementSuggested:false,
                 editElement:false,
-                newQuantity:1
+                newQuantity:1,
+
             }
         },
         mounted() {        
             this.isElementAddedToCart = this.ElementDetails.isAddedToCart
             this.isElementSuggested = this.ElementDetails.isSuggested
             this.newQuantity = this.ElementDetails.quantity
+            console.log(this.ElementDetails);
         },
         methods: {
             async removeElementFromCart() {
@@ -89,6 +92,7 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                 let transferStatus = await ShoppingCartService.transferGroceryToShoppingList(this.ElementDetails.id);
                 console.log(transferStatus);
                 if (transferStatus.data) {
+                    this.$emit('prompt-refrigerator');
                     //alert("Varen ble vellykket lagt tilbake i handlelisten")
                 } else {
                     alert("Det oppstod en feil ved overføring av varen")
@@ -104,7 +108,6 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                     deleteResponse = await ShoppingListService.removeRefrigeratorGroceryFromShoppingList(this.ElementDetails.id);
                 }
                 this.$emit('updateList')
-                console.log(deleteResponse);
                 if (deleteResponse.data) {
                     //alert("Varen ble vellykket slettet")
                 } else {
@@ -114,10 +117,11 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
             async addElementToRefrigerator() {
                 let transferStatus: any;
                 if (!this.ElementDetails.isFromRefrigerator) {
-                    transferStatus = await ShoppingCartService.transferToRefrigerator(this.ElementDetails.id);    
+                    transferStatus = await ShoppingCartService.transferToRefrigerator(this.ElementDetails.id, this.ElementDetails.unitDTO, this.ElementDetails.quantity);    
                 }
                 this.$emit('updateList')            
                 if (transferStatus.status == 200) {
+                    this.$emit('prompt-refrigerator');
                     //alert("Varen ble vellykket overført")
                 } else {
                     alert("Det oppstod en feil ved overføring av varen")
@@ -138,14 +142,14 @@ import ShoppingListService from "~/service/httputils/ShoppingListService";
                     alert("Det oppstod en feil ved overføring av varen")
                 }
             },
-            updateGrocery(newQuantity: number) {
+            async updateGrocery(newQuantity: number) {
                 this.editElement = false
                 this.ElementDetails.quantity = newQuantity
                 let quantity = newQuantity
                 if (!this.ElementDetails.isFromRefrigerator) {
-                    ShoppingListService.updateGrocery(this.ElementDetails.id, quantity)
+                    await ShoppingListService.updateGrocery(this.ElementDetails.id, quantity)
                 } else {
-                    ShoppingListService.updateRefrigeratorGrocery(this.ElementDetails.id, quantity);
+                    await ShoppingListService.updateRefrigeratorGrocery(this.ElementDetails.id, quantity);
                 }
                 this.$emit('updateList')
             }

@@ -10,7 +10,7 @@
   </div>
   <div class="flex flex-wrap justify-center w-3/4 mx-auto" v-if="recipesPage.length > 0">
     <RecipeCard
-        v-for="recipe in recipesPage"
+        v-for="recipe in displayedRecipes"
         :key="recipe.id"
         :recipe-info="recipe"
         @see-recipe-event="seeRecipeNextWeek"
@@ -36,7 +36,7 @@ import { Recipe } from "~/types/RecipeType";
 export default {
   data (){
     return {
-      recipesPage :[] as Recipe[] | null
+      //recipesPage :[] as Recipe[] | null
     }
   },
   watch: {
@@ -49,7 +49,7 @@ export default {
     const refrigeratorStore = useRefrigeratorStore();
 
 
-
+    const recipesPage = ref<Recipe[]>([]);
     const searchTerm = ref("");
     const currentPage = ref(1);
     const pageSize = 12;
@@ -60,7 +60,7 @@ export default {
     const errorMessage = ref('');
     const catchError = ref(false);
 
-    /*
+
     const filteredRecipes = computed(() =>
         recipesPage.value.filter((recipe) =>
             recipe.name.toLowerCase().includes(searchTerm.value.toLowerCase())
@@ -72,6 +72,7 @@ export default {
       const end = start + pageSize;
       return filteredRecipes.value.slice(start, end);
     });
+
 
     const pageCount = computed(() => Math.ceil(filteredRecipes.value.length / pageSize));
 
@@ -85,9 +86,8 @@ export default {
     function nextPage(): void {
       currentPage.value++;
       window.scrollTo(0, 0);
-    }*/
+    }
 
-    
 
     return {
       refrigeratorStore,
@@ -97,14 +97,13 @@ export default {
       pageSize,
       data,
       weeklyMenuStore,
-      //recipesPage,
+      recipesPage,
       errorMessage,
       catchError,
-      //filteredRecipes,
-      //displayedRecipes,
-      //pageCount,
-      //previousPage,
-      //nextPage,
+      displayedRecipes,
+      pageCount,
+      previousPage,
+      nextPage,
     }
     },
 

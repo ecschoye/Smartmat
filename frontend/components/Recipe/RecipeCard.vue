@@ -49,10 +49,9 @@ export default {
       this.weeklyMenuStore.setCurrentChosenIndex(null);
       this.$router.push("/weekly-menu");
     },
-
-    clickEvent() {
-      this.$emit("seeRecipeEvent", this.recipeInfo);
-    }
+    seeRecipeNextWeek(recipe: Recipe): void {
+      this.$emit("see-recipe-event", recipe);
+    },
   },
 }
 

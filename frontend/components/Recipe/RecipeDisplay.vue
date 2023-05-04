@@ -30,11 +30,11 @@
               </div>
             </td>
             <td>
-              <div v-if="matchingIngredient !== null" class="flex items-center justify-start">
+              <div class="flex items-center justify-start">
                 <img v-if="isInFridge(ingredient.id) === 2" class="mx-1 w-4" src="@/assets/icons/figures/greencircle.png" alt="">
                 <img v-else-if=" isInFridge(ingredient.id) == 1" class=" mx-1 w-4" src="@/assets/icons/figures/yellowcircle.png" alt="">
                 <img v-else-if=" isInFridge(ingredient.id) == 0" class=" mx-1 w-4" src="@/assets/icons/figures/redcircle.png" alt="">
-                <p class="text-sm whitespace-nowrap">{{ getFridgeStatus(ingredient.id) }}</p>
+                <p class="opacity-80 text-sm whitespace-nowrap">{{ getFridgeStatus(ingredient.id) }}</p>
               </div>
             </td>
             <td class="inline-flex">
@@ -103,6 +103,7 @@ import { useRefrigeratorStore } from '~/store/refrigeratorStore';
         this.unit = newUnit; 
       },
       isInFridge(groceryId : Number) : number{
+        if(this.matchingIngredient===null) return 0; 
         let refIng : Ingredient | undefined = this.matchingIngredient?.get(groceryId)
         if(refIng !== undefined && this.recipe !== null){
           let recIng : Ingredient | undefined = this.recipe.ingredients.find(obj => obj.id === groceryId); 

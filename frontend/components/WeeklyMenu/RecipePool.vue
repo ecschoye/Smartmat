@@ -251,11 +251,10 @@ export default {
                 const ingredients : Ingredient[] = []; 
                 for(let j = 0; j < response.data[i].ingredients.length; j++){
                     const ingredientDTO = response.data[i].ingredients[j]; 
-
                     const unit : Unit = {
-                        id : ingredientDTO.id,
-                        name : ingredientDTO.name,
-                        weight : ingredientDTO.weight
+                        id : ingredientDTO.unit.id,
+                        name : ingredientDTO.unit.name,
+                        weight : ingredientDTO.unit.weight
                     }
 
                     const ingredient : Ingredient = {

@@ -41,7 +41,7 @@ export default {
   },
   watch: {
     recipesPage(){
-      console.log(this.recipesPage); 
+      //console.log(this.recipesPage); 
     }
   },
   setup() {
@@ -127,9 +127,9 @@ export default {
                         const ingredientDTO = response.data[i].ingredients[j]; 
 
                         const unit : Unit = {
-                            id : ingredientDTO.id,
-                            name : ingredientDTO.name,
-                            weight : ingredientDTO.weight
+                            id : ingredientDTO.unit.id,
+                            name : ingredientDTO.unit.name,
+                            weight : ingredientDTO.unit.weight
                         }
 
                         const ingredient : Ingredient = {
@@ -144,7 +144,6 @@ export default {
                     recipes[i].ingredients = ingredients;
                 }
                 this.recipesPage = recipes;  
-                console.log(this.recipesPage)
               }
       } catch (error: any) {
         this.errorMessage = error.response.data || 'An error occurred.';

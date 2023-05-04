@@ -15,12 +15,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-
 public class GroceryHistoryService {
 
     private final GroceryHistoryRepository groceryHistoryRepository;
 
-    private List<GroceryHistory> findGroceriesForMonth(int x, long refrigeratorId) {
+    public List<GroceryHistory> findGroceriesForMonth(int x, long refrigeratorId) {
         LocalDate dateXMonthsBack = LocalDate.now().minusMonths(x);
         LocalDate startDate = dateXMonthsBack.withDayOfMonth(1); // Get first day of month x months back
         LocalDate endDate = dateXMonthsBack.withDayOfMonth(dateXMonthsBack.lengthOfMonth()); // Get last day of month x months back
@@ -35,17 +34,25 @@ public class GroceryHistoryService {
             LocalDate dateXMonthsBack = LocalDate.now().minusMonths(i);
             String formattedDate = dateXMonthsBack.format(formatter);
 
-
-            stats.add(GroceryStatisticDTO.builder()
-                    .foodWaste(sumTrash(iMonth))
-                    .foodEaten(sumEaten(iMonth))
-                    .monthName(formattedDate)
-                    .build());
+            if(iMonth.size() == 0){
+                stats.add(GroceryStatisticDTO.builder()
+                        .foodWaste(0)
+                        .foodEaten(0)
+                        .monthName(formattedDate)
+                        .build());
+            }
+            else{
+                stats.add(GroceryStatisticDTO.builder()
+                        .foodWaste(sumTrash(iMonth))
+                        .foodEaten(sumEaten(iMonth))
+                        .monthName(formattedDate)
+                        .build());
+            }
         }
         return stats;
     }
 
-    private Integer sumTrash(List<GroceryHistory> list) {
+    public Integer sumTrash(List<GroceryHistory> list) {
         List<GroceryHistory> trash = list.stream()
                 .filter(groceryHistory -> groceryHistory.isWasTrashed())
                 .collect(Collectors.toList());
@@ -57,7 +64,7 @@ public class GroceryHistoryService {
         return totalWeight;
     }
 
-    private Integer sumEaten(List<GroceryHistory> list) {
+    public Integer sumEaten(List<GroceryHistory> list) {
         List<GroceryHistory> eaten = list.stream()
                 .filter(groceryHistory -> !groceryHistory.isWasTrashed())
                 .collect(Collectors.toList());

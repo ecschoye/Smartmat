@@ -191,24 +191,32 @@ export default {
                 if (response.status === 200) {
                     const recipe = response.data[0];
                     
-                    const unit : Unit = {
-                        id: response.data[0].ingredients[0].unit.id,
-                        name: response.data[0].ingredients[0].unit.name,
-                        weight: response.data[0].ingredients[0].unit.weight
-                    };
-                    
-                    const ingredient = response.data[0].ingredients.map((ingredientsRecieved : Ingredient) => ({
-                    id: ingredientsRecieved.simpleGrocery.id,
-                    name: ingredientsRecieved.simpleGrocery.name,
-                    quantity: ingredientsRecieved.quantity,
-                    unit : unit
-                    }));
+                    const ingredients : Ingredient[] = []; 
+                    for(let j = 0; j < response.data[0].ingredients.length; j++){
+                        const ingredientDTO = response.data[0].ingredients[j]; 
+                        console.log("Yo")
+                        console.log(ingredientDTO)
+                        const unit : Unit = {
+                            id : ingredientDTO.unit.id,
+                            name : ingredientDTO.unit.name,
+                            weight : ingredientDTO.unit.weight 
+                        }
+
+                        const ingredient : Ingredient = {
+                            id: ingredientDTO.simpleGrocery.id,
+                            name: ingredientDTO.simpleGrocery.name,
+                            quantity: ingredientDTO.quantity,
+                            unit : unit
+                        }
+
+                        ingredients.push(ingredient); 
+                    }
 
                     const newRecipe: Recipe = {
                         id: recipe.id,
                         name: recipe.name,
                         url: recipe.url,
-                        ingredients: ingredient,
+                        ingredients: ingredients,
                     };
 
                     this.addRecipeWeek(dayIndex, newRecipe);
@@ -236,24 +244,30 @@ export default {
               url: recipe.url,
               ingredients: []
             }));
-          let ingredients;       
+                 
           if (response.status === 200) {
-            for(let i = 0; i < response.data.length; i++) {
+            for(let i = 0; i < recipes.length; i++) {
+                const ingredients : Ingredient[] = []; 
+                for(let j = 0; j < response.data[i].ingredients.length; j++){
+                    const ingredientDTO = response.data[i].ingredients[j]; 
 
-                const unit : Unit = {
-                        id: response.data[i].ingredients[i].unit.id,
-                        name: response.data[i].ingredients[i].unit.name,
-                        weight: response.data[i].ingredients[i].unit.weight
-                    };
-                ingredients = response.data[i].ingredients.map((ingredientsRecieved : Ingredient) => ({
-                    id: ingredientsRecieved.simpleGrocery.id,
-                    name: ingredientsRecieved.simpleGrocery.name,
-                    quantity: ingredientsRecieved.quantity,
-                    unit : unit 
-                    }));
+                    const unit : Unit = {
+                        id : ingredientDTO.id,
+                        name : ingredientDTO.name,
+                        weight : ingredientDTO.weight
+                    }
+
+                    const ingredient : Ingredient = {
+                        id: ingredientDTO.simpleGrocery.id,
+                        name: ingredientDTO.simpleGrocery.name,
+                        quantity: ingredientDTO.quantity,
+                        unit : unit
+                    }
+
+                    ingredients.push(ingredient); 
+                }
                 recipes[i].ingredients = ingredients;   
             }
-            
 
             if (this.weeklyMenuStore.$state.chosenWeek === 1) {
               this.weeklyMenuStore.setCurrentWeekRandomly(recipes);

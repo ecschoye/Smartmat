@@ -227,21 +227,20 @@ public class TestDataSerializer {
 
         for (int i = 0; i < recipeNames.length; i++) {
             Recipe recipe = getRecipeByName(recipeNames[i]);
-            for (int j = 0; j < recipeNames.length; j++) {
-                long[] groceryIds = ingredientGroceries.get(recipeNames[i]);
-                int[] quantities = ingredientQuantities.get(recipeNames[i]);
-                long[] units = ingredientUnits.get(recipeNames[i]);
-                for (int k = 0; k < groceryIds.length; k++) {
-                    Grocery grocery = getGroceryById(groceryIds[k]);
-                    Unit unit = getUnitById(units[i]);
-                    if (!recipeGroceryRepository.existsByRecipeAndGrocery(recipe, grocery)) {
-                        recipeGroceryRepository.save(RecipeGrocery.builder()
-                                .recipe(recipe)
-                                .grocery(grocery)
-                                .unit(unit)
-                                .quantity(quantities[k])
-                                .build());
-                    }
+            long[] groceryIds = ingredientGroceries.get(recipeNames[i]);
+            int[] quantities = ingredientQuantities.get(recipeNames[i]);
+            long[] units = ingredientUnits.get(recipeNames[i]);
+
+            for (int k = 0; k < groceryIds.length; k++) {
+                Grocery grocery = getGroceryById(groceryIds[k]);
+                Unit unit = getUnitById(units[k]);
+                if (!recipeGroceryRepository.existsByRecipeAndGrocery(recipe, grocery)) {
+                    recipeGroceryRepository.save(RecipeGrocery.builder()
+                            .recipe(recipe)
+                            .grocery(grocery)
+                            .unit(unit)
+                            .quantity(quantities[k])
+                            .build());
                 }
             }
         }

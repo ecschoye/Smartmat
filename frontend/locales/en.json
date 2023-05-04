@@ -97,8 +97,7 @@
   "total_food_eaten": "Total Food Eaten",
   "total_food_wasted": "Total Food Wasted",
   "food_eaten": "Food Eaten",
-  "food_wasted": "Food Wasted"
-  "to_refrigerator": "To refrigerator",
+  "food_wasted": "Food Wasted",
   "generate_random_recipes" : "Generate random recipes based on groceries in your fridge",
   "remove_all_recipes" : "Remove all recipes",
   "current_week" : "Current week",

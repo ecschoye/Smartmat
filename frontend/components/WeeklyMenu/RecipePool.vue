@@ -5,9 +5,9 @@
     </div>
     <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title">{{ $t("current_week") }}</h1>
     <h1 v-else class="title">{{ $t("next_week") }}</h1>
-    <div class="recepe-pool" v-if="weeklyMenuStore.$state.chosenWeek === 1">
-        <div v-for="weekday in activeWeekdays" :key="weekday" class="recepe-card">
-            <div class="recepe-content">
+    <div class="recipe-pool" v-if="weeklyMenuStore.$state.chosenWeek === 1">
+        <div v-for="weekday in activeWeekdays" :key="weekday" class="recipe-card">
+            <div class="recipe-content">
                 <div class="weekday">
                     {{ weekday }}
                 </div>
@@ -25,9 +25,9 @@
             </div>
         </div>
     </div>
-    <div class="recepe-pool" v-else>
-        <div v-for="weekday in Weekdays" :key="weekday" class="recepe-card">
-            <div class="recepe-content">
+    <div class="recipe-pool" v-else>
+        <div v-for="weekday in Weekdays" :key="weekday" class="recipe-card">
+            <div class="recipe-content">
                 <div class="weekday">
                     {{ weekday }}
                 </div>
@@ -343,7 +343,7 @@ export default {
 
 <style>
 
-.recepe-pool {
+.recipe-pool {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
@@ -358,7 +358,7 @@ export default {
     justify-content: space-between;
 }
 
-.recepe-card {
+.recipe-card {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
@@ -366,7 +366,7 @@ export default {
     overflow: hidden;
 }
 
-.recepe-content {
+.recipe-content {
     display: flex;
     flex-direction: column;
     align-items: center;

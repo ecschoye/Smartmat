@@ -114,5 +114,7 @@
   "no_recipes_to_delete" : "There are no recipes to remove",
   "add_recipe_to_day" : "Add a recipe",
   "amount" : "Amount", 
-  "add" : "Add"
+  "add" : "Add",
+  "not_in_refrigerator" : "Not In Refrigerator",
+  "in_refrigerator" : " In Refrigerator"
 }

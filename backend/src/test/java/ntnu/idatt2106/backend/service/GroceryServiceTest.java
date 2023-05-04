@@ -67,6 +67,15 @@ public class GroceryServiceTest {
     @Mock
     private UnitRepository unitRepository;
 
+    @Mock
+    private RefrigeratorUserRepository refrigeratorUserRepository;
+
+    @Mock
+    private GroceryNotificationRepository groceryNotificationRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
     //Testdata
     private Grocery grocery;
     private GroceryDTO customGroceryDTO;
@@ -428,4 +437,31 @@ public class GroceryServiceTest {
         assertEquals(customGroceryDTO.getGroceryExpiryDays(), result.getGroceryExpiryDays());
         assertEquals(customGroceryDTO.getSubCategory(), result.getSubCategory());
     }
+
+
+    @Test
+    public void testUseRefrigeratorGrocery_ThrowsNoSuchElement() {
+        Mockito.when(refrigeratorGroceryRepository.findById(any())).thenReturn(Optional.empty());
+        DeleteRefrigeratorGroceryDTO dto = new DeleteRefrigeratorGroceryDTO();
+        RefrigeratorGroceryDTO refrigeratorGroceryDTO = new RefrigeratorGroceryDTO();
+        refrigeratorGroceryDTO.setId(1L);
+        dto.setRefrigeratorGroceryDTO(refrigeratorGroceryDTO);
+
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        assertThrows(NoSuchElementException.class, () -> groceryService.useRefrigeratorGrocery(dto, request));
+
+    }
+
+    @Test
+    public void testUseRefrigeratorGrocery_NotAuthorized() {
+        Mockito.when(refrigeratorGroceryRepository.findById(any())).thenReturn(Optional.of(RefrigeratorGrocery.builder().build()));
+        DeleteRefrigeratorGroceryDTO dto = new DeleteRefrigeratorGroceryDTO();
+        RefrigeratorGroceryDTO refrigeratorGroceryDTO = new RefrigeratorGroceryDTO();
+        refrigeratorGroceryDTO.setId(1L);
+        dto.setRefrigeratorGroceryDTO(refrigeratorGroceryDTO);
+        when(refrigeratorUserRepository.findByUserAndRefrigerator(any(), any())).thenReturn(Optional.of(RefrigeratorUser.builder().fridgeRole(FridgeRole.USER).build()));
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        assertThrows(UnauthorizedException.class, () -> groceryService.useRefrigeratorGrocery(dto, request));
+    }
+
 }

@@ -274,17 +274,17 @@ public class TestDataSerializer {
         }
     }
 
-    private Recipe getRecipeByName(String name) {
+    public Recipe getRecipeByName(String name) {
         return (Recipe) recipeRepository.findByName(name)
                 .orElseThrow(() -> new RuntimeException("Recipe not found: " + name));
     }
 
-    private Grocery getGroceryById(long id) {
+    public Grocery getGroceryById(long id) {
         return groceryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Grocery not found: " + id));
     }
 
-    private Unit getUnitById(long id) {
+    public Unit getUnitById(long id) {
         return unitRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Grocery not found: " + id));
     }
@@ -332,7 +332,7 @@ public class TestDataSerializer {
     }
 
 
-    private RecipeCategory getRecipeCategoryByName(String name) {
+    public RecipeCategory getRecipeCategoryByName(String name) {
         Optional<RecipeCategory> categories = recipeCategoryRepository.findByName(name);
 
         if (categories.isEmpty()) {

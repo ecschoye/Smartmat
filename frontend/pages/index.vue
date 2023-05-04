@@ -14,25 +14,25 @@
 
     <div class="sm:flex sm:justify-center text-center mt-14" >
       <NuxtLink v-if="loggedIn && isSelected()" :to="localePath('/home')" class="sm:mt-5 sm:pr-4">
-        <button class="w-54 h-14 sm:w-50 border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
+        <button class="w-54 h-14 sm:w-50 border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-color hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
           {{  t('go_to_my_fridge') }}
         </button>
       </NuxtLink>
 
       <NuxtLink v-else-if="loggedIn" @click="toggleSelect()" class="sm:mt-5 sm:pr-4">
-        <button class="w-54 h-14 sm:w-50 border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
+        <button class="w-54 h-14 sm:w-50 border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-color hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
           {{  t('go_to_my_fridge') }}
         </button>
       </NuxtLink>
 
 
       <NuxtLink v-else :to="localePath('/login')" class="sm:mt-5 sm:pr-4">
-        <button class="w-54 h-14 sm:w-50 border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
+        <button class="w-54 h-14 sm:w-50 border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-color hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
           {{ t('log_in_here') }}
         </button>
       </NuxtLink>
       <NuxtLink :to="localePath('/about-us')" class="sm:mt-5 sm:pl-4">
-        <button class="w-54 h-14 sm:w-50 border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-700 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
+        <button class="w-54 h-14 sm:w-50 border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-color hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
           {{ t('read_more_about_us')}}
         </button>
       </NuxtLink>

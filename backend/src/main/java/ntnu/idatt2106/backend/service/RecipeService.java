@@ -52,6 +52,7 @@ public class RecipeService {
         // First fetch all groceries the user has in fridge
         List<RefrigeratorGrocery> allGroceries = refrigeratorGroceryRepository.findAllByRefrigeratorId(refrigeratorId);
 
+
         if (allGroceries.isEmpty()) {
             throw new NoSuchElementException("No groceries found for the given refrigerator ID.");
         }
@@ -64,22 +65,25 @@ public class RecipeService {
             throw new NoSuchElementException("No valid groceries found. All groceries have expired.");
         }
 
-        // Count the number of each grocery in the RefrigeratorGrocery table
-        Map<Grocery, Integer> groceryCount = validGroceries.stream()
-                .filter(item -> item.getRefrigerator().getId() == refrigeratorId)
-                .collect(Collectors.groupingBy(RefrigeratorGrocery::getGrocery, Collectors.summingInt(item -> 1)));
+        // Count the number of each grocery in the RefrigeratorGrocery table by name
+        Map<String, Integer> groceryNameCount = validGroceries.stream()
+                .map(RefrigeratorGrocery::getGrocery)
+                .collect(Collectors.groupingBy(Grocery::getName, Collectors.summingInt(item -> 1)));
 
-        // Retrieve all RecipeGrocery records that match the groceries in the validGroceries
-        List<RecipeGrocery> matchingRecipeGroceries = recipeGroceryRepository.findAllByGroceryIn(
-                validGroceries.stream().map(RefrigeratorGrocery::getGrocery).collect(Collectors.toList()));
+
+
+        // Retrieve all RecipeGrocery records that match the groceries in the validGroceries based on name
+        List<RecipeGrocery> matchingRecipeGroceries = recipeGroceryRepository.findAllByGroceryNameIn(
+                validGroceries.stream().map(RefrigeratorGrocery::getGrocery).map(Grocery::getName).collect(Collectors.toList()));
+
 
         if (matchingRecipeGroceries.isEmpty()) {
             throw new NoSuchElementException("No matching recipes found for the available groceries.");
         }
 
-        // Group the RecipeGrocery records by recipe and count the number of matched groceries for each recipe
+        // Group the RecipeGrocery records by recipe and count the number of matched groceries for each recipe by name
         Map<Recipe, Long> recipeMatchCount = matchingRecipeGroceries.stream()
-                .filter(rg -> groceryCount.getOrDefault(rg.getGrocery(), 0) >= rg.getQuantity())
+                .filter(rg -> groceryNameCount.getOrDefault(rg.getGrocery().getName(), 0) >= rg.getQuantity())
                 .collect(Collectors.groupingBy(RecipeGrocery::getRecipe, Collectors.counting()));
 
         // Sort the recipes based on the number of matched groceries

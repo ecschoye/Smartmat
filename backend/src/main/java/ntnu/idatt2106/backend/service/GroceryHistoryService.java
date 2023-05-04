@@ -27,6 +27,7 @@ public class GroceryHistoryService {
         return groceryHistoryRepository.findByDateConsumedBetweenAndRefrigeratorId(startDate, endDate, refrigeratorId);
     }
     public List<GroceryStatisticDTO> getStatsforLastYear(long refrigeratorId){
+        deleteOldStatistics();
         List<GroceryStatisticDTO> stats = new ArrayList<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM, yyyy");
         for(int i = 0; i < 12; i++){
@@ -67,6 +68,12 @@ public class GroceryHistoryService {
 
         return totalWeight;
     }
+
+    public void deleteOldStatistics() {
+        LocalDate dateThreshold = LocalDate.now().minusDays(400); // Change to 365 if you want exactly 12 months
+        groceryHistoryRepository.deleteByDateConsumedBefore(dateThreshold);
+    }
+
 
     public void newGroceryHistory(RefrigeratorGrocery refrigeratorGrocery, boolean isTrash){
         GroceryHistory groceryHistory = GroceryHistory.builder()

@@ -1,8 +1,8 @@
 import type { AxiosResponse } from 'axios';
 import axiosInstance from "~/service/AxiosInstance";
 
-const getStatsData = (): Promise<AxiosResponse> => {
-    return axiosInstance.get(`/api/stats/data`);
+const getStatsData = (refrigeratorId: Number): Promise<AxiosResponse> => {
+    return axiosInstance.get(`/api/history/grocery/lastYear/${refrigeratorId}`);
 };
 
 export default {

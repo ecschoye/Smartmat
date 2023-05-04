@@ -213,7 +213,7 @@ public class ShoppingListService {
 
 
 
-        /**
+    /**
      * Adds predefined grocery to the shopping list for groceries
      * @param saveGroceryRequest JSON object to save
      * @param request The http request
@@ -224,7 +224,6 @@ public class ShoppingListService {
      */
     public void saveGrocery(SaveGroceryRequest saveGroceryRequest, HttpServletRequest request) throws ShoppingListNotFound, UserNotFoundException, UnauthorizedException, SaveException {
         ShoppingList shoppingList = getShoppingListById(saveGroceryRequest.getForeignKey());
-        Grocery grocery = groceryService.getGroceryById(saveGroceryRequest.getGroceryId());
         Optional<GroceryShoppingList> groceryShoppingList = groceryShoppingListRepository
                 .findByGroceryIdAndShoppingListId(saveGroceryRequest.getGroceryId(), shoppingList.getId());
         boolean isRequested = groceryService.getFridgeRole(shoppingList.getRefrigerator(), request) != FridgeRole.SUPERUSER;
@@ -233,6 +232,7 @@ public class ShoppingListService {
             logger.info("Grocery item exist already in entity for shopping list. Increment quantity with one");
             groceryShoppingList.get().editQuantity(saveGroceryRequest.getQuantity());
         } else {
+            Grocery grocery = groceryService.getGroceryById(saveGroceryRequest.getGroceryId());
             groceryShoppingList = Optional.of(GroceryShoppingList.builder()
                     .grocery(grocery)
                     .shoppingList(shoppingList)

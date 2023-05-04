@@ -2,7 +2,7 @@
     <div class="unknown-recipe" @click="addRecipe">
       <div class="add-recepe">
         <div class="centered-content">
-          <img src="@/assets/icons/add.png" alt="icon" />
+          <img src="../../assets/icons/add.png" alt="icon" />
           <h3>{{$t("add_recipe_to_day")}}</h3>
         </div>
       </div>
@@ -12,8 +12,6 @@
 <script lang="ts">
   export default {
     setup() {
-      const {locale, locales, t} = useI18n()
-      return {locale, locales, t}
     },
     methods: {
 

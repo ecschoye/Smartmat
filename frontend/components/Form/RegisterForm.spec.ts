@@ -11,6 +11,7 @@ import GrayButton from "../Button/GrayButton.vue";
 import NuxtLink from "#app/components/nuxt-link";
 import RegisterForm from "./RegisterForm.vue";
 import { createI18n } from 'vue-i18n'
+import BaseInput from "~/components/Form/BaseInput.vue";
 
 
 
@@ -75,6 +76,29 @@ describe('RegisterForm.vue', () => {
         const newUserButton = wrapper.findComponent(GrayButton);
         expect(loginButton.exists()).toBe(true);
         expect(newUserButton.exists()).toBe(true);
+    });
+
+    test('renders baseinput', () => {
+        const input = wrapper.findComponent(BaseInput);
+        expect(input.exists()).toBe(true);
+    });
+
+    test('renders id', () => {
+        const nameInput = wrapper.find('#inpName');
+        const emailInput = wrapper.find('#inpEmail');
+        const passwordInput = wrapper.find('#inpPassword');
+        expect(nameInput.attributes('id')).toBe('inpName');
+        expect(emailInput.attributes('id')).toBe('inpEmail');
+        expect(passwordInput.attributes('id')).toBe('inpPassword');
+    });
+
+    test('renders type', () => {
+        const nameInput = wrapper.find('#inpName');
+        const emailInput = wrapper.find('#inpEmail');
+        const passwordInput = wrapper.find('#inpPassword');
+        expect(nameInput.attributes('type')).toBe('name');
+        expect(emailInput.attributes('type')).toBe('email');
+        expect(passwordInput.attributes('type')).toBe('password');
     });
 });
 

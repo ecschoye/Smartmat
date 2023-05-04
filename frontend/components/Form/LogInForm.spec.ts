@@ -8,7 +8,6 @@ import ErrorAlert from '../AlertBox/ErrorAlert.vue';
 import GreenButton from "../Button/GreenButton.vue";
 import GrayButton from "../Button/GrayButton.vue";
 import LoginForm from "./LogInForm.vue";
-import NuxtLink from "#app/components/nuxt-link";
 
 
 

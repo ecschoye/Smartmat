@@ -195,7 +195,7 @@ public class ShoppingListService {
      * @throws SaveException if it was not possible to save the modifications to the database
      */
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void editRefrigeratorGrocery(long groceryRefrigeratorShoppingListId, int quantity, HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, UnauthorizedException, SaveException, ShoppingListNotFound {
+    public void editRefrigeratorGrocery(long groceryRefrigeratorShoppingListId, int quantity, HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, UnauthorizedException, SaveException, ShoppingListNotFound, NoSuchElementException {
         RefrigeratorShoppingList refrigeratorShoppingListItem = refrigeratorShoppingListRepository.findById(groceryRefrigeratorShoppingListId)
                 .orElseThrow(() -> new NoGroceriesFound("Could not find a grocery with the given i"));
         FridgeRole fridgeRole = groceryService.getFridgeRole(refrigeratorShoppingListItem.getShoppingList().getRefrigerator(), httpRequest);

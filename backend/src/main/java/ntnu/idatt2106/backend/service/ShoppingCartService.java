@@ -181,7 +181,7 @@ public class ShoppingCartService {
      * @throws NoGroceriesFound If no groceries was found in the shopping cart
      */
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void transferGroceryToRefrigerator(long shoppingCartItemId, HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, SaveException, UnauthorizedException, RefrigeratorNotFoundException {
+    public void transferGroceryToRefrigerator(long shoppingCartItemId, HttpServletRequest httpRequest, CreateRefrigeratorGroceryDTO dto) throws NoGroceriesFound, UserNotFoundException, SaveException, UnauthorizedException, RefrigeratorNotFoundException {
         GroceryShoppingCart shoppingCartItem = groceryShoppingCartRepository.findById(shoppingCartItemId)
                         .orElseThrow(() -> new NoGroceriesFound("Could not find shopping cart item"));
 

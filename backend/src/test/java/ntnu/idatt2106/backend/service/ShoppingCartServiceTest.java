@@ -1,11 +1,10 @@
 package ntnu.idatt2106.backend.service;
 
 import ntnu.idatt2106.backend.exceptions.*;
-import ntnu.idatt2106.backend.model.Refrigerator;
-import ntnu.idatt2106.backend.model.ShoppingCart;
-import ntnu.idatt2106.backend.model.ShoppingList;
-import ntnu.idatt2106.backend.model.SubCategory;
+import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.category.Category;
+import ntnu.idatt2106.backend.model.dto.CreateRefrigeratorGroceryDTO;
+import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
@@ -18,6 +17,7 @@ import ntnu.idatt2106.backend.model.requests.SaveGroceryRequest;
 import ntnu.idatt2106.backend.repository.GroceryShoppingCartRepository;
 import ntnu.idatt2106.backend.repository.ShoppingCartRepository;
 import ntnu.idatt2106.backend.repository.ShoppingListRepository;
+import ntnu.idatt2106.backend.repository.UnitRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 public class ShoppingCartServiceTest {
@@ -48,6 +49,8 @@ public class ShoppingCartServiceTest {
     @InjectMocks
     private ShoppingCartService shoppingCartService;
     private MockHttpServletRequest httpRequest;
+    @Mock
+    private UnitRepository unitRepository;
 
     @BeforeEach
     void setup() {
@@ -142,7 +145,7 @@ public class ShoppingCartServiceTest {
 
 
         groceries.add(GroceryShoppingCart.builder().grocery(grocery1)
-                .shoppingCart(new ShoppingCart(1L, shoppingList)).quantity(1).build());
+                .shoppingCart(new ShoppingCart(1L, shoppingList)).quantity(1).unit(Unit.builder().id(1L).name("123").build()).build());
         when(shoppingCartRepository.findByShoppingCartId(shoppingCartId)).thenReturn(groceries);
 
 
@@ -183,12 +186,14 @@ public class ShoppingCartServiceTest {
                 .id(1L)
                 .grocery(grocery1)
                 .quantity(2)
+                .unit(Unit.builder().id(1L).name("dl").build())
                 .shoppingCart(shoppingCart)
                 .build();
         SaveGroceryRequest saveGroceryRequest = SaveGroceryRequest.builder()
                 .groceryId(grocery1.getId())
                 .quantity(1)
                 .foreignKey(shoppingCart.getId())
+                .unitDTO(new UnitDTO(Unit.builder().id(1L).name("dl").build()))
                 .build();
 
         when(shoppingCartRepository.findById(shoppingCart.getId())).thenReturn(Optional.of(shoppingCart));
@@ -196,7 +201,7 @@ public class ShoppingCartServiceTest {
         when(groceryShoppingCartRepository.findByGroceryIdAndShoppingCartId(grocery1.getId(), shoppingCart.getId())).thenReturn(Optional.empty());
         when(groceryService.getFridgeRole(shoppingList.getRefrigerator(), httpRequest)).thenReturn(FridgeRole.SUPERUSER);
         when(groceryShoppingCartRepository.save(groceryShoppingCartItem)).thenReturn(groceryShoppingCartItem);
-
+        when(unitRepository.findById(anyLong())).thenReturn(Optional.ofNullable(Unit.builder().id(1L).name("dl").build()));
         assertDoesNotThrow(() -> {
             shoppingCartService.saveGrocery(saveGroceryRequest, httpRequest);
         });
@@ -346,7 +351,7 @@ public class ShoppingCartServiceTest {
         long shoppingCartItem = 1L;
         when(groceryShoppingCartRepository.findById(shoppingCartItem)).thenReturn(Optional.empty());
 
-        assertThrows(NoGroceriesFound.class, () -> shoppingCartService.transferGroceryToRefrigerator(shoppingCartItem, httpRequest));
+        assertThrows(NoGroceriesFound.class, () -> shoppingCartService.transferGroceryToRefrigerator(shoppingCartItem, httpRequest, new CreateRefrigeratorGroceryDTO()));
     }
 
     @Test
@@ -385,6 +390,6 @@ public class ShoppingCartServiceTest {
         when(groceryShoppingCartRepository.findById(groceryListId)).thenReturn(Optional.of(groceryShoppingCart));
         when(groceryService.getFridgeRole(shoppingList.getRefrigerator(), httpRequest)).thenReturn(FridgeRole.SUPERUSER);
 
-        assertDoesNotThrow(() -> shoppingCartService.transferGroceryToRefrigerator(groceryListId, httpRequest));
+        assertDoesNotThrow(() -> shoppingCartService.transferGroceryToRefrigerator(groceryListId, httpRequest, new CreateRefrigeratorGroceryDTO()));
     }
 }

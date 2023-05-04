@@ -23,6 +23,7 @@
 </template>
 
 <script lang="ts">
+import { ShoppingListElementType } from '~/types/ShoppingListElement';
     export default defineComponent({
         props:{
             ShoppingListId: {
@@ -30,7 +31,7 @@
                 required: true
             },
             CategoryListItems: {
-                type: Array as () => ShoppingListElement[],
+                type: Array as () => ShoppingListElementType[],
                 require: true
             }
         },

@@ -14,6 +14,11 @@
     </div>
     <div class="flex flex-1 space-x-2 items-center justify-end">
       <FridgeSelector v-if="loggedIn"/>
+      <NuxtLink v-if="loggedInStatus" href="/notifications" title="Varslinger" class="lg:hidden -ml-4 mr-8 p-1.5 text-sm font-semibold leading-6 text-gray-900">
+        <span class="sr-only">Varslinger</span>
+        <img v-if = "notificationStore.getNotifications.length > 0" class="h-8 w-auto" src="../assets/icons/bell-not.png" alt="">
+        <img v-else class="h-8 w-auto hover:transform hover:scale-125" src="../assets/icons/bell.png" alt="">
+      </NuxtLink>
       <div class=" w-8"></div>
       <div class="flex lg:hidden">
         <button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md min-w-fit p-2.5 text-gray-700" @click="mobileMenuOpen = true">

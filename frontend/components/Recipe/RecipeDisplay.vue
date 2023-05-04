@@ -141,16 +141,13 @@ import { useRefrigeratorStore } from '~/store/refrigeratorStore';
       },
       async addToShoppingList(){
         if(this.selectedIngredient !== null && this.shoppingListId !== -1 && this.quantity !== null && this.unit !== null) {
-          let grocery : SaveGrocery = {groceryId : this.selectedIngredient.id, quantity : this.quantity, foreignKey : this.shoppingListId, unit : this.unit}
-          /*ShoppingListService.saveGroceryToShoppingList(grocery)
-            .then((response) => {
-              console.log("success")
+          let grocery : SaveGrocery = {groceryId : this.selectedIngredient.id, quantity : this.quantity, foreignKey : this.shoppingListId, unitDTO : this.unit}
+          ShoppingListService.saveGroceryToShoppingList(grocery)
+            .then(async (response) => {
               await this.fetchMatchingIngredients(); 
               this.hidePopup();
             })
-            .catch((error) => console.log(error));*/
-          await this.fetchMatchingIngredients(); 
-          this.hidePopup();
+            .catch((error) => console.log(error));
         }
       },
       async fetchShoppingList(){

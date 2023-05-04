@@ -1,5 +1,5 @@
 <template>
-  <div class="" @click="clickEvent">
+  <div class="" @click="seeRecipeNextWeek">
     <div class="bg-green-color dark:bg-zinc-500 hover:transform hover:scale-105 pb-3 w-11/12 h-72 justify-center relative rounded-xl">
       <div class="h-40 dark:hidden bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(49,196,141,0) 90%, rgba(49,196,141,1) 100%), url(${recipeInfo.url})` }"></div>
       <div class="h-40 hidden dark:block bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(39,39,42,0) 95%, rgba(39,39,42,1) 100%), url(${recipeInfo.url})` }"></div>
@@ -49,8 +49,8 @@ export default {
       this.weeklyMenuStore.setCurrentChosenIndex(null);
       this.$router.push("/weekly-menu");
     },
-    seeRecipeNextWeek(recipe: Recipe): void {
-      this.$emit("see-recipe-event", recipe);
+    seeRecipeNextWeek(): void {
+      this.$emit("seeRecipeEvent", this.recipeInfo);
     },
   },
 }

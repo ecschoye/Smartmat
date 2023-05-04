@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.dto.GroceryStatisticDTO;
-import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.service.GroceryHistoryService;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,8 +30,6 @@ public class GroceryHistoryControllerTest {
     @Mock
     private RefrigeratorService refrigeratorService;
 
-    @Mock
-    private HttpServletRequest request;
 
     @BeforeEach
     public void setup() {

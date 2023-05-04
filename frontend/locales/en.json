@@ -93,5 +93,9 @@
   "add_a_grocery_from_the_list" : "Add a grocery from the list",
   "find_recipe": "Find recipe",
   "go_to_weekly_menu": "Go to weekly menu",
-  "to_refrigerator": "To refrigerator"
+  "to_refrigerator": "To refrigerator",
+  "total_food_eaten": "Total Food Eaten",
+  "total_food_wasted": "Total Food Wasted",
+  "food_eaten": "Food Eaten",
+  "food_wasted": "Food Wasted"
 }

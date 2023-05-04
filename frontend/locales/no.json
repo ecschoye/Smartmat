@@ -97,6 +97,10 @@
   "your_recipes": "Dine oppskrifter",
   "find_recipe": "Finn oppskrift",
   "go_to_weekly_menu": "Gå til ukemeny",
-  "to_refrigerator": "Til kjøleskap"
+  "to_refrigerator": "Til kjøleskap",
+  "total_food_eaten": "Total Mat Spist",
+  "total_food_wasted": "Total Mat Kastet",
+  "food_eaten": "Mat Spist",
+  "food_wasted": "Mat Kastet"
 
 }

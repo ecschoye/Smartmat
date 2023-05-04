@@ -58,5 +58,9 @@
   "add_a_grocery_from_the_list": "从列表中添加杂货",
   "find_recipe": "查找食谱",
   "go_to_weekly_menu": "前往每周菜单",
-  "to_refrigerator": "前往冰箱"
+  "to_refrigerator": "前往冰箱",
+  "total_food_eaten": "总食物消耗量",
+  "total_food_wasted": "总食物浪费量",
+  "food_eaten": "食物消耗量",
+  "food_wasted": "食物浪费量"
 }

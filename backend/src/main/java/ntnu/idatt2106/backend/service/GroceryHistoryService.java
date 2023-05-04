@@ -3,6 +3,7 @@ package ntnu.idatt2106.backend.service;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.model.GroceryHistory;
 import ntnu.idatt2106.backend.model.dto.GroceryStatisticDTO;
+import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.repository.GroceryHistoryRepository;
 import org.springframework.stereotype.Service;
@@ -82,12 +83,12 @@ public class GroceryHistoryService {
     }
 
 
-    public void newGroceryHistory(RefrigeratorGrocery refrigeratorGrocery, boolean isTrash){
+    public void newGroceryHistory(RefrigeratorGrocery refrigeratorGrocery, int quantity, UnitDTO unitDTO, boolean isTrash){
         GroceryHistory groceryHistory = GroceryHistory.builder()
                 .dateConsumed(LocalDate.now())
                 .refrigerator(refrigeratorGrocery.getRefrigerator())
                 .wasTrashed(isTrash)
-                .weightInGrams(refrigeratorGrocery.getQuantity()*refrigeratorGrocery.getUnit().getWeight())
+                .weightInGrams(quantity * unitDTO.getWeight())
                 .build();
         groceryHistoryRepository.save(groceryHistory);
     }

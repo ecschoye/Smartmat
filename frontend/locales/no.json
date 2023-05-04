@@ -96,6 +96,18 @@
   "members": "Medlemmer",
   "find_recipe": "Finn oppskrift",
   "go_to_weekly_menu": "Gå til ukemeny",
-  "to_refrigerator": "Til kjøleskap"
+  "to_refrigerator": "Til kjøleskap",
+  "current_week": "Denne uken",
+  "monday": "Mandag",
+  "tuesday": "Tirsdag",
+  "wednesday": "Onsdag",
+  "thursday": "Torsdag",
+  "friday": "Fredag",
+  "saturday": "Lørdag",
+  "sunday": "Søndag",
+  "view_ingredients": "Vis ingredienser",
+  "see_recipe": "Se oppskrift",
+  "options": "Valg"
+
 
 }

@@ -86,9 +86,9 @@
       unlockRecipe() {
         this.$emit("unlockedEvent");
       },
-      handleOptionChange() {
+      handleOptionChange(option : string) {
         this.showIngredients = false;
-        switch (this.selectedOption) {
+        switch (option) {
           case "option1":
             this.showIngredients = true;
             break;

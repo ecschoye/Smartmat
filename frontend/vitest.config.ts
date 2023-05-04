@@ -7,7 +7,9 @@ export default defineConfig({
         environment: 'jsdom',
         globals: true,
         coverage: {
-            provider: 'c8'
+            all: true,
+            provider: 'c8',
+            include: ['components/**/*.vue', 'store/**/*.ts'],
         }
     },
     resolve: {

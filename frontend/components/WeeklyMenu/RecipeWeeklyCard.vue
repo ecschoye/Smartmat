@@ -1,5 +1,5 @@
 <template>
-  <div class="Recipe-card-wrapper">
+  <div class="Recipe-card-wrapper bg-green-color dark:bg-zinc-500">
     <div class="lock-container">
         <img
           v-if="lockedBoolean"
@@ -15,9 +15,9 @@
         />
       </div>
     <div v-if="!showIngredients" class="Recipe-card">
-      
-      <div class="image-wrapper">
-        <img :src="recepeInfo.url" alt="" />
+      <div class="">
+      <div class="h-40 dark:hidden bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(49,196,141,0) 90%, rgba(49,196,141,1) 100%), url(${recepeInfo.url})` }"></div>
+      <div class="h-40 hidden dark:block bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(39,39,42,0) 95%, rgba(39,39,42,1) 100%), url(${recepeInfo.url})` }"></div>
       </div>
       <div class="recipe-info">
         <div>
@@ -25,10 +25,10 @@
         </div>
         <div class="recipe-choices">
           <select @change="handleOptionChange" v-model="selectedOption">
-            <option value="" disabled selected hidden>Valg</option>
-            <option value="option1">Se ingredienser</option>
-            <option value="option2">Legg til i handlekurv</option>
-            <option value="option3">Fjern</option>
+            <option value="" disabled selected hidden>{{ $t("options") }}</option>
+            <option value="option1">{{ $t("view_ingredients") }}</option>
+            <option value="option2">{{ $t("see_recipe") }}</option>
+            <option value="option3">{{ $t("remove") }}</option>
           </select>
         </div>
       </div>
@@ -38,18 +38,19 @@
       <div class="ingredients">
         <ul>
           <li v-for="ingredient in recepeInfo.ingredients" :key="ingredient">
-            {{ ingredient }}
+            {{ ingredient.name + "(" + ingredient.quantity + ")" }} 
           </li>
         </ul>
       </div>
-      <GreenButton label="Tilbake" width="100%" height="50px" @click="returnEvent" />
+      <div class="back-button">
+        <ButtonGreenButton label="Tilbake" width="100%" height="50px" @click="returnEvent" />
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
   import { Recipe } from "@/types/RecipeType";
-  import GreenButton from "@/components/Button/GreenButton.vue";
 
   export default {
     data() {
@@ -57,6 +58,11 @@
         selectedOption: "",
         showIngredients: false,
       };
+    },
+
+    setup() {
+      const {locale, locales, t} = useI18n()
+      return {locale, locales, t}
     },
 
     props: {
@@ -84,6 +90,7 @@
             this.showIngredients = true;
             break;
           case "option2":
+            this.$emit("seeRecipeEvent")
             break;
           case "option3":
             this.$emit("removeEvent");
@@ -94,15 +101,14 @@
         this.selectedOption = "";
         this.showIngredients = false;
       },
-    },
-    components: { GreenButton },
+    }
   };
 </script>
 
 <style>
  .Recipe-card-wrapper {
   position: relative;
-  width: 170px;
+  width: 160px;
   height: 260px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -159,12 +165,10 @@
   height: 120px;
 }
 
-.recipe-choices {
-}
 
 .recepe-title {
   font-size: 20px;
-  margin: 0;
+  margin-bottom: 15px;
   display: flex;
   justify-content: center;
   color: white;
@@ -172,6 +176,7 @@
 
 .ingredients {
   padding: 10px;
+  height: 150px;
 }
 
 .ingredients ul {
@@ -186,6 +191,11 @@
 
 .select {
   width: 20px;
+}
+
+.back-button {
+  display: flex;
+  justify-content: end;
 }
 
 </style>

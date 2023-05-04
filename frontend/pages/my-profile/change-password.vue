@@ -4,7 +4,7 @@
     <div class="user-details">
       <div class="form-group w-full">
         <p class="text-black dark:text-white text-xl font-semibold">{{t('enter_your_old_password')}}</p>
-        <BaseInput id="oldPassword" type="password" class="" :label="$t('old_password')" v-model="oldPassword"/>
+        <BaseInput :cut-width="'120px'" id="oldPassword" type="password" class="" :label="$t('old_password')" v-model="oldPassword"/>
       </div>
       <div class="form-group">
         <p class="text-black dark:text-white text-xl font-semibold">{{t('enter_your_new_password')}}</p>

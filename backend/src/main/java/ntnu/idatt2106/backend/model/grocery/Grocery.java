@@ -39,7 +39,6 @@ public class Grocery {
     @Schema(description = "Description of the grocery")
     private String description;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "subCategoryId")
     @Schema(description = "The sub category to the grocery")

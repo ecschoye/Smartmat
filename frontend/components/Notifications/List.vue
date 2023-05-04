@@ -9,12 +9,13 @@
         <div v-else-if="notifications.length > 8" class="grid grid-cols-3">
             <NotificationsElement v-for="notification in props.notifications" :key="notification.id" @delete-notif = "(payload) => emit('delete-notif', payload)" :notification="notification"/>
         </div>
-        <div v-else>{{ t('no_notifications') }}!</div>
+        <div v-else class="text-center dark:text-white">{{ t('no_notifications') }}!</div>
     </div>
     <div class="block md:hidden flex flex-wrap w-full justify-center align-middle  rounded-xl p-5">
-      <div class="grid grid-cols-1">
+      <div v-if="notifications.length > 0" class="grid grid-cols-1">
         <NotificationsElement v-for="notification in props.notifications" :key="notification.id" @delete-notif = "(payload) => emit('delete-notif', payload)" :notification="notification"/>
       </div>
+      <div v-else class="text-center dark:text-white">{{ t('no_notifications') }}!</div>
     </div>
 </template>
 

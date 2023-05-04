@@ -53,6 +53,7 @@ public class RefrigeratorGrocery {
     @Schema(description = "The unit of a grocery")
     private Unit unit;
 
+    @NotNull
     @Column(name = "quantity")
     @Schema(description = "THe quantity of specified units")
     private int quantity;

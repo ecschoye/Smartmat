@@ -4,10 +4,7 @@ import ntnu.idatt2106.backend.exceptions.NoGroceriesFound;
 import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.exceptions.ShoppingCartNotFound;
 import ntnu.idatt2106.backend.exceptions.ShoppingListNotFound;
-import ntnu.idatt2106.backend.model.Refrigerator;
-import ntnu.idatt2106.backend.model.ShoppingCart;
-import ntnu.idatt2106.backend.model.ShoppingList;
-import ntnu.idatt2106.backend.model.SubCategory;
+import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.category.Category;
 import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
@@ -91,10 +88,16 @@ public class ShoppingCartControllerTest {
                 .id(1L)
                 .shoppingList(shoppingList)
                 .build();
+        Unit unit = Unit.builder()
+                .id(1L)
+                .name("Milk")
+                .weight(1000)
+                .build();
         GroceryShoppingCart groceryShoppingCart = GroceryShoppingCart.builder()
                 .grocery(grocery)
                 .shoppingCart(shoppingCart)
                 .quantity(1)
+                .unit(unit)
                 .build();
 
         List<ShoppingCartElementDTO> expectedGroceries = new ArrayList<>();

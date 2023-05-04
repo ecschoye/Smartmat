@@ -46,7 +46,7 @@ public class RefrigeratorGrocery {
     @JoinColumn(name = "groceryId")
     @Schema(description = "Grocery in the refrigerator")
     private Grocery grocery;
-    
+
     @ManyToOne
     @JoinColumn(name = "unitId")
     @Schema(description = "The unit of a grocery")

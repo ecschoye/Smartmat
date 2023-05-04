@@ -1,13 +1,13 @@
 <template>
   <div class="flex items-center py-10">
-    <div class="flex administrate-fridge text-black dark:text-white form-light-color dark:form-dark-color m-auto border-2 border-[#31C48D]/60">
+    <div class="flex administrate-fridge w-10/12 text-black dark:text-white form-light-color dark:form-dark-color m-auto border-2 border-[#31C48D]/60">
       <ButtonFavoriteToggler
         class="relative -top-7 -left-12"
         @favorite-event="favoriteEventHandler"
         :text="false"
         :large="true"
         :isFavorite="isFavorite()" />
-      <h1>{{$t("administrate_refrigerator")}}</h1>
+      <h1 class="text-center">{{$t("administrate_refrigerator")}}</h1>
       <div>
         <div class="wrapper">
           <FormEditFridgeForm :is-super-user="isSuperUser" :refrigerator="fridge"/>
@@ -21,17 +21,17 @@
               <h1 v-if="isSuperUser" class="title">{{ $t("edit_members") }}</h1>
               <h1 v-else class="title">{{ $t("members") }}</h1>
               <div class="userlist-wrapper" v-for="member in fridge.members" :key="member.username">
-                  <div class="userinfo-divider">
-                      <div class="userinfo">
+                  <div class="userinfo-divider flex md:flex-row justify-center">
+                      <div class="userinfo w-1/2 md:w-3/12">
                           <div class="username">
                               <img class="h-8 w-auto" src="@/assets/icons/profile.png" alt="">
-                              <h3>{{ member.name }}</h3>
+                              <h3 class="text-xs md:text-lg">{{ member.name }}</h3>
                           </div>
                           <div class="email-wrapper">
-                           <h4>{{ member.username }}</h4>
+                           <h4 class="text-xs md:text-lg">{{ member.username }}</h4>
                           </div>
                       </div>
-                      <div class="member-role items-center">
+                      <div class="member-role items-center w-1/2 md:w-3/12">
                           <select
                           :disabled="!isSuperUser"
                           :class="[isSuperUser ? 'custom-select hover:cursor-pointer' : 'disabled-select', 'h-12 px-2 rounded-md ring-1 ring-gray-300 dark:ring-zinc-600  text-black bg-white']"
@@ -40,16 +40,16 @@
                               <option class="hover:cursor-pointer" value="SUPERUSER">Superuser</option>
                           </select>
                       </div>
-                      <div class="choice-wrapper w-full" v-if="isUser(member.username)" @click="handleLeaveFridge(member)">
+                      <div class="choice-wrapper w-1/2 md:w-3/12" v-if="isUser(member.username)" @click="handleLeaveFridge(member)">
                           <div class="action-choice">
-                              <img class="choice-image" src="@/assets/icons/openDoor.png">
-                              <h4 class="email-wrapper">{{ $t("leave_refrigerator")}}</h4>
+                              <img class="choice-image" src="@/assets/icons/openDoor.png" alt="Door">
+                              <h4 class="email-wrapper text-xs md:text-base">{{ $t("leave_refrigerator")}}</h4>
                           </div>
                       </div>
-                      <div class="choice-wrapper w-full" v-else-if="isSuperUser" @click="deleteMember(member)">
+                      <div class="choice-wrapper w-1/2 md:w-3/12" v-else-if="isSuperUser" @click="deleteMember(member)">
                           <div class="action-choice">
-                              <img class="choice-image" src="@/assets/icons/trash.png">
-                              <h4 class="email-wrapper">{{ $t("remove_member")}}</h4>
+                              <img class="choice-image" src="@/assets/icons/trash.png" alt="Trash">
+                              <h4 class="email-wrapper text-xs md:text-base">{{ $t("remove_member")}}</h4>
                           </div>
                       </div>
                   </div>
@@ -71,6 +71,7 @@ import { RemoveMemberRequest } from "~/types/RemoveMemberRequest";
 import { MemberRequest } from "~/types/MemberRequest";
 import type { Refrigerator } from '~/types/RefrigeratorType'
 import type {Member} from "~/types/MemberType"
+import fridgeSelector from "~/components/FridgeSelector.vue";
 
 export default {
   data() {
@@ -168,12 +169,16 @@ export default {
     },
     async leaveFridge(removeMemberRequest : RemoveMemberRequest) {
       try {
-        let response = await postRemoveMember(removeMemberRequest); 
+        let response = await postRemoveMember(removeMemberRequest);
         if(response !== null && response.status == 200){
           if(response.data == "" && removeMemberRequest.forceDelete == false){
             if(window.confirm(this.t("force_delete_alert"))) {
-              removeMemberRequest.forceDelete = true; 
-              await this.leaveFridge(removeMemberRequest); 
+              removeMemberRequest.forceDelete = true;
+              this.refrigeratorStore.deleteRefrigerator(removeMemberRequest.refrigeratorId);
+              if(this.refrigeratorStore.getSelectedRefrigerator.id === removeMemberRequest.refrigeratorId){
+                this.refrigeratorStore.setSelectedRefrigerator(null);
+              }
+              await this.leaveFridge(removeMemberRequest);
             }
           }
           else {
@@ -335,7 +340,6 @@ definePageMeta({
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 600px;
   height: fit-content;
   padding: 0 20px 20px;
   border-radius: 15px;
@@ -347,11 +351,13 @@ definePageMeta({
   white-space: pre-wrap;
   word-break: break-word;
 }
-
+/*
 .userinfo-divider {
   display: flex;
   flex-direction: row;
 }
+
+ */
 
 .title {
   text-align:center;
@@ -369,8 +375,6 @@ margin: 20px 0;
 .userinfo {
   display: flex;
   flex-direction: column;
-  max-width: 200px;
-  min-width: 200px;
   
 }
 
@@ -392,9 +396,7 @@ margin: 20px 0;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align:center; 
-  min-width:150px; 
-  max-width:150px; 
+  text-align:center;
 }
 
 .flex-row{

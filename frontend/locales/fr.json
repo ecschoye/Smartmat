@@ -87,5 +87,9 @@
   "add_a_grocery_from_the_list" : "Ajouter un produit de la liste",
   "find_recipe": "Trouver une recette",
   "go_to_weekly_menu": "Aller au menu hebdomadaire",
-  "to_refrigerator": "Au réfrigérateur"
+  "to_refrigerator": "Au réfrigérateur",
+  "total_food_eaten": "Nourriture totale consommée",
+  "total_food_wasted": "Nourriture totale gaspillée",
+  "food_eaten": "Nourriture consommée",
+  "food_wasted": "Nourriture gaspillée"
 }

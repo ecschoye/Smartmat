@@ -143,7 +143,7 @@
   
   @media (max-width: 768px) {
     .form {
-      width: 370px;
+      width: 290px;
     }
   }
   

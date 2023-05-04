@@ -2,7 +2,6 @@ package ntnu.idatt2106.backend.service;
 
 import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.Refrigerator;
-import ntnu.idatt2106.backend.model.ShoppingCart;
 import ntnu.idatt2106.backend.model.ShoppingList;
 import ntnu.idatt2106.backend.model.SubCategory;
 import ntnu.idatt2106.backend.model.category.Category;
@@ -395,12 +394,10 @@ public class ShoppingListServiceTest {
         assertThrows(SaveException.class, () -> shoppingListService.editGrocery(groceryShoppingListId, quantity, httpRequest));
     }
 
-    //todo: test editRefrigeratorGrocery
-
-    @DisplayName("saveGrocery saves a grocery item as a new item marked as requested when it does not exists a correspondent grocery")
+    @DisplayName("saveGrocery saves a grocery item as a new item when it does not exists a correspondent grocery")
     @ParameterizedTest(name = "when is requested is set to {0}")
     @ValueSource(booleans = {true, false})
-    void saveGrocery_saves_a_grocery_item_as_a_new_item_marked_as_requested_when_it_does_not_exists_a_correspondent_grocery(boolean isRequested) throws UserNotFoundException, UnauthorizedException, SaveException, ShoppingListNotFound {
+    void saveGrocery_saves_a_grocery_item_as_a_new_item_when_it_does_not_exists_a_correspondent_grocery(boolean isRequested) throws UserNotFoundException, UnauthorizedException, SaveException, ShoppingListNotFound {
         SubCategory subCategory = new SubCategory();
         subCategory.setCategory(new Category());
         Refrigerator refrigerator = Refrigerator.builder()
@@ -443,10 +440,10 @@ public class ShoppingListServiceTest {
         });
     }
 
-    @DisplayName("saveGrocery saves a grocery item as a new item marked as requested when it does exists a correspondent grocery")
+    @DisplayName("saveGrocery saves a grocery item as a new item when it does exists a correspondent grocery")
     @ParameterizedTest(name = "when is requested is set to {0}")
     @ValueSource(booleans = {true, false})
-    void saveGrocery_saves_a_grocery_item_as_a_new_item_marked_as_requested_when_it_does_t_exists_a_correspondent_grocery(boolean isRequested) throws UserNotFoundException, UnauthorizedException, SaveException, ShoppingListNotFound {
+    void saveGrocery_saves_a_grocery_item_as_a_new_item_when_it_does_t_exists_a_correspondent_grocery(boolean isRequested) throws UserNotFoundException, UnauthorizedException, SaveException, ShoppingListNotFound {
         SubCategory subCategory = new SubCategory();
         subCategory.setCategory(new Category());
         Refrigerator refrigerator = Refrigerator.builder()
@@ -566,7 +563,7 @@ public class ShoppingListServiceTest {
 
     @Test
     @DisplayName("Throws deleteGrocery NoGroceriesFound when it is not any groceries with the given id in the database")
-    void throws_getGroceries_NoGroceriesFound_when_it_is_no_groceries_with_the_given_id_in_the_database() {
+    void throws_deleteGrocery_NoGroceriesFound_when_it_is_no_groceries_with_the_given_id_in_the_database() {
         long groceryListId = 1L;
         when(groceryShoppingListRepository.findById(groceryListId)).thenReturn(Optional.empty());
 
@@ -887,6 +884,4 @@ public class ShoppingListServiceTest {
 
         assertDoesNotThrow(() -> shoppingListService.transferRefrigeratorGroceryToCart(groceryListId, httpRequest));
     }
-
-
 }

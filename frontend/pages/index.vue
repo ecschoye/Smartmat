@@ -15,25 +15,25 @@
     <div class="sm:flex sm:justify-center text-center mt-14" >
       <NuxtLink v-if="loggedIn && isSelected()" :to="localePath('/home')" class="sm:mt-5 sm:pr-4">
         <button class="w-54 h-14 sm:w-50 border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-color hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
-          {{  t('go_to_my_fridge') }}
+          {{  $t('go_to_my_fridge') }}
         </button>
       </NuxtLink>
 
       <NuxtLink v-else-if="loggedIn" @click="toggleSelect()" class="sm:mt-5 sm:pr-4">
         <button class="w-54 h-14 sm:w-50 border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-color hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
-          {{  t('go_to_my_fridge') }}
+          {{  $t('go_to_my_fridge') }}
         </button>
       </NuxtLink>
 
 
       <NuxtLink v-else :to="localePath('/login')" class="sm:mt-5 sm:pr-4">
         <button class="w-54 h-14 sm:w-50 border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-color hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
-          {{ t('log_in_here') }}
+          {{ $t('log_in_here') }}
         </button>
       </NuxtLink>
       <NuxtLink :to="localePath('/about-us')" class="sm:mt-5 sm:pl-4">
         <button class="w-54 h-14 sm:w-50 border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-color hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">
-          {{ t('read_more_about_us')}}
+          {{ $t('read_more_about_us')}}
         </button>
       </NuxtLink>
     </div>
@@ -47,16 +47,16 @@
 
   <script setup lang="ts">
   import { useUserStore } from "~/store/userStore";
-  import { onMounted, computed } from "vue";
+  import { onMounted, computed, ref } from "vue";
   import { getNotifications } from "~/service/httputils/NotificationService";
   import { useNotificationStore } from '~/store/notificationStore';
   import { getRefrigerators } from "~/service/httputils/RefrigeratorService";
   import { useRefrigeratorStore } from "~/store/refrigeratorStore";
   import { Refrigerator } from '~/types/RefrigeratorType';
+  import { useRouter } from "vue-router";
+
   const router = useRouter();
-  const { t, locale, locales } = useI18n({
-    useScope: 'local'
-  })
+
 
   const userStore = useUserStore();
   const loggedIn = computed(() => userStore.isLoggedIn);

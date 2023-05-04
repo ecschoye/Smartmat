@@ -116,5 +116,7 @@
   "amount" : "Amount", 
   "add" : "Add",
   "not_in_refrigerator" : "Not In Refrigerator",
-  "in_refrigerator" : " In Refrigerator"
+  "in_refrigerator" : " In Refrigerator",
+  "add_grocery" : "Add Grocery",
+  "cancel" : "Cancel"
 }

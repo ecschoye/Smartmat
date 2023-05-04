@@ -5,11 +5,11 @@
         placeholder=" "
         class="input"
         :type="type"
-        :value="modelValue"
+        :value="value"
         required
         :disabled="disabled"
         :class="[disabled ? 'opacity-80' : 'opacity-100']"
-        @input="$emit('update:modelValue', $event.target.value)"
+        @input="$emit('update:value', $event.target.value)"
     >
     <div class="cut" :style="{ width: cutWidth }"></div>
     <label :class="[disabled ? 'opacity-80' : 'opacity-100']" :for="id" class="placeholder">{{ label }}</label>
@@ -29,7 +29,7 @@ export default defineComponent({
       type: String,
       default: '',
     },
-    modelValue: {
+    value: {
       type: [String, Number],
       default: '',
     },
@@ -46,14 +46,14 @@ export default defineComponent({
       required: false
     },
     disabled : {
-      type: Boolean, 
-      required: false 
+      type: Boolean,
+      required: false
     }
   },
   methods : {
     updateInitiatedValue(){
-      if(this.initiatedValue !== undefined && this.modelValue === '') {
-        this.$emit('update:modelValue', this.initiatedValue);
+      if(this.initiatedValue !== undefined && this.value === '') {
+        this.$emit('update:value', this.initiatedValue);
       }
     }
   },

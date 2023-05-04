@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { Recipe } from '~/types/RecipeType';
+import { Recipe } from '../types/RecipeType';
 
 export interface WeeklyMenuState {
   currentWeek: Recipe[] | null[];

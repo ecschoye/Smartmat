@@ -75,6 +75,7 @@ import ShoppingListElement from "./ShoppingListElement.vue";
 import AddNewElement from "./AddNewElement.vue";
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
+import { defineComponent } from 'vue';
     export default defineComponent({
     props: {
         refrigeratorId: {

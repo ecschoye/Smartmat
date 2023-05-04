@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { AxiosInstance } from "axios";
-import { useUserStore } from "~/store/userStore";
+import { useUserStore } from "../store/userStore";
 import {Session} from "inspector";
 
 //check if we're in development mode or in production mode

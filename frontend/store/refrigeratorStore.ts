@@ -1,8 +1,17 @@
 import { defineStore } from 'pinia'
 import { Category } from '~/types/CategoryType';
-import type { GroceryEntity } from '~/types/GroceryEntityType'
-import { Refrigerator } from '~/types/RefrigeratorType';
-import {useUserStore} from "~/store/userStore";
+import type { GroceryEntity } from '../types/GroceryEntityType'
+import { Refrigerator } from '../types/RefrigeratorType';
+import {useUserStore} from "../store/userStore";
+
+const sessionStorageMock = {
+    getItem: () => null,
+    setItem: () => null,
+    removeItem: () => null,
+    clear: () => null,
+};
+
+const isTestEnvironment = process.env.NODE_ENV === 'test';
 
 export interface RefrigeratorState{
     refrigerators : Refrigerator[],
@@ -17,7 +26,7 @@ export const useRefrigeratorStore = defineStore('refrigerator', {
         selectedGrocery: null as GroceryEntity | null, // Update the initial state here
     }),
     persist: {
-        storage: persistedState.sessionStorage,
+        storage: isTestEnvironment ? sessionStorageMock : sessionStorage,
     },
     getters: {
         getSelectedGrocery : (state : RefrigeratorState) : GroceryEntity | null => {

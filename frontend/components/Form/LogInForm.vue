@@ -6,7 +6,7 @@
       <div class="button-wrapper">
         <GreenButton id="login" :label="$t('log_in')" width="100%" height="50px" />
         <div class="divider"></div>
-        <nuxt-link :to="localePath('/register')">
+        <nuxt-link :to="('/register')">
           <GrayButton id="new-user" :label="$t('new_user')" width="100%" height="50px" />
         </nuxt-link>
       </div>
@@ -16,12 +16,15 @@
 </template>
 
 <script setup lang="ts">
-import GreenButton from "~/components/Button/GreenButton.vue";
-import GrayButton from "~/components/Button/GrayButton.vue";
-import BaseInput from "~/components/Form/BaseInput.vue";
-import { useUserStore } from "~/store/userStore";
-import { postLogin } from "~/service/httputils/authentication/AuthenticationService";
-import ErrorAlert from "~/components/AlertBox/ErrorAlert.vue";
+import GreenButton from "../../components/Button/GreenButton.vue";
+import GrayButton from "../../components/Button/GrayButton.vue";
+import BaseInput from "../../components/Form/BaseInput.vue";
+import { useUserStore } from "../../store/userStore";
+import { postLogin } from "../../service/httputils/authentication/AuthenticationService";
+import ErrorAlert from "../../components/AlertBox/ErrorAlert.vue";
+import { ref } from "vue";
+import { useRouter} from "vue-router";
+import { reactive, computed} from "vue";
 
 const userStore = useUserStore();
 const catchError = ref(false);
@@ -34,6 +37,8 @@ const form = reactive({
 });
 
 const sendForm = async () => {
+  console.log(form.email)
+  console.log(form); // add this line
   try {
     const response = await postLogin(form);
     if (response.status === 200) {

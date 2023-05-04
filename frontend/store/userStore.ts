@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
-import axiosInstance from '~/service/AxiosInstance';
-import { useRefrigeratorStore} from "~/store/refrigeratorStore";
+import axiosInstance from '../service/AxiosInstance';
+import { useRefrigeratorStore} from "../store/refrigeratorStore";
 
 interface UserState {
     userId: string;
@@ -8,6 +8,15 @@ interface UserState {
     role: string;
     favoriteRefrigeratorId : number | null
 }
+
+const sessionStorageMock = {
+    getItem: () => null,
+    setItem: () => null,
+    removeItem: () => null,
+    clear: () => null,
+};
+
+const isTestEnvironment = process.env.NODE_ENV === 'test';
 
 export const useUserStore = defineStore({
     id: 'user',
@@ -77,6 +86,6 @@ export const useUserStore = defineStore({
         },
     },
     persist: {
-        storage: persistedState.sessionStorage,
+        storage: isTestEnvironment ? sessionStorageMock : sessionStorage,
     },
 });

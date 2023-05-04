@@ -102,5 +102,18 @@
   "total_food_wasted": "Total Mat Kastet",
   "food_eaten": "Mat Spist",
   "food_wasted": "Mat Kastet"
+  "to_refrigerator": "Til kjøleskap",
+  "current_week": "Denne uken",
+  "monday": "Mandag",
+  "tuesday": "Tirsdag",
+  "wednesday": "Onsdag",
+  "thursday": "Torsdag",
+  "friday": "Fredag",
+  "saturday": "Lørdag",
+  "sunday": "Søndag",
+  "view_ingredients": "Vis ingredienser",
+  "see_recipe": "Se oppskrift",
+  "options": "Valg"
+
 
 }

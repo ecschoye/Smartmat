@@ -12,12 +12,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
+import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.dto.*;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.response.ErrorResponse;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
+import ntnu.idatt2106.backend.model.recipe.Recipe;
+import ntnu.idatt2106.backend.model.recipe.RecipeGrocery;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.service.*;
 import org.slf4j.Logger;
@@ -42,11 +45,13 @@ import java.util.List;
 public class GroceryController {
 
     private final GroceryService groceryService;
+    private final RefrigeratorService refrigeratorService;
     private final CookieService cookieService;
     private final UserService userService;
     private final JwtService jwtService;
     private final NotificationService notificationService;
     private final ShoppingListService shoppingListService;
+    private final RecipeService recipeService;
     Logger logger = LoggerFactory.getLogger(GroceryController.class);
 
     @Operation(summary = "Get all groceries by refrigerator id")
@@ -249,5 +254,20 @@ public class GroceryController {
         catch(Exception e){
             throw new Exception(e);
         }
+    }
+
+    @Operation(summary = "Fetch a list of groceries in the refrigerator that matches a recipe ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Groceries fetched successfully"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/matching-recipe/{refrigeratorId}/{recipeId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getIngredientsInRefrigerator(@Valid @RequestParam long refrigeratorId, @Valid @RequestParam long recipeId) throws RefrigeratorNotFoundException {
+        Recipe recipe = recipeService.getRecipeById(recipeId);
+        List<RecipeGrocery> recipeGroceries = recipeService.getIngredientsByRecipe(recipe);
+        if(recipeGroceries.size() == 0) return new ResponseEntity<>(HttpStatus.OK);
+        Refrigerator refrigerator = refrigeratorService.getRefrigerator(refrigeratorId);
+        return new ResponseEntity<>(groceryService.getIngredientsInRefrigerator(recipeGroceries, refrigerator.getId()), HttpStatus.OK);
     }
 }

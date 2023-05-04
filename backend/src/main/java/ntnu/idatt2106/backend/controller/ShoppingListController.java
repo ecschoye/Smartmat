@@ -100,7 +100,7 @@ public class ShoppingListController {
     @PostMapping("/add-grocery")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<SuccessResponse> saveGroceryToShoppingList(@RequestBody SaveGroceryRequest saveGroceryRequest,
-                                                                     HttpServletRequest request) throws SaveException, UserNotFoundException, ShoppingListNotFound, UnauthorizedException {
+                                                                     HttpServletRequest request) throws SaveException, UserNotFoundException, ShoppingListNotFound, UnauthorizedException, NoSuchElementException {
         logger.info("Received request to save grocery with id {} to shopping list with id {}", saveGroceryRequest.getGroceryId(), saveGroceryRequest.getForeignKey());
         shoppingListService.saveGrocery(saveGroceryRequest, request);
         return new ResponseEntity<>(new SuccessResponse("The grocery was added successfully", HttpStatus.OK.value()), HttpStatus.OK);
@@ -120,7 +120,7 @@ public class ShoppingListController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<SuccessResponse> editRefrigeratorGrocery(@PathVariable("groceryRefrigeratorShoppingListId") long groceryRefrigeratorShoppingListId,
                                                                    @PathVariable("quantity") int quantity,
-                                                                   HttpServletRequest httpRequest) throws SaveException, NoGroceriesFound, UserNotFoundException, UnauthorizedException, ShoppingListNotFound {
+                                                                   HttpServletRequest httpRequest) throws SaveException, NoGroceriesFound, UserNotFoundException, UnauthorizedException, ShoppingListNotFound, NoSuchElementException {
         logger.info("Received request to edit grocery item with id {}", groceryRefrigeratorShoppingListId);
         shoppingListService.editRefrigeratorGrocery(groceryRefrigeratorShoppingListId, quantity, httpRequest);
         return new ResponseEntity<>(new SuccessResponse("The grocery was edited successfully", HttpStatus.OK.value()), HttpStatus.OK);
@@ -169,7 +169,7 @@ public class ShoppingListController {
 
     @PostMapping("transfer-shopping-cart/{groceryShoppingListId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Boolean> transferToShoppingCart(@PathVariable("groceryShoppingListId") long groceryShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SaveException {
+    public ResponseEntity<Boolean> transferToShoppingCart(@PathVariable("groceryShoppingListId") long groceryShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SaveException, NoSuchElementException {
         logger.info("Received request to transfer grocery item with id {} in shopping list to shopping cart", groceryShoppingListId);
 
         shoppingListService.transferGroceryToCart(groceryShoppingListId, httpRequest); //throws error if the transfer was unsuccessful
@@ -179,7 +179,7 @@ public class ShoppingListController {
 
     @PostMapping("refrigerator/transfer-shopping-cart/{refrigeratorShoppingListId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Boolean> transferRefrigeratorGroceryToShoppingCart(@PathVariable("refrigeratorShoppingListId") long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SaveException {
+    public ResponseEntity<Boolean> transferRefrigeratorGroceryToShoppingCart(@PathVariable("refrigeratorShoppingListId") long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SaveException, NoSuchElementException {
         logger.info("Received request to transfer grocery item with id {} in refrigerator shopping list to shopping list", refrigeratorShoppingListId);
         shoppingListService.transferRefrigeratorGroceryToCart(refrigeratorShoppingListId, httpRequest); //throws error if the transfer was unsuccessful
 

@@ -72,13 +72,13 @@ public class GroceryController {
     })
     @DeleteMapping("/remove/{refrigeratorGroceryId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<SuccessResponse> removeRefrigeratorGrocery(@Valid @PathVariable long refrigeratorGroceryId, HttpServletRequest httpServletRequest) throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException, SaveException, ShoppingListNotFound {
+    public ResponseEntity<SuccessResponse> removeRefrigeratorGrocery(@Valid @PathVariable long refrigeratorGroceryId, HttpServletRequest httpServletRequest) throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException, SaveException, ShoppingListNotFound, NoSuchElementException {
         logger.info("Received request to remove refrigeratorGrocery with id: {}",refrigeratorGroceryId);
         RefrigeratorGrocery refrigeratorGrocery = groceryService.getRefrigeratorGroceryById(refrigeratorGroceryId);
         notificationService.deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);
         groceryService.removeRefrigeratorGrocery(refrigeratorGroceryId, httpServletRequest);
         shoppingListService.saveGroceryToSuggestionForRefrigerator(refrigeratorGrocery.getGrocery().getId(),
-                refrigeratorGrocery.getRefrigerator().getId(), httpServletRequest);
+                refrigeratorGrocery.getRefrigerator().getId(), refrigeratorGrocery.getUnit().getId(), 1, httpServletRequest);
         return new ResponseEntity<>(new SuccessResponse("Grocery removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
@@ -105,7 +105,7 @@ public class GroceryController {
             if(grocery != null){
                 logger.info("All of grocery consumed, sending refrigeratorGrocery to shopping list");
                 shoppingListService.saveGroceryToSuggestionForRefrigerator(grocery.getGrocery().getId(),
-                        grocery.getRefrigerator().getId(), httpServletRequest);
+                        grocery.getRefrigerator().getId(), dto.getUnitDTO().getId(),dto.getQuantity(), httpServletRequest);
             }
         }catch(Exception e){
             throw new Exception(e);
@@ -136,7 +136,7 @@ public class GroceryController {
             if(grocery != null){
                 logger.info("All of grocery trashed, sending refrigeratorGrocery to shopping list");
                 shoppingListService.saveGroceryToSuggestionForRefrigerator(grocery.getGrocery().getId(),
-                        grocery.getRefrigerator().getId(), httpServletRequest);
+                        grocery.getRefrigerator().getId(),dto.getUnitDTO().getId(),dto.getQuantity(), httpServletRequest);
             }
         }catch(Exception e){
             throw new Exception(e);
@@ -167,7 +167,7 @@ public class GroceryController {
             if(grocery != null){
                 logger.info("All of grocery removed, sending refrigeratorGrocery to shopping list");
                 shoppingListService.saveGroceryToSuggestionForRefrigerator(grocery.getGrocery().getId(),
-                        grocery.getRefrigerator().getId(), httpServletRequest);
+                        grocery.getRefrigerator().getId(),dto.getUnitDTO().getId(),dto.getQuantity(), httpServletRequest);
             }
         }catch(Exception e){
             throw new Exception(e);

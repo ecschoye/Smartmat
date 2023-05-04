@@ -84,6 +84,8 @@ import RefrigeratorGroceries from "./RefrigeratorGroceries.vue";
 import { Unit } from "~/types/UnitType";
 import { SaveGrocery } from "~/types/SaveGrocery";
 import { Grocery } from "~/types/GroceryType";
+import { ShoppingListElementType } from "~/types/ShoppingListElement";
+import { ResponseGrocery } from"~/types/ResponseGrocery"
     export default defineComponent({
     props: {
         refrigeratorId: {
@@ -102,8 +104,8 @@ import { Grocery } from "~/types/GroceryType";
             shoppingListId: -1,
             shoppingCartId: -1,
             categoryList: [] as ShoppingListCategory[],
-            shoppingCart: [] as ShoppingListElement[],
-            refrigeratorSuggestions: [] as ShoppingListElement[],
+            shoppingCart: [] as ShoppingListElementType[],
+            refrigeratorSuggestions: [] as ShoppingListElementType[],
             unit : {} as Unit,
             quantity : -1,
             grocery : {} as Grocery,
@@ -114,7 +116,6 @@ import { Grocery } from "~/types/GroceryType";
         if (refrigeratorStore.getSelectedRefrigerator !== null) {
             this.refrigeratorId = refrigeratorStore.getSelectedRefrigerator.id
         }
-        console.log("REF_ID: " + this.refrigeratorId)
         this.loadLists();
     },
     setup() {
@@ -126,7 +127,7 @@ import { Grocery } from "~/types/GroceryType";
     methods: {
         async addGroceryToShoppingList() {
             if(this.grocery.id && this.unit.id && this.quantity > 0){
-                const grocery: SaveGrocery = { groceryId: this.grocery.id, quantity: this.quantity, foreignKey: this.shoppingListId, unit : this.unit};
+                const grocery: SaveGrocery = { groceryId: this.grocery.id, quantity: this.quantity, foreignKey: this.shoppingListId, unitDTO : this.unit};
                 let responseStatus = await ShoppingListService.saveGroceryToShoppingList(grocery);
 
                 if (responseStatus.status !== 200) {
@@ -173,12 +174,14 @@ import { Grocery } from "~/types/GroceryType";
             try {
                 this.shoppingCart = []
                 let responseCart = await ShoppingCartService.getGroceriesFromShoppingCart(this.shoppingCartId);
+                console.log(responseCart)
                 if (responseCart.data.length > 0) {
                     responseCart.data.forEach((element: ResponseGrocery) => {
-                        let object: ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: true, isSuggested: false, isFromRefrigerator: false };
+                        let object: ShoppingListElementType = { id: element.id, description: element.description, quantity: element.quantity,unitDTO : element.unitDTO, subCategoryName: element.subCategoryName, isAddedToCart: true, isSuggested: false, isFromRefrigerator: false };
                         this.shoppingCart.push(object);
                     }); 
                 }
+                console.log(this.shoppingCart);
             } catch (error) {
                 console.error(error);
                 this.shoppingCart = [];
@@ -188,8 +191,8 @@ import { Grocery } from "~/types/GroceryType";
                 try {
                     let responseSuggestions = await ShoppingListService.getSuggestedGroceriesFromRefrigerator(this.shoppingListId);
                     if (responseSuggestions.data.length > 0) {
-                        responseSuggestions.data.forEach((element: ResponseGrocery) => {
-                            let object: ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true, isFromRefrigerator: true };
+                        responseSuggestions.data.forEach((element : ResponseGrocery) => {
+                            let object : ShoppingListElementType = { id: element.id, description: element.description, quantity: element.quantity, unitDTO : element.unitDTO, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true, isFromRefrigerator: true };
                             this.refrigeratorSuggestions.push(object);
                         });
                     }
@@ -209,12 +212,17 @@ import { Grocery } from "~/types/GroceryType";
         },
         async addAllElementsToRefrigerator() {
             // Add an element from the shoppingCart to the Refrigerator
-            let groceryIds: Number[] = [];
-            this.shoppingCart.forEach((element: ShoppingListElement) => {
-                groceryIds.push(element.id);
-            })
+            let groceries : SaveGrocery[] = [];
+            this.shoppingCart.forEach((element: ShoppingListElementType) => {
+                groceries.push({
+                    groceryId : element.id,
+                    unitDTO : element.unitDTO,
+                    quantity : element.quantity,
+                    foreignKey : -1,
+                })
+            });
             
-            let transferStatus = await ShoppingCartService.tranferAllToRefrigerator(groceryIds);
+            let transferStatus = await ShoppingCartService.transferAllToRefrigerator(groceries);
             this.loadShoppingCart()
             if (transferStatus.status == 200) {
                 //alert("Varen ble vellykket overført")

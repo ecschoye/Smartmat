@@ -93,7 +93,7 @@ class GroceryControllerTest {
     }
 
     @Test
-    void removeRefrigeratorGrocery_validInput_removesGrocery() throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException, SaveException, ShoppingListNotFound {
+    void removeRefrigeratorGrocery_validInput_removesGrocery() throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException, SaveException, ShoppingListNotFound, NoSuchElementException {
         // Arrange
         long refrigeratorGroceryId = 1L;
         RefrigeratorGrocery refrigeratorGrocery = new RefrigeratorGrocery();

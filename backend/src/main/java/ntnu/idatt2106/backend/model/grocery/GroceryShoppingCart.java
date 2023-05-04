@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.ShoppingCart;
+import ntnu.idatt2106.backend.model.Unit;
 
 @Data
 @Builder
@@ -24,6 +25,11 @@ public class GroceryShoppingCart {
     @Column(name = "quantity")
     @Schema(description = "The number of groceries to buy")
     private int quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "unitId")
+    @Schema(description = "The unit of a grocery")
+    private Unit unit;
 
     @ManyToOne
     @JoinColumn(name = "groceryId")

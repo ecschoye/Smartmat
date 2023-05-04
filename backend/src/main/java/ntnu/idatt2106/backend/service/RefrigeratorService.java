@@ -368,6 +368,7 @@ public class RefrigeratorService {
                 Optional<ShoppingList> shoppingList = shoppingListRepository.findByRefrigeratorId(refrigeratorId);
                 if(shoppingList.isPresent()) {
                     shoppingCartRepository.removeByShoppingList(shoppingList.get());
+                    shoppingListRepository.deleteById(shoppingList.get().getId());
                     shoppingListRepository.removeByRefrigerator_Id(refrigeratorId);
                 }
 

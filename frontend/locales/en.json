@@ -94,6 +94,10 @@
   "find_recipe": "Find recipe",
   "go_to_weekly_menu": "Go to weekly menu",
   "to_refrigerator": "To refrigerator",
+  "total_food_eaten": "Total Food Eaten",
+  "total_food_wasted": "Total Food Wasted",
+  "food_eaten": "Food Eaten",
+  "food_wasted": "Food Wasted",
   "generate_random_recipes" : "Generate random recipes based on groceries in your fridge",
   "remove_all_recipes" : "Remove all recipes",
   "current_week" : "Current week",
@@ -113,6 +117,6 @@
   "remove_all_next_week" : "Are you sure you want to remove all recipes from next week?",
   "no_recipes_to_delete" : "There are no recipes to remove",
   "add_recipe_to_day" : "Add a recipe",
-  "amount" : "Amount", 
+  "amount" : "Amount",
   "add" : "Add"
 }

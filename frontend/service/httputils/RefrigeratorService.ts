@@ -13,6 +13,10 @@ export const getRefrigeratorById = async(refrigeratorId : Number) : Promise<Axio
     return axiosInstance.get(`/api/refrigerator/${refrigeratorId}`); 
 }
 
+export const getMatchingIngredientsInRefrigerator = async(refrigeratorId : Number, recipeId:  Number) : Promise<AxiosResponse> => {
+    return axiosInstance.get(`/api/refrigerator/grocery/matching-recipe/${refrigeratorId}/${recipeId}`); 
+}
+
 export const postRegisterFridge = async (refrigeratorRegisterData : RefrigeratorRegisterData): Promise<AxiosResponse> => {
     return axiosInstance.post('/api/refrigerator/new', refrigeratorRegisterData);
 }

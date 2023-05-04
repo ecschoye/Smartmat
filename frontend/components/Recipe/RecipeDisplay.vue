@@ -23,7 +23,8 @@
           <tr class="text-center items-center" v-for="ingredient in recipe?.ingredients" :key="ingredient.id">
             <td>{{ ingredient.name }}</td>
             <td class="items-center">
-              <h3>{{ ingredient.quantity }}</h3>
+              <h3 v-if="ingredient.unit === undefined">{{ ingredient.quantity}}</h3>
+              <h3 v-else >{{ ingredient.quantity + '' + ingredient.unit.name }}</h3>
               <img src="" alt="">
               <p></p>
             </td>
@@ -44,12 +45,14 @@ import type { Recipe } from '~/types/RecipeType';
 import type { Ingredient } from '~/types/IngredientType';
 import type { SaveGrocery } from '~/types/SaveGrocery';
 import ShoppingListService from '@/service/httputils/ShoppingListService';
+import { getMatchingIngredientsInRefrigerator} from '@/service/httputils/RefrigeratorService'; 
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 
   export default {
     data () {
       return {
-        shoppingListId : -1 
+        shoppingListId : -1,
+        matchingIngredient :null as Map<Number, Ingredient> | null
       }
     },
     props : {
@@ -60,6 +63,7 @@ import { useRefrigeratorStore } from '~/store/refrigeratorStore';
     },
     watch: {
       recipe() {
+        console.log(this.recipe); 
         if(this.recipe !== null) {
           this.fetchShoppingList(); 
         }
@@ -87,7 +91,17 @@ import { useRefrigeratorStore } from '~/store/refrigeratorStore';
         if(response && response.data) {
           this.shoppingListId = response.data; 
         }
+      }, 
+      async fetchMatchingIngredients(){
+        let refrigeratorId = this.refrigeratorStore.getSelectedRefrigerator?.id; 
+        let recipeId = this.recipe?.id; 
+        if(refrigeratorId === undefined || recipeId === undefined) return 
+        let response = await getMatchingIngredientsInRefrigerator(refrigeratorId, recipeId); 
+        if(response && response.data) {
+          console.log(response.data); 
+        }
       }
+
     }, 
     setup() {
       const refrigeratorStore = useRefrigeratorStore(); 
@@ -97,7 +111,3 @@ import { useRefrigeratorStore } from '~/store/refrigeratorStore';
     }
   }
 </script>
-
-<style lang="scss" scoped>
-
-</style>

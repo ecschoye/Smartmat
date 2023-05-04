@@ -10,7 +10,7 @@
       <NuxtLink to="/" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('home')}}</NuxtLink>
       <NuxtLink to="/weekly-menu" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('weekly_menu')}}</NuxtLink>
       <NuxtLink to="/recipe-list" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('recipes')}}</NuxtLink>
-      <NuxtLink to="/" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('statistics')}}</NuxtLink>
+      <NuxtLink to="/stats" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('statistics')}}</NuxtLink>
     </div>
     <div class="flex flex-1 space-x-2 items-center justify-end">
       <FridgeSelector v-if="loggedIn"/>

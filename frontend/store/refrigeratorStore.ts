@@ -46,7 +46,11 @@ export const useRefrigeratorStore = defineStore('refrigerator', {
         setSelectedGrocery(search : GroceryEntity) : void {
             this.selectedGrocery = search;
         },
-        setSelectedRefrigerator(refrigeratorSearch : Refrigerator) : boolean {
+        setSelectedRefrigerator(refrigeratorSearch : Refrigerator | null) : boolean {
+            if(refrigeratorSearch === null) {
+                this.selectedRefrigerator = null;
+                return true;
+            }
             const index = this.refrigerators.findIndex(refrigerator => refrigerator.id === refrigeratorSearch.id);
             if(index !== -1){
                 this.selectedRefrigerator = refrigeratorSearch;
@@ -61,6 +65,14 @@ export const useRefrigeratorStore = defineStore('refrigerator', {
             this.refrigerators = [];
             this.selectedRefrigerator = null;
             this.selectedGrocery = null;
+        },
+        deleteRefrigerator(refrigerator: Refrigerator) {
+            const index = this.refrigerators.findIndex(r => r.id === refrigerator);
+            if (index !== -1) {
+                this.refrigerators.splice(index, 1);
+                console.log("after delete")
+                console.log(this.refrigerators)
+            }
         },
     }
 

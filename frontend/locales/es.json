@@ -84,5 +84,9 @@
   "you_have_no_groceries_in_the_shopping_list" : "No tienes alimentos en la lista de compras",
   "you_have_no_groceries_in_the_shopping_cart" : "No tienes alimentos en el carrito de compras",
   "add_a_new_grocery" : "Agregar un nuevo comestible",
-  "add_a_grocery_from_the_list" : "Agregar un comestible de la lista"
+  "add_a_grocery_from_the_list" : "Agregar un comestible de la lista",
+  "total_food_eaten": "Comida total consumida",
+  "total_food_wasted": "Comida total desperdiciada",
+  "food_eaten": "Comida consumida",
+  "food_wasted": "Comida desperdiciada"
 }

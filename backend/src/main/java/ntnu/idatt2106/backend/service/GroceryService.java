@@ -188,6 +188,8 @@ public class GroceryService {
         logger.info("Checking if user is member");
         String email = extractEmail(request);
         //Throws if user is not member
+        System.out.println(email);
+        System.out.println(refrigerator);
         return refrigeratorService.getFridgeRole(refrigerator, email);
     }
 
@@ -319,6 +321,7 @@ public class GroceryService {
             throw new UnauthorizedException("User is not a member of the refrigerator");
         }
         RefrigeratorGrocery newGrocery = unitService.convertGrocery(grocery.get(), dto.getUnitDTO().getId());
+        System.out.println(newGrocery.getQuantity() - dto.getQuantity());
         if(newGrocery.getQuantity() - dto.getQuantity() <= 0){
             notificationService.deleteNotificationsByRefrigeratorGrocery(grocery.get());
             removeRefrigeratorGrocery(grocery.get().getId(), request);

@@ -401,6 +401,7 @@ public class RefrigeratorService {
         User user = getUser(email);
         RefrigeratorUser ru = refrigeratorUserRepository.findByUserAndRefrigerator(user, refrigerator)
                 .orElseThrow(() -> new UnauthorizedException("User not member of refrigerator"));
+        System.out.println(ru);
         return ru.getFridgeRole();
     }
 

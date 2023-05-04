@@ -1,7 +1,7 @@
 <template>
     <div class="top-buttons">
-        <button class="random-button" @click="randomRecipesEvent">{{ $t("generate_random_recipes") }}</button>
-        <button class="random-button" @click="removeAllRecipes">{{ $t("remove_all_recipes") }}</button>
+        <ButtonGreenButton width="300px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="randomRecipesEvent" :label="$t('generate_random_recipes')"></ButtonGreenButton>
+        <ButtonGreenButton width="300px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="removeAllRecipes" :label="$t('remove_all_recipes')"></ButtonGreenButton>
     </div>
     <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title">{{ $t("current_week") }}</h1>
     <h1 v-else class="title">{{ $t("next_week") }}</h1>
@@ -12,7 +12,7 @@
                     {{ weekday }}
                 </div>
                 <div v-if="weeklyMenuStore.$state.currentWeek[getDayIndex(weekday)] === null">
-                    <UnknownRecipe @add-recipe-event="addRecipe(getDayIndex(weekday))"/>
+                    <UnknownRecipe @add-recipe-event="findNewRecipe(getDayIndex(weekday))"/>
                 </div>
                 <div v-else>
                     <WeeklyMenuRecipeWeeklyCard @unlocked-event="unlockRecipe(getDayIndex(weekday))" 
@@ -32,7 +32,7 @@
                     {{ weekday }}
                 </div>
                 <div v-if="weeklyMenuStore.$state.nextWeek[getDayIndex(weekday)] === null">
-                    <UnknownRecipe @add-recipe-event="addRecipe(getDayIndex(weekday))"/>
+                    <UnknownRecipe @add-recipe-event="findNewRecipe(getDayIndex(weekday))"/>
                 </div>
                 <div v-else>
                     <WeeklyMenuRecipeWeeklyCard @unlocked-event="unlockRecipe(getDayIndex(weekday))" 
@@ -47,8 +47,8 @@
     </div>
 
     <div class="navigation-buttons">
-      <button @click="goToPreviousWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 1" class="week-button">{{ $t("current_week") }}</button>
-      <button @click="goToNextWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 2" class="week-button">{{ $t("next_week") }}</button>
+        <ButtonGreenButton width="100px" height="30px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="goToPreviousWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 1" :label="$t('current_week')"></ButtonGreenButton>
+        <ButtonGreenButton width="100px" height="30px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="goToNextWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 2" :label="$t('next_week')"></ButtonGreenButton>
     </div>
     
 </template>
@@ -56,11 +56,9 @@
 <script lang="ts">
 import { useWeeklyMenuStore } from '~/store/WeeklyMenuStore';
 import { Recipe } from '~/types/RecipeType';
-import GrayButton from '../Button/GrayButton.vue';
 import UnknownRecipe from './UnknownRecipe.vue';
 import { fetchRecipes } from '~/service/httputils/RecipeService';
 import { useRefrigeratorStore } from '~/store/refrigeratorStore';
-import { number } from '@intlify/core-base';
 import {FetchRecipeDTO} from "~/types/FetchRecipeDTO";
 import { Ingredient } from "~/types/IngredientType"
 import type { Unit } from '~/types/UnitType';
@@ -179,6 +177,11 @@ export default {
             this.$emit("seeRecipeEvent", this.weeklyMenuStore.$state.nextWeek[dayIndex]);
         },
 
+        findNewRecipe(dayIndex: number) {
+            this.weeklyMenuStore.$state.currentChosenIndex = dayIndex;
+            this.$router.push("/recipe-list");
+        },
+
         async addRecipe(dayIndex: number) {
             try {
               this.fetchRecipeDTO = {
@@ -194,8 +197,6 @@ export default {
                     const ingredients : Ingredient[] = []; 
                     for(let j = 0; j < response.data[0].ingredients.length; j++){
                         const ingredientDTO = response.data[0].ingredients[j]; 
-                        console.log("Yo")
-                        console.log(ingredientDTO)
                         const unit : Unit = {
                             id : ingredientDTO.unit.id,
                             name : ingredientDTO.unit.name,
@@ -250,11 +251,10 @@ export default {
                 const ingredients : Ingredient[] = []; 
                 for(let j = 0; j < response.data[i].ingredients.length; j++){
                     const ingredientDTO = response.data[i].ingredients[j]; 
-
                     const unit : Unit = {
-                        id : ingredientDTO.id,
-                        name : ingredientDTO.name,
-                        weight : ingredientDTO.weight
+                        id : ingredientDTO.unit.id,
+                        name : ingredientDTO.unit.name,
+                        weight : ingredientDTO.unit.weight
                     }
 
                     const ingredient : Ingredient = {
@@ -333,7 +333,7 @@ export default {
                 }
         }
     },
-    components: { GrayButton, UnknownRecipe }
+    components: { UnknownRecipe }
 }
 
 </script>

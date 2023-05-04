@@ -1,6 +1,6 @@
 <template>
   <div class="Recipe-card-wrapper bg-green-color dark:bg-zinc-500">
-    <div class="lock-container">
+    <div class="lock-container z-20 overflow-">
         <img
           v-if="lockedBoolean"
           class="lock-icon"
@@ -24,13 +24,13 @@
           <h3 class="recepe-title">{{ recepeInfo.name }}</h3>
         </div>
         <div class="recipe-choices flex flex-col space-y-2">
-          <button @click="handleOptionChange('option1')" class="border-2 bg-light-color border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black font-bold items-center px-4 rounded transform hover:scale-100 py-1 px-2 rounded text-sm w-full">
+          <button @click="handleOptionChange('option1')" class="border-2 bg-light-color border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black items-center px-4 rounded transform hover:scale-100 py-1 px-2 rounded text-sm w-full">
             {{ $t("view_ingredients") }}
           </button>
-          <button @click="handleOptionChange('option2')" class="border-2 bg-light-color border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black font-bold items-center px-4 rounded transform hover:scale-100 py-1 px-2 rounded text-sm w-full">
+          <button @click="handleOptionChange('option2')" class="border-2 bg-light-color border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black items-center px-4 rounded transform hover:scale-100 py-1 px-2 rounded text-sm w-full">
             {{ $t("see_recipe") }}
           </button>
-          <button @click="handleOptionChange('option3')" class="border-2 bg-light-color border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black font-bold items-center px-4 rounded transform hover:scale-100 py-1 px-2 rounded text-sm w-full">
+          <button @click="handleOptionChange('option3')" class="border-2 bg-light-color border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black items-center px-4 rounded transform hover:scale-100 py-1 px-2 rounded text-sm w-full">
             {{ $t("remove") }}
           </button>
         </div>
@@ -86,9 +86,9 @@
       unlockRecipe() {
         this.$emit("unlockedEvent");
       },
-      handleOptionChange() {
+      handleOptionChange(option : string) {
         this.showIngredients = false;
-        switch (this.selectedOption) {
+        switch (option) {
           case "option1":
             this.showIngredients = true;
             break;
@@ -111,7 +111,7 @@
 <style>
  .Recipe-card-wrapper {
   position: relative;
-  width: 225px;
+  width: 200px;
   height: 350px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -129,8 +129,8 @@
 
 .lock-container {
   position: absolute;
-  top: -1px;
-  right: -1px;
+  top: 1px;
+  right: 1px;
   z-index: 2;
   background-color: white;
   border: 2px solid black;
@@ -138,7 +138,7 @@
 }
 
 .lock-icon {
-  width: 20px;
+  width: 25px;
   cursor: pointer;
   margin: 2px;
 }

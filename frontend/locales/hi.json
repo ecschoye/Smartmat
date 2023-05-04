@@ -62,6 +62,11 @@
   "total_food_eaten": "कुल खाद्य सामग्री खाई गई",
   "total_food_wasted": "कुल खाद्य सामग्री बर्बाद हुई",
   "food_eaten": "खाद्य सामग्री खाई गई",
+  "norwegian_average": "नॉर्वेजियन औसत",
   "food_wasted": "खाद्य सामग्री बर्बाद हुई",
-  "norwegian_average": "नॉर्वेजियन औसत"
+  "not_in_refrigerator": "फ्रिज में नहीं है",
+  "in_refrigerator": "फ्रिज में है",
+  "add_grocery": "ग्रोसरी जोड़ें",
+  "cancel": "रद्द करें",
+  "add_recipe_to_weekly_menu": "साप्ताहिक मेनू में व्यंजन जोड़ें"
 }

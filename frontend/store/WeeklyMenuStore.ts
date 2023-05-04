@@ -7,6 +7,7 @@ export interface WeeklyMenuState {
   currentWeekLocks: boolean[];
   nextWeekLocks: boolean[];
   chosenWeek: number;
+  currentChosenIndex: number | null
 }
 
 export const useWeeklyMenuStore = defineStore({
@@ -17,6 +18,7 @@ export const useWeeklyMenuStore = defineStore({
     currentWeekLocks: Array(7).fill(false) as boolean[],
     nextWeekLocks: Array(7).fill(false) as boolean[],
     chosenWeek: 1,
+    currentChosenIndex: null
   }),
     persist: {
         storage: persistedState.sessionStorage,
@@ -36,6 +38,9 @@ export const useWeeklyMenuStore = defineStore({
     },
     setChosenWeek(week: number) {
       this.chosenWeek = week;
+    },
+    setCurrentChosenIndex(index: number | null) {
+      this.currentChosenIndex = index;
     },
     setNextWeekRandomly(recipes: Recipe[]) {
         for (let i = 0; i < 7; i++) {

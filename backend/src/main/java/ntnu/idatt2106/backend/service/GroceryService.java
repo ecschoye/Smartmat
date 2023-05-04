@@ -214,7 +214,7 @@ public class GroceryService {
         HashMap<Long,RefrigeratorGroceryDTO> result = new HashMap<Long, RefrigeratorGroceryDTO>();
         List<RefrigeratorGrocery> refrigeratorGroceries = refrigeratorGroceryRepository.findAllByRefrigeratorId(refrigeratorId);
         for (RecipeGrocery recipeGrocery : recipeGroceries) {
-            long groceryId = recipeGrocery.getId();
+            long groceryId = recipeGrocery.getGrocery().getId();
             for(RefrigeratorGrocery refrigeratorGrocery : refrigeratorGroceries){
                 if(refrigeratorGrocery.getGrocery().getId() == groceryId){
                     if(result.containsKey(groceryId)){

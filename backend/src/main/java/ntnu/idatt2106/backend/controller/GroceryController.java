@@ -263,7 +263,8 @@ public class GroceryController {
     })
     @GetMapping("/matching-recipe/{refrigeratorId}/{recipeId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getIngredientsInRefrigerator(@Valid @RequestParam long refrigeratorId, @Valid @RequestParam long recipeId) throws RefrigeratorNotFoundException {
+    public ResponseEntity<?> getIngredientsInRefrigerator(@Valid @PathVariable long refrigeratorId, @Valid @PathVariable long recipeId) throws RefrigeratorNotFoundException {
+        logger.info("Received request for ingredients in refrigerator");
         Recipe recipe = recipeService.getRecipeById(recipeId);
         List<RecipeGrocery> recipeGroceries = recipeService.getIngredientsByRecipe(recipe);
         if(recipeGroceries.size() == 0) return new ResponseEntity<>(HttpStatus.OK);

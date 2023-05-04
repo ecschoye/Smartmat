@@ -63,6 +63,7 @@ import { useRefrigeratorStore } from '~/store/refrigeratorStore';
 import { number } from '@intlify/core-base';
 import {FetchRecipeDTO} from "~/types/FetchRecipeDTO";
 import { Ingredient } from "~/types/IngredientType"
+import type { Unit } from '~/types/UnitType';
 
 export default {
     data() {
@@ -189,20 +190,25 @@ export default {
                 console.log(response);
                 if (response.status === 200) {
                     const recipe = response.data[0];
-                    const ingredientsRecieved = response.data[0].ingredients;
-                    console.log(ingredientsRecieved)
                     
-                    const ingredients = response.data[0].ingredients.map((ingredientsRecieved : Ingredient) => ({
+                    const unit : Unit = {
+                        id: response.data[0].ingredients[0].unit.id,
+                        name: response.data[0].ingredients[0].unit.name,
+                        weight: response.data[0].ingredients[0].unit.weight
+                    };
+                    
+                    const ingredient = response.data[0].ingredients.map((ingredientsRecieved : Ingredient) => ({
                     id: ingredientsRecieved.simpleGrocery.id,
                     name: ingredientsRecieved.simpleGrocery.name,
                     quantity: ingredientsRecieved.quantity,
+                    unit : unit
                     }));
 
                     const newRecipe: Recipe = {
                         id: recipe.id,
                         name: recipe.name,
                         url: recipe.url,
-                        ingredients: ingredients,
+                        ingredients: ingredient,
                     };
 
                     this.addRecipeWeek(dayIndex, newRecipe);
@@ -223,6 +229,7 @@ export default {
           this.fetchRecipeDTO.refrigeratorId = this.refrigeratorStore.getSelectedRefrigerator.id;
 
           const response = await fetchRecipes(this.fetchRecipeDTO);
+          console.log(response);
           const recipes = response.data.map((recipe : Recipe) => ({
               id: recipe.id,
               name: recipe.name,
@@ -232,10 +239,17 @@ export default {
           let ingredients;       
           if (response.status === 200) {
             for(let i = 0; i < response.data.length; i++) {
+
+                const unit : Unit = {
+                        id: response.data[i].ingredients[i].unit.id,
+                        name: response.data[i].ingredients[i].unit.name,
+                        weight: response.data[i].ingredients[i].unit.weight
+                    };
                 ingredients = response.data[i].ingredients.map((ingredientsRecieved : Ingredient) => ({
                     id: ingredientsRecieved.simpleGrocery.id,
                     name: ingredientsRecieved.simpleGrocery.name,
                     quantity: ingredientsRecieved.quantity,
+                    unit : unit 
                     }));
                 recipes[i].ingredients = ingredients;   
             }

@@ -1,6 +1,5 @@
 import { expect, test } from 'vitest';
 import {mount, shallowMount} from '@vue/test-utils';
-import LoginForm from './LoginForm.vue';
 import { createPinia } from 'pinia';
 import { createRouter, createWebHistory } from 'vue-router'
 import register from '../../pages/register.vue'
@@ -8,6 +7,7 @@ import index from '../../pages/index.vue'
 import ErrorAlert from '../AlertBox/ErrorAlert.vue';
 import GreenButton from "../Button/GreenButton.vue";
 import GrayButton from "../Button/GrayButton.vue";
+import LoginForm from "./LogInForm.vue";
 import NuxtLink from "#app/components/nuxt-link";
 
 

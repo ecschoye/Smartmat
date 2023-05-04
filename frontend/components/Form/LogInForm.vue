@@ -23,7 +23,7 @@ import BaseInput from "./BaseInput.vue";
 import { useUserStore } from "../../store/userStore";
 import { postLogin } from "../../service/httputils/authentication/AuthenticationService";
 import ErrorAlert from "../AlertBox/ErrorAlert.vue";
-import { provide, reactive, ref } from "vue";
+import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const userStore = useUserStore();

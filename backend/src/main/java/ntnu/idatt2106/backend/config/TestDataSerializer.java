@@ -234,31 +234,64 @@ public class TestDataSerializer {
 
     private void createRecipeGroceries() {
         // An array of recipe names
-        String[] recipeNames = {"Kremet pasta med laks", "Enkel sjokoladekake", "Grove vafler", "Hjemmelaget knekkebrød", "Protein-scones med cottage cheese"};
+        String[] recipeNames = {"Kremet pasta med laks", "Enkel sjokoladekake", "Grove vafler",
+                "Hjemmelaget knekkebrød", "Protein-scones med cottage cheese", "Pannekaker",
+                "Sjokolade- og marshmallowfudge", "Innbakte pølser i form", "Kjøttboller i tomatsaus",
+                "Brente mandler"};
 
         HashMap<String, long[]> ingredientGroceries = new HashMap<>();
         HashMap<String, int[]> ingredientQuantities = new HashMap<>();
         HashMap<String, long[]> ingredientUnits = new HashMap<>();
 
+        //Kremet pasta med laks
         ingredientGroceries.put(recipeNames[0], new long[]{730L, 450L, 1534L, 1273L, 56L} ); // Grocery ID
         ingredientQuantities.put(recipeNames[0], new int[]{400, 400, 9, 200, 3} );    // Quantites
         ingredientUnits.put(recipeNames[0], new long[]{3L, 3L, 3L, 3L, 4L} );         // Unit
 
+        //Enkel sjokoladekake
         ingredientGroceries.put(recipeNames[1], new long[]{154L, 1534L, 1475L, 1955L, 682L} ); // Grocery ID
         ingredientQuantities.put(recipeNames[1], new int[]{180, 250, 4, 1, 3} );    // Quantites
         ingredientUnits.put(recipeNames[1], new long[]{3L, 3L, 4L, 4L, 4L} );         // Unit
 
+        //Grove vafler
         ingredientGroceries.put(recipeNames[2], new long[]{1534L, 153L, 1475L, 22L, 682L, 681L, 1444L, 1945L} ); // Grocery ID
         ingredientQuantities.put(recipeNames[2], new int[]{36, 120, 18, 6, 2, 2, 6, 3} );    // Quantites
         ingredientUnits.put(recipeNames[2], new long[]{3L, 3L, 3L, 4L, 4L, 4L, 3L, 3L} );         // Unit
 
+        //Hjemmelaget knekkebrød
         ingredientGroceries.put(recipeNames[3], new long[]{681L, 714L, 1082L, 1081L, 1059L, 1617L} ); // Grocery ID
         ingredientQuantities.put(recipeNames[3], new int[]{4,4,2,1,1,5,7} );    // Quantites
         ingredientUnits.put(recipeNames[3], new long[]{4L,4L,4L,4L,4L,3L,4L} );         // Unit
 
+        //Protein-scones med cottage cheese
         ingredientGroceries.put(recipeNames[4], new long[]{153L, 133L, 681L, 713L, 1945L, 1082L} ); // Grocery ID
         ingredientQuantities.put(recipeNames[4], new int[]{120, 250, 150, 2, 8, 18} );    // Quantites
         ingredientUnits.put(recipeNames[4], new long[]{3L, 3L, 3L, 4L, 3L, 3L} );         // Unit
+
+        //Pannekaker
+        ingredientGroceries.put(recipeNames[5], new long[]{1534L,682L,1966L,22L,153L} ); // Grocery ID
+        ingredientQuantities.put(recipeNames[5], new int[]{6,3,4,6,3,180} );    // Quantites
+        ingredientUnits.put(recipeNames[5], new long[]{3L,4L,3,4L,3L} );         // Unit
+
+        //Sjokolade- og marshmallowfudge
+        ingredientGroceries.put(recipeNames[6], new long[]{1476L, 1475L, 1966L, 1534L, 63L, 1508L, 1493L, 1069L} ); // Grocery ID
+        ingredientQuantities.put(recipeNames[6], new int[]{3, 4, 5, 100, 2, 5, 400, 1} );    // Quantites
+        ingredientUnits.put(recipeNames[6], new long[]{3L, 4L, 3L, 3L, 4L, 4L, 3L, 4L} );         // Unit
+
+        //Innbakte pølser i form
+        ingredientGroceries.put(recipeNames[7], new long[]{682L, 1966L, 1463L, 1945L, 153L, 22L, 1969L} ); // Grocery ID
+        ingredientQuantities.put(recipeNames[7], new int[]{2, 3, 2, 10, 5, 240, 16} );    // Quantites
+        ingredientUnits.put(recipeNames[7], new long[]{3L,3L,3L,3L,3L,3L,4L,3L} );         // Unit
+
+        //Kjøttboller i tomatsaus
+        ingredientGroceries.put(recipeNames[8], new long[]{739L, 292L, 153L, 1966L, 1359L, 1534L, 1254L, 70L, 1139L} ); // Grocery ID
+        ingredientQuantities.put(recipeNames[8], new int[]{3, 500, 60, 10, 120, 18, 400, 1, 200} );    // Quantites
+        ingredientUnits.put(recipeNames[8], new long[]{4L, 3L, 3L, 3L, 3L, 3L, 3L, 4L, 3L} );         // Unit
+
+        //Brente mandler
+        ingredientGroceries.put(recipeNames[9], new long[]{1062L, 1467L, 1617L, 1534L} ); // Grocery ID
+        ingredientQuantities.put(recipeNames[9], new int[]{300, 5, 2, 50} );    // Quantites
+        ingredientUnits.put(recipeNames[9], new long[]{3L, 4L, 4L, 3L} );         // Unit
 
         for (int i = 0; i < recipeNames.length; i++) {
             Recipe recipe = getRecipeByName(recipeNames[i]);
@@ -311,13 +344,21 @@ public class TestDataSerializer {
 
 
     private void createRecipes() {
-        String[] recipeNames = {"Kremet pasta med laks", "Enkel sjokoladekake", "Grove vafler", "Hjemmelaget knekkebrød", "Protein-scones med cottage cheese"};
+        String[] recipeNames = {"Kremet pasta med laks", "Enkel sjokoladekake", "Grove vafler",
+                "Hjemmelaget knekkebrød", "Protein-scones med cottage cheese", "Pannekaker",
+                "Sjokolade- og marshmallowfudge", "Innbakte pølser i form", "Kjøttboller i tomatsaus",
+                "Brente mandler"};
         String[] recipeUrls = {
                 "https://www.tine.no/_/recipeimage/w_1600%2Ch_900%2Cc_fill%2Cx_2244%2Cy_1262%2Cg_xy_center/recipeimage/gojg6eaiym9ehbhd2b8l.jpg",
                 "https://www.tine.no/_/recipeimage/w_1600%2Ch_900%2Cc_fill%2Cx_1500%2Cy_1000%2Cg_xy_center/recipeimage/317652.jpg",
                 "https://www.tine.no/_/recipeimage/w_1600%2Ch_900%2Cc_fill%2Cx_1500%2Cy_1000%2Cg_xy_center/recipeimage/378532.jpg",
                 "https://www.tine.no/_/recipeimage/w_1600%2Ch_900%2Cc_fill%2Cx_1500%2Cy_1097%2Cg_xy_center/recipeimage/357942.jpg",
-                "https://www.tine.no/_/recipeimage/w_1600%2Ch_900%2Cc_fill%2Cx_1500%2Cy_937%2Cg_xy_center/recipeimage/427018.jpg"
+                "https://www.tine.no/_/recipeimage/w_1600%2Ch_900%2Cc_fill%2Cx_1500%2Cy_937%2Cg_xy_center/recipeimage/427018.jpg",
+                "https://www.tine.no/_/recipeimage/w_1280%2Ch_720%2Cc_fill%2Cx_1379%2Cy_775%2Cg_xy_center/recipeimage/oqqj6gxyyaidj4xmkqvx.jpg",
+                "https://www.tine.no/_/recipeimage/w_1280%2Ch_720%2Cc_fill%2Cx_1500%2Cy_1000%2Cg_xy_center/recipeimage/370677.jpg," ,
+                "https://www.tine.no/_/recipeimage/w_1280%2Ch_720%2Cc_fill%2Cx_1500%2Cy_1000%2Cg_xy_center/recipeimage/353909.jpg",
+                "https://www.tine.no/_/recipeimage/w_1280%2Ch_720%2Cc_fill%2Cx_1500%2Cy_1185%2Cg_xy_center/recipeimage/293397.jpg",
+                "https://www.tine.no/_/recipeimage/w_1280%2Ch_720%2Cc_fill%2Cx_1500%2Cy_590%2Cg_xy_center/recipeimage/370627.jpg"
         };
         RecipeCategory[] categories = {
                 getRecipeCategoryByName("Dinner"),
@@ -325,6 +366,11 @@ public class TestDataSerializer {
                 getRecipeCategoryByName("Dinner"),
                 getRecipeCategoryByName("Lunch"),
                 getRecipeCategoryByName("Lunch"),
+                getRecipeCategoryByName("Dinner"),
+                getRecipeCategoryByName("Dessert"),
+                getRecipeCategoryByName("Dinner"),
+                getRecipeCategoryByName("Dinner"),
+                getRecipeCategoryByName("Snack")
         };
 
         for (int i = 0; i < recipeNames.length; i++) {

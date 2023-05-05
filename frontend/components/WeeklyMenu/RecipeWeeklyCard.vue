@@ -1,6 +1,6 @@
 <template>
   <div class="Recipe-card-wrapper bg-green-color dark:bg-zinc-500">
-    <div class="lock-container z-20 ">
+    <div class="lock-container absolute top-2 right-2 bg-green-color rounded-3xl p-1 z-20 dark:button-dark-color ">
         <img
           v-if="lockedBoolean"
           class="lock-icon"
@@ -101,17 +101,6 @@
     border-radius: 14px;
     cursor: pointer;
   }
-
- .lock-container {
-   position: absolute;
-   top: 1px;
-   right: 1px;
-   background-color: rgb(49, 196, 141);
-   border-radius: 50%;
-   padding: 5px;
-   z-index: 111;
-   margin: 2px 2px 0 0;
- }
 
 .lock-icon {
   width: 25px;

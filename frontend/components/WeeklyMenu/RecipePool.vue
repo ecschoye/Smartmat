@@ -1,5 +1,5 @@
 <template>
-    <div class="top-buttons">
+    <div data-test="buttons" class="top-buttons">
         <ButtonGreenButton width="300px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="randomRecipesEvent" :label="$t('generate_random_recipes')"></ButtonGreenButton>
         <ButtonGreenButton width="300px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="removeAllRecipes" :label="$t('remove_all_recipes')"></ButtonGreenButton>
     </div>
@@ -66,7 +66,7 @@ import type { Unit } from '~/types/UnitType';
 export default {
     data() {
         return {
-            Weekdays: [this.t("monday"), this.t("tuesday"), this.t("wednesday"), this.t("thursday"), this.t("friday"), this.t("saturday"), this.t("sunday")],
+            Weekdays: [this.$t("monday"), this.$t("tuesday"), this.$t("wednesday"), this.$t("thursday"), this.$t("friday"), this.$t("saturday"), this.$t("sunday")],
         };
     },
 

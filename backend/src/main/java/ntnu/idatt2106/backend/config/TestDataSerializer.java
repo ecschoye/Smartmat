@@ -172,15 +172,22 @@ public class TestDataSerializer {
                 int weight = (j + 1) * 100;
                 boolean wasTrashed = random.nextDouble() <= 0.2;
 
-                groceryHistoryRepository.save(GroceryHistory.builder()
-                        .weightInGrams(weight)
-                        .wasTrashed(wasTrashed)
-                        .refrigerator(refrigerator)
-                        .dateConsumed(date)
-                        .build());
+                Optional<GroceryHistory> groceryHistoryOptional = groceryHistoryRepository.findByDateConsumedAndWeightInGramsAndRefrigerator(date, weight, refrigerator);
+
+                if (groceryHistoryOptional.isPresent()) {
+                    // Data already exists, do nothing
+                } else {
+                    groceryHistoryRepository.save(GroceryHistory.builder()
+                            .weightInGrams(weight)
+                            .wasTrashed(wasTrashed)
+                            .refrigerator(refrigerator)
+                            .dateConsumed(date)
+                            .build());
+                }
             }
         }
     }
+
 
 
 

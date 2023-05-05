@@ -55,11 +55,20 @@ import ShoppingListCategory from './ShoppingListCategory.vue';
     });
 
     
-    test('renders ShoppingListelement when isCategoryExpanded is true ', () => {
+    test('renders ShoppingListelement when isCategoryExpanded is true', () => {
         wrapper.setData({ isCategoryExpanded: true });
         const shoppingListElementWrapper = wrapper.find('[data-test="shoppingListElementWrapper"]');
         const shoppingListElement = shoppingListElementWrapper.find('[data-test="shoppingListElement"]');
 
         expect(shoppingListElement.exists()).toBe(true);
+    });
+
+    test('renders expand button and expand more img', () => {
+        wrapper.setData({ isCategoryExpanded: false });
+        const expandBtn = wrapper.find('[data-test="expandBtn"]');
+        const expandMoreImg = wrapper.find('[data-test="expandLess"]');
+        
+        expect(expandBtn.exists()).toBe(true);
+        expect(expandMoreImg.exists()).toBe(true);
     });
 });

@@ -9,10 +9,7 @@
   
   <script lang="ts">
   import { useRefrigeratorStore } from '~/store/refrigeratorStore';
-  import { useUserStore } from "~/store/userStore";
-  import { postRegister } from "~/service/httputils/authentication/AuthenticationService";
   import { Refrigerator } from '~/types/RefrigeratorType'
-  import type { Member } from '~/types/MemberType';
   import { postAddMember } from '~/service/httputils/RefrigeratorService';
   import type { MemberRequest } from "~/types/MemberRequest";
   
@@ -32,15 +29,16 @@
         const sendForm = async () => {
         try {
             const newMember: MemberRequest = {
-            refrigeratorId: refrigeratorStore.$state.selectedRefrigerator.id, 
+            refrigeratorId: refrigeratorStore.getSelectedRefrigerator.id, 
             userName: form.email,
             fridgeRole: "USER", 
             };
             const response = await postAddMember(newMember);
             if(response !== null) {
-              alert(t("new_member_success"))
+              alert(t("member_added_success"))
               location.reload(); 
             }
+            else alert(t("member_added_failure"))
           } catch (error: any) {
               console.log(error);
               errorMessage.value = error.response;

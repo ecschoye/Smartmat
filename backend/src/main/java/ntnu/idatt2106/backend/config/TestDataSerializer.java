@@ -51,7 +51,7 @@ import java.util.*;
  */
 @Component
 @RequiredArgsConstructor
-@Profile("dev")
+@Profile("prod")
 public class TestDataSerializer {
 
     private final CategoryRepository categoryRepository;

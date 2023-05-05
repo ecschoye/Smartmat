@@ -50,4 +50,22 @@ describe('BaseInput.vue', () => {
         const input = wrapper.find('input');
         expect(input.attributes('type')).toBe('text');
     });
+
+    test('emits update:modelValue event with initiatedValue when modelValue is empty and initiatedValue is set', () => {
+        const wrapper = mount(BaseInput, {
+            props: {
+                id: 'test-id',
+                label: 'Test Label',
+                modelValue: '',
+                initiatedValue: 'Initiated Value',
+                type: 'text',
+                cutWidth: '70px',
+            },
+        });
+
+        wrapper.vm.updateInitiatedValue();
+        expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+        expect(wrapper.emitted('update:modelValue')[0]).toEqual(['Initiated Value']);
+    });
+
 });

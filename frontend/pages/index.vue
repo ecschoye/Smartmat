@@ -6,15 +6,11 @@
     <div v-if="select" class="flex justify-center w-44 truncate mx-auto rounded-xl">
       <SelectPrompt @clicked="(payload) => goToFridge(payload)" :refrigerators="refrigeratorStore.getRefrigerators"/>
     </div>
-    <div v-else class="flex justify-center pb-5 sm:pb-0 dark:hidden ">
+    <div v-else class="flex justify-center pb-5 sm:pb-0">
       <!-- logo -->
-      <img src="../assets/icons/smartmat/smartMat.png" alt="logo" class="w-72 h-auto sm:w-1/2 sm:h-auto image rounded-3xl pointer-events-none">
+      <img src="../assets/icons/smartmat/smartMat.png" alt="logo" class="dark:hidden block w-72 h-auto sm:w-1/2 sm:h-auto image rounded-3xl pointer-events-none">
+      <img src="../assets/icons/smartmat/smartMat_transparent.png" alt="logo" class="dark:block hidden w-72 h-auto sm:w-1/2 sm:h-auto image rounded-3xl pointer-events-none">
     </div>
-    <div class="dark:flex dark:justify-center dark:pb-5 hidden">
-      <!-- logo -->
-      <img src="../assets/icons/smartmat/smartMat_transparent.png" alt="logo" class="w-72 mt-10 sm:m-0 h-auto sm:w-3/5 sm:h-auto image pointer-events-none items-center">
-    </div>
-
     <div class="flex flex-col sm:flex-row sm:justify-center text-center mt-14" >
       <NuxtLink v-if="loggedIn && isSelected()" :to="localePath('/home')" class="sm:mt-5 sm:pr-4">
         <button class="w-56 h-14 border-2 border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black hover:bg-green-color hover:text-white font-bold items-center rounded transform hover:scale-100 my-2 sm:my-0 sm:h-14 sm:flex sm:justify-center">

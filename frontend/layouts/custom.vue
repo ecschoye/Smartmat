@@ -1,5 +1,8 @@
 <template>
   <div class="wrapper">
+    <Head>
+      <Title>SmartMat</Title>
+    </Head>
     <div class="page-container bg-light-color dark:bg-dark-color">
       <slot />
     </div>
@@ -40,5 +43,4 @@ onUnmounted(() => {
   document.body.classList.remove('bg-light-color');
   document.body.classList.remove('dark:bg-dark-color');
 });
-
 </script>

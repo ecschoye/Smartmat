@@ -1,5 +1,8 @@
 <template>
   <div class="wrapper">
+    <Head>
+      <Title>SmartMat</Title>
+    </Head>
     <div v-if="select" class="flex justify-center w-44 truncate mx-auto rounded-xl">
       <SelectPrompt @clicked="(payload) => goToFridge(payload)" :refrigerators="refrigeratorStore.getRefrigerators"/>
     </div>

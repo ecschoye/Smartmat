@@ -85,7 +85,7 @@ public class TestDataSerializer {
     private final GroceryHistoryRepository groceryHistoryRepository;
     @PostConstruct
     public void init() throws NumberFormatException {
-        serialize();
+        //serialize();
         createUnits();
 
 

@@ -39,7 +39,7 @@ test_backend:
   artifacts:
     when: always
     paths:
-      - target/site/jacoco
+      - public
     reports:
       junit:
         - target/surefire-reports/TEST-*.xml
@@ -48,6 +48,8 @@ test_backend:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
       changes:
         - backend/**/*
+  only:
+    - web
 
 package_backend:
   stage: package_backend

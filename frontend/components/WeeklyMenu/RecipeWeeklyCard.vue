@@ -1,6 +1,6 @@
 <template>
   <div class="Recipe-card-wrapper bg-green-color dark:bg-zinc-500">
-    <div class="lock-container z-20 overflow-">
+    <div class="lock-container z-20 ">
         <img
           v-if="lockedBoolean"
           class="lock-icon"
@@ -19,10 +19,10 @@
       <div class="h-40 dark:hidden bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(49,196,141,0) 90%, rgba(49,196,141,1) 100%), url(${recepeInfo.url})` }"></div>
       <div class="h-40 hidden dark:block bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(39,39,42,0) 95%, rgba(39,39,42,1) 100%), url(${recepeInfo.url})` }"></div>
       </div>
-      <div class="recipe-info mt-10">
-        <div>
-          <h3 class="recepe-title">{{ recepeInfo.name }}</h3>
-        </div>
+      <div style="height:50px;" class="flex-1 items-center">
+        <h3 class="recepe-title m-2">{{ recepeInfo.name }}</h3>
+      </div>
+      <div class="recipe-info mt-1">
         <div class="recipe-choices flex flex-col space-y-2">
           <button @click="handleOptionChange('option1')" class="border-2 bg-light-color border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black items-center px-4 rounded transform hover:scale-100 py-1 px-2 rounded text-sm w-full">
             {{ $t("view_ingredients") }}
@@ -170,9 +170,8 @@
   display: flex;
   justify-content: left;
   color: white;
-  white-space: nowrap;
-  font-size:large; 
-  overflow:scroll; 
+  overflow:hidden; 
+  font-size:large;  
 }
 
 .ingredients {

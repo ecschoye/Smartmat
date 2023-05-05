@@ -55,19 +55,7 @@ export default defineNuxtConfig({
         iso: 'es',
         name: 'Español',
         file: 'es.json',
-      },
-      {
-        code: 'zh',
-        iso: 'zh',
-        name: '中文 (Chinese) ',
-        file: 'zh.json',
-      },
-      {
-        code: 'hi',
-        iso: 'hi',
-        name: 'हिंदी (Hindi) ',
-        file: 'hi.json',
-      },
+      }
     ],
     customRoutes: 'config',
     pages: {

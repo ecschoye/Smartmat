@@ -12,13 +12,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.*;
+import ntnu.idatt2106.backend.model.Refrigerator;
+import ntnu.idatt2106.backend.model.dto.*;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.User;
-import ntnu.idatt2106.backend.model.dto.GroceryDTO;
-import ntnu.idatt2106.backend.model.dto.RefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.response.ErrorResponse;
 import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
+import ntnu.idatt2106.backend.model.recipe.Recipe;
+import ntnu.idatt2106.backend.model.recipe.RecipeGrocery;
 import ntnu.idatt2106.backend.model.requests.SaveGroceryListRequest;
 import ntnu.idatt2106.backend.service.*;
 import org.slf4j.Logger;
@@ -43,11 +45,13 @@ import java.util.List;
 public class GroceryController {
 
     private final GroceryService groceryService;
+    private final RefrigeratorService refrigeratorService;
     private final CookieService cookieService;
     private final UserService userService;
     private final JwtService jwtService;
     private final NotificationService notificationService;
     private final ShoppingListService shoppingListService;
+    private final RecipeService recipeService;
     Logger logger = LoggerFactory.getLogger(GroceryController.class);
 
     @Operation(summary = "Get all groceries by refrigerator id")
@@ -73,34 +77,107 @@ public class GroceryController {
     })
     @DeleteMapping("/remove/{refrigeratorGroceryId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<SuccessResponse> removeRefrigeratorGrocery(@Valid @PathVariable long refrigeratorGroceryId, HttpServletRequest httpServletRequest) throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException, SaveException, ShoppingListNotFound {
+    public ResponseEntity<SuccessResponse> removeRefrigeratorGrocery(@Valid @PathVariable long refrigeratorGroceryId, HttpServletRequest httpServletRequest) throws UserNotFoundException, UnauthorizedException, EntityNotFoundException, NotificationException, SaveException, ShoppingListNotFound, NoSuchElementException {
         logger.info("Received request to remove refrigeratorGrocery with id: {}",refrigeratorGroceryId);
         RefrigeratorGrocery refrigeratorGrocery = groceryService.getRefrigeratorGroceryById(refrigeratorGroceryId);
         notificationService.deleteNotificationsByRefrigeratorGrocery(refrigeratorGrocery);
         groceryService.removeRefrigeratorGrocery(refrigeratorGroceryId, httpServletRequest);
-        shoppingListService.saveGroceryToSuggestionForRefrigerator(refrigeratorGrocery.getGrocery().getId(), refrigeratorGrocery.getRefrigerator().getId());
+        shoppingListService.saveGroceryToSuggestionForRefrigerator(refrigeratorGrocery.getGrocery().getId(),
+                refrigeratorGrocery.getRefrigerator().getId(), refrigeratorGrocery.getUnit().getId(), 1, httpServletRequest);
         return new ResponseEntity<>(new SuccessResponse("Grocery removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
-    @Operation(summary = "Get all groceries")
+    /**
+     * "Eats" part of or entire refrigeratorGrocery. Calls the groceryService and passes entire DTO.
+     * @param dto Contains the RefrigeratorGroceryDTO, UnitDTO and quantity
+     * @param httpServletRequest request
+     * @return returns a ResponseEntity.
+     * @throws Exception
+     */
+    @Operation(summary = "eat parts or all of refrigeratorGrocery if user removes grocery")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of groceries fetched successfully", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Grocery.class)))),
-            @ApiResponse(responseCode = "204", description = "No content", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            @ApiResponse(responseCode = "200", description = "Refrigerator grocery quantity updated successfully", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "204", description = "Refrigerator grocery, user or shopping list not found"),
+            @ApiResponse(responseCode = "401", description = "User is unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @GetMapping("/all")
+    @PostMapping("/eat")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> getAllGroceries(HttpServletRequest request){
-        String jwt = cookieService.extractTokenFromCookie(request); // Extract the token from the cookie
-        if (jwt == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Unauthorized"));
+    public ResponseEntity<?> eatRefrigeratorGrocery(@RequestBody DeleteRefrigeratorGroceryDTO dto, HttpServletRequest httpServletRequest) throws Exception {
+        try{
+            logger.info("Received request to eat refrigeratorGrocery: " + dto.getRefrigeratorGroceryDTO().getId());
+            RefrigeratorGrocery grocery = groceryService.eatRefrigeratorGrocery(dto, httpServletRequest);
+            if(grocery != null){
+                logger.info("All of grocery consumed, sending refrigeratorGrocery to shopping list");
+                shoppingListService.saveGroceryToSuggestionForRefrigerator(grocery.getGrocery().getId(),
+                        grocery.getRefrigerator().getId(), dto.getUnitDTO().getId(),dto.getQuantity(), httpServletRequest);
+            }
+        }catch(Exception e){
+            throw new Exception(e);
         }
-        List<Grocery> list = groceryService.getAllGroceries();
+        return new ResponseEntity<>(new SuccessResponse("Grocery updated properly", HttpStatus.OK.value()), HttpStatus.OK);
+    }
 
-        if(list.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ErrorResponse("No groceries found"));
+    /**
+     * Trashes part of or entire refrigeratorGrocery. Calls the groceryService and passes entire DTO.
+     * @param dto Contains the RefrigeratorGroceryDTO, UnitDTO and quantity
+     * @param httpServletRequest request
+     * @return returns a ResponseEntity.
+     * @throws Exception
+     */
+    @Operation(summary = "Trashes parts or all of refrigeratorGrocery if user removes grocery")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Refrigerator grocery quantity removed successfully", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "204", description = "Refrigerator grocery, user or shopping list not found"),
+            @ApiResponse(responseCode = "401", description = "User is unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PostMapping("/trash")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> trashRefrigeratorGrocery(@RequestBody DeleteRefrigeratorGroceryDTO dto, HttpServletRequest httpServletRequest) throws Exception {
+        try{
+            logger.info("Received request to trash refrigeratorGrocery: " + dto.getRefrigeratorGroceryDTO().getId());
+            RefrigeratorGrocery grocery = groceryService.trashRefrigeratorGrocery(dto, httpServletRequest);
+            if(grocery != null){
+                logger.info("All of grocery trashed, sending refrigeratorGrocery to shopping list");
+                shoppingListService.saveGroceryToSuggestionForRefrigerator(grocery.getGrocery().getId(),
+                        grocery.getRefrigerator().getId(),dto.getUnitDTO().getId(),dto.getQuantity(), httpServletRequest);
+            }
+        }catch(Exception e){
+            throw new Exception(e);
         }
-        return ResponseEntity.ok(list);
+        return new ResponseEntity<>(new SuccessResponse("Grocery updated properly", HttpStatus.OK.value()), HttpStatus.OK);
+    }
+
+    /**
+     * Removes part of or entire refrigeratorGrocery. Calls the groceryService and passes entire DTO.
+     * @param dto Contains the RefrigeratorGroceryDTO, UnitDTO and quantity
+     * @param httpServletRequest request
+     * @return returns a ResponseEntity.
+     * @throws Exception
+     */
+    @Operation(summary = "Remove parts or all of refrigeratorGrocery if user removes grocery")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Refrigerator grocery quantity removed successfully", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "204", description = "Refrigerator grocery, user or shopping list not found"),
+            @ApiResponse(responseCode = "401", description = "User is unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PostMapping("/remove")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> removeRefrigeratorGrocery(@RequestBody DeleteRefrigeratorGroceryDTO dto, HttpServletRequest httpServletRequest) throws Exception {
+        try{
+            logger.info("Received request to remove refrigeratorGrocery: " + dto.getRefrigeratorGroceryDTO().getId());
+            RefrigeratorGrocery grocery = groceryService.useRefrigeratorGrocery(dto, httpServletRequest);
+            if(grocery != null){
+                logger.info("All of grocery removed, sending refrigeratorGrocery to shopping list");
+                shoppingListService.saveGroceryToSuggestionForRefrigerator(grocery.getGrocery().getId(),
+                        grocery.getRefrigerator().getId(),dto.getUnitDTO().getId(),dto.getQuantity(), httpServletRequest);
+            }
+        }catch(Exception e){
+            throw new Exception(e);
+        }
+        return new ResponseEntity<>(new SuccessResponse("Grocery updated properly", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
     @Operation(summary = "Create a new grocery")
@@ -113,18 +190,25 @@ public class GroceryController {
     })
     @PostMapping("/new/{refrigeratorId}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> createNewGrocery(HttpServletRequest request, @RequestBody GroceryDTO groceryDTO, @Valid @PathVariable long refrigeratorId) throws Exception {
+    public ResponseEntity<?> createNewGrocery(HttpServletRequest request, @RequestBody CreateRefrigeratorGroceryDTO dto, @Valid @PathVariable long refrigeratorId) throws Exception {
         try{
             String jwt = cookieService.extractTokenFromCookie(request);
             User user = userService.findByEmail(jwtService.extractUsername(jwt)); // Pass the JWT token instead of the request
             logger.info("Received request to create grocery from user: "+ user.getEmail() + ".");
             List<GroceryDTO> DTOs = new ArrayList<>();
-            DTOs.add(groceryDTO);
-            groceryService.addGrocery(new SaveGroceryListRequest(refrigeratorId, DTOs), request);
-            return ResponseEntity.ok(groceryDTO);
+            DTOs.add(dto.getGroceryDTO());
+            groceryService.addGrocery(new SaveGroceryListRequest(refrigeratorId, DTOs, dto.getUnitDTO(), dto.getQuantity()), request);
+            return ResponseEntity.ok(dto.getGroceryDTO());
         }catch(Exception e){
             throw new Exception(e);
         }
+    }
+
+    @PostMapping("/create")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Grocery> saveGrocery(@RequestBody GroceryDTO grocery) {
+        Grocery savedGrocery = groceryService.createGrocery(grocery);
+        return ResponseEntity.ok(savedGrocery);
     }
 
     @Operation(summary = "Get all grocery DTOs")
@@ -142,21 +226,49 @@ public class GroceryController {
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 
+    /**
+     * Update a grocery item in the user's refrigerator.
+     *
+     * @param request The HTTP request containing the JWT token in the cookie.
+     * @param refrigeratorGroceryDTO The DTO containing the updated grocery item information.
+     * @return The updated grocery item.
+     * @throws Exception If there was an error updating the grocery item.
+     */
+    @Operation(summary = "Update a groceries attributes")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated grocery successfully", content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroceryDTO.class)))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "204", description = "Grocery not found", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PostMapping("/updateGrocery")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> updateGrocery(HttpServletRequest request, @RequestBody RefrigeratorGroceryDTO refrigeratorGroceryDTO) throws Exception {
         try{
-            String jwt = cookieService.extractTokenFromCookie(request); // Extract the token from the cookie
+            logger.info("Received request to update grocery: " + refrigeratorGroceryDTO.getId());
 
-            User user = userService.findByEmail(jwtService.extractUsername(jwt)); // Pass the JWT token instead of the request
-            logger.info("Received request to update a grocery for user: "+ user.getEmail() + ".");
+            groceryService.updateRefrigeratorGrocery(refrigeratorGroceryDTO, request);
 
-            groceryService.updateRefrigeratorGrocery(user, refrigeratorGroceryDTO, request);
-
+            logger.info("Successfully updated grocery:" +refrigeratorGroceryDTO.getId());
             return ResponseEntity.ok(refrigeratorGroceryDTO);
         }
         catch(Exception e){
             throw new Exception(e);
         }
+    }
+
+    @Operation(summary = "Fetch a list of groceries in the refrigerator that matches a recipe ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Groceries fetched successfully"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping("/matching-recipe/{refrigeratorId}/{recipeId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> getIngredientsInRefrigerator(@Valid @PathVariable long refrigeratorId, @Valid @PathVariable long recipeId) throws RefrigeratorNotFoundException {
+        logger.info("Received request for ingredients in refrigerator");
+        Recipe recipe = recipeService.getRecipeById(recipeId);
+        List<RecipeGrocery> recipeGroceries = recipeService.getIngredientsByRecipe(recipe);
+        if(recipeGroceries.size() == 0) return new ResponseEntity<>(HttpStatus.OK);
+        Refrigerator refrigerator = refrigeratorService.getRefrigerator(refrigeratorId);
+        return new ResponseEntity<>(groceryService.getIngredientsInRefrigerator(recipeGroceries, refrigerator.getId()), HttpStatus.OK);
     }
 }

@@ -1,6 +1,10 @@
 <template>
-    <div ref="el" class="grid grid-cols-12 w-full justify-center py-5 md:py-3">
-      <p class ="col-span-8 text-sm md:text-base">{{ props.grocery.grocery.description }}</p>
+    <div ref="el" class="grid grid-cols-12 w-full justify-center py-3">
+      <div class ="col-span-8  text-sm md:text-base flex">
+        <p>{{ props.grocery.grocery.description }} |</p>
+
+        <p class="mx-2"> {{ props.grocery.quantity }}{{ props.grocery.unit.name }}</p>
+      </div>
       <div class="align-middle col-span-3 flex rounded-lg align-middle">
         <img v-if="needsConfirmation" src="../../assets\icons\done.png" alt="Menu" class="w-5 h-5 m-1 align-middle bg-green-500 hover:bg-green-600 rounded-xl" @click="setDate()">
         <input type="date" :id="'expiry-date-' + props.grocery.id" name="expiry-date" class="hover:bg-zinc-500 h-6 bg-inherit text-sm md:text-base rounded-lg" :class="{'text-red-500' : isNearExpiry() }">
@@ -15,9 +19,9 @@
   import { updateGrocery } from '~/service/httputils/GroceryService';
   import { getNotifications } from '~/service/httputils/NotificationService';
   import { useNotificationStore } from '~/store/notificationStore';
-  import {useRefrigeratorStore} from "~/store/refrigeratorStore";
-
+  import { useRefrigeratorStore } from '~/store/refrigeratorStore';
   const notificationStore = useNotificationStore();
+  const refrigeratorStore = useRefrigeratorStore();
 
   async function loadNotifications(){
     try{
@@ -38,12 +42,11 @@
   });
   
   const el = ref<HTMLDivElement | null>(null);
-  const emit = defineEmits(['element-height', 'emit-date', "selected-grocery"]);
+  const emit = defineEmits(['element-height', 'emit-date']);
   
   function clicked() {
-    emit("selected-grocery", props.grocery);
       emit('element-height', el.value?.getBoundingClientRect().y);
-
+      refrigeratorStore.setSelectedGrocery(props.grocery);
   }
   
   function isNearExpiry(): boolean {
@@ -57,6 +60,7 @@
     if(expiryDateInput){
       const newGrocery = props.grocery;
       if(expiryDateInput.valueAsDate !== null){
+        console.log(expiryDateInput.value)
         newGrocery.physicalExpireDate = expiryDateInput.valueAsDate;
         try{
           const response = await updateGrocery(newGrocery);

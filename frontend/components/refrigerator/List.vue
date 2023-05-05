@@ -19,7 +19,7 @@
           <li v-for="(group, index2) in Array.from(category.groups.values())" :key="index2">
             <div @click="toggleCategoryGroup(index, index2)" class="flex">
               - {{ group.name }} ({{ group.groceries.length }}) 
-              <div v-if="getClosestExpiryDateForGroup(group) !== null" class="px-5" :class="{'text-red-500' : isNearExpiry(getClosestExpiryDateForCategory(category)!) }">
+              <div v-if="getClosestExpiryDateForGroup(group) !== null" class="px-5" :class="{'text-red-500' : isNearExpiry(getClosestExpiryDateForGroup(group)!) }">
                 {{ getClosestExpiryDateForGroup(group)!.toLocaleDateString() }}
               </div>
               <i :class="['fa', isCategoryGroupOpen(index,index2) ? 'fa-chevron-up' : 'fa-chevron-down']"></i>

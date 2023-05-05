@@ -1,21 +1,43 @@
 <template>
-  <div class="flex justify-center mt-5">
-    <button @click="showRefrigerator = !showRefrigerator" class="bg-gray-200 hover:bg-gray-300 rounded-md py-2 px-4">
-      {{ showRefrigerator ? t('view_shopping_list') : t('view_refrigerator') }}
-    </button>
-  </div>
-  <div class="w-full">
-    <div v-if="showRefrigerator" class="w-full">
-      <RefrigeratorWrapper />
+  <div class="md:flex hidden">
+
+    <div class="flex-1 order-1 mr-2 mx-1">
+      <RefrigeratorWrapper ref="refrigeratorRef"  />
     </div>
-    <div v-else class="w-full">
+
+    <div class="flex-1 order-2 ml-2 mx-1">
       <ShoppingList
+          @prompt-refrigerator="promptRefrigerator()"
           :shopping-list="shoppingList"
           :category-list="categoryList"
           :suggestions-list="suggestionsList"
           :shopping-cart="shoppingCart"
           :refrigeratorId="refrigeratorId"
       />
+    </div>
+
+  </div>
+
+  <div class="md:hidden flex flex-col justify-center">
+    <div class="flex justify-center mt-5">
+      <button @click="showRefrigerator = !showRefrigerator" class="bg-gray-200 hover:bg-gray-300 rounded-md py-2 px-4">
+        {{ showRefrigerator ? t('view_shopping_list') : t('view_refrigerator') }}
+      </button>
+    </div>
+    <div>
+      <div v-if="showRefrigerator" class="ml-5">
+        <RefrigeratorWrapper ref="refrigeratorRef" />
+      </div>
+      <div v-else class="w-full">
+        <ShoppingList
+            @prompt-refrigerator="promptRefrigerator()"
+            :shopping-list="shoppingList"
+            :category-list="categoryList"
+            :suggestions-list="suggestionsList"
+            :shopping-cart="shoppingCart"
+            :refrigeratorId="refrigeratorId"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -44,5 +66,16 @@ export default defineComponent({
       t
     };
   },
+  methods: {
+    promptRefrigerator(){
+      this.$refs.refrigeratorRef.loadGroceries();
+    }
+  }
 });
 </script>
+
+
+<style scoped>
+
+</style>
+

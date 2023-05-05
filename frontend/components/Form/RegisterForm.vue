@@ -1,15 +1,13 @@
 <template>
   <div class="wrapper">
     <form @submit.prevent="sendForm" class="form form-light-color dark:form-dark-color">
-      <BaseInput :cutWidth="'50px'" id="inpName" class="input-container" type="name" :label="$t('name')" v-model="form.name" />
-      <BaseInput :cutWidth="'58px'" id="inpEmail" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
-      <BaseInput :cutWidth="'68px'" id="inpPassword" class="input-container" type="password" :label="$t('password')" v-model="form.password" />
+      <BaseInput :cutWidth="'50px'" id="inpName" class="input-container" type="name" :label="$t('name')" v-model="form.name" :form="form" />
+      <BaseInput :cutWidth="'58px'" id="inpEmail" class="input-container" type="email" :label="$t('email')" v-model="form.email" :form="form" />
+      <BaseInput :cutWidth="'68px'" id="inpPassword" class="input-container" type="password" :label="$t('password')" v-model="form.password" :form="form" />
       <div class="button-wrapper">
         <GreenButton id="register" :label="$t('create_account')" width="100%" height="50px" />
         <div class="divider"></div>
-        <nuxt-link :to="localePath('/login')">
-          <GrayButton :label="$t('go_to_log_in')" width="100%" height="50px" />
-        </nuxt-link>
+        <GrayButton @click="$router.push(localePath('/login'))" :label="$t('go_to_log_in')" width="100%" height="50px" />
       </div>
       <ErrorAlert class="mt-4" v-if="catchError" :errorMessage="errorMessage" />
     </form>
@@ -17,17 +15,18 @@
 </template>
 
 <script setup lang="ts">
-import GreenButton from "~/components/Button/GreenButton.vue";
-import GrayButton from "~/components/Button/GrayButton.vue";
-import BaseInput from "~/components/Form/BaseInput.vue";
-import {postLogin, postRegister} from "~/service/httputils/authentication/AuthenticationService";
-import ErrorAlert from "~/components/AlertBox/ErrorAlert.vue";
-import {useUserStore} from "~/store/userStore";
+import GreenButton from "../Button/GreenButton.vue";
+import GrayButton from "../Button/GrayButton.vue";
+import BaseInput from "./BaseInput.vue";
+import { useUserStore } from "../../store/userStore";
+import { postRegister, postLogin } from "../../service/httputils/authentication/AuthenticationService";
+import ErrorAlert from "../AlertBox/ErrorAlert.vue";
+import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
 
 const userStore = useUserStore();
 const router = useRouter();
 
-const { t } = useI18n();
 
 const form = reactive({
   name: '',

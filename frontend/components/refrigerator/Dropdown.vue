@@ -2,6 +2,7 @@
   <div class="h-80 w-full py-6 flex flex-col items-center dark:bg-zinc-400 sm:py-6 overflow-hidden">
     <div class="w-full flex justify-center">
       <input
+          autocomplete="off"
           @click="open = !open"
           type="search"
           id="input"
@@ -27,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { getGroceries } from "~/service/httputils/GroceryService";
+import { getGroceriesDTOs } from "~/service/httputils/GroceryService";
 import { Grocery } from "~/types/GroceryType";
 
 const { t } = useI18n();
@@ -43,7 +44,7 @@ let groceries: Grocery[] = [];
 
 async function loadGroceries() {
   try {
-    const response = await getGroceries();
+    const response = await getGroceriesDTOs();
     groceries = response.data;
   } catch (error) {
     console.log("Could not load groceries", error);

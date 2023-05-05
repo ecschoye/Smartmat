@@ -3,7 +3,7 @@
         <div class="items stretch text-sm">
             <div class="ml-4 p-2 flex justify-end absolute left-0 font-extrabold">
                 <h3 class="mr-2"> Foreslått fra kjøleskap </h3>
-                <h5> [{{ categoryListItems.length }}] </h5>
+                <h5> [{{ CategoryListItems?.length }}] </h5>
             </div>
             <div class="p-2 flex justify-end absolute right-0">
                 <button @click.stop="isCategoryExpanded = !isCategoryExpanded" class="h-5 w-5 mr-4">
@@ -14,47 +14,36 @@
         </div>
         <div v-if="isCategoryExpanded" class="grid grid-cols-1 gap-8">
             <ShoppingListElement
-                v-for="element in categoryListItems"
+                v-for="element in CategoryListItems"
                 :key="element.id"
                 :ElementDetails="element"
-                @updateList="loadShoppingListCategories">
+                @updateList="updateList()"
+                >
             </ShoppingListElement>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import ShoppingListService from "~/service/httputils/ShoppingListService";
+import { ShoppingListElementType } from '~/types/ShoppingListElement';
     export default defineComponent({
         props:{
             ShoppingListId: {
                 type: Number,
                 required: true
+            },
+            CategoryListItems: {
+                type: Array as () => ShoppingListElementType[],
+                require: true
             }
         },
         data() {
             return {
                 isCategoryExpanded: false,
-                categoryListItems: [] as ShoppingListElement[],
             }
         },
-        async mounted() {   
-            //loads suggestions
-            this.loadSuggestionsFromRefrigerator()
-        },
         methods: {
-            async loadSuggestionsFromRefrigerator() {
-                try {
-                    let responseSuggestions = await ShoppingListService.getSuggestedGroceriesFromRefrigerator(this.ShoppingListId);
-                    responseSuggestions.data.forEach((element: ResponseGrocery) => {
-                        let object: ShoppingListElement = { id: element.id, description: element.description, quantity: element.quantity, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true, isFromRefrigerator: true };
-                        this.categoryListItems.push(object);
-                    });
-                } catch (error) {
-                    console.error(error)
-                }
-            },
-            async loadShoppingListCategories() {
+            updateList(){
                 this.$emit('updateList')
             }
         }

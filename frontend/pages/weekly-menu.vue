@@ -1,49 +1,28 @@
 <template>
-    <div class="weekly-menu">
-        <RecipePool/>
-    </div>
-
+  <div class="weekly-menu">
+    <RecipeDisplay :recipe="recipe" @close-display-event="closeDisplayEvent"/>
+    <WeeklyMenuRecipePool @see-recipe-event="handleRecipeEvent"/>
+  </div>
 </template>
 
-<script>
-import RecipePool from '~/components/WeeklyMenu/RecipePool.vue';
+<script lang="ts">
+import type { Recipe } from '~/types/RecipeType';
+
 export default {
     data() {
         return {
-            Recipes: [{ name: "Spaghetti Bolognese", ingredients: [
-                        "Spaghetti",
-                        "Tomatsaus",
-                        "kjøttdeig",
-                        "parmesan ost"
-                    ] }, { name: "Kjøttkaker i brun saus", ingredients: [
-                        "Spaghetti",
-                        "Tomatsaus",
-                        "kjøttdeig",
-                        "parmesan ost"
-                    ] }, { name: "Lapskaus", ingredients: [
-                        "Spaghetti",
-                        "Tomatsaus",
-                        "kjøttdeig",
-                        "parmesan ost"
-                    ] }, { name: "Spaghetti Bolognese", ingredients: [
-                        "Spaghetti",
-                        "Tomatsaus",
-                        "kjøttdeig",
-                        "parmesan ost"
-                    ] }, { name: "Spaghetti Bolognese", ingredients: [
-                        "Spaghetti",
-                        "Tomatsaus",
-                        "kjøttdeig",
-                        "parmesan ost"
-                    ] }, { name: "Spaghetti Bolognese", ingredients: [
-                        "Spaghetti",
-                        "Tomatsaus",
-                        "kjøttdeig",
-                        "parmesan ost"
-                    ] },]
+          overlay : true,
+          recipe : null as Recipe | null
         };
     },
-    components: { RecipePool }
+    methods: {
+      handleRecipeEvent(recipe : Recipe) {
+        this.recipe = recipe
+      },
+      closeDisplayEvent(){
+        this.recipe = null;
+      }
+    }
 }
 
 definePageMeta({
@@ -54,8 +33,6 @@ definePageMeta({
 })
 </script>
 
-<style>
-.weekly-menu {
-    margin: 20px;
-}
+<style scoped>
+
 </style>

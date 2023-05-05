@@ -1,14 +1,15 @@
 <template>
   <div class="wrapper">
-    <form @submit.prevent="sendForm" class="form form-light-color dark:form-dark-color">
-      <BaseInput :cutWidth="'58px'" id="inpEmail" class="input-container" type="email" :label="$t('email')" v-model="form.email" />
-      <BaseInput :cutWidth="'68px'" id="inpPassword" class="input-container" type="password" :label="$t('log_in')" v-model="form.password" />
+    <form @submit.prevent="sendForm" class="form border-2 border-[#31C48D]/60 form-light-color dark:form-dark-color">
+      <BaseInput :cutWidth="'58px'" id="inpEmail" class="input-container" type="email" :label="$t('email')" v-model="form.email" :form="form" />
+      <BaseInput :cutWidth="'68px'" id="inpPassword" class="input-container" type="password" :label="$t('password')" v-model="form.password" :form="form" />
       <div class="button-wrapper">
         <GreenButton id="login" :label="$t('log_in')" width="100%" height="50px" />
         <div class="divider"></div>
-        <nuxt-link :to="localePath('/register')">
+<!--        <nuxt-link :to="localePath('/register')">
           <GrayButton id="new-user" :label="$t('new_user')" width="100%" height="50px" />
-        </nuxt-link>
+        </nuxt-link>-->
+        <GrayButton @click="$router.push(localePath('/register'))" id="new-user" :label="$t('new_user')" width="100%" height="50px" />
       </div>
       <ErrorAlert class="mt-4" v-if="catchError" :errorMessage="errorMessage" />
     </form>
@@ -16,12 +17,14 @@
 </template>
 
 <script setup lang="ts">
-import GreenButton from "~/components/Button/GreenButton.vue";
-import GrayButton from "~/components/Button/GrayButton.vue";
-import BaseInput from "~/components/Form/BaseInput.vue";
-import { useUserStore } from "~/store/userStore";
-import { postLogin } from "~/service/httputils/authentication/AuthenticationService";
-import ErrorAlert from "~/components/AlertBox/ErrorAlert.vue";
+import GreenButton from "../Button/GreenButton.vue";
+import GrayButton from "../Button/GrayButton.vue";
+import BaseInput from "./BaseInput.vue";
+import { useUserStore } from "../../store/userStore";
+import { postLogin } from "../../service/httputils/authentication/AuthenticationService";
+import ErrorAlert from "../AlertBox/ErrorAlert.vue";
+import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
 
 const userStore = useUserStore();
 const catchError = ref(false);
@@ -77,7 +80,6 @@ h1{
   padding: 0 40px 40px 40px;
   border-radius: 15px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border: solid 2px #dcdbdb;
 }
 
 .input-container {

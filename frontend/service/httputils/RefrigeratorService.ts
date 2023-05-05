@@ -2,7 +2,6 @@ import axiosInstance from "~/service/AxiosInstance";
 import {AxiosResponse} from "axios";
 import {RefrigeratorRegisterData} from "~/types/RefrigeratorRegisterData";
 import type {Refrigerator} from "~/types/RefrigeratorType"; 
-import type {Member} from "~/types/MemberType"
 import type { MemberRequest } from "~/types/MemberRequest";
 import { RemoveMemberRequest } from "~/types/RemoveMemberRequest";
 
@@ -12,6 +11,10 @@ export const getRefrigerators = async () : Promise<AxiosResponse> => {
 
 export const getRefrigeratorById = async(refrigeratorId : Number) : Promise<AxiosResponse> => {
     return axiosInstance.get(`/api/refrigerator/${refrigeratorId}`); 
+}
+
+export const getMatchingIngredientsInRefrigerator = async(refrigeratorId : Number, recipeId:  Number) : Promise<AxiosResponse> => {
+    return axiosInstance.get(`/api/refrigerator/grocery/matching-recipe/${refrigeratorId}/${recipeId}`); 
 }
 
 export const postRegisterFridge = async (refrigeratorRegisterData : RefrigeratorRegisterData): Promise<AxiosResponse> => {
@@ -38,3 +41,10 @@ export const postEditMembers = async (memberRequests : MemberRequest[]) : Promis
     return axiosInstance.post('/api/refrigerator/members/edit-roles', memberRequests);
 }
 
+export const postEditFavorite = async (favoriteRefrigeratorId : Number) : Promise<AxiosResponse> => {
+    return axiosInstance.post('/api/refrigerator/members/edit-favorite', favoriteRefrigeratorId);
+}
+
+export const postRemoveFavorite = async () : Promise<AxiosResponse> => {
+    return axiosInstance.post('/api/refrigerator/members/edit-favorite', -1);
+}

@@ -9,6 +9,15 @@ interface UserState {
     favoriteRefrigeratorId : number | null
 }
 
+const sessionStorageMock = {
+    getItem: () => null,
+    setItem: () => null,
+    removeItem: () => null,
+    clear: () => null,
+};
+
+const isTestEnvironment = process.env.NODE_ENV === 'test';
+
 export const useUserStore = defineStore({
     id: 'user',
     state: (): UserState => ({
@@ -32,6 +41,9 @@ export const useUserStore = defineStore({
         },
         setLoggedInUserStatus(status: boolean) {
             this.authenticated = status;
+        },
+        setFavoritedRefrigeratorId(favoriteId : number) {
+            this.favoriteRefrigeratorId = favoriteId; 
         },
         logOut() {
             this.authenticated = false;
@@ -74,6 +86,7 @@ export const useUserStore = defineStore({
         },
     },
     persist: {
-        storage: persistedState.sessionStorage,
+        storage: isTestEnvironment ? sessionStorageMock : sessionStorage,
     },
+
 });

@@ -1,6 +1,6 @@
 import type { AxiosResponse } from 'axios';
 import axiosInstance from "~/service/AxiosInstance";
-import type {EditGrocery} from "~/types/EditGrocery";
+import type {SaveGrocery} from "~/types/SaveGrocery";
 
 
 const createShoppingList = (refrigeratorId: Number): Promise<AxiosResponse> => {
@@ -19,11 +19,11 @@ const getCategoriesFromShoppingList = (shoppingListId: Number): Promise<AxiosRes
     return axiosInstance.get(`/api/shopping-list/categories/${shoppingListId}`);
 };
 
-const saveGroceryToShoppingList = (shoppingListId: Number, groceryId: Number, quantity: Number): Promise<AxiosResponse> => {
-    return axiosInstance.post(`/api/shopping-list/add-grocery/${shoppingListId}/${groceryId}/${quantity}`);
+const saveGroceryToShoppingList = (grocery: SaveGrocery): Promise<AxiosResponse> => {
+    return axiosInstance.post(`/api/shopping-list/add-grocery`, grocery);
 };
 
-const editGroceryQuantity = (editGrocery: EditGrocery): Promise<AxiosResponse> => {
+const editGroceryQuantity = (editGrocery: SaveGrocery): Promise<AxiosResponse> => {
     return axiosInstance.post(`/api/shopping-list/edit-grocery`, editGrocery);
 };
 

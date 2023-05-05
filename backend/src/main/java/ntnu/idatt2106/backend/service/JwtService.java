@@ -183,7 +183,7 @@ public class JwtService {
      @return a Claims object containing all claims from the token
      @throws TokenExpiredException if the token is expired
      */
-    private Claims extractAllClaims(String token) throws TokenExpiredException {
+    public Claims extractAllClaims(String token) throws TokenExpiredException {
         try {
             return Jwts
                     .parserBuilder()

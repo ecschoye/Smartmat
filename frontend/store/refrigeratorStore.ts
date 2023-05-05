@@ -10,6 +10,16 @@ export interface RefrigeratorState{
     selectedGrocery : GroceryEntity | null
 }
 
+const sessionStorageMock = {
+    getItem: () => null,
+    setItem: () => null,
+    removeItem: () => null,
+    clear: () => null,
+};
+
+const isTestEnvironment = process.env.NODE_ENV === 'test';
+
+
 export const useRefrigeratorStore = defineStore('refrigerator', {
     state: () : RefrigeratorState => ({
         refrigerators : [] as Refrigerator[],   
@@ -17,8 +27,9 @@ export const useRefrigeratorStore = defineStore('refrigerator', {
         selectedGrocery: null as GroceryEntity | null, // Update the initial state here
     }),
     persist: {
-        storage: persistedState.sessionStorage,
+        storage: isTestEnvironment ? sessionStorageMock : sessionStorage,
     },
+
     getters: {
         getSelectedGrocery : (state : RefrigeratorState) : GroceryEntity | null => {
             return state.selectedGrocery;
@@ -46,7 +57,11 @@ export const useRefrigeratorStore = defineStore('refrigerator', {
         setSelectedGrocery(search : GroceryEntity) : void {
             this.selectedGrocery = search;
         },
-        setSelectedRefrigerator(refrigeratorSearch : Refrigerator) : boolean {
+        setSelectedRefrigerator(refrigeratorSearch : Refrigerator | null) : boolean {
+            if(refrigeratorSearch === null) {
+                this.selectedRefrigerator = null;
+                return true;
+            }
             const index = this.refrigerators.findIndex(refrigerator => refrigerator.id === refrigeratorSearch.id);
             if(index !== -1){
                 this.selectedRefrigerator = refrigeratorSearch;
@@ -61,6 +76,15 @@ export const useRefrigeratorStore = defineStore('refrigerator', {
             this.refrigerators = [];
             this.selectedRefrigerator = null;
             this.selectedGrocery = null;
+        },
+        deleteRefrigerator(refrigerator: Refrigerator) {
+            // @ts-ignore
+            const index = this.refrigerators.findIndex(r => r.id === refrigerator);
+            if (index !== -1) {
+                this.refrigerators.splice(index, 1);
+                console.log("after delete")
+                console.log(this.refrigerators)
+            }
         },
     }
 

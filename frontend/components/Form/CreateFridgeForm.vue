@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <form @submit.prevent="sendForm" class="form">
+    <form @submit.prevent="sendForm" class="form form-light-color dark:form-dark-color border-2 border-[#31C48D]/60">
       <BaseInput :cutWidth="'118px'" id="name" class="input-container" type="name" :label="$t('name')" v-model="form.name" />
       <BaseInput :cutWidth="'65px'" id="address" class="input-container" type="address" :label="$t('address')" v-model="form.address" />
       <div class="button-wrapper">
@@ -64,7 +64,6 @@ const sendForm = async () => {
 .form {
   width: 400px;
   height: fit-content;
-  background: white;
   padding: 0 20px 20px;
   border-radius: 15px;
 }
@@ -152,7 +151,7 @@ const sendForm = async () => {
 
 @media (max-width: 768px) {
   .form {
-    width: 370px;
+    width: 350px;
   }
 }
 

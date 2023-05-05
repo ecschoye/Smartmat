@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -23,6 +24,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleFileSizeLimitExceededException(FileSizeLimitExceededException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body("The file size limit has been exceeded: " + ex.getMessage());
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<String> handleUserNameNotFoundException(UsernameNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body("Username was not found in database" + ex.getMessage());
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
@@ -62,6 +69,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SubCategoryNotFound.class)
     public ResponseEntity<String> handleSubCategoryNotFound(Exception ex) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(CategoryNotFound.class)
+    public ResponseEntity<String> handleCategoryNotFound(Exception ex) {
+        logger.info("Could not find any categories");
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .body(ex.getMessage());
     }

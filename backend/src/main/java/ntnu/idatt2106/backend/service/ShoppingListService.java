@@ -6,6 +6,7 @@ import ntnu.idatt2106.backend.exceptions.*;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.category.Category;
 import ntnu.idatt2106.backend.model.category.CategoryComparator;
+import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTOComparator;
 import ntnu.idatt2106.backend.model.dto.shoppingListElement.ShoppingListElementDTO;
@@ -19,10 +20,11 @@ import ntnu.idatt2106.backend.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
     @Service
     @RequiredArgsConstructor
@@ -30,6 +32,7 @@ public class ShoppingListService {
     private final ShoppingListRepository shoppingListRepository;
     private final GroceryShoppingListRepository groceryShoppingListRepository;
     private final RefrigeratorShoppingListRepository refrigeratorShoppingListRepository;
+    private final UnitRepository unitRepository;
 
     private final ShoppingCartService shoppingCartService;
     private final RefrigeratorService refrigeratorService;
@@ -61,7 +64,7 @@ public class ShoppingListService {
 
     /**
      * Creates a new shopping list if it does not already exist a shopping list for the refrigerator id
-     * The shopping id to an already existing list is returned if it already exists a shopping list for the given refrigerator
+     * The shopping list id to an already existing list is returned if it already exists a shopping list for the given refrigerator
      * @param refrigeratorId ID of connected refrigerator
      * @return shopping list id for the refrigerator id in the parameter
      * @throws RefrigeratorNotFoundException If no refrigerator is found the refrigerator id in the parameter
@@ -97,7 +100,7 @@ public class ShoppingListService {
 
         }
         return groceries.stream().map(ShoppingListElementDTO::new)
-                .sorted(new ShoppingListElementDTOComparator()).collect(Collectors.toList());
+                .sorted(new ShoppingListElementDTOComparator()).toList();
     }
 
     /**
@@ -116,25 +119,25 @@ public class ShoppingListService {
         }
 
         return groceries.stream().map(ShoppingListElementDTO::new)
-                .sorted(new ShoppingListElementDTOComparator()).collect(Collectors.toList());
+                .sorted(new ShoppingListElementDTOComparator()).toList();
     }
 
-        /**
-         * Getter for all groceries from the suggested refrigerator shopping list belonging to the shopping list specified in the parameter
-         * @param shoppingListId ID to the shopping list related to the refrigerator shopping list
-         * @return All groceries from the shopping list with the shopping list id specified in the parameter
-         * @exception NoGroceriesFound Could not find any groceries
-         */
-        public List<ShoppingCartElementDTO> getGroceriesFromRefrigeratorShoppingList(long shoppingListId) throws NoGroceriesFound {
-            List<RefrigeratorShoppingList> groceries = refrigeratorShoppingListRepository.findByShoppingListId(shoppingListId);
-            if (groceries.isEmpty()) {
-                logger.info("Received no groceries from the database");
-                throw new NoGroceriesFound("Could not find any groceries for shopping list id " + shoppingListId);
+    /**
+     * Getter for all groceries from the suggested refrigerator shopping list belonging to the shopping list specified in the parameter
+     * @param shoppingListId ID to the shopping list related to the refrigerator shopping list
+     * @return All groceries from the shopping list with the shopping list id specified in the parameter
+     * @exception NoGroceriesFound Could not find any groceries
+     */
+    public List<ShoppingCartElementDTO> getGroceriesFromRefrigeratorShoppingList(long shoppingListId) throws NoGroceriesFound {
+        List<RefrigeratorShoppingList> groceries = refrigeratorShoppingListRepository.findByShoppingListId(shoppingListId);
+        if (groceries.isEmpty()) {
+            logger.info("Received no groceries from the database");
+            throw new NoGroceriesFound("Could not find any groceries for shopping list id " + shoppingListId);
 
-            }
-            return groceries.stream().map(ShoppingCartElementDTO::new)
-                    .sorted(new ShoppingCartElementDTOComparator()).collect(Collectors.toList());
         }
+        return groceries.stream().map(ShoppingCartElementDTO::new)
+                .sorted(new ShoppingCartElementDTOComparator()).toList();
+    }
 
     /**
      * Getter for all categories of groceries in shopping list
@@ -151,7 +154,6 @@ public class ShoppingListService {
         categories.sort(new CategoryComparator());
         return categories;
     }
-
 
     /**
      * Edit the grocery in shopping list. It is only possible for a superuser of the refrigerator assosiated with the shopping list
@@ -179,7 +181,7 @@ public class ShoppingListService {
         throw new SaveException("Failed to add a edit the grocery item with id " + groceryShoppingListId);
     }
 
-    //todo: remove duplicates
+
     /**
      * Edit the grocery in refrigerator shopping list . It is only possible for a superuser of the refrigerator
      * assosiated with the shopping list to edit the grocery. The grocery is transferred to the shopping list when a
@@ -187,54 +189,65 @@ public class ShoppingListService {
      * @param groceryRefrigeratorShoppingListId ID to the grocery item on a refrigerator shopping list
      * @param quantity Amount of groceries
      * @param httpRequest http request
-     * @return The item on the grocery shopping list
      * @throws NoGroceriesFound if no grocery is found for the groceryShoppingListId
      * @throws UserNotFoundException if no user is found
      * @throws UnauthorizedException if the user is not a superuser in the refrigerator
      * @throws SaveException if it was not possible to save the modifications to the database
      */
-    public GroceryShoppingList editRefrigeratorGrocery(long groceryRefrigeratorShoppingListId, int quantity, HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, UnauthorizedException, SaveException {
+    @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void editRefrigeratorGrocery(long groceryRefrigeratorShoppingListId, int quantity, HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, UnauthorizedException, SaveException, ShoppingListNotFound, NoSuchElementException {
         RefrigeratorShoppingList refrigeratorShoppingListItem = refrigeratorShoppingListRepository.findById(groceryRefrigeratorShoppingListId)
                 .orElseThrow(() -> new NoGroceriesFound("Could not find a grocery with the given i"));
         FridgeRole fridgeRole = groceryService.getFridgeRole(refrigeratorShoppingListItem.getShoppingList().getRefrigerator(), httpRequest);
 
         if (fridgeRole == FridgeRole.SUPERUSER) {
-            GroceryShoppingList groceryShoppingList = GroceryShoppingList.builder()
-                            .shoppingList(refrigeratorShoppingListItem.getShoppingList())
-                            .grocery(refrigeratorShoppingListItem.getGrocery())
-                            .quantity(quantity)
-                            .isRequest(false)
-                            .build();
-            groceryShoppingListRepository.save(groceryShoppingList);
+            SaveGroceryRequest saveGroceryRequest = SaveGroceryRequest.builder()
+                    .groceryId(refrigeratorShoppingListItem.getGrocery().getId())
+                    .quantity(quantity)
+                    .unitDTO(new UnitDTO(refrigeratorShoppingListItem.getUnit()))
+                    .foreignKey(refrigeratorShoppingListItem.getShoppingList().getId())
+                    .build();
+
+            saveGrocery(saveGroceryRequest, httpRequest);
             deleteRefrigeratorGrocery(groceryRefrigeratorShoppingListId, httpRequest);
-            return groceryShoppingList;
         }
-        throw new SaveException("Failed to add a edit the refrigerator grocery item");
     }
+
+
 
     /**
      * Adds predefined grocery to the shopping list for groceries
-     * @param groceryId ID to the grocery to save to the shopping list
-     * @param shoppingListId ID to the shopping list to save to the grocery to
-     * @param quantity Quantity of groceries to save in the shopping list
+     * @param saveGroceryRequest JSON object to save
      * @param request The http request
      * @exception ShoppingListNotFound If the shopping list is not found
      * @exception UserNotFoundException If the user is not found
+     * @exception UnauthorizedException If the user is not authorized
+     * @exception SaveException If error while saving
      */
-    public void saveGrocery(long groceryId, long shoppingListId, int quantity, HttpServletRequest request) throws ShoppingListNotFound, UserNotFoundException, UnauthorizedException, SaveException {
-        ShoppingList shoppingList = getShoppingListById(shoppingListId);
-        Grocery grocery = groceryService.getGroceryById(groceryId);
-
+    public void saveGrocery(SaveGroceryRequest saveGroceryRequest, HttpServletRequest request) throws ShoppingListNotFound, UserNotFoundException, UnauthorizedException, SaveException, NoSuchElementException {
+        ShoppingList shoppingList = getShoppingListById(saveGroceryRequest.getForeignKey());
+        Grocery grocery = groceryService.getGroceryById(saveGroceryRequest.getGroceryId());
+        Optional<GroceryShoppingList> groceryShoppingList = groceryShoppingListRepository
+                .findByGroceryIdAndShoppingListId(saveGroceryRequest.getGroceryId(), shoppingList.getId());
         boolean isRequested = groceryService.getFridgeRole(shoppingList.getRefrigerator(), request) != FridgeRole.SUPERUSER;
 
-        GroceryShoppingList groceryShoppingList = GroceryShoppingList.builder()
-                .grocery(grocery)
-                .shoppingList(shoppingList)
-                .quantity(quantity)
-                .isRequest(isRequested).build();
+        if (groceryShoppingList.isPresent()) {
+            logger.info("Grocery item exist already in entity for shopping list. Increment quantity with one");
+            groceryShoppingList.get().editQuantity(saveGroceryRequest.getQuantity());
+        } else {
+            Unit unit = unitRepository.findById(saveGroceryRequest.getUnitDTO().getId()).orElseThrow(() -> new NoSuchElementException("Could not find specified unit"));
+
+            groceryShoppingList = Optional.of(GroceryShoppingList.builder()
+                    .grocery(grocery)
+                    .shoppingList(shoppingList)
+                    .quantity(saveGroceryRequest.getQuantity())
+                    .unit(unit)
+                    .isRequest(isRequested).build());
+        }
 
         try {
-            groceryShoppingListRepository.save(groceryShoppingList);
+            logger.info("Saving to shopping list" + groceryShoppingList.get().getGrocery().getName());
+            groceryShoppingListRepository.save(groceryShoppingList.get());
         } catch (Exception e) {
             logger.info("Error when saving grocery");
             throw new SaveException("Could not save the grocery");
@@ -248,32 +261,35 @@ public class ShoppingListService {
      * @exception ShoppingListNotFound If the shopping list is not found
      * @exception UserNotFoundException If the user is not found
      */
-    public void saveGroceryToSuggestionForRefrigerator(long groceryId, long refrigeratorId) throws ShoppingListNotFound, UserNotFoundException, UnauthorizedException, SaveException {
+    public void saveGroceryToSuggestionForRefrigerator(long groceryId, long refrigeratorId, long unitId, int quantity, HttpServletRequest httpRequest) throws ShoppingListNotFound, SaveException, UserNotFoundException, UnauthorizedException, NoSuchElementException {
         ShoppingList shoppingList = getShoppingListByRefrigeratorId(refrigeratorId);
-        Optional<RefrigeratorShoppingList> refrigeratorShoppingListOptional = refrigeratorShoppingListRepository
-                .findByGroceryIdAndShoppingListId(groceryId, shoppingList.getId());
-        RefrigeratorShoppingList refrigeratorShoppingList;
+        FridgeRole fridgeRole = groceryService.getFridgeRole(shoppingList.getRefrigerator(), httpRequest);
+        if (fridgeRole == FridgeRole.SUPERUSER) {
+            Optional<RefrigeratorShoppingList> refrigeratorShoppingList = refrigeratorShoppingListRepository
+                    .findByGroceryIdAndShoppingListId(groceryId, shoppingList.getId());
 
-        if (refrigeratorShoppingListOptional.isPresent()) {
-            logger.info("Grocery item exist already in database. Increment quantity with one");
-            refrigeratorShoppingListOptional.get().incrementQuantity();
-            refrigeratorShoppingList = refrigeratorShoppingListOptional.get();
-        } else {
-            logger.info("Grocery item does not exit. Saving the grocery to the database");
-            Grocery grocery = groceryService.getGroceryById(groceryId);
+            if (refrigeratorShoppingList.isPresent()) {
+                logger.info("Grocery item exist already in entity for refrigerator shopping list. Increment quantity with one");
+                refrigeratorShoppingList.get().incrementQuantity();
+            } else {
+                logger.info("Grocery item does not exit in refrigerator shopping list. Saving the grocery to the database");
+                Grocery grocery = groceryService.getGroceryById(groceryId);
 
-             refrigeratorShoppingList = RefrigeratorShoppingList.builder()
-                    .grocery(grocery)
-                    .shoppingList(shoppingList)
-                    .quantity(1) //one grocery in the refrigerator is always one quantity
-                    .build();
-        }
+                Unit unit = unitRepository.findById(unitId).orElseThrow(() -> new NoSuchElementException("Could not find specified unit"));
+                 refrigeratorShoppingList = Optional.of(RefrigeratorShoppingList.builder()
+                        .grocery(grocery)
+                        .shoppingList(shoppingList)
+                        .quantity(quantity)
+                         .unit(unit)//one grocery in the refrigerator is always one quantity
+                        .build());
+            }
 
-        try {
-            refrigeratorShoppingListRepository.save(refrigeratorShoppingList);
-        } catch (Exception e) {
-            logger.info("Error when saving grocery");
-            throw new SaveException("Could not save the grocery");
+            try {
+                refrigeratorShoppingListRepository.save(refrigeratorShoppingList.get());
+            } catch (Exception e) {
+                logger.info("Error when saving grocery");
+                throw new SaveException("Could not save the grocery to refrigerator shopping list");
+            }
         }
     }
 
@@ -370,7 +386,8 @@ public class ShoppingListService {
      * @throws NoGroceriesFound If the grocery item not is found in the shopping list
      * @throws UserNotFoundException If the user is not found
      */
-    public void transferGroceryToCart(long groceryListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {
+    @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void transferGroceryToCart(long groceryListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SaveException, NoSuchElementException {
         GroceryShoppingList groceryShoppingList = groceryShoppingListRepository.findById(groceryListId)
                 .orElseThrow(() -> new NoGroceriesFound("Could not find grocery item"));
         FridgeRole fridgeRole = groceryService.getFridgeRole(groceryShoppingList.getShoppingList().getRefrigerator(), httpRequest);
@@ -394,7 +411,8 @@ public class ShoppingListService {
      * @throws NoGroceriesFound If the grocery item not is found in the shopping list
      * @throws UserNotFoundException If the user is not found
      */
-    public void transferRefrigeratorGroceryToCart(long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {
+    @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
+    public void transferRefrigeratorGroceryToCart(long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SaveException, NoSuchElementException {
         RefrigeratorShoppingList refrigeratorShoppingListItem = refrigeratorShoppingListRepository.findById(refrigeratorShoppingListId)
                 .orElseThrow(() -> new NoGroceriesFound("Could not find grocery item"));
         FridgeRole fridgeRole = groceryService.getFridgeRole(refrigeratorShoppingListItem.getShoppingList().getRefrigerator(), httpRequest);

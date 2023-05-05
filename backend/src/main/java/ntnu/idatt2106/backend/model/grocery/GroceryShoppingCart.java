@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.ShoppingCart;
+import ntnu.idatt2106.backend.model.Unit;
 
 @Data
 @Builder
@@ -26,6 +27,11 @@ public class GroceryShoppingCart {
     private int quantity;
 
     @ManyToOne
+    @JoinColumn(name = "unitId")
+    @Schema(description = "The unit of a grocery")
+    private Unit unit;
+
+    @ManyToOne
     @JoinColumn(name = "groceryId")
     @Schema(description = "Grocery object in the list")
     private Grocery grocery;
@@ -34,4 +40,12 @@ public class GroceryShoppingCart {
     @JoinColumn(name = "shoppingCartId")
     @Schema(description = "The shopping cart connected to the grocery")
     private ShoppingCart shoppingCart;
+
+    /**
+     * Adds the amount in the param to the quantity if it is greater than 0
+     * @return New quantity
+     */
+    public int editQuantity(int amount) {
+        return amount > 0 ? this.quantity += amount : this.quantity ;
+    }
 }

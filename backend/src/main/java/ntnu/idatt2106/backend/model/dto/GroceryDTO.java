@@ -1,6 +1,7 @@
 package ntnu.idatt2106.backend.model.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
@@ -11,6 +12,7 @@ import ntnu.idatt2106.backend.model.SubCategory;
  */
 @Data
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class GroceryDTO {
     private long id;

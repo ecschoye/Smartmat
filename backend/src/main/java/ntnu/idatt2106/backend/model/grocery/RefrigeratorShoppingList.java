@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.ShoppingList;
 import ntnu.idatt2106.backend.model.Unit;
 
+/**
+ * Connection entity model for a refrigerator and a shopping list.
+ */
 @Data
 @Builder
 @NoArgsConstructor

@@ -7,6 +7,10 @@ import jakarta.persistence.*;
 import ntnu.idatt2106.backend.model.Unit;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 
+
+/**
+ * Connection entity model between a Recipe and a Grocery. Holds the required unit/quantity.
+ */
 @Data
 @Builder
 @NoArgsConstructor

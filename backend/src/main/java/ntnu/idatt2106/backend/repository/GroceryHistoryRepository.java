@@ -2,6 +2,7 @@ package ntnu.idatt2106.backend.repository;
 
 
 import ntnu.idatt2106.backend.model.GroceryHistory;
+import ntnu.idatt2106.backend.model.Refrigerator;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +18,6 @@ public interface GroceryHistoryRepository extends JpaRepository<GroceryHistory, 
     List<GroceryHistory> findAllByDateConsumedAfter(LocalDate date);
     List<GroceryHistory> findByDateConsumedBetweenAndRefrigeratorId(LocalDate startDate, LocalDate endDate, Long refrigeratorId);
     void deleteByDateConsumedBefore(LocalDate date);
+
+    Optional<GroceryHistory> findByDateConsumedAndWeightInGramsAndRefrigerator(LocalDate date, int weight, Refrigerator refrigerator);
 }

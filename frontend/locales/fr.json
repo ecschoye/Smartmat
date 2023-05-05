@@ -96,7 +96,7 @@
   "remove_member" : "Supprimer un membre",
   "remove_member_failed" : "Le membre n'a pas pu être supprimé",
   "remove_member_succsess" : "Le membre a été supprimé avec succès",
-  "role_change_failure": "Impossible de modifier le rôle de l'utilisateur"
+  "role_change_failure": "Impossible de modifier le rôle de l'utilisateur",
   "role_change_success": "Rôles d'utilisateur modifiés",
   "saturday" : "Samedi",
   "save_userroles" : "Enregistrer les utilisateurs",

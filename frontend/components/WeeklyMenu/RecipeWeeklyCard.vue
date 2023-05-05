@@ -124,15 +124,16 @@
     cursor: pointer;
   }
 
-.lock-container {
-  position: absolute;
-  top: 1px;
-  right: 1px;
-  z-index: 2;
-  background-color: white;
-  border: 2px solid black;
-  border-radius: 50%;
-}
+ .lock-container {
+   position: absolute;
+   top: 1px;
+   right: 1px;
+   background-color: rgb(49, 196, 141);
+   border-radius: 50%;
+   padding: 5px;
+   z-index: 111;
+   margin: 2px 2px 0 0;
+ }
 
 .lock-icon {
   width: 25px;

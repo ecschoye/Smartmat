@@ -48,8 +48,6 @@ test_backend:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
       changes:
         - backend/**/*
-  only:
-    - web
 
 package_backend:
   stage: package_backend

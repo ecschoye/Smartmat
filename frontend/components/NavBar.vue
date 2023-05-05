@@ -7,7 +7,8 @@
       <img class="dark:hidden h-12 w-auto hover:transform hover:scale-125 pointer-events-none" src="../assets/icons/smartmat/leaf.png" alt="">
     </NuxtLink>
     <div class="hidden lg:flex flex-1 space-x-5 items-center lg:justify-start">
-      <NuxtLink to="/" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('home')}}</NuxtLink>
+      <NuxtLink v-if="isSelected()" to="/home" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('refrigerator')}}</NuxtLink>
+      <NuxtLink v-else to="/create-refrigerator" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('refrigerator')}}</NuxtLink>
       <NuxtLink v-if="isSelected()" to="/weekly-menu" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('weekly_menu')}}</NuxtLink>
       <NuxtLink v-else to="/create-fridge" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('weekly_menu')}}</NuxtLink>
       <NuxtLink v-if="isSelected()" to="/recipe-list" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('recipes')}}</NuxtLink>

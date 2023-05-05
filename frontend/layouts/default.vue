@@ -1,5 +1,8 @@
 <template>
   <div class="wrapper">
+    <Head>
+      <Title>SmartMat</Title>
+    </Head>
     <NavBar/>
     <div class="page-container bg-light-color dark:bg-dark-color">
       <slot />

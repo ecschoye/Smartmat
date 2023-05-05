@@ -2,6 +2,7 @@ import axios from "axios";
 import type { AxiosInstance } from "axios";
 import { useUserStore } from "~/store/userStore";
 import {Session} from "inspector";
+import {useRouter} from "vue-router";
 
 //check if we're in development mode or in production mode
 //if we're in development mode, use localhost:8080 as baseURL
@@ -34,9 +35,10 @@ axiosInstance.interceptors.response.use(
             return;
         }
         else if (error.response.status === 401 && useUserStore().isLoggedIn) {
+            const router = useRouter();
             console.log("Session has expired. You've been logged out.");
-            alert("Session has expired. You've been logged out.");
             useUserStore().logOut();
+            router.push({name: "login"});
         }
         else if(error.response.status !== 401) {
             console.log("An error has occurred. Errorcode: " + error.response.status);

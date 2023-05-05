@@ -97,3 +97,13 @@ build_frontend:
       changes:
         - frontend/**/*¨
 
+pages:
+  stage:
+    - mvn javadoc:javadoc
+  artifacts:
+    paths: 
+      - public
+    expire_in: 30 days
+  only:
+    - web
+

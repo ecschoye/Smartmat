@@ -5,7 +5,6 @@ import lombok.Data;
 /**
  * Error response model.
  */
-
 @Data
 public class ErrorResponse {
     private String message;

@@ -9,7 +9,7 @@
 <!--        <nuxt-link :to="localePath('/register')">
           <GrayButton id="new-user" :label="$t('new_user')" width="100%" height="50px" />
         </nuxt-link>-->
-        <GrayButton @click="$router.push(localePath('/register'))" id="new-user" :label="$t('new_user')" width="100%" height="50px" />
+        <GrayButton type="button" @click="$router.push(localePath('/register'))" id="new-user" :label="$t('new_user')" width="100%" height="50px" />
       </div>
       <ErrorAlert class="mt-4" v-if="catchError" :errorMessage="errorMessage" />
     </form>

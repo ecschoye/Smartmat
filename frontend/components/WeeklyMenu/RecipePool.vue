@@ -1,15 +1,15 @@
 <template>
     <div data-test="buttons" class="top-buttons">
-        <ButtonGreenButton width="300px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="randomRecipesEvent" :label="$t('generate_random_recipes')"></ButtonGreenButton>
-        <ButtonGreenButton width="300px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="removeAllRecipes" :label="$t('remove_all_recipes')"></ButtonGreenButton>
+        <ButtonGreenButton width="300px" class="button m-2 px-1 py-3 border-2 border-black rounded-lg text-black dark:bg-zinc-400" @click="randomRecipesEvent" :label="$t('generate_random_recipes')"></ButtonGreenButton>
+        <ButtonGreenButton width="300px" class="button m-2 px-1 border-2 border-black rounded-lg text-black dark:bg-zinc-400" @click="removeAllRecipes" :label="$t('remove_all_recipes')"></ButtonGreenButton>
     </div>
-    <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title">{{ $t("current_week") }}</h1>
+    <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title dark:text-white">{{ $t("current_week") }}</h1>
     <h1 v-else class="title">{{ $t("next_week") }}</h1>
     <div class="recipe-pool" v-if="weeklyMenuStore.$state.chosenWeek === 1">
         <div v-for="weekday in activeWeekdays" :key="weekday" class="recipe-card">
             <div class="recipe-content">
                 <div class="weekday">
-                    {{ weekday }}
+                    <p class=" text-black dark:text-white">{{ weekday }}</p>
                 </div>
                 <div v-if="weeklyMenuStore.$state.currentWeek[getDayIndex(weekday)] === null">
                     <UnknownRecipe @add-recipe-event="findNewRecipe(getDayIndex(weekday))"/>
@@ -28,8 +28,8 @@
     <div class="recipe-pool" v-else>
         <div v-for="weekday in Weekdays" :key="weekday" class="recipe-card">
             <div class="recipe-content">
-                <div class="weekday">
-                    {{ weekday }}
+                <div class="weekday text-black dark:text-white">
+                  <p class=" text-black dark:text-white">{{ weekday }}</p>
                 </div>
                 <div v-if="weeklyMenuStore.$state.nextWeek[getDayIndex(weekday)] === null">
                     <UnknownRecipe @add-recipe-event="findNewRecipe(getDayIndex(weekday))"/>
@@ -47,8 +47,8 @@
     </div>
 
     <div class="navigation-buttons">
-        <ButtonGreenButton width="100px" height="50px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="goToPreviousWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 1" :label="$t('current_week')"></ButtonGreenButton>
-        <ButtonGreenButton width="100px" height="50px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="goToNextWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 2" :label="$t('next_week')"></ButtonGreenButton>
+        <ButtonGreenButton width="150px" height="50px" class="button m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="goToPreviousWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 1" :label="$t('current_week')"></ButtonGreenButton>
+        <ButtonGreenButton width="150px" height="50px" class="button m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="goToNextWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 2" :label="$t('next_week')"></ButtonGreenButton>
     </div>
     
 </template>
@@ -390,6 +390,10 @@ export default {
   margin: 20px;
   border: none;
   margin: 30px;
+}
+
+.button:hover{
+  transform: scale(1.1);
 }
 
 .week-button {

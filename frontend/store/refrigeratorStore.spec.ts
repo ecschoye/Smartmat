@@ -46,4 +46,42 @@ describe('refrigerator store', () => {
         expect(refrigeratorStore.getSelectedRefrigerator).toBeNull()
     })
 
+
+    it('returns all refrigerators when getRefrigerators is called', () => {
+        const refrigeratorStore = useRefrigeratorStore();
+        const refrigerators = [{ id: 1 }, { id: 2 }];
+
+        refrigeratorStore.setRefrigerators(refrigerators);
+
+        expect(refrigeratorStore.getRefrigerators).toEqual(refrigerators);
+    });
+
+    it('returns a refrigerator by id when getRefrigeratorById is called', () => {
+        const refrigeratorStore = useRefrigeratorStore();
+        const refrigerators = [{ id: 1 }, { id: 2 }];
+
+        refrigeratorStore.setRefrigerators(refrigerators);
+
+        expect(refrigeratorStore.getRefrigeratorById(1)).toEqual({ id: 1 });
+        expect(refrigeratorStore.getRefrigeratorById(2)).toEqual({ id: 2 });
+    });
+
+    it('does not return a refrigerator by id when getRefrigeratorById is called with an invalid id', () => {
+        const refrigeratorStore = useRefrigeratorStore();
+        const refrigerators = [{ id: 1 }, { id: 2 }];
+
+        refrigeratorStore.setRefrigerators(refrigerators);
+
+        expect(refrigeratorStore.getRefrigeratorById(3)).toBeUndefined();
+    });
+
+    it('does not automatically select a refrigerator when the user is not logged in', () => {
+        const refrigeratorStore = useRefrigeratorStore();
+
+        refrigeratorStore.setRefrigerators([{ id: 1 }]);
+
+        expect(refrigeratorStore.getSelectedRefrigerator).toBeNull();
+    });
+
+
 })

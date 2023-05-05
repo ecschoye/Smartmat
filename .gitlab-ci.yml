@@ -102,7 +102,7 @@ pages:
   stage: package_backend
   script:
       - echo "Building javadoc"
-      - mvn javadoc:javadoc
+      - mvn -f backend/pom.xml javadoc:javadoc
   artifacts:
     paths: 
       - public

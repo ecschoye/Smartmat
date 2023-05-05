@@ -1,5 +1,5 @@
 <template>
-  <div class="md:flex hidden">
+  <div class="md:flex hidden px-20 my-5 gap-80">
 
     <div class="flex-1 order-1 mr-2 mx-1">
       <RefrigeratorWrapper ref="refrigeratorRef"  />

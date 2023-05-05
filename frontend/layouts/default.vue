@@ -13,9 +13,9 @@
 
 <style scoped>
 .page-container {
-  min-height: calc(100vh - 96px);
+  height: calc(100vh - 96px);
   display: block;
-  max-height: 100vh;
+  max-height: calc(100vh - 96px);
 }
 
 .wrapper{

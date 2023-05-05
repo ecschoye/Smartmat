@@ -50,7 +50,15 @@ public class GroceryShoppingList {
      * Adds the amount in the param to the quantity if it is greater than 0
      * @return New quantity
      */
-    public int editQuantity(int amount) {
-        return amount > 0 ? this.quantity += amount : this.quantity ;
+    public int editQuantity(int amount, Unit unit) {
+        if(this.unit.getWeight() > unit.getWeight()){
+            this.quantity = (this.unit.getWeight()*this.quantity + unit.getWeight()*amount)/unit.getWeight();
+            this.unit = unit;
+            return this.quantity;
+        }
+        else{
+            this.quantity = (this.unit.getWeight() * this.quantity + unit.getWeight()*amount)/this.unit.getWeight();
+            return (this.unit.getWeight() * this.quantity + unit.getWeight()*amount)/this.unit.getWeight();
+        }
     }
 }

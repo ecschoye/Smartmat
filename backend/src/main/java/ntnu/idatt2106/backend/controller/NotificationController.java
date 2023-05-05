@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,6 @@ public class NotificationController {
 
     Logger logger = Logger.getLogger(NotificationController.class.getName());
 
-
     @Operation(summary = "Retrieves all of the users notifications",
             description = "Retrieves a users notifications",
             responses = {
@@ -58,6 +58,15 @@ public class NotificationController {
         }
     }
 
+    @Operation(summary = "Delete notification by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Notification deleted successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated"),
+            @ApiResponse(responseCode = "403", description = "User is not authorized"),
+            @ApiResponse(responseCode = "404", description = "Notification not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/delete")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> delete(HttpServletRequest request, @RequestBody long id) throws NotificationException {

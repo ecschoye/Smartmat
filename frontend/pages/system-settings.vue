@@ -1,5 +1,5 @@
 <template>
-  <div class="w-3/4 sm:w-2/3 min-h-fit bg-slate-100 border-4 border-[#31C48D]/60 dark:bg-zinc-500 mx-auto text-center rounded-xl py-6 mt-10">
+  <div class="w-3/4 sm:w-2/3 min-h-fit h-4/5 md:h-3/5 bg-slate-100 border-4 border-[#31C48D]/60 dark:bg-zinc-500 mx-auto text-center rounded-xl py-6 mt-10">
 
     <p class="text-center dark:text-white mt-7 text-xl font-bold">{{t('system_settings')}}</p>
 
@@ -51,18 +51,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Notifications -->
-      <div class="flex items-center mt-8 justify-between mb-12">
-        <p class="font-bold text-xl text-gray-900 dark:text-gray-100 mr-4">{{t('notifications')}}</p>
-        <div class="w-16 flex flex-col items-center" @click="toggleNotifications = !toggleNotifications">
-          <div class="hover:cursor-pointer w-16 h-10 flex items-center bg-gray-300 rounded-full p-1 duration-300 ease-in-out" :class="{ 'bg-green-400 dark:bg-green-600': toggleNotifications }">
-            <div class="bg-white dark:bg-gray-300 w-8 h-8 rounded-full shadow-md transform duration-300 ease-in-out" :class="{ 'translate-x-6': toggleNotifications }"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Switch Container End -->
     </div>
   </div>
 </template>
@@ -95,7 +83,6 @@ export default defineComponent({
     }
   },
   setup() {
-    const colorMode = useColorMode()
     const {locales, locale, t, setLocale } = useI18n();
     const selected = ref(locale.value);
 

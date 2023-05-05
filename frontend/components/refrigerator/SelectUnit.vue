@@ -39,7 +39,7 @@
 import type { Unit } from '~/types/UnitType';
 import axiosInstance from '~/service/AxiosInstance';
 import { GroceryEntity } from '~/types/GroceryEntityType';
-const { t } = useI18n();
+import { defineProps, defineEmits, ref, watch, onMounted } from 'vue';
 
 let open = ref(false);
 

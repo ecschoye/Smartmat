@@ -226,17 +226,18 @@ public class ShoppingListService {
      */
     public void saveGrocery(SaveGroceryRequest saveGroceryRequest, HttpServletRequest request) throws ShoppingListNotFound, UserNotFoundException, UnauthorizedException, SaveException, NoSuchElementException {
         ShoppingList shoppingList = getShoppingListById(saveGroceryRequest.getForeignKey());
+        System.out.println(shoppingList);
         Grocery grocery = groceryService.getGroceryById(saveGroceryRequest.getGroceryId());
+        Unit unit = unitRepository.findById(saveGroceryRequest.getUnitDTO().getId()).orElseThrow(() -> new NoSuchElementException("Could not find specified unit"));
         Optional<GroceryShoppingList> groceryShoppingList = groceryShoppingListRepository
                 .findByGroceryIdAndShoppingListId(saveGroceryRequest.getGroceryId(), shoppingList.getId());
         boolean isRequested = groceryService.getFridgeRole(shoppingList.getRefrigerator(), request) != FridgeRole.SUPERUSER;
 
+        System.out.println(groceryShoppingList);
         if (groceryShoppingList.isPresent()) {
-            logger.info("Grocery item exist already in entity for shopping list. Increment quantity with one");
-            groceryShoppingList.get().editQuantity(saveGroceryRequest.getQuantity());
+            logger.info("Grocery item exist already in entity for shopping list. Increment quantity");
+            groceryShoppingList.get().editQuantity(saveGroceryRequest.getQuantity(), unit);
         } else {
-            Unit unit = unitRepository.findById(saveGroceryRequest.getUnitDTO().getId()).orElseThrow(() -> new NoSuchElementException("Could not find specified unit"));
-
             groceryShoppingList = Optional.of(GroceryShoppingList.builder()
                     .grocery(grocery)
                     .shoppingList(shoppingList)

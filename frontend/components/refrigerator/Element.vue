@@ -1,9 +1,9 @@
 <template>
     <div ref="el" class="grid grid-cols-12 w-full justify-center py-3">
       <div class ="col-span-8  text-sm md:text-base flex">
-        <p>{{ props.grocery.grocery.description }} |</p>
+        <p data-test="description">{{ props.grocery.grocery.description }} |</p>
 
-        <p class="mx-2"> {{ props.grocery.quantity }}{{ props.grocery.unit.name }}</p>
+        <p data-test="quantity" class="mx-2"> {{ props.grocery.quantity }}{{ props.grocery.unit.name }}</p>
       </div>
       <div class="align-middle col-span-3 flex rounded-lg align-middle">
         <img v-if="needsConfirmation" src="../../assets\icons\done.png" alt="Menu" class="w-5 h-5 m-1 align-middle bg-green-500 hover:bg-green-600 rounded-xl" @click="setDate()">
@@ -20,6 +20,7 @@
   import { getNotifications } from '~/service/httputils/NotificationService';
   import { useNotificationStore } from '~/store/notificationStore';
   import { useRefrigeratorStore } from '~/store/refrigeratorStore';
+  import { defineComponent, defineProps, onMounted } from 'vue';
   const notificationStore = useNotificationStore();
   const refrigeratorStore = useRefrigeratorStore();
 

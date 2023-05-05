@@ -30,17 +30,17 @@
             </div>
         </div>
         <div class="md:hidden flex flex-col justify-center p-5 font-bold">
-            <div class="w-80 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
+            <div class="w-64 md:w-80 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
               <h1 class="flex justify-center text-xl mb-3"> {{t('total_food_eaten')}} </h1>
               <h3 class="flex justify-center text-green-custom text-4xl"> {{ totalFoodEaten / 1000 }} KG </h3> 
               <h3 class="flex justify-center text-green-custom text-xl"> {{ getTotalFoodEatenPercentage() }} % </h3> 
             </div>
-            <div class="w-80 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
+            <div class="w-64 md:w-80  bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
               <h1 class="flex justify-center text-xl mb-3"> {{t('total_food_wasted')}} </h1>
               <h3 class="flex justify-center text-red-400 text-4xl"> {{ totalFoodWaste / 1000 }} KG </h3> 
               <h3 class="flex justify-center text-red-400 text-xl"> {{ getTotalFoodWastePercentage() }} % </h3> 
             </div>
-            <div class="w-80 h-48 max-h-56 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
+            <div class="w-64 md:w-80 h-48 max-h-56 bg-zinc-100 dark:bg-zinc-700 dark:text-white border-2 border-black dark:border-white rounded-3xl p-10 m-5">
               <div v-if="!showInfo">
                 <h1 class="flex justify-center text-xl mb-3"> {{t('norwegian_average')}} </h1>
                 <h3 class="flex justify-center text-red-400 text-4xl"> 160 KG </h3> 
@@ -143,11 +143,14 @@
             this.totalFood = this.totalFoodEaten + this.totalFoodWaste
         },
       getTotalFoodEatenPercentage() {
-        return (this.totalFoodEaten / this.totalFood * 100).toFixed(2)
+        const percentage = (this.totalFoodEaten / this.totalFood * 100).toFixed(2);
+        return isNaN(percentage) ? '0.00' : percentage;
       },
       getTotalFoodWastePercentage() {
-        return (this.totalFoodWaste / this.totalFood * 100).toFixed(2)
+        const percentage = (this.totalFoodWaste / this.totalFood * 100).toFixed(2);
+        return isNaN(percentage) ? '0.00' : percentage;
       }
+
     },
     mounted() {
       const refrigeratorStore = useRefrigeratorStore();

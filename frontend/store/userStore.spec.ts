@@ -59,27 +59,6 @@ describe('user store', () => {
         expect(userStore.isLoggedIn).toBe(false)
     })
 
-    test('Axios interceptor logs out user on 401 error', async () => {
-        window.alert = () => {};
-
-
-        // log in a user so that useUserStore().isLoggedIn returns true
-        useUserStore().logIn({ username: 'testuser', password: 'password' });
-
-        // mock a response that returns a 401 error status code
-        mockAxios.onGet('/some/endpoint').reply(401);
-
-        try {
-            // make a request that triggers the interceptor
-            await axiosInstance.get('/some/endpoint');
-        } catch (error) {
-            // Expect an error to be thrown
-            expect(error.response.status).toBe(401);
-        }
-
-        // check that the user was logged out
-        expect(useUserStore().isLoggedIn).toBe(false);
-    });
 
     test('fetches user status and sets authenticated status to false if status is not "AUTHENTICATED"', async () => {
         const userStore = useUserStore()

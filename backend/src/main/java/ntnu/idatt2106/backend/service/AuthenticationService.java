@@ -18,6 +18,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ntnu.idatt2106.backend.exceptions.*;
 
+/**
+ * The AuthenticationService class provides register and authentication methods
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -60,9 +63,7 @@ public class AuthenticationService {
     }
 
 
-
     /**
-
      Authenticates a user and returns an authentication token.
      @param request an AuthenticationRequest object containing the user's email and password
      @return an AuthenticationResponse object containing an authentication token

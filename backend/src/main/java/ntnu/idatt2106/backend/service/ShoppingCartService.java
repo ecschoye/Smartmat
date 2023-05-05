@@ -25,6 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * The ShoppingCartService class provides methods to create a new shopping cart, or get an existing one,
+ * get groceries in the shopping cart, and to delete, edit and transfer groceries to the refrigerator
+ */
 @Service
 @RequiredArgsConstructor
 public class ShoppingCartService {

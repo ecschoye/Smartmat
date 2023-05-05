@@ -1,6 +1,5 @@
 package ntnu.idatt2106.backend.service;
 
-
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.model.dto.GroceryInfoDTO;
 import ntnu.idatt2106.backend.model.dto.recipe.IngredientDTO;
@@ -23,6 +22,10 @@ import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * The RecipeService class provides methods to get recipes by what the user have in the refrigerator,
+ * a provided id, get all recipes, and to get the ingredients of a recipe by the recipe
+ */
 @Service
 @RequiredArgsConstructor
 public class RecipeService {
@@ -35,10 +38,9 @@ public class RecipeService {
 
     private static int lastDuplicateIndex = 0;
 
-
     /**
      * Method to fetch recipes based on what the user has stored in their fridge
-     * Also finds the recipes that uses groceries that are about to expire
+     * Also finds the recipes that use groceries that are about to expire
      */
     public List<RecipeDTO> getRecipesByGroceriesAndExpirationDates(FetchRecipesDTO fetchRecipesDTO, boolean allRecipes) throws NoSuchElementException {
 
@@ -69,12 +71,9 @@ public class RecipeService {
                 .map(RefrigeratorGrocery::getGrocery)
                 .collect(Collectors.groupingBy(Grocery::getName, Collectors.summingInt(item -> 1)));
 
-
-
         // Retrieve all RecipeGrocery records that match the groceries in the validGroceries based on name
         List<RecipeGrocery> matchingRecipeGroceries = recipeGroceryRepository.findAllByGroceryNameIn(
                 validGroceries.stream().map(RefrigeratorGrocery::getGrocery).map(Grocery::getName).collect(Collectors.toList()));
-
 
         if (matchingRecipeGroceries.isEmpty()) {
             throw new NoSuchElementException("No matching recipes found for the available groceries.");
@@ -106,7 +105,6 @@ public class RecipeService {
             }
         }
 
-
         // If there are not enough unique recipes, add duplicates from the beginning of the sortedRecipes list
         if (newRecipes.size() < numRecipes) {
             int remainingRecipes = numRecipes - newRecipes.size();
@@ -122,6 +120,11 @@ public class RecipeService {
 
     }
 
+    /**
+     * Convert recipes to recipeDTOs
+     * @param recipes a list of the recipes to convert
+     * @return a list of the converted recipeDTOs
+     */
     public List<RecipeDTO> convertToDTOs(List<Recipe> recipes) {
         return recipes.stream().map(recipe -> {
             RecipeDTO recipeDTO = new RecipeDTO(recipe);
@@ -168,6 +171,10 @@ public class RecipeService {
         return recipeGroceryRepository.findAllByRecipe(recipe);
     }
 
+    /**
+     * Gets all recipes from the database
+     * @return a list containing all the recipes
+     */
     public List<RecipeDTO> getAllRecipes() {
         List<Recipe> recipes = recipeRepository.findAll();
         return convertToDTOs(recipes);

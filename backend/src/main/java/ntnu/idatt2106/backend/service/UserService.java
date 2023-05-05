@@ -19,6 +19,10 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    /**
+     * Constructor for the UserService class
+     * @param userRepository the UserRepository
+     */
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;

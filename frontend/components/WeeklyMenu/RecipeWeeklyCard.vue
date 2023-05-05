@@ -112,7 +112,6 @@
  .Recipe-card-wrapper {
   position: relative;
   width: 200px;
-  height: 350px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   z-index: 1;
@@ -164,7 +163,6 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 120px;
 }
 
 

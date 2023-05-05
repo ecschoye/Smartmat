@@ -23,9 +23,9 @@
           <div class="text-center">{{notification.refrigeratorGrocery.refrigerator.name }}</div>
         </div>
         <div class="py-2" >
-          <button :disabled="true" class="border bg-white border-black mx-2 p-1 my-1 rounded disabled:bg-slate-300 disabled:text-slate-500">
+          <button @click="goToRecipes()" class="border bg-white border-black mx-2 p-1 my-1 rounded disabled:bg-slate-300 disabled:text-slate-500">
             {{ t('find_recipe') }}</button>
-          <button :disabled="true" class="border bg-white border-black mx-2 p-1 my-1 rounded disabled:bg-slate-300 disabled:text-slate-500">
+          <button @click="goToMenu()" class="border bg-white border-black mx-2 p-1 my-1 rounded disabled:bg-slate-300 disabled:text-slate-500">
             {{ t('go_to_weekly_menu') }}</button>
           <button @click="goToFridge()" class="border bg-white dark:bg-neutral-50 text-black border-black mx-2 p-1 my-1 rounded hover:bg-slate-400 cursor-pointer">
             {{ t('to_refrigerator') }}</button>
@@ -52,6 +52,12 @@ const props = defineProps({
 function goToFridge(){
   refrigeratorStore.setSelectedRefrigerator(props.notification.refrigeratorGrocery.refrigerator);
   router.push('/home');
+}
+function goToRecipes(){
+  router.push('/recipe-list');
+}
+function goToMenu(){
+  router.push('/weekly-menu');
 }
 
 const emit = defineEmits(['delete-notif'])

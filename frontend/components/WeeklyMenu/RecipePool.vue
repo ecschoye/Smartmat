@@ -4,7 +4,7 @@
         <ButtonGreenButton width="300px" class="button m-2 px-1 border-2 border-black rounded-lg text-black dark:bg-zinc-400" @click="removeAllRecipes" :label="$t('remove_all_recipes')"></ButtonGreenButton>
     </div>
     <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title dark:text-white">{{ $t("current_week") }}</h1>
-    <h1 v-else class="title">{{ $t("next_week") }}</h1>
+    <h1 v-else class="title dark:text-white">{{ $t("next_week") }}</h1>
     <div class="recipe-pool" v-if="weeklyMenuStore.$state.chosenWeek === 1">
         <div v-for="weekday in activeWeekdays" :key="weekday" class="recipe-card">
             <div class="recipe-content">

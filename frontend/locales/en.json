@@ -12,6 +12,7 @@
   "amount" : "Amount",
   "category": "Category",
   "change_password": "Change password",
+  "close" : "Close",
   "confirm_your_new_password": "Confirm your new password:",
   "create_account": "Create account",
   "create_grocery": "Create grocery",

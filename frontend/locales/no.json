@@ -12,6 +12,7 @@
   "amount" : "Mengde",
   "category": "Kategori",
   "change_password": "Endre passord",
+  "close" : "Lukk",
   "confirm_your_new_password": "Bekreft ditt nye passord:",
   "create_account": "Lag bruker",
   "create_grocery" : "Opprett matvare",

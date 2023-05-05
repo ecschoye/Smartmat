@@ -12,6 +12,7 @@
   "amount" : "Cantidad",
   "category": "Categoría",
   "change_password": "Cambiar contraseña",
+  "close" : "cerrar",
   "confirm_your_new_password": "Confirmar nueva contraseña:",
   "create_account": "Crear cuenta",
   "create_grocery": "Crear producto",

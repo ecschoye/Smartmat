@@ -133,5 +133,6 @@
   "in_refrigerator" : " I Kjøleskap",
   "add_grocery" : "Legg Til Vare",
   "cancel" : "Avbryt",
-  "add_recipe_to_weekly_menu" : "Legg til oppskrift i ukentlig meny"
+  "add_recipe_to_weekly_menu" : "Legg til oppskrift i ukentlig meny",
+  "you_have_no_groceries_in_the_shopping_cart": "Du har ingen matvarer i handlekurven"
 }

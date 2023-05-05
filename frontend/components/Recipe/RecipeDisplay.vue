@@ -31,9 +31,9 @@
             </td>
             <td>
               <div class="flex items-center justify-start">
-                <img v-if="isInFridge(ingredient.id) === 2" class="mx-1 w-4" src="@/assets/icons/figures/greencircle.png" alt="">
-                <img v-else-if=" isInFridge(ingredient.id) == 1" class=" mx-1 w-4" src="@/assets/icons/figures/yellowcircle.png" alt="">
-                <img v-else-if=" isInFridge(ingredient.id) == 0" class=" mx-1 w-4" src="@/assets/icons/figures/redcircle.png" alt="">
+                <img v-if="isInFridge(ingredient) === 2" class="mx-1 w-4" src="@/assets/icons/figures/greencircle.png" alt="">
+                <img v-else-if=" isInFridge(ingredient) == 1" class=" mx-1 w-4" src="@/assets/icons/figures/yellowcircle.png" alt="">
+                <img v-else-if=" isInFridge(ingredient) == 0" class=" mx-1 w-4" src="@/assets/icons/figures/redcircle.png" alt="">
                 <p class="opacity-80 text-sm whitespace-nowrap">{{ getFridgeStatus(ingredient.id) }}</p>
               </div>
             </td>
@@ -71,7 +71,7 @@ import { useRefrigeratorStore } from '~/store/refrigeratorStore';
     data () {
       return {
         shoppingListId : -1,
-        matchingIngredient :null as Map<Number, Ingredient> | null,
+        matchingIngredient :null as Map<Number, Ingredient[]> | null,
         showInputPopup : false,
         selectedIngredient : null as Ingredient | null,
         quantity : null as Number | null, 
@@ -102,12 +102,16 @@ import { useRefrigeratorStore } from '~/store/refrigeratorStore';
         }
         this.unit = newUnit; 
       },
-      isInFridge(groceryId : Number) : number{
+      isInFridge(grocery : Ingredient) : number{
         if(this.matchingIngredient===null) return 0; 
-        let refIng : Ingredient | undefined = this.matchingIngredient?.get(groceryId)
+        let refIng : Ingredient[] | undefined = this.matchingIngredient?.get(grocery.id)
+        
         if(refIng !== undefined && this.recipe !== null){
-          let recIng : Ingredient | undefined = this.recipe.ingredients.find(obj => obj.id === groceryId); 
-          if(recIng !== undefined && refIng.quantity*refIng.unit.weight >= recIng.quantity * recIng.unit.weight){
+          let refWeight : number = 0; 
+          for(let ingredient in refIng){
+            refWeight += refIng[ingredient].quantity * refIng[ingredient].unit.weight; 
+          }
+          if(grocery.quantity*grocery.unit.weight <= refWeight){
             return 2; 
           }
           return 1; 
@@ -116,9 +120,15 @@ import { useRefrigeratorStore } from '~/store/refrigeratorStore';
       },
       getFridgeStatus(groceryId : Number) : string{
         if(this.matchingIngredient !== null && this.matchingIngredient.has(groceryId)){
-          let ing : Ingredient | undefined = this.matchingIngredient.get(groceryId); 
-          if(ing === undefined) return this.t("not_in_refrigerator"); 
-          let message : string = ing.quantity + "" + ing.unit.name; 
+          let ingredients : Ingredient[] | undefined = this.matchingIngredient.get(groceryId); 
+          if(ingredients === undefined) return this.t("not_in_refrigerator"); 
+          let refWeight : number = 0; 
+          for(let ingredient in ingredients){
+            refWeight += ingredients[ingredient].quantity * ingredients[ingredient].unit.weight; 
+          }
+          let message : string; 
+          if(ingredients.length > 1) message = refWeight + "g"; 
+          else message = ingredients[0].quantity + ingredients[0].unit.name; 
           return message; 
         }
         else return this.t("not_in_refrigerator"); 
@@ -165,17 +175,22 @@ import { useRefrigeratorStore } from '~/store/refrigeratorStore';
         try{
           let response = await getMatchingIngredientsInRefrigerator(refrigeratorId, recipeId);
           if(response && response.data) {
-            let map : Map<Number, Ingredient> = new Map<Number,Ingredient>();
+            let map : Map<Number, Ingredient[]> = new Map<Number,Ingredient[]>();
             for(let key in response.data){
-              let data = response.data[key];
-              let ingredient : Ingredient = {
-                id : data.id,
-                name : data.grocery.name,
-                quantity : data.quantity,
-                unit : data.unit
-              }; 
-              
-              map.set(Number(key), ingredient); 
+              for(let object in response.data[key]){
+                let data = response.data[key][object];
+                let ingredient : Ingredient = {
+                  id : data.grocery.id,
+                  name : data.grocery.name,
+                  quantity : data.quantity,
+                  unit : data.unit
+                }; 
+                
+                if(!map.has(ingredient.id)){
+                  map.set(ingredient.id, []);
+                }
+                map.get(ingredient.id)?.push(ingredient)
+              }
             }
             if(map.size> 0) this.matchingIngredient = map;
           }

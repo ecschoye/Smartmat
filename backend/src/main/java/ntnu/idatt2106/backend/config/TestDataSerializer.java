@@ -23,6 +23,7 @@ import ntnu.idatt2106.backend.repository.recipe.RecipeRepository;
 import ntnu.idatt2106.backend.service.GroceryHistoryService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -77,7 +78,7 @@ public class TestDataSerializer {
 
     private final RefrigeratorGroceryRepository refrigeratorGroceryRepository;
 
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     private final UnitRepository unitRepository;
 

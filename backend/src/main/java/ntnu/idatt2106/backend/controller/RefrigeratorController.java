@@ -13,7 +13,6 @@ import ntnu.idatt2106.backend.model.dto.response.SuccessResponse;
 import ntnu.idatt2106.backend.model.refrigerator.NewRefrigeratorDTO;
 import ntnu.idatt2106.backend.model.requests.MemberRequest;
 import ntnu.idatt2106.backend.model.requests.RemoveMemberRequest;
-import ntnu.idatt2106.backend.repository.UnitRepository;
 import ntnu.idatt2106.backend.service.CookieService;
 import ntnu.idatt2106.backend.service.JwtService;
 import ntnu.idatt2106.backend.service.RefrigeratorService;
@@ -39,6 +38,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controller for refrigerator
+ */
 @RestController
     @RequestMapping("/api/refrigerator")
 @RequiredArgsConstructor
@@ -56,6 +58,15 @@ public class RefrigeratorController {
 
     Logger logger = LoggerFactory.getLogger(RefrigeratorController.class);
 
+
+    /**
+     * Edits the favorite refrigerator for a user.
+     * @param refrigeratorId the ID of the refrigerator to be set as the favorite
+     * @param httpServletRequest the HttpServletRequest object for the current request
+     * @return a ResponseEntity with a SuccessResponse object and HTTP status code 200 if the operation was successful
+     * @throws UserNotFoundException if the current user cannot be found
+     * @throws RefrigeratorNotFoundException if the specified refrigerator cannot be found
+     */
     @Operation(summary = "Edit favorite refrigerator")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User not found"),
@@ -69,6 +80,13 @@ public class RefrigeratorController {
         return new ResponseEntity<>(new SuccessResponse("Favorite refrigerator set", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
+    /**
+     * Edit the role of a member in the refrigerator
+     * @param memberRequest - The request body containing the member details to be updated
+     * @param httpRequest - The HTTP request object
+     * @return - ResponseEntity<MemberDTO> with updated member details if successful, otherwise an HTTP status code
+     * @throws Exception - Throws an exception if there was an error while updating the member details
+     */
     @Operation(summary = "Edit role of a refrigerator member")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Role edited successfully", content = @Content(schema = @Schema(implementation = MemberDTO.class))),
@@ -93,6 +111,13 @@ public class RefrigeratorController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    /**
+     * Edit the roles of multiple members in the refrigerator
+     * @param memberRequests - The request body containing an array of member details to be updated
+     * @param httpRequest - The HTTP request object
+     * @return - ResponseEntity<MemberDTO[]> with updated member details if successful, otherwise an HTTP status code
+     * @throws Exception - Throws an exception if there was an error while updating the member details
+     */
     @Operation(summary = "Edit role of a number of refrigerator members")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Roles edited successfully", content = @Content(schema = @Schema(implementation = MemberDTO.class))),
@@ -116,7 +141,13 @@ public class RefrigeratorController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-
+    /**
+     * Add a new member to the refrigerator
+     * @param memberRequest - The request body containing the details of the new member
+     * @param httpRequest - The HTTP request object
+     * @return - ResponseEntity<MemberDTO> with the details of the new member if successful, otherwise an HTTP status code
+     * @throws SaveException - Throws a SaveException if there was an error while saving the new member details
+     */
     @Operation(summary = "Add a new member to a refrigerator")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Member added successfully", content = @Content(schema = @Schema(implementation = MemberDTO.class))),
@@ -155,6 +186,13 @@ public class RefrigeratorController {
         return new ResponseEntity<>(new SuccessResponse("Member removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
+    /**
+     * Creates a new refrigerator
+     * @param refrigerator The details of the new refrigerator to be created
+     * @param httpRequest The HttpServletRequest object that contains the HTTP request sent by the client
+     * @return The newly created refrigerator
+     * @throws SaveException If the refrigerator cannot be created due to a server-side error
+     */
     @Operation(summary = "Create a new refrigerator")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Refrigerator created successfully", content = @Content(schema = @Schema(implementation = Refrigerator.class))),
@@ -177,6 +215,16 @@ public class RefrigeratorController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    /**
+     * Edits an existing refrigerator
+     * @param refrigerator The details of the refrigerator to be edited
+     * @param httpRequest The HttpServletRequest object that contains the HTTP request sent by the client
+     * @return A success response indicating that the refrigerator was edited successfully
+     * @throws UserNotFoundException If the user cannot be found
+     * @throws SaveException If the refrigerator cannot be edited due to a server-side error
+     * @throws UnauthorizedException If the user is not authorized to edit the refrigerator
+     * @throws RefrigeratorNotFoundException If the refrigerator cannot be found
+     */
     @Operation(summary = "Edits a refrigerator")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Refrigerator updated successfully", content = @Content(schema = @Schema(implementation = Refrigerator.class))),
@@ -192,6 +240,13 @@ public class RefrigeratorController {
         return new ResponseEntity<>(new SuccessResponse("Refrigerator updated successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
+    /**
+     * Deletes a refrigerator by its ID and username
+     * @param refrigeratorId The ID of the refrigerator to be deleted
+     * @param httpRequest The HttpServletRequest object that contains the HTTP request sent by the client
+     * @return A success response indicating that the refrigerator was deleted successfully
+     * @throws Exception If the refrigerator cannot be deleted due to a server-side error
+     */
     @Operation(summary = "Delete a refrigerator by ID and username")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Refrigerator deleted successfully", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
@@ -207,6 +262,12 @@ public class RefrigeratorController {
         return new ResponseEntity<>(new SuccessResponse("Member removed successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
+    /**
+     * This method gets all refrigerators associated with the authenticated user
+     * @param request the HTTP servlet request that contains the authenticated user's information
+     * @return a response entity containing a list of refrigerators and the HTTP status code
+     * @throws UserNotFoundException if the authenticated user is not found in the system
+     */
     @Operation(summary = "Get all refrigerators by user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of refrigerators fetched successfully", content = @Content(schema = @Schema(implementation = Refrigerator.class))),
@@ -220,6 +281,14 @@ public class RefrigeratorController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    /**
+     * This method gets a specific refrigerator by its id
+     * @param refrigeratorId the id of the refrigerator to retrieve
+     * @param httpServletRequest the HTTP servlet request that contains the authenticated user's information
+     * @return a response entity containing a refrigerator DTO and the HTTP status code
+     * @throws UserNotFoundException if the authenticated user is not found in the system
+     * @throws RefrigeratorNotFoundException if the refrigerator with the given id is not found in the system
+     */
     @Operation(summary = "Get refrigerators by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of refrigerators fetched successfully", content = @Content(schema = @Schema(implementation = Refrigerator.class))),
@@ -234,15 +303,23 @@ public class RefrigeratorController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    /**
+     * This method gets all available units
+     * @return a response entity containing a list of available units and the HTTP status code
+     */
     @GetMapping("/units")
     public ResponseEntity<?> getUnits(){
         logger.info("Received request for retrieving all units");
 
         List<UnitDTO> list = refrigeratorService.getUnits();
         return ResponseEntity.ok(list);
-
     }
 
+    /**
+     * Handle exceptions from @Valid annotation
+     * @param ex exception to handle
+     * @return errors
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {

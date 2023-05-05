@@ -4,25 +4,25 @@
       <div class="mt-8 m-auto medium-box w-full px-5 pb-5 flex flex-col items-center
             border-2 border-black rounded-lg bg-white dark:bg-zinc-400"
       >
-      <div class=" inline-flex items-center justify-left w-full">
+      <div class="hidden sm:inline-flex items-center justify-left w-full">
         <div @click="closeHandler" class="hover:cursor-pointer relative -left-10 -top-5 z-20 border-2 border-black rounded-3xl bg-white dark:bg-zinc-400 rounded-2xl inline-flex items-center">
           <img class="w-12" src="@/assets/icons/close.png" alt="">
         </div>
       </div>
-      <img class="border-2 border-black rounded-lg bg-white dark:bg-zinc-400 w-full h-auto " v-if="recipe !== null" :src="recipe.url" alt="">
+      <img class="mt-5 sm:mt-0 border-2 border-black rounded-lg bg-white dark:bg-zinc-400 w-full h-auto " v-if="recipe !== null" :src="recipe.url" alt="">
       <h1 class="mt-5 ">{{ recipe?.name }}</h1>
       <table class="w-full mt-5 border-2 border-black rounded-lg bg-white dark:bg-zinc-400">
         <thead class="">
-          <tr class="border-b-2">
-            <th scope="col" class="px-4 py-3">{{ $t("ingredient") }}</th>
-            <th scope="col" class="px-6 py-3">{{ $t("amount") }}</th>
-            <th scope="col" class="px-6 py-3 whitespace-nowrap">{{ $t("in_refrigerator") }}</th>
-            <th scope="col" class="px-6 py-3">{{ $t("add") }}</th>
+          <tr class="border-b-2 border-black">
+            <th scope="col" class="px-1 sm:px-4 py-3">{{ $t("ingredients") }}</th>
+            <th scope="col" class="px-0 sm:px-6 py-3">{{ $t("amount") }}</th>
+            <th scope="col" class="px-2 sm:px-6 py-3 whitespace-nowrap">{{ $t("in_refrigerator") }}</th>
+            <th scope="col" class="px-2 sm:px-6 py-3">{{ $t("add") }}</th>
           </tr>
         </thead>
         <tbody>
           <tr class="text-center items-center" v-for="ingredient in recipe?.ingredients" :key="ingredient.id">
-            <td>{{ ingredient.name }}</td>
+            <td class="overflow-x-scroll whitespace-nowrap" >{{ ingredient.name }}</td>
             <td class="items-center">
               <div class="inline-flex items-center">
                 <h3 v-if="ingredient.unit === undefined">{{ ingredient.quantity}}</h3>
@@ -37,22 +37,23 @@
                 <p class="opacity-80 text-sm whitespace-nowrap">{{ getFridgeStatus(ingredient.id) }}</p>
               </div>
             </td>
-            <td class="inline-flex">
-              <button :disabled="showInputPopup" @click="showPopup(ingredient)" class="justify-end hover:cursor-pointer w-6 m-1 focus:outline-none">
+            <td :class="[showInputPopup ? 'opacity-50 hover:cursor-default' : 'opacity-100' ,'inline-flex']">
+              <button :disabled="showInputPopup" @click="showPopup(ingredient)" :class="[showInputPopup ? 'opacity-50' : 'opacity-100 hover:cursor-pointer' ,'inline-flex justify-end w-6 m-1 focus:outline-none']">
                 <img class="w-full h-full" src="@/assets/icons/add.png" alt="Add to Shopping List">
                 <span class="sr-only">{{$t("add_grocery")}}</span>
               </button>
             </td>
           </tr>
-          <div v-if="showInputPopup" style="top:50%; left:40%;" class="absolute z-50 bg-white flex flex-col items-center p-4 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" >
-            <RefrigeratorSelectUnit @unit-set="handleSelectedUnitEvent"/>
-            <div class="inline-flex items-center w-full mt-5">
-              <ButtonGreenButton @click="hidePopup" class="m-1" width="100%" height="50px" :label="$t('cancel')"></ButtonGreenButton>
-              <ButtonGreenButton @click="addToShoppingList" class="m-1" width="100%" height="50px" :label="$t('add')"></ButtonGreenButton>
-            </div>
-          </div>
         </tbody>
       </table>
+        <div v-if="showInputPopup" class=" z-50 bg-white flex flex-col items-center p-4 rounded-lg bg-white dark:bg-zinc-400" >
+          <RefrigeratorSelectUnit @unit-set="handleSelectedUnitEvent"/>
+          <div class="inline-flex items-center w-full mt-5">
+            <ButtonGreenButton @click="hidePopup" class="m-1" width="100%" height="50px" :label="$t('cancel')"></ButtonGreenButton>
+            <ButtonGreenButton @click="addToShoppingList" class="m-1" width="100%" height="50px" :label="$t('add')"></ButtonGreenButton>
+          </div>
+        </div>
+        <ButtonGreenButton @click="closeHandler" class="sm:hidden m-1 mt-3 text-lg border-2 border-black rounded-lg" width="67%" height="50px" :label="$t('close')"></ButtonGreenButton>
       </div>
     </div>
   </div>
@@ -134,6 +135,10 @@ import { useRefrigeratorStore } from '~/store/refrigeratorStore';
         else return this.t("not_in_refrigerator"); 
       },
       closeHandler(){
+        this.showInputPopup = false; 
+        this.selectedIngredient = null; 
+        this.quantity = null; 
+        this.unit = null; 
         this.$emit("closeDisplayEvent"); 
       },
       overLay() : boolean {

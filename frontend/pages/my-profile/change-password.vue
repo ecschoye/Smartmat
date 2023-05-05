@@ -1,26 +1,26 @@
 <template>
-  <div class="header text-black dark:text-white mt-8 text-center text-4xl font-bold">{{t('change_password')}}</div>
+  <div class="wrapper header text-black dark:text-white mt-8 text-center text-4xl font-bold">{{$t('change_password')}}</div>
   <div class="edit-container border-2 border-[#31C48D]/60 w-5/6 h-11/12 md:w-3/5 lg:w-5/12 mt-5 mx-auto form-light-color dark:form-dark-color">
     <div class="user-details">
       <div class="form-group w-full">
-        <p class="text-black dark:text-white text-xl font-semibold">{{t('enter_your_old_password')}}</p>
+        <p class="text-black dark:text-white text-xl font-semibold">{{$t('enter_your_old_password')}}</p>
         <BaseInput :cut-width="'120px'" id="oldPassword" type="password" class="" :label="$t('old_password')" v-model="oldPassword"/>
       </div>
       <div class="form-group">
-        <p class="text-black dark:text-white text-xl font-semibold">{{t('enter_your_new_password')}}</p>
+        <p class="text-black dark:text-white text-xl font-semibold">{{$t('enter_your_new_password')}}</p>
         <BaseInput id="newPassword" type="password" class="" :label="$t('new_password')" v-model="newPassword"/>
       </div>
       <div class="form-group">
-        <p class="text-black dark:text-white text-xl font-semibold">{{t('confirm_your_new_password')}}</p>
+        <p class="text-black dark:text-white text-xl font-semibold">{{$t('confirm_your_new_password')}}</p>
         <BaseInput id="verifyNewPassword" type="password" class="" :label="$t('verify_new_password')" v-model="verifyNewPassword"/>
       </div>
       <div class="flex flex-row">
         <NuxtLink :to="localePath('/my-profile')">
           <button class="w-36 h-14 border-2 border-[#31C48D]/60 button-light-color dark:button-dark-color dark:text-white text-black hover:bg-slate-400 hover:text-white font-bold items-center px-4 rounded transform hover:scale-100 sm:flex sm:justify-center mr-4">
-            {{t('go_back')}}
+            {{$t('go_back')}}
           </button>
         </NuxtLink>
-        <button @click="updatePassword()" class="w-36 h-14 border-2 border-[#31C48D]/60 button-light-color dark:button-dark-color dark:text-white text-black hover:bg-slate-400 hover:text-white font-bold items-center rounded transform hover:scale-100 sm:flex sm:justify-center">{{t('change_password')}}</button>
+        <button id="submit" @click="updatePassword()" class="w-36 h-14 border-2 border-[#31C48D]/60 button-light-color dark:button-dark-color dark:text-white text-black hover:bg-slate-400 hover:text-white font-bold items-center rounded transform hover:scale-100 sm:flex sm:justify-center">{{$t('change_password')}}</button>
       </div>
     </div>
   </div>
@@ -30,18 +30,16 @@
 <script setup lang="ts">
 import {getUserData} from "~/service/httputils/authentication/AuthenticationService";
 import type { User } from "~/types/UserType";
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { useUserStore } from "~/store/userStore";
 import axiosInstance from "~/service/AxiosInstance";
 import BaseInput from "~/components/Form/BaseInput.vue";
 import { AxiosError } from "axios";
-const { t } = useI18n();
 
 const userStore = useUserStore();
-
+const router = useRouter();
 const user = ref({} as User);
 
-const router = useRouter();
 
 onMounted(() => {
   loadData();

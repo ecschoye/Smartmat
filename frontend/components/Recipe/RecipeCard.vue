@@ -1,6 +1,6 @@
 <template>
   <div class="" @click="seeRecipeNextWeek">
-    <div class="bg-green-color dark:bg-zinc-500 hover:transform hover:scale-105 pb-3 w-11/12 h-72 justify-center relative rounded-xl">
+    <div class="bg-green-color dark:bg-zinc-500 hover:transform hover:scale-105 pb-3 w-11/12 h-56 justify-center relative rounded-xl">
       <div class="h-40 dark:hidden bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(49,196,141,0) 90%, rgba(49,196,141,1) 100%), url(${recipeInfo.url})` }"></div>
       <div class="h-40 hidden dark:block bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(39,39,42,0) 95%, rgba(39,39,42,1) 100%), url(${recipeInfo.url})` }"></div>
       <div class="">
@@ -9,9 +9,6 @@
         </div>
         <div v-if="weeklyMenuStore.$state.currentChosenIndex != null" class="w-48 mx-auto absolute bottom-0 left-6 mb-2">
           <button @click.stop="returnToWeeklyMenu(recipeInfo)" class="cursor-pointer w-full h-auto mx-auto my-1 text-l button-light-color text-black block hover:transform hover:scale-105 rounded-lg">{{ t('add_recipe_to_weekly_menu') }}</button>
-<!--          <a :href="recipe_url" target="_blank">
-            <button class="cursor-pointer w-full h-auto mx-auto my-1 text-l button-light-color text-black block hover:transform hover:scale-105 rounded-lg">{{ t('view_recipe') }}</button>
-          </a>-->
         </div>
       </div>
     </div>

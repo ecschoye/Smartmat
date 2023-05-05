@@ -6,6 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.Unit;
 
+
+/**
+ * DTO for a Unit.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -28,6 +28,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller for managing shopping carts and their contents
+ */
 @RestController
 @RequestMapping("/api/shopping-cart")
 @RequiredArgsConstructor
@@ -38,12 +41,17 @@ public class ShoppingCartController {
     private final ShoppingListService shoppingListService;
     private Logger logger = LoggerFactory.getLogger(ShoppingCartController.class);
 
-    @Operation(summary = "Get all groceries by refrigerator id")
+    /**
+     * Endpoint for creating a new shopping cart for a given shopping list
+     * @param shoppingListId the id of the shopping list to create the cart for
+     * @return a ResponseEntity containing the id of the created shopping cart and a status of OK
+     * @throws ShoppingListNotFound if the shopping list with the given id does not exist
+     */
+    @Operation(summary = "Create a shopping cart for a given shopping list ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of groceries fetched successfully",
-                    content = @Content(schema = @Schema(implementation = RefrigeratorGroceryDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Refrigerator not found"),
-            @ApiResponse(responseCode = "401", description = "User is not authorized"),
+            @ApiResponse(responseCode = "200", description = "Shopping cart created successfully",
+                    content = @Content(schema = @Schema(type = "long"))),
+            @ApiResponse(responseCode = "404", description = "Shopping list not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/create/{shoppingListId}")
@@ -55,6 +63,13 @@ public class ShoppingCartController {
         return new ResponseEntity<>(shoppingCartId, HttpStatus.OK);
     }
 
+    /**
+     * Retrieves all the groceries from the shopping cart with the given id.
+     * @param shoppingCartId the id of the shopping cart to retrieve the groceries from
+     * @return a ResponseEntity containing a List of ShoppingCartElementDTO objects representing the groceries retrieved from the shopping cart and the HTTP status
+     * @throws NullPointerException if the shopping cart id is null
+     * @throws NoGroceriesFound if no groceries were found in the shopping cart
+     */
     @Operation(summary = "Get all groceries from shopping cart")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of groceries fetched successfully",
@@ -71,7 +86,17 @@ public class ShoppingCartController {
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 
-    @Operation(summary = "Save a grocery to a shopping cart")
+/**
+ * Saves a grocery to a shopping cart.
+ * @param groceryRequest the request object containing the id of the grocery to save and the id of the shopping cart to save it to
+ * @param request the HTTP request object
+ * @return a ResponseEntity containing a SuccessResponse object with a success message and the HTTP status
+ * @throws UnauthorizedException if the user is not authorized to perform the operation
+ * @throws ShoppingCartNotFound if the shopping cart with the specified id is not found
+ * @throws UserNotFoundException if the user is not found
+ * @throws SaveException if there is an error while saving the grocery
+*/
+ @Operation(summary = "Save a grocery to a shopping cart")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Grocery added successfully",
                     content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
@@ -87,6 +112,18 @@ public class ShoppingCartController {
         return new ResponseEntity<>(new SuccessResponse("The grocery was added successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
+    /**
+     * This method transfers a grocery item from the shopping cart to the shopping list.
+     * @param shoppingCartItemId the id of the grocery item in the shopping cart to be transferred.
+     * @param httpRequest the HTTP request object.
+     * @return ResponseEntity with a boolean indicating whether the transfer was successful and the HTTP status code.
+     * @throws NoGroceriesFound if no groceries are found in the shopping cart.
+     * @throws UserNotFoundException if the user associated with the shopping cart is not found.
+     * @throws SaveException if there is an error while saving the grocery item to the shopping list.
+     * @throws UnauthorizedException if the user is not authorized to perform the transfer.
+     * @throws RefrigeratorNotFoundException if the refrigerator associated with the shopping cart is not found.
+     * @throws ShoppingListNotFound if the shopping list associated with the user is not found.
+     */
     @Operation(summary = "Transfer grocery from shopping cart to shopping list")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Grocery transferred successfully", content = @Content(schema = @Schema(implementation = Boolean.class))),
@@ -106,6 +143,18 @@ public class ShoppingCartController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
+    /**
+     * Transfers a grocery item from the shopping cart to the refrigerator.
+     * @param shoppingCartItemId the id of the grocery item to transfer from the shopping cart
+     * @param dto the DTO containing the details of the grocery item to create in the refrigerator
+     * @param httpRequest the HTTP request
+     * @return a ResponseEntity<Boolean> indicating whether the transfer was successful or not
+     * @throws NoGroceriesFound if no groceries are found in the shopping cart
+     * @throws UserNotFoundException if the user making the request is not found
+     * @throws SaveException if there is an error while saving the grocery item to the refrigerator
+     * @throws UnauthorizedException if the user making the request is not authorized
+     * @throws RefrigeratorNotFoundException if the refrigerator is not found
+     */
     @Operation(summary = "Transfer grocery from shopping cart to refrigerator")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Grocery transferred successfully", content = @Content(schema = @Schema(implementation = Boolean.class))),
@@ -124,6 +173,18 @@ public class ShoppingCartController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
+
+    /**
+     * Transfers all the grocery items from the shopping cart to the refrigerator.
+     * @param request the array of SaveGroceryRequest objects containing the details of the grocery items to create in the refrigerator
+     * @param httpRequest the HTTP request
+     * @return a ResponseEntity<Boolean> indicating whether the transfer was successful or not
+     * @throws NoGroceriesFound if no groceries are found in the shopping cart
+     * @throws UserNotFoundException if the user making the request is not found
+     * @throws SaveException if there is an error while saving the grocery items to the refrigerator
+     * @throws UnauthorizedException if the user making the request is not authorized
+     * @throws RefrigeratorNotFoundException if the refrigerator is not found
+     */
     @Operation(summary = "Transfer all groceries to refrigerator")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All groceries transferred successfully"),
@@ -132,7 +193,7 @@ public class ShoppingCartController {
             @ApiResponse(responseCode = "404", description = "No groceries found in the shopping cart"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PostMapping("all/transfer-refrigerator/")
+    @PostMapping("/all/transfer-refrigerator")
     public ResponseEntity<Boolean> transferAllToRefrigerator(@RequestBody SaveGroceryRequest[] request, HttpServletRequest httpRequest) throws UserNotFoundException, NoGroceriesFound, SaveException, UnauthorizedException, RefrigeratorNotFoundException {
         logger.info("Received request to transfer groceries to refrigerator");
         shoppingCartService.transferAllGroceriesToRefrigerator(request, httpRequest);

@@ -6,6 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+/**
+ * A DTO for a request to create a Refrigerator Grocery. Holds a RefrigeratorGroceryDTO, the quantity and the unitDTO.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

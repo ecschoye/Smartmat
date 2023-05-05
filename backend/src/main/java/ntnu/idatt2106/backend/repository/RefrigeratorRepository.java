@@ -9,15 +9,31 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+
+/**
+ * Repository for Refrigerator entity.
+ */
 @Repository
 public interface RefrigeratorRepository extends JpaRepository<Refrigerator, Long> {
+    /**
+     * Returns a optional refrigerator based on id.
+     * @param id
+     * @return
+     */
     Optional<Refrigerator> findById(Long id);
 
+    /**
+     * boolean based on if refrigerator name exists.
+     * @param name
+     * @return
+     */
     boolean existsByName(String name);
 
+    /**
+     * Returns optional refrigerator based on name.
+     * @param test_refrigerator
+     * @return
+     */
     Optional<Refrigerator> findByName(String test_refrigerator);
 
-    @Modifying
-    @Query(value = "ALTER TABLE my_entity ALTER COLUMN id RESTART WITH 1", nativeQuery = true)
-    void resetAutoIncrement();
 }

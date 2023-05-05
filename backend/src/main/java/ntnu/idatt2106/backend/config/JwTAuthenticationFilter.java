@@ -26,6 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * JWTAuthentication filter is used for authenticating users based on JWT token
+ * The JWTAuthentication filter validates the token before the request is sent to a controller
+ */
 @Component
 @RequiredArgsConstructor
 public class JwTAuthenticationFilter extends OncePerRequestFilter {

@@ -1,6 +1,6 @@
 <template>
   <div class="flex items-center py-10">
-    <div class="flex administrate-fridge w-10/12 text-black dark:text-white form-light-color dark:form-dark-color m-auto border-2 border-[#31C48D]/60">
+    <div class="flex administrate-fridge md:w-8/12  text-black dark:text-white form-light-color dark:form-dark-color m-auto border-2 border-[#31C48D]/60">
       <ButtonFavoriteToggler
         class="relative -top-7 -left-12"
         @favorite-event="favoriteEventHandler"
@@ -152,19 +152,19 @@ export default {
               alert(this.t("last_superuser_alert"))
             }
             else {
-              alert(this.t("member_added_success"))
-              location.reload(); 
+              alert(this.t("role_change_success"))
+              this.getRefrigerator();
             }
           }
           else {
-            alert(this.t("member_added_failure"))
-            location.reload(); 
+            alert(this.t("role_change_failure"))
+            this.getRefrigerator();
           }
       }
       catch(error){
-        alert(this.t("member_added_failure"))
+        alert(this.t("role_change_failure"))
         console.log(error)
-        location.reload(); 
+        this.getRefrigerator();
       }
     },
     async leaveFridge(removeMemberRequest : RemoveMemberRequest) {
@@ -188,13 +188,13 @@ export default {
         }
         else {
           alert(this.t("user_removed_failure"))
-          location.reload(); 
+          this.getRefrigerator(); 
         }
       }
       catch(error) {
         alert(this.t("user_removed_failure"))
         console.log(error)
-        location.reload();
+        this.getRefrigerator();
       }
     },
     async handleLeaveFridge(member : Member) {
@@ -215,7 +215,7 @@ export default {
         const response = await postRemoveMember(removeMemberRequest);
         if(response !== null && response.status == 200) {
           alert(this.t("remove_member_succsess"))
-          location.reload();
+          this.getRefrigerator();
         }
       } catch (error) {
         alert(this.t("remove_member_failed"))

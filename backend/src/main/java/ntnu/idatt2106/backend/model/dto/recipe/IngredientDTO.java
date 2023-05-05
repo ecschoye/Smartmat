@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.Unit;
-import ntnu.idatt2106.backend.model.grocery.Grocery;
 
+/**
+ * DTO for ingredients
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

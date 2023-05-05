@@ -8,6 +8,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 
+
+/**
+ * Model which connects a user and a refrigerator. Entity in database which connects user and refrigerator tables.
+ */
 @Data
 @Builder
 @NoArgsConstructor

@@ -1,5 +1,8 @@
 <template>
   <div class="wrapper">
+    <Head>
+      <Title>SmartMat</Title>
+    </Head>
     <NavBar/>
     <div class="page-container bg-light-color dark:bg-dark-color">
       <slot />
@@ -10,9 +13,9 @@
 
 <style scoped>
 .page-container {
-  min-height: calc(100vh - 96px);
+  height: calc(100vh - 96px);
   display: block;
-  max-height: 100vh;
+  max-height: calc(100vh - 96px);
 }
 
 .wrapper{

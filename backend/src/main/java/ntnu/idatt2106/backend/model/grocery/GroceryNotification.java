@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import ntnu.idatt2106.backend.model.User;
 
+/**
+ * A notification regarding a grocery.
+ */
 @Data
 @Builder
 @NoArgsConstructor

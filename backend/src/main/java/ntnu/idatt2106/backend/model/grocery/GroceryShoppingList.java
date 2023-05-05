@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.ShoppingList;
 import ntnu.idatt2106.backend.model.Unit;
 
+/**
+ * Connection between a Grocery and a Shopping list. Can be requested if its from a normal User. Represents a shopping list entity.
+ */
 @Data
 @Builder
 @NoArgsConstructor

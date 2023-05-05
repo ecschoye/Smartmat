@@ -1,7 +1,7 @@
 <template>
     <div class="mt-5 font-mono text-sm flex justify-end">
     <div class="w-full font-mono text-sm flex justify-center">
-        <div class="w-11/12  md:w-full h-96 overflow-auto bg-white dark:bg-zinc-400 border-2 rounded-lg border-black relative">
+        <div class="w-11/12  lg:w-full h-96 overflow-auto bg-white dark:bg-zinc-400 border-2 rounded-lg border-black relative">
             <div>
                 <div class="m-2 pl-2 pr-2 flex justify-center text-lg font-sans font-medium">
                     <button @click.stop="selectListTab" :class="{'bg-sky-400 dark:bg-sky-900 dark:text-white': menuOptions.isShoppingListSelected, 'bg-white dark:bg-zinc-400 dark:text-white': !menuOptions.isShoppingListSelected}" class="pl-4 pr-4 border-2 rounded-l-lg border-black cursor-pointer">
@@ -35,11 +35,15 @@
                             </RefrigeratorGroceries>
                         </div>
                     </div>
-                    <div class="p-2 flex justify-end absolute bottom-0 right-0">
-                        <button @click.stop="addNewElementSelected = true" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-300 bg-sky-400"> {{ t('add_a_new_grocery') }} </button>
-                    </div>                
+                  <div class="grid grid-cols-1 gap-8 mt-12">
+                    <!-- ... -->
+                    <div class="p-2 flex justify-end mb-4">
+                      <button @click.stop="addNewElementSelected = true" class="pl-2 pr-2 text-lg rounded-lg font-sans border-2 border-black cursor-pointer hover:bg-sky-300 bg-sky-400">{{ t('add_a_new_grocery') }}</button>
+                    </div>
+                  </div>
                 </div>
-                <div v-if="menuOptions.isShoppingCartSelected">
+
+              <div v-if="menuOptions.isShoppingCartSelected">
                     <div v-if="shoppingCart === null || shoppingCart.length === 0">
                         <h3 class="mt-3"> {{ t('you_have_no_groceries_in_the_shopping_cart') }} </h3>
                     </div>
@@ -51,14 +55,17 @@
                             @updateList="loadShoppingCart"
                             @prompt-refrigerator="promptRefrigerator()">
                         </ShoppingListElement>
-                        <div class="p-2 flex justify-end absolute bottom-0 right-0">
-                            <button @click.stop="addAllElementsToRefrigerator" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-300 bg-sky-400"> {{ t('put_everything_in_the_refrigerator') }} </button>
+                      <div class="grid grid-cols-1 gap-8 mt-12">
+                        <!-- ... -->
+                        <div class="p-2 flex justify-end mb-4">
+                          <button @click.stop="addAllElementsToRefrigerator" class="pl-2 pr-2 text-lg font-sans border-2 rounded-full border-black cursor-pointer hover:bg-sky-300 bg-sky-400"> {{ t('put_everything_in_the_refrigerator') }} </button>
                         </div>
+                      </div>
                     </div>
                 </div>
             </div>
         </div>
-      <div v-if="addNewElementSelected" class="w-4/5 md:w-2/5 h-96 p-1 bg-white border-2 rounded-lg border-black absolute">
+      <div v-if="addNewElementSelected" class="w-4/5 md:w-2/5 h-96 p-1 bg-white dark:bg-zinc-400 border-2 rounded-lg border-black absolute">
         <div>
             <RefrigeratorDropdown @update-value="(payload) => {grocery = payload}" />
             <div class="flex justify-center h-full">
@@ -120,12 +127,19 @@ import { ResponseGrocery } from"~/types/ResponseGrocery"
             this.refrigeratorId = refrigeratorStore.getSelectedRefrigerator.id
         }
         this.loadLists();
+        watch(() => refrigeratorStore.getSelectedRefrigerator, () => {
+            if(refrigeratorStore.getSelectedRefrigerator !== null){
+                this.refrigeratorId = refrigeratorStore.getSelectedRefrigerator?.id;
+                this.loadLists();
+            }
+        });
     },
     setup() {
       const { t } = useI18n();
 
       return { t }
     },
+    
     
     methods: {
         promptRefrigerator(){
@@ -199,7 +213,7 @@ import { ResponseGrocery } from"~/types/ResponseGrocery"
         async loadSuggestionsFromRefrigerator() {
                 try {
                     let responseSuggestions = await ShoppingListService.getSuggestedGroceriesFromRefrigerator(this.shoppingListId);
-                    console.log(responseSuggestions);
+                    this.refrigeratorSuggestions = [];
                     if (responseSuggestions.data.length > 0) {
                         responseSuggestions.data.forEach((element : ResponseGrocery) => {
                             let object : ShoppingListElementType = { id: element.id, description: element.description, quantity: element.quantity, unitDTO : element.unitDTO, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true, isFromRefrigerator: true };
@@ -250,3 +264,17 @@ import { ResponseGrocery } from"~/types/ResponseGrocery"
     components: { RefrigeratorGroceries }
 })
 </script>
+
+
+<style scoped>
+.height {
+  height: 550px;
+}
+
+@media screen and (max-width: 640px) {
+  .height {
+    height: 350px;
+  }
+}
+</style>
+

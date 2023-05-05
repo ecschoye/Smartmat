@@ -1,5 +1,5 @@
 <template>
-  <div class="md:flex hidden">
+  <div class="lg:flex hidden ">
 
     <div class="flex-1 order-1 mr-2 mx-1">
       <RefrigeratorWrapper ref="refrigeratorRef"  />
@@ -18,7 +18,7 @@
 
   </div>
 
-  <div class="md:hidden flex flex-col justify-center">
+  <div class="lg:hidden flex flex-col justify-center">
     <div class="flex justify-center mt-5">
       <button @click="showRefrigerator = !showRefrigerator" class="bg-gray-200 hover:bg-gray-300 rounded-md py-2 px-4">
         {{ showRefrigerator ? t('view_shopping_list') : t('view_refrigerator') }}

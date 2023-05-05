@@ -1,7 +1,7 @@
 <template>
     <div data-test="buttons" class="top-buttons">
-        <ButtonGreenButton width="300px" class="button m-2 px-1 py-3 border-2 border-black rounded-lg text-black dark:bg-zinc-400" @click="randomRecipesEvent" :label="$t('generate_random_recipes')"></ButtonGreenButton>
-        <ButtonGreenButton width="300px" class="button m-2 px-1 border-2 border-black rounded-lg text-black dark:bg-zinc-400" @click="removeAllRecipes" :label="$t('remove_all_recipes')"></ButtonGreenButton>
+        <ButtonGreenButton width="300px" class="button m-2 px-1 py-3 border-2 border-black rounded-lg text-black dark:bg-zinc-600" @click="randomRecipesEvent" :label="$t('generate_random_recipes')"></ButtonGreenButton>
+        <ButtonGreenButton width="300px" class="button m-2 px-1 border-2 border-black rounded-lg text-black dark:bg-zinc-600" @click="removeAllRecipes" :label="$t('remove_all_recipes')"></ButtonGreenButton>
     </div>
     <h1 v-if="weeklyMenuStore.$state.chosenWeek === 1" class="title dark:text-white">{{ $t("current_week") }}</h1>
     <h1 v-else class="title dark:text-white">{{ $t("next_week") }}</h1>
@@ -47,8 +47,8 @@
     </div>
 
     <div class="navigation-buttons">
-        <ButtonGreenButton width="150px" height="50px" class="button m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="goToPreviousWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 1" :label="$t('current_week')"></ButtonGreenButton>
-        <ButtonGreenButton width="150px" height="50px" class="button m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="goToNextWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 2" :label="$t('next_week')"></ButtonGreenButton>
+        <ButtonGreenButton width="150px" height="50px" class="button m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-600" @click="goToPreviousWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 1" :label="$t('current_week')"></ButtonGreenButton>
+        <ButtonGreenButton width="150px" height="50px" class="button m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-600" @click="goToNextWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 2" :label="$t('next_week')"></ButtonGreenButton>
     </div>
     
 </template>

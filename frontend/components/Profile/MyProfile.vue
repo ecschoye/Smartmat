@@ -6,10 +6,11 @@
         <p class="user-email mt-2 lg:mt-5 ml-2 lg:ml-2 text-black dark:text-white lg:text-4xl text-lg font-light">{{ user.email }}</p>
       </div>
       <div class="flex items-center">
-        <img class="h-24 lg:h-32 w-24 lg:w-32 mr-1 pointer-events-none" src="~/assets/profile.png" alt="Profile Picture" />
+        <img class="h-24 lg:h-32 w-24 lg:w-32 mr-1 pointer-events-none" src="../../assets/profile.png" alt="Profile Picture" />
       </div>
     </div>
-    <button class="box logout-btn text-black dark:text-white form-light-color dark:form-dark-color border-2 border-[#31C48D]/60" @click="logOut">Log out</button>
+    <button class="box logout-btn text-black dark:text-white form-light-color dark:form-dark-color border-2 border-[#31C48D]/60" @click="logOut">
+      {{ $t('log_out') }}</button>
   </div>
 </template>
 

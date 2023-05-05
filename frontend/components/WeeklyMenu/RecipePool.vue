@@ -47,8 +47,8 @@
     </div>
 
     <div class="navigation-buttons">
-        <ButtonGreenButton width="100px" height="30px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="goToPreviousWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 1" :label="$t('current_week')"></ButtonGreenButton>
-        <ButtonGreenButton width="100px" height="30px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="goToNextWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 2" :label="$t('next_week')"></ButtonGreenButton>
+        <ButtonGreenButton width="100px" height="50px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="goToPreviousWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 1" :label="$t('current_week')"></ButtonGreenButton>
+        <ButtonGreenButton width="100px" height="50px" class="m-2 px-1 border-2 border-black rounded-lg bg-white dark:bg-zinc-400" @click="goToNextWeek" :disabled="weeklyMenuStore.$state.chosenWeek === 2" :label="$t('next_week')"></ButtonGreenButton>
     </div>
     
 </template>

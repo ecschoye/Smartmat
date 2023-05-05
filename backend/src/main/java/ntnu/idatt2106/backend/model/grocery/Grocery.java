@@ -11,6 +11,10 @@ import ntnu.idatt2106.backend.model.SubCategory;
 
 import java.util.Set;
 
+
+/**
+ * A Grocery model. Represents a Grocery type, not a physical food item. For example "Milk", not a physical carton of Milk.
+ */
 @Data
 @Builder
 @NoArgsConstructor

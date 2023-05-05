@@ -9,6 +9,10 @@ import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingList;
 import ntnu.idatt2106.backend.model.grocery.RefrigeratorShoppingList;
 
+
+/**
+ * A Request DTO which holds a grocery object that needs to be saved. Is used in transitions between Shopping List, Shopping Cart and Refrigerator.
+ */
 @Data
 @Builder
 @AllArgsConstructor

@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Request DTO for removing a member from a refrigerator. Force delete is a boolean which allows a request to force delete a refrigerator and its members.
+ */
 @Data
 @Builder
 @NoArgsConstructor

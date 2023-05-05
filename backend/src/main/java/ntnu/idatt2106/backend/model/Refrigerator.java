@@ -8,6 +8,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+/**
+ * Refrigerator model. Holds an id, name and address.
+ */
 @Data
 @Builder
 @NoArgsConstructor

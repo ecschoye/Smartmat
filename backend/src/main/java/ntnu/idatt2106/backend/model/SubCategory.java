@@ -9,6 +9,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.category.Category;
 
+
+/**
+ * Model class representing a SubCategory.
+ */
 @Data
 @Builder
 @NoArgsConstructor

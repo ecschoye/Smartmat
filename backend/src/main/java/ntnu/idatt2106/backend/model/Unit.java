@@ -8,6 +8,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+/**
+ * A class representing a unit of measurement. Can for example be kilograms.
+ */
 @Data
 @Builder
 @NoArgsConstructor

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import axiosInstance from '~/service/AxiosInstance';
 import { useRefrigeratorStore} from "~/store/refrigeratorStore";
+import { useWeeklyMenuStore } from './WeeklyMenuStore';
 
 interface UserState {
     userId: string;
@@ -53,6 +54,8 @@ export const useUserStore = defineStore({
             sessionStorage.clear();
             const refrigeratorStore = useRefrigeratorStore();
             refrigeratorStore.resetState();
+            const weeklyMenuStore = useWeeklyMenuStore();
+            weeklyMenuStore.resetState(); 
         },
         logIn(data: any) {
             this.authenticated = true;

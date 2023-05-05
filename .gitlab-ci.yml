@@ -1,15 +1,12 @@
 image: maven:3.8.5-openjdk-18
-
 services:
   - docker:20.10-dind
-
 #####################################################################################################################
 # This template will build and test your project
 # * It caches downloaded dependencies and plugins between invocation.
 # * NOTE: there is NO deployment of created artifacts in this case, because every student doesn't have an own server/VM,
 #   and to the best of my knowledge, there is no Docker repository running at IDI (yet) for us to use.
 #####################################################################################################################
-
 variables:
   # This will suppress any download for dependencies and plugins or upload messages which would clutter the console log.
   # `showDateTime` will show the passed time in milliseconds. You need to specify `--batch-mode` to make this work.
@@ -21,49 +18,44 @@ variables:
   SPRING_PROFILES_ACTIVE: gitlab-ci # NB!! THIS ONE'S IMPORTANT!
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: "/certs"
-
-
-
 stages:
   - test_backend
   - package_backend
   - test_frontend
   - build_frontend
   
-
 test_backend:
   stage: test_backend
   script:
     - mvn -f backend/pom.xml clean test
-    - mvn -f backend/pom.xml jacoco:prepare-agent
     - mvn -f backend/pom.xml jacoco:report
   artifacts:
     when: always
     paths:
-      - backend/target/site/jacoco/
+      - target/site/jacoco
     reports:
       junit:
-        - backend/target/surefire-reports/TEST-*.xml
-        - backend/target/failsafe-reports/TEST-*.xml
+        - target/surefire-reports/TEST-*.xml
+        - target/failsafe-reports/TEST-*.xml
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
       changes:
         - backend/**/*
-
 package_backend:
   stage: package_backend
   script:
     - mvn -f backend/pom.xml -DskipTests package
   artifacts:
     paths:
-      - backend/target/*.jar
+      - target/*.jar
+      - target/site/jacoco/
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
       changes:
         - backend/**/*
-
-    
-
+  after_script:
+    - mvn -f backend/pom.xml jacoco:report
+    - mvn -f backend/pom.xml jacoco:report-aggregate
 test_frontend:
   stage: test_frontend
   image: node:latest
@@ -81,7 +73,6 @@ test_frontend:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
       changes:
         - frontend/**/*
-
 build_frontend:
   stage: build_frontend
   image: node:latest
@@ -95,5 +86,5 @@ build_frontend:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
       changes:
-        - frontend/**/*¨
+        - frontend/**/*
 

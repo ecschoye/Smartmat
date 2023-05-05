@@ -62,22 +62,6 @@ describe('YourComponentName.vue', () => {
         expect(wrapper.find('.lock-icon').attributes('src')).toContain('unlock.png');
     });
 
-    it('renders ingredients when showIngredients is true', async () => {
-        const wrapper = mount(RecipeWeeklyCard, {
-            global: {
-                mocks: globalMocks,
-                stubs: {
-                    NuxtLink: true,
-                },
-            },
-            props: {recepeInfo: mockRecipe, lockedBoolean: false},
-        });
-
-        await wrapper.find('button:first-child').trigger('click');
-
-        expect(wrapper.find('.ingredients').exists()).toBe(true);
-    });
-
     it('emits seeRecipeEvent when "See Recipe" button is clicked', async () => {
         const wrapper = mount(RecipeWeeklyCard, {
             global: {
@@ -89,7 +73,7 @@ describe('YourComponentName.vue', () => {
             props: {recepeInfo: mockRecipe, lockedBoolean: false},
         });
 
-        await wrapper.find('button:nth-child(2)').trigger('click');
+        await wrapper.find('button:nth-child(1)').trigger('click');
 
         expect(wrapper.emitted().seeRecipeEvent).toBeTruthy();
     });
@@ -105,7 +89,7 @@ describe('YourComponentName.vue', () => {
             props: {recepeInfo: mockRecipe, lockedBoolean: false},
         });
 
-        await wrapper.find('button:nth-child(3)').trigger('click');
+        await wrapper.find('button:nth-child(2)').trigger('click');
 
         expect(wrapper.emitted().removeEvent).toBeTruthy();
     });

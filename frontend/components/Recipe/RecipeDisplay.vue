@@ -1,5 +1,5 @@
 <template>
-  <div v-if="overLay()" class="fixed inset-0 bg-gray-950/80 z-10 overflow-scroll">
+  <div v-if="overLay()" class="fixed inset-0 bg-gray-950/80 z-10 lg:overflow-hidden sm:overflow-auto md:overflow-auto">
     <div class="flex items-center">
       <div class="mt-8 m-auto medium-box w-full px-5 pb-5 flex flex-col items-center
             border-2 border-black rounded-lg bg-white dark:bg-zinc-400"
@@ -22,7 +22,7 @@
         </thead>
         <tbody>
           <tr class="text-center items-center" v-for="ingredient in recipe?.ingredients" :key="ingredient.id">
-            <td class="overflow-x-scroll whitespace-nowrap" >{{ ingredient.name }}</td>
+            <td class="whitespace-nowrap" >{{ ingredient.name }}</td>
             <td class="items-center">
               <div class="inline-flex items-center">
                 <h3 v-if="ingredient.unit === undefined">{{ ingredient.quantity}}</h3>

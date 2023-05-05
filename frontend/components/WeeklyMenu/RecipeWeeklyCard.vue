@@ -4,13 +4,13 @@
         <img
           v-if="lockedBoolean"
           class="lock-icon"
-          src="@/assets/icons/Locked.webp"
+          src="../../assets/icons/Locked.webp"
           @click="unlockRecipe"
         />
         <img
           v-else-if="!lockedBoolean"
           class="lock-icon"
-          src="@/assets/icons/unlock.png"
+          src="../../assets/icons/unlock.png"
           @click="lockRecipe"
         />
       </div>
@@ -41,7 +41,7 @@
       <div class="ingredients">
         <ul>
           <li v-for="ingredient in recepeInfo.ingredients" :key="ingredient">
-            {{ ingredient.name + "(" + ingredient.quantity + ")" }} 
+            {{ ingredient.name + "(" + ingredient.quantity + ")" }}
           </li>
         </ul>
       </div>
@@ -64,8 +64,6 @@
     },
 
     setup() {
-      const {locale, locales, t} = useI18n()
-      return {locale, locales, t}
     },
 
     props: {
@@ -112,7 +110,6 @@
  .Recipe-card-wrapper {
   position: relative;
   width: 200px;
-  height: 350px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   z-index: 1;
@@ -156,7 +153,7 @@
 .image-wrapper img {
   min-height: inherit;
   object-fit: cover;
-  
+
 }
 
 .recipe-info {
@@ -164,7 +161,6 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 120px;
 }
 
 

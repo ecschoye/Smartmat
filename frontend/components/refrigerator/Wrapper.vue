@@ -1,5 +1,5 @@
 <template>
-    <div class = "flex h-4/5 w-full">
+    <div class = "flex w-full">
         <RefrigeratorNew v-if="toggleCreate" @toggle="(payload) => onToggleCreate(payload)" />
         <RefrigeratorDisplay v-else @emit-date="(payload) => updateGrocery(payload)" @toggle-create="(payload) => onToggleCreate(payload)" :refrigerator="refrigeratorStore.getSelectedRefrigerator" class="font-mono" @group-closed="togglePos(false)" :groceries="groceries.groceries" @popup-height="(payload) => setPos(payload)" />
             <div>

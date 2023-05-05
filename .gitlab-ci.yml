@@ -27,8 +27,6 @@ variables:
 stages:
   - test_backend
   - package_backend
-  - publish_backend
-  - deploy
   - test_frontend
   - build_frontend
   
@@ -99,29 +97,3 @@ build_frontend:
       changes:
         - frontend/**/*¨
 
-publish_jacoco:
-  stage: publish_backend
-  dependencies:
-    - test_backend
-  script:
-    - mkdir -p public/jacoco
-    - cp -r backend/target/site/jacoco/* public/jacoco/
-  artifacts:
-    paths:
-      - public
-  only:
-    - main
-    - dev
-
-
-pages:
-  stage: deploy
-  script:
-    - echo "Publishing to GitLab Pages"
-  artifacts:
-    paths:
-      - public
-  only:
-    - main
-    - dev
-# ...

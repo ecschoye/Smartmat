@@ -68,5 +68,7 @@
   "in_refrigerator": "在冰箱里",
   "add_grocery": "添加杂货",
   "cancel": "取消",
-  "add_recipe_to_weekly_menu": "添加菜谱到每周菜单"
+  "add_recipe_to_weekly_menu": "添加菜谱到每周菜单",
+  "role_change_success": "已更改用户角色",
+  "role_change_failure": "无法更改用户角色"
 }

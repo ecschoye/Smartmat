@@ -134,5 +134,7 @@
   "in_refrigerator": "En el refrigerador",
   "add_grocery": "Agregar comestible",
   "cancel": "Cancelar",
-  "add_recipe_to_weekly_menu": "Agregar receta al menú semanal"
+  "add_recipe_to_weekly_menu": "Agregar receta al menú semanal",
+  "role_change_success": "Cambio de roles de usuario exitoso",
+  "role_change_failure": "No se pudo cambiar el rol del usuario"
 }

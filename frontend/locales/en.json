@@ -134,5 +134,7 @@
   "in_refrigerator" : " In Refrigerator",
   "add_grocery" : "Add Grocery",
   "cancel" : "Cancel",
-  "add_recipe_to_weekly_menu" : "Add recipe to weekly menu"
+  "add_recipe_to_weekly_menu" : "Add recipe to weekly menu",
+  "role_change_success" : "Changed User Roles",
+  "role_change_failure" : "User Role Could Not Be Changed"
 }

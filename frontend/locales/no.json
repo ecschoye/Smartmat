@@ -134,5 +134,7 @@
   "add_grocery" : "Legg Til Vare",
   "cancel" : "Avbryt",
   "add_recipe_to_weekly_menu" : "Legg til oppskrift i ukentlig meny",
-  "you_have_no_groceries_in_the_shopping_cart": "Du har ingen matvarer i handlekurven"
+  "you_have_no_groceries_in_the_shopping_cart": "Du har ingen matvarer i handlekurven",
+  "role_change_success" : "Kjøleskapsroller endre",
+  "role_change_failure" : "Kunne ikke endre kjøleskaps rolle"
 }

@@ -58,7 +58,7 @@ package_backend:
   artifacts:
     paths:
       - target/*.jar
-      - target/site/jacoco/
+      - public/target/site/jacoco/
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
       changes:

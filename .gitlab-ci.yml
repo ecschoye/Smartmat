@@ -27,6 +27,7 @@ variables:
 stages:
   - test_backend
   - package_backend
+  - publish_backend
   - test_frontend
   - build_frontend
   
@@ -96,5 +97,19 @@ build_frontend:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
       changes:
-        - frontend/**/*
+        - frontend/**/*¨
+
+publish_jacoco:
+  stage: publish_backend
+  dependencies:
+    - package_backend
+  script:
+    - mkdir -p public/jacoco
+    - cp -r backend/target/site/jacoco/* public/jacoco/
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+    - dev
 # ...

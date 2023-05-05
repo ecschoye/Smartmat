@@ -1,5 +1,5 @@
 <template>
-  <div class="w-3/4 sm:w-2/3 min-h-fit h-3/5 bg-slate-100 border-4 border-[#31C48D]/60 dark:bg-zinc-500 mx-auto text-center rounded-xl py-6 mt-10">
+  <div class="w-3/4 sm:w-2/3 min-h-fit h-4/5 md:h-3/5 bg-slate-100 border-4 border-[#31C48D]/60 dark:bg-zinc-500 mx-auto text-center rounded-xl py-6 mt-10">
 
     <p class="text-center dark:text-white mt-7 text-xl font-bold">{{t('system_settings')}}</p>
 
@@ -83,7 +83,6 @@ export default defineComponent({
     }
   },
   setup() {
-    const colorMode = useColorMode()
     const {locales, locale, t, setLocale } = useI18n();
     const selected = ref(locale.value);
 

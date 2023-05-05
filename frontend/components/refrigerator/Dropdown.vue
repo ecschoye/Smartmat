@@ -2,6 +2,7 @@
   <div class="h-80 w-full py-6 flex flex-col items-center dark:bg-zinc-400 sm:py-6 overflow-hidden">
     <div class="w-full flex justify-center">
       <input
+          data-test="input"
           autocomplete="off"
           @click="open = !open"
           type="search"
@@ -12,7 +13,7 @@
       />
     </div>
     <div id="listwrapper" class="relative mt-2 overflow-hidden border border-black rounded-lg bg-gray-200 w-11/12 sm:w-2/3">
-      <ul v-if="open" @click="open = !open" class="h-fit">
+      <ul data-test="list" v-if="open" @click="open = !open" class="h-fit">
         <div v-for="grocery in filteredGroceries" :key="grocery.id">
           <li
             @click="setGrocery(grocery)"
@@ -30,8 +31,8 @@
 <script setup lang="ts">
 import { getGroceriesDTOs } from "~/service/httputils/GroceryService";
 import { Grocery } from "~/types/GroceryType";
+import { ref, computed, onMounted } from "vue";
 
-const { t } = useI18n();
 
 let open = ref(false);
 

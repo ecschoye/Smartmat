@@ -55,17 +55,17 @@ package_backend:
   stage: package_backend
   script:
     - mvn -f backend/pom.xml -DskipTests package
+    - mvn -f backend/pom.xml jacoco:report
+    - mvn -f backend/pom.xml jacoco:report-aggregate
   artifacts:
     paths:
-      - target/*.jar
-      - public/target/site/jacoco/
+      - backend/target/*.jar
+      - backend/target/site/jacoco/
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
       changes:
         - backend/**/*
-  after_script:
-    - mvn -f backend/pom.xml jacoco:report
-    - mvn -f backend/pom.xml jacoco:report-aggregate
+    
 
 test_frontend:
   stage: test_frontend

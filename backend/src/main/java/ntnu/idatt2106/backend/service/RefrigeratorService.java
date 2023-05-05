@@ -36,9 +36,6 @@ import java.util.stream.Collectors;
 /**
  * The RefrigeratorService class provides access to user data stored in the RefrigeratorRepository.
  * It provides methods for finding and manipulating user data.
- *
- * TODO Generalize member data valiation
- * TODO Superuser should not be able to change to user if only superuser
  */
 @Service
 @RequiredArgsConstructor
@@ -66,7 +63,7 @@ public class RefrigeratorService {
      *
      * @param request MemberRequest input
      * @param httpRequest
-     * @return MemberReponse containing information about the affected user
+     * @return MemberResponse containing information about the affected user
      * @throws UserNotFoundException if super or user does not exist
      */
     public MemberDTO addMember(MemberRequest request, HttpServletRequest httpRequest) throws UserNotFoundException, RefrigeratorNotFoundException, UnauthorizedException {

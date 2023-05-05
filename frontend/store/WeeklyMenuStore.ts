@@ -33,6 +33,14 @@ export const useWeeklyMenuStore = defineStore({
     storage: isTestEnvironment ? sessionStorageMock : sessionStorage,
   },
   actions: {
+    resetState(){
+      this.currentWeek = (new Array(7)).fill(null) as Recipe[] | null[],
+      this.nextWeek = (new Array(7)).fill(null) as Recipe[] | null[],
+      this.currentWeekLocks = Array(7).fill(false) as boolean[],
+      this.nextWeekLocks = Array(7).fill(false) as boolean[],
+      this.chosenWeek = 1,
+      this.currentChosenIndex = null
+    },
     setCurrentWeek(index: number, recipe: Recipe | null) {
       this.currentWeek[index] = recipe;
     },

@@ -13,16 +13,16 @@
       <h1 class="mt-5 ">{{ recipe?.name }}</h1>
       <table class="w-full mt-5 border-2 border-black rounded-lg bg-white dark:bg-zinc-400">
         <thead class="">
-          <tr class="border-b-2">
-            <th scope="col" class="px-4 py-3">{{ $t("ingredient") }}</th>
-            <th scope="col" class="px-6 py-3">{{ $t("amount") }}</th>
-            <th scope="col" class="px-6 py-3 whitespace-nowrap">{{ $t("in_refrigerator") }}</th>
-            <th scope="col" class="px-6 py-3">{{ $t("add") }}</th>
+          <tr class="border-b-2 border-black">
+            <th scope="col" class="px-1 sm:px-4 py-3">{{ $t("ingredients") }}</th>
+            <th scope="col" class="px-0 sm:px-6 py-3">{{ $t("amount") }}</th>
+            <th scope="col" class="px-2 sm:px-6 py-3 whitespace-nowrap">{{ $t("in_refrigerator") }}</th>
+            <th scope="col" class="px-2 sm:px-6 py-3">{{ $t("add") }}</th>
           </tr>
         </thead>
         <tbody>
           <tr class="text-center items-center" v-for="ingredient in recipe?.ingredients" :key="ingredient.id">
-            <td>{{ ingredient.name }}</td>
+            <td class="overflow-x-scroll whitespace-nowrap" >{{ ingredient.name }}</td>
             <td class="items-center">
               <div class="inline-flex items-center">
                 <h3 v-if="ingredient.unit === undefined">{{ ingredient.quantity}}</h3>

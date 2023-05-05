@@ -1,5 +1,5 @@
 <template>
-  <button class="text-white rounded" :style="{ width: width, height: height }">
+  <button class="text-black dark:text-white rounded" :style="{ width: width, height: height }">
     {{ label }}
   </button>
 </template>

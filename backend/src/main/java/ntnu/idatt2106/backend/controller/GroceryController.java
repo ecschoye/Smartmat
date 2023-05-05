@@ -54,6 +54,15 @@ public class GroceryController {
     private final RecipeService recipeService;
     Logger logger = LoggerFactory.getLogger(GroceryController.class);
 
+    /**
+     * Getter for all groceries in the refrigerator given in the parameter
+     * @param refrigeratorId ID to the refrigerator to retrieve groceries from
+     * @param httpServletRequest http request
+     * @return list of groceries
+     * @throws UserNotFoundException If the user is not found
+     * @throws UnauthorizedException If the user is not authorized
+     * @throws RefrigeratorNotFoundException If the refrigerator is not found
+     */
     @Operation(summary = "Get all groceries by refrigerator id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of groceries fetched successfully", content = @Content(schema = @Schema(implementation = RefrigeratorGroceryDTO.class))),
@@ -68,6 +77,19 @@ public class GroceryController {
         return new ResponseEntity<>(groceryService.getGroceriesByRefrigerator(refrigeratorId, httpServletRequest), HttpStatus.OK);
     }
 
+    /**
+     * Removes a refrigerator by grocery id
+     * @param refrigeratorGroceryId ID to the refrigerator to remove
+     * @param httpServletRequest http request
+     * @return success response: string with message and status code
+     * @throws UserNotFoundException If the user is not found
+     * @throws UnauthorizedException If the user is unauthorized
+     * @throws EntityNotFoundException If an entity was not found
+     * @throws NotificationException If an error occurred related to notifications
+     * @throws SaveException If an error occurred during saving
+     * @throws ShoppingListNotFound If the shopping list was not found
+     * @throws NoSuchElementException If it does not exist an element
+     */
     @Operation(summary = "Remove a refrigerator grocery by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Refrigerator grocery removed successfully", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
@@ -180,6 +202,14 @@ public class GroceryController {
         return new ResponseEntity<>(new SuccessResponse("Grocery updated properly", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
+    /**
+     * Create a new grocery item in a given refrigerator
+     * @param request http request
+     * @param dto grocery to create
+     * @param refrigeratorId refrigerator id to create a new grocery in
+     * @return response status and the created grocery
+     * @throws Exception
+     */
     @Operation(summary = "Create a new grocery")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Grocery created successfully", content = @Content(schema = @Schema(implementation = GroceryDTO.class))),
@@ -204,6 +234,17 @@ public class GroceryController {
         }
     }
 
+    /**
+     * Create a new grocery in the grocery entity in the database
+     * @param grocery grocery to create
+     * @return response status and the created grocery
+     */
+    @Operation(summary = "Create a new grocery")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "The grocery was created successfully", content = @Content(schema = @Schema(implementation = Grocery.class))),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated or authorized to access the resource", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PostMapping("/create")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Grocery> saveGrocery(@RequestBody GroceryDTO grocery) {
@@ -211,6 +252,11 @@ public class GroceryController {
         return ResponseEntity.ok(savedGrocery);
     }
 
+    /**
+     * Method to get all groceries stored in the database
+     * @return list of all groceries in the database
+     * @throws NoGroceriesFound if not groceries was found
+     */
     @Operation(summary = "Get all grocery DTOs")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of grocery DTOs fetched successfully", content = @Content(array = @ArraySchema(schema = @Schema(implementation = GroceryDTO.class)))),
@@ -256,6 +302,13 @@ public class GroceryController {
         }
     }
 
+    /**
+     * Getter for all ingredients in the refrigerator that matches a recipe
+     * @param refrigeratorId ID to the refrigerator to retrieve ingredients from
+     * @param recipeId ID to the recipe to get ingredients from
+     * @return list of groceries needed for a recipe
+     * @throws RefrigeratorNotFoundException If the refrigerator was not found
+     */
     @Operation(summary = "Fetch a list of groceries in the refrigerator that matches a recipe ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Groceries fetched successfully"),

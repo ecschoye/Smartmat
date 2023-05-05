@@ -8,7 +8,6 @@ import ntnu.idatt2106.backend.model.dto.CreateRefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTOComparator;
-import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;
@@ -25,6 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Service for shopping cart
+ * The service class contains methods to operate on a shopping cart
+ */
 @Service
 @RequiredArgsConstructor
 public class ShoppingCartService {

@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import ntnu.idatt2106.backend.exceptions.RefrigeratorNotFoundException;
 import ntnu.idatt2106.backend.model.Refrigerator;
 import ntnu.idatt2106.backend.model.dto.GroceryStatisticDTO;
@@ -27,8 +26,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
+/**
+ * Controller for stats for groceries eaten or trashed
+ */
 @RestController
 @RequestMapping("/api/history/grocery")
 @RequiredArgsConstructor
@@ -37,6 +38,13 @@ public class GroceryHistoryController {
     private final GroceryHistoryService groceryHistoryService;
     private final RefrigeratorService refrigeratorService;
 
+    /**
+     * Getter for the stats for groceries eaten or trashed the last year
+     * @param refrigeratorId ID to the refrigerator to retrieve history from
+     * @param request http request
+     * @return list with grocery stats
+     * @throws RefrigeratorNotFoundException If the refrigerator was not found
+     */
     @Operation(summary = "Get the stats for groceries eaten/trashed the last year")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "stats retrieved correctly", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Grocery.class)))),

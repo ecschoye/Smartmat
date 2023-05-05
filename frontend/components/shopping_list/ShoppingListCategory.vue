@@ -2,23 +2,24 @@
     <div class="grid grid-cols-1 gap-8">
         <div class="items stretch text-sm">
             <div class="ml-4 p-2 flex justify-end absolute left-0 font-extrabold">
-                <h3 class="mr-2"> {{ CategoryDetails.name }} </h3>
-                <h5> [{{ categoryListItems.length }}] </h5>
+                <h3 data-test="categoryName" class="mr-2"> {{ CategoryDetails.name }} </h3>
+                <h5 data-test="numberOfCategoryItems"> [{{ categoryListItems.length }}] </h5>
             </div>
             <div class="p-2 flex justify-end absolute right-0">
-                <button @click.stop="isCategoryExpanded = !isCategoryExpanded" class="h-5 w-5 mr-4">
-                    <img v-if="isCategoryExpanded" src="../../assets/icons/expandLess.png" alt="Expand Less">
-                    <img v-else src="../../assets/icons/expandMore.png" alt="Expand More">
+                <button data-test="expandBtn" @click.stop="isCategoryExpanded = !isCategoryExpanded" class="h-5 w-5 mr-4">
+                    <img v-if="isCategoryExpanded" data-test='expandLess' src="../../assets/icons/expandLess.png" alt="Expand Less">
+                    <img v-else data-test='expandMore' src="../../assets/icons/expandMore.png" alt="Expand More">
                 </button>            
             </div>
         </div>
-        <div v-if="isCategoryExpanded" class="grid grid-cols-1 gap-8">
+        <div v-if="isCategoryExpanded" data-test="shoppingListElementWrapper" class="grid grid-cols-1 gap-8">
             <ShoppingListElement
                 v-for="element in categoryListItems"
                 :key="element.id"
                 :ElementDetails="element"
                 @updateList="loadShoppingListCategories"
-                @prompt-refrigerator="promptRefrigerator()">
+                @prompt-refrigerator="promptRefrigerator()"
+                data-test="shoppingListElement">
             </ShoppingListElement>
         </div>
     </div>
@@ -28,6 +29,7 @@
 import ShoppingListService from "~/service/httputils/ShoppingListService";
 import { ShoppingListElementType } from "~/types/ShoppingListElement";
 import { ResponseGrocery } from "~/types/ResponseGrocery";
+import { defineComponent } from 'vue';
 
     export default defineComponent({
         props:{
@@ -42,7 +44,7 @@ import { ResponseGrocery } from "~/types/ResponseGrocery";
         },
         data() {
             return {
-                isCategoryExpanded: false,
+                isCategoryExpanded: true,
                 categoryListItems: [] as ShoppingListElementType[],
             }
         },

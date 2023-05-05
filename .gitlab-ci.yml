@@ -28,6 +28,7 @@ stages:
   - test_backend
   - package_backend
   - publish_backend
+  - deploy
   - test_frontend
   - build_frontend
   
@@ -106,6 +107,17 @@ publish_jacoco:
   script:
     - mkdir -p public/jacoco
     - cp -r backend/target/site/jacoco/* public/jacoco/
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+    - dev
+
+pages:
+  stage: deploy
+  script:
+    - echo "Publishing to GitLab Pages"
   artifacts:
     paths:
       - public

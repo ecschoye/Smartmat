@@ -193,7 +193,7 @@ public class ShoppingCartController {
             @ApiResponse(responseCode = "404", description = "No groceries found in the shopping cart"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PostMapping("all/transfer-refrigerator/")
+    @PostMapping("/all/transfer-refrigerator")
     public ResponseEntity<Boolean> transferAllToRefrigerator(@RequestBody SaveGroceryRequest[] request, HttpServletRequest httpRequest) throws UserNotFoundException, NoGroceriesFound, SaveException, UnauthorizedException, RefrigeratorNotFoundException {
         logger.info("Received request to transfer groceries to refrigerator");
         shoppingCartService.transferAllGroceriesToRefrigerator(request, httpRequest);

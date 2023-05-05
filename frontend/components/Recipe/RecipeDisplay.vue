@@ -1,5 +1,5 @@
 <template>
-  <div v-if="overLay()" class="fixed inset-0 bg-gray-950/80 z-10 overflow-scroll">
+  <div v-if="overLay()" class="fixed inset-0 bg-gray-950/80 z-10 lg:overflow-hidden sm:overflow-auto md:overflow-auto">
     <div class="flex items-center">
       <div class="mt-8 m-auto medium-box w-full px-5 pb-5 flex flex-col items-center
             border-2 border-black rounded-lg bg-white dark:bg-zinc-400"

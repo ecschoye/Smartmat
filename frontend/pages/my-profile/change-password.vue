@@ -20,7 +20,7 @@
             {{$t('go_back')}}
           </button>
         </NuxtLink>
-        <button id="submit" :disabled="!formValid" @click="updatePassword()" class="w-36 h-14 border-2 border-[#31C48D]/60 button-light-color dark:button-dark-color dark:text-white text-black hover:bg-slate-400 hover:text-white font-bold items-center rounded transform hover:scale-100 sm:flex sm:justify-center">{{$t('change_password')}}</button>
+        <button id="submit" @click="updatePassword()" class="w-36 h-14 border-2 border-[#31C48D]/60 button-light-color dark:button-dark-color dark:text-white text-black hover:bg-slate-400 hover:text-white font-bold items-center rounded transform hover:scale-100 sm:flex sm:justify-center">{{$t('change_password')}}</button>
       </div>
     </div>
   </div>

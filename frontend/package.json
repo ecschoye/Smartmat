@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "cross-env NODE_ENV=development nuxt dev",
     "start": "nuxt start",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
@@ -30,6 +30,7 @@
     "@windicss/plugin-utils": "^1.8.10",
     "autoprefixer": "^10.4.14",
     "axios-mock-adapter": "^1.21.4",
+    "cross-env": "^7.0.3",
     "cypress": "^12.10.0",
     "fetch-mock": "^9.11.0",
     "jsdom": "^22.0.0",

@@ -29,7 +29,6 @@ stages:
   - package_backend
   - test_frontend
   - build_frontend
-  - publish
   
 
 test_backend:
@@ -97,13 +96,4 @@ build_frontend:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
       changes:
         - frontend/**/*¨
-
-pages:
-  stage: publish
-  script:
-    - mv backend/target/site/jacoco public
-  artifacts:
-    paths: 
-      - public
-    expire_in: 30 days
 

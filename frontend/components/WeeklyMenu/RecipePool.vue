@@ -368,6 +368,7 @@ export default {
     flex-direction: column;
     align-items: center;
     margin: 5px;
+    gap: 10px;
 }
 
 .weekday {

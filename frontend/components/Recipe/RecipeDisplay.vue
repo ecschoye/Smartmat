@@ -22,7 +22,7 @@
         </thead>
         <tbody>
           <tr class="text-center items-center" v-for="ingredient in recipe?.ingredients" :key="ingredient.id">
-            <td class="overflow-x-scroll whitespace-nowrap" >{{ ingredient.name }}</td>
+            <td class="whitespace-nowrap" >{{ ingredient.name }}</td>
             <td class="items-center">
               <div class="inline-flex items-center">
                 <h3 v-if="ingredient.unit === undefined">{{ ingredient.quantity}}</h3>

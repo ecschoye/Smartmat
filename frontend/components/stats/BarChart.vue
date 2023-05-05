@@ -143,11 +143,14 @@
             this.totalFood = this.totalFoodEaten + this.totalFoodWaste
         },
       getTotalFoodEatenPercentage() {
-        return (this.totalFoodEaten / this.totalFood * 100).toFixed(2)
+        const percentage = (this.totalFoodEaten / this.totalFood * 100).toFixed(2);
+        return isNaN(percentage) ? '0.00' : percentage;
       },
       getTotalFoodWastePercentage() {
-        return (this.totalFoodWaste / this.totalFood * 100).toFixed(2)
+        const percentage = (this.totalFoodWaste / this.totalFood * 100).toFixed(2);
+        return isNaN(percentage) ? '0.00' : percentage;
       }
+
     },
     mounted() {
       const refrigeratorStore = useRefrigeratorStore();

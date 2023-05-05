@@ -1,8 +1,11 @@
 <template>
     <div class="w-full h-full items-center">
-        <h1 class="p-5 text-black text-center dark:text-white">
+        <div class="w-1/2 md:w-1/4 mx-auto">
+          <h1 class="p-5 text-black text-center dark:text-white">
             {{t("Notification")}}
-        </h1>
+          <div class="divider"></div>
+          </h1>
+        </div>
         <NotificationsList @delete-notif="(payload) => deleteNotification(payload)" :notifications="notificationStore.getNotifications"/>
     </div>
 </template>
@@ -57,3 +60,13 @@ onMounted(() => {
   loadNotifications();
 });
 </script>
+
+
+<style scoped>
+.divider{
+  width: 100%;
+  height: 2px;
+  background-color: gray;
+  margin: 20px 0;
+}
+</style>

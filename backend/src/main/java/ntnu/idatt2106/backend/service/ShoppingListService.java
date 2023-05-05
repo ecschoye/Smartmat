@@ -27,11 +27,11 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Service for shopping list
- * The service class contains methods to operate on the shopping list
+ * The ShoppingListService class provides methods to create a new shopping list, or get an existing one,
+ * get categories and groceries in the shopping list, and to delete, edit and transfer groceries
  */
-@Service
-@RequiredArgsConstructor
+    @Service
+    @RequiredArgsConstructor
 public class ShoppingListService {
     private final ShoppingListRepository shoppingListRepository;
     private final GroceryShoppingListRepository groceryShoppingListRepository;
@@ -48,7 +48,7 @@ public class ShoppingListService {
      * Getter for the shopping list by the refrigerator id
      * @param refrigeratorId ID to the refrigerator
      * @return Shopping list object
-     * @throws ShoppingListNotFound If it is not find any shopping list for the refrigerator id in the parameter
+     * @throws ShoppingListNotFound If no shopping list is found for the provided refrigerator id
      */
     protected ShoppingList getShoppingListByRefrigeratorId(long refrigeratorId) throws ShoppingListNotFound {
         return shoppingListRepository.findByRefrigeratorId(refrigeratorId)
@@ -59,7 +59,7 @@ public class ShoppingListService {
      * Getter for the shopping list by the shopping list id
      * @param shoppingListId ID to the shopping list
      * @return Shopping list object
-     * @throws ShoppingListNotFound If it is not find any shopping list for the shopping list id in the parameter
+     * @throws ShoppingListNotFound If no shopping list is found for the provided shopping list id
      */
     protected ShoppingList getShoppingListById(long shoppingListId) throws ShoppingListNotFound {
         return shoppingListRepository.findById(shoppingListId)
@@ -67,11 +67,11 @@ public class ShoppingListService {
     }
 
     /**
-     * Creates a new shopping list if it does not already exist a shopping list for the refrigerator id
-     * The shopping list id to an already existing list is returned if it already exists a shopping list for the given refrigerator
+     * Creates a new shopping list if one does not already exist for the provided refrigerator id
+     * The shopping list id to an existing list is returned if one already exists for the given refrigerator
      * @param refrigeratorId ID of connected refrigerator
      * @return shopping list id for the refrigerator id in the parameter
-     * @throws RefrigeratorNotFoundException If no refrigerator is found the refrigerator id in the parameter
+     * @throws RefrigeratorNotFoundException If no refrigerator is found for the refrigerator id in the parameter
      */
     public long createShoppingList(long refrigeratorId) throws RefrigeratorNotFoundException {
         Refrigerator refrigerator = refrigeratorService.getRefrigerator(refrigeratorId);
@@ -91,8 +91,8 @@ public class ShoppingListService {
 
     /**
      * Getter for all groceries in the shopping list specified in the parameter
-     * @param shoppingListId ID to the shopping list to retrieve groceries from
-     * @param isRequested True if suggested groceries to the shopping list is wanted and false if not
+     * @param shoppingListId ID of the shopping list to retrieve groceries from
+     * @param isRequested True if suggested groceries to the shopping list is requested and false if not
      * @return All groceries from the shopping list with the shopping list id specified in the parameter
      * @exception NoGroceriesFound Could not find any groceries
      */
@@ -109,8 +109,8 @@ public class ShoppingListService {
 
     /**
      * Getter for all groceries in the shopping list and the category specified in the parameter
-     * @param shoppingListId ID to the shopping list to retrieve groceries from
-     * @param categoryId ID to the category to retrieve groceries from
+     * @param shoppingListId ID of the shopping list to retrieve groceries from
+     * @param categoryId ID of the category to retrieve groceries from
      * @param isRequested True if suggested groceries to the shopping list is wanted and false if not
      * @return All groceries from the shopping list with the shopping list id and category id specified in the parameter
      * @exception NoGroceriesFound Could not find any groceries
@@ -145,7 +145,7 @@ public class ShoppingListService {
 
     /**
      * Getter for all categories of groceries in shopping list
-     * @param shoppingListId ID to the shopping list to retrieve categories from
+     * @param shoppingListId ID of the shopping list to retrieve categories from
      * @return All categories from the shopping list with the shopping list id specified in the parameter
      * @exception CategoryNotFound If no categories found
      */
@@ -160,12 +160,12 @@ public class ShoppingListService {
     }
 
     /**
-     * Edit the grocery in shopping list. It is only possible for a superuser of the refrigerator assosiated with the shopping list
-     * to edit the grocery. When a superuser is editing a suggested grocery is requested set to false
-     * @param groceryShoppingListId ID to the grocery item on a shopping list
+     * Edit the grocery in shopping list. It is only possible for a superuser of the refrigerator associated with the
+     * shopping list to edit the grocery. When a superuser is editing a suggested grocery, requested is set to false
+     * @param groceryShoppingListId ID of the grocery item in a shopping list
      * @param quantity Amount of groceries
      * @param httpRequest http request
-     * @return The item on the grocery shopping list
+     * @return The item in the grocery shopping list
      * @throws NoGroceriesFound if no grocery is found for the groceryShoppingListId
      * @throws UserNotFoundException if no user is found
      * @throws UnauthorizedException if the user is not a superuser in the refrigerator
@@ -185,12 +185,11 @@ public class ShoppingListService {
         throw new SaveException("Failed to add a edit the grocery item with id " + groceryShoppingListId);
     }
 
-
     /**
      * Edit the grocery in refrigerator shopping list . It is only possible for a superuser of the refrigerator
-     * assosiated with the shopping list to edit the grocery. The grocery is transferred to the shopping list when a
+     * associated with the shopping list to edit the grocery. The grocery is transferred to the shopping list when a
      * superuser is editing a grocery suggested from the refrigerator
-     * @param groceryRefrigeratorShoppingListId ID to the grocery item on a refrigerator shopping list
+     * @param groceryRefrigeratorShoppingListId ID of the grocery item on a refrigerator shopping list
      * @param quantity Amount of groceries
      * @param httpRequest http request
      * @throws NoGroceriesFound if no grocery is found for the groceryShoppingListId
@@ -201,7 +200,7 @@ public class ShoppingListService {
     @Transactional(propagation =  Propagation.REQUIRED, rollbackFor = Exception.class)
     public void editRefrigeratorGrocery(long groceryRefrigeratorShoppingListId, int quantity, HttpServletRequest httpRequest) throws NoGroceriesFound, UserNotFoundException, UnauthorizedException, SaveException, ShoppingListNotFound, NoSuchElementException {
         RefrigeratorShoppingList refrigeratorShoppingListItem = refrigeratorShoppingListRepository.findById(groceryRefrigeratorShoppingListId)
-                .orElseThrow(() -> new NoGroceriesFound("Could not find a grocery with the given i"));
+                .orElseThrow(() -> new NoGroceriesFound("Could not find a grocery with the given id"));
         FridgeRole fridgeRole = groceryService.getFridgeRole(refrigeratorShoppingListItem.getShoppingList().getRefrigerator(), httpRequest);
 
         if (fridgeRole == FridgeRole.SUPERUSER) {
@@ -259,8 +258,8 @@ public class ShoppingListService {
 
     /**
      * Adds predefined grocery to the shopping list for suggestions to refrigerator
-     * @param groceryId ID to the grocery to save to the shopping list
-     * @param refrigeratorId ID to the shopping list to save to the grocery to
+     * @param groceryId ID of the grocery to save to the shopping list
+     * @param refrigeratorId ID of the shopping list to save to the grocery to
      * @exception ShoppingListNotFound If the shopping list is not found
      * @exception UserNotFoundException If the user is not found
      */
@@ -298,7 +297,7 @@ public class ShoppingListService {
 
     /**
      * Deletes a grocery from the shopping list
-     * @param groceryListId ID to the grocery to delete
+     * @param groceryListId ID of the grocery to delete
      * @param httpRequest http request
      * @throws UnauthorizedException If not authorized
      * @throws NoGroceriesFound If the grocery item not is found in the shopping list
@@ -318,7 +317,7 @@ public class ShoppingListService {
 
     /**
      * Deletes a grocery from the refrigerator shopping list
-     * @param refrigeratorShoppingListId ID to the grocery to delete
+     * @param refrigeratorShoppingListId ID of the grocery to delete
      * @param httpRequest http request
      * @throws UnauthorizedException If not authorized
      * @throws NoGroceriesFound If the grocery item not is found in the shopping list
@@ -338,7 +337,7 @@ public class ShoppingListService {
 
     /**
      * Transfer one grocery from shopping list to shopping cart
-     * @param groceryListId ID to the grocery in shopping list to transfer to the shopping cart
+     * @param groceryListId ID of the grocery in shopping list to transfer to the shopping cart
      * @param httpRequest http request
      * @throws UnauthorizedException If not authorized
      * @throws NoGroceriesFound If the grocery item not is found in the shopping list
@@ -363,7 +362,7 @@ public class ShoppingListService {
 
     /**
      * Transfer one grocery from refrigerator shopping list to shopping cart
-     * @param refrigeratorShoppingListId ID to the grocery in refrigerator shopping list to transfer to the shopping list
+     * @param refrigeratorShoppingListId ID of the grocery in refrigerator shopping list to transfer to the shopping list
      * @param httpRequest http request
      * @throws UnauthorizedException If not authorized
      * @throws NoGroceriesFound If the grocery item not is found in the shopping list

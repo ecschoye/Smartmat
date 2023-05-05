@@ -40,7 +40,7 @@ import java.util.Optional;
  */
 @Component
 @RequiredArgsConstructor
-@Profile("dev")
+@Profile("prod")
 public class TestDataSerializer {
 
     private final CategoryRepository categoryRepository;

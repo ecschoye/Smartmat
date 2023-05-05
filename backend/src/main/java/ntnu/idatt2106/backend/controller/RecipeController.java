@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.NoSuchElementException;
 import ntnu.idatt2106.backend.model.dto.recipe.RecipeDTO;
 import ntnu.idatt2106.backend.model.dto.recipe.FetchRecipesDTO;
+import ntnu.idatt2106.backend.model.recipe.Recipe;
 import ntnu.idatt2106.backend.service.RecipeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -65,12 +66,13 @@ public class RecipeController {
         logger.info("Received request to fetch recipes for user");
         logger.info(fetchRecipesDTO.toString());
         List<RecipeDTO> recipes;
-        if (fetchRecipesDTO.getNumRecipes() == -1){
+        /*if (fetchRecipesDTO.getNumRecipes() == -1){
             recipes = recipeService.getRecipesByGroceriesAndExpirationDates(fetchRecipesDTO, true);
         }
         else{
             recipes = recipeService.getRecipesByGroceriesAndExpirationDates(fetchRecipesDTO, false);
-        }
+        }*/
+        recipes = recipeService.getSortedRecipesByMatchingGroceries(fetchRecipesDTO.getRefrigeratorId(), fetchRecipesDTO.getNumRecipes());
 
         return ResponseEntity.ok(recipes);
     }

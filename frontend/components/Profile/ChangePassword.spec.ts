@@ -26,7 +26,7 @@ const router = createRouter({
         {
             path: '/',
             component: index,
-        },
+        }
     ],
 })
 
@@ -71,7 +71,7 @@ describe('ChangePassword', () => {
     });
 
     test('renders button', () => {
-        const button = wrapper.findComponent(GrayButton);
+        const button = wrapper.find('#submit');
         expect(button.exists()).toBe(true);
     });
 

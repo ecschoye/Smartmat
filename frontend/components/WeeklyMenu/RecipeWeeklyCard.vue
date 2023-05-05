@@ -14,7 +14,7 @@
           @click="lockRecipe"
         />
       </div>
-    <div v-if="!showIngredients" class="Recipe-card">
+    <div class="Recipe-card">
       <div class="">
       <div class="h-40 dark:hidden bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(49,196,141,0) 90%, rgba(49,196,141,1) 100%), url(${recepeInfo.url})` }"></div>
       <div class="h-40 hidden dark:block bg-cover bg-center rounded-t-lg" :style="{backgroundImage: `linear-gradient(to bottom, rgba(39,39,42,0) 95%, rgba(39,39,42,1) 100%), url(${recepeInfo.url})` }"></div>
@@ -24,9 +24,6 @@
       </div>
       <div class="recipe-info mt-1">
         <div class="recipe-choices flex flex-col space-y-2">
-          <button @click="handleOptionChange('option1')" class="border-2 bg-light-color border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black items-center px-4 rounded transform hover:scale-100 py-1 px-2 rounded text-sm w-full">
-            {{ $t("view_ingredients") }}
-          </button>
           <button @click="handleOptionChange('option2')" class="border-2 bg-light-color border-[#31C48D]/60 dark:button-dark-color dark:text-white text-black items-center px-4 rounded transform hover:scale-100 py-1 px-2 rounded text-sm w-full">
             {{ $t("see_recipe") }}
           </button>
@@ -34,19 +31,6 @@
             {{ $t("remove") }}
           </button>
         </div>
-      </div>
-    </div>
-    <div v-else class="Recipe-card">
-      <h3 class="recepe-title">{{ recepeInfo.name }}</h3>
-      <div class="ingredients">
-        <ul>
-          <li v-for="ingredient in recepeInfo.ingredients" :key="ingredient">
-            {{ ingredient.name + "(" + ingredient.quantity + ")" }}
-          </li>
-        </ul>
-      </div>
-      <div class="back-button">
-        <ButtonGreenButton label="Tilbake" width="100%" height="50px" @click="returnEvent" />
       </div>
     </div>
   </div>
@@ -59,7 +43,6 @@
     data() {
       return {
         selectedOption: "",
-        showIngredients: false,
       };
     },
 
@@ -85,11 +68,7 @@
         this.$emit("unlockedEvent");
       },
       handleOptionChange(option : string) {
-        this.showIngredients = false;
         switch (option) {
-          case "option1":
-            this.showIngredients = true;
-            break;
           case "option2":
             this.$emit("seeRecipeEvent")
             break;
@@ -100,7 +79,6 @@
       },
       returnEvent() {
         this.selectedOption = "";
-        this.showIngredients = false;
       },
     }
   };

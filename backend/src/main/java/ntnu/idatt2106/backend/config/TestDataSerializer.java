@@ -355,7 +355,7 @@ public class TestDataSerializer {
                 "https://www.tine.no/_/recipeimage/w_1600%2Ch_900%2Cc_fill%2Cx_1500%2Cy_1097%2Cg_xy_center/recipeimage/357942.jpg",
                 "https://www.tine.no/_/recipeimage/w_1600%2Ch_900%2Cc_fill%2Cx_1500%2Cy_937%2Cg_xy_center/recipeimage/427018.jpg",
                 "https://www.tine.no/_/recipeimage/w_1280%2Ch_720%2Cc_fill%2Cx_1379%2Cy_775%2Cg_xy_center/recipeimage/oqqj6gxyyaidj4xmkqvx.jpg",
-                "https://www.tine.no/_/recipeimage/w_1280%2Ch_720%2Cc_fill%2Cx_1500%2Cy_1000%2Cg_xy_center/recipeimage/370677.jpg," ,
+                "https://www.tine.no/_/recipeimage/w_1600%2Ch_900%2Cc_fill%2Cx_1500%2Cy_1000%2Cg_xy_center/recipeimage/370677.jpg",
                 "https://www.tine.no/_/recipeimage/w_1280%2Ch_720%2Cc_fill%2Cx_1500%2Cy_1000%2Cg_xy_center/recipeimage/353909.jpg",
                 "https://www.tine.no/_/recipeimage/w_1280%2Ch_720%2Cc_fill%2Cx_1500%2Cy_1185%2Cg_xy_center/recipeimage/293397.jpg",
                 "https://www.tine.no/_/recipeimage/w_1280%2Ch_720%2Cc_fill%2Cx_1500%2Cy_590%2Cg_xy_center/recipeimage/370627.jpg"

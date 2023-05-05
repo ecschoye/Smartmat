@@ -98,4 +98,15 @@ build_frontend:
       changes:
         - frontend/**/*
 
+pages:
+  stage: package_backend
+  script:
+      - echo "Building javadoc"
+      - mvn javadoc:javadoc
+  artifacts:
+    paths: 
+      - public
+  only:
+    - web
+
 # ...

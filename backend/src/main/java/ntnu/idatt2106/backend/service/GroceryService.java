@@ -208,22 +208,17 @@ public class GroceryService {
      * @param refrigeratorId Refrigerator ID
      * @return Map binding grocery id to refrigeratorGroceryDTO
      */
-    public HashMap<Long,RefrigeratorGroceryDTO> getIngredientsInRefrigerator(List<RecipeGrocery> recipeGroceries, long refrigeratorId) {
-        HashMap<Long,RefrigeratorGroceryDTO> result = new HashMap<Long, RefrigeratorGroceryDTO>();
+    public HashMap<Long,List<RefrigeratorGroceryDTO>> getIngredientsInRefrigerator(List<RecipeGrocery> recipeGroceries, long refrigeratorId) {
+        HashMap<Long,List<RefrigeratorGroceryDTO>> result = new HashMap<Long, List<RefrigeratorGroceryDTO>>();
         List<RefrigeratorGrocery> refrigeratorGroceries = refrigeratorGroceryRepository.findAllByRefrigeratorId(refrigeratorId);
         for (RecipeGrocery recipeGrocery : recipeGroceries) {
             long groceryId = recipeGrocery.getGrocery().getId();
             for(RefrigeratorGrocery refrigeratorGrocery : refrigeratorGroceries){
                 if(refrigeratorGrocery.getGrocery().getId() == groceryId){
-                    if(result.containsKey(groceryId)){
-                        RefrigeratorGroceryDTO existingDTO = result.get(groceryId);
-                        if(existingDTO.getUnit().equals(refrigeratorGrocery.getUnit())){
-                            existingDTO.setQuantity(existingDTO.getQuantity() + refrigeratorGrocery.getQuantity());
-                        }
-                        result.put(groceryId, existingDTO);
-                    }else{
-                        result.put(groceryId, new RefrigeratorGroceryDTO(refrigeratorGrocery));
+                    if(!result.containsKey(groceryId)){
+                        result.put(groceryId, new ArrayList<>());
                     }
+                    result.get(groceryId).add(new RefrigeratorGroceryDTO(refrigeratorGrocery));
                 }
             }
         }

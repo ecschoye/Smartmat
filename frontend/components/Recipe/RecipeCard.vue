@@ -9,9 +9,6 @@
         </div>
         <div v-if="weeklyMenuStore.$state.currentChosenIndex != null" class="w-48 mx-auto absolute bottom-0 left-6 mb-2">
           <button @click.stop="returnToWeeklyMenu(recipeInfo)" class="cursor-pointer w-full h-auto mx-auto my-1 text-l button-light-color text-black block hover:transform hover:scale-105 rounded-lg">{{ t('add_recipe_to_weekly_menu') }}</button>
-<!--          <a :href="recipe_url" target="_blank">
-            <button class="cursor-pointer w-full h-auto mx-auto my-1 text-l button-light-color text-black block hover:transform hover:scale-105 rounded-lg">{{ t('view_recipe') }}</button>
-          </a>-->
         </div>
       </div>
     </div>

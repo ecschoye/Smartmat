@@ -88,6 +88,7 @@
 "password_missmatch": "Passordene er ikke like",
 "read_more_about_us": "Les mer om oss her",
 "recipes": "Oppskrifter",
+"refrigerator" : "Kjøleskap",
 "remove": "Fjern",
 "remove_all_next_week" : "Er du sikker på at du vil fjerne alle oppskrifter fra neste uke?",
 "remove_all_recipes": "Fjern alle oppskrifter",
@@ -138,5 +139,7 @@
 "who_is_smart_mat_for": "Hvem er SmartMat for?",
 "who_is_smart_mat_for_response": "SmartMat er en applikasjon som er spesielt egnet for husholdninger som ønsker å redusere matsvinn, spare penger og ta vare på miljøet. Med SmartMat-appen kan brukerne enkelt planlegge og organisere måltidene sine på en mer effektiv måte.",
 "your_recipes": "Dine oppskrifter",
-"you_have_no_groceries_in_the_shopping_cart": "Du har ingen matvarer i handlekurven"
+"you_have_no_groceries_in_the_shopping_cart": "Du har ingen matvarer i handlekurven",
+"close" : "Lukk",
+"you_have_no_groceries_in_the_shopping_list": "Du har ingen matvarer i handlelisten"
 }

@@ -2,6 +2,9 @@ import { mount } from '@vue/test-utils';
 import RecipeWeeklyCard from '~/components/WeeklyMenu/RecipeWeeklyCard.vue';
 import { Recipe } from '~/types/RecipeType';
 import LoginForm from "~/components/Form/LogInForm.vue";
+import GreenButton from "~/components/Button/GreenButton.vue";
+import GrayButton from "~/components/Button/GrayButton.vue";
+import {expect} from "vitest";
 
 const globalMocks = {
     $t: () => {}, // Add this line to mock the $t function
@@ -106,4 +109,38 @@ describe('YourComponentName.vue', () => {
 
         expect(wrapper.emitted().removeEvent).toBeTruthy();
     });
+
+    it('emits lockedEvent when "locked" icon is clicked', () => {
+        const wrapper = mount(RecipeWeeklyCard, {
+            global: {
+                mocks: globalMocks,
+                stubs: {
+                    NuxtLink: true,
+                },
+            },
+            props: {recepeInfo: mockRecipe, lockedBoolean: false},
+        });
+
+        wrapper.find('.lock-icon').trigger('click');
+
+        expect(wrapper.emitted().lockedEvent).toBeTruthy();
+    });
+
+    it('emits unlockedEvent when "unlocked" icon is clicked', () => {
+        const wrapper = mount(RecipeWeeklyCard, {
+            global: {
+                mocks: globalMocks,
+                stubs: {
+                    NuxtLink: true,
+                },
+            },
+            props: {recepeInfo: mockRecipe, lockedBoolean: true},
+        });
+
+        wrapper.find('.lock-icon').trigger('click');
+
+        expect(wrapper.emitted().unlockedEvent).toBeTruthy();
+    });
+
+
 });

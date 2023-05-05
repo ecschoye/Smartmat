@@ -8,7 +8,6 @@ import ntnu.idatt2106.backend.model.dto.CreateRefrigeratorGroceryDTO;
 import ntnu.idatt2106.backend.model.dto.GroceryDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTO;
 import ntnu.idatt2106.backend.model.dto.shoppingCartElement.ShoppingCartElementDTOComparator;
-import ntnu.idatt2106.backend.model.dto.UnitDTO;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.grocery.GroceryShoppingCart;

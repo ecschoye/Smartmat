@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/shopping-list")
 @RequiredArgsConstructor
@@ -35,6 +36,7 @@ public class ShoppingListController {
     private final ShoppingListService shoppingListService;
 
     Logger logger = LoggerFactory.getLogger(ShoppingListController.class);
+
 
     @Operation(summary = "Create a shopping list for a refrigerator")
     @ApiResponses(value = {

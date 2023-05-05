@@ -1,7 +1,6 @@
 package ntnu.idatt2106.backend.config;
 
 import jakarta.annotation.PostConstruct;
-import jnr.constants.platform.Local;
 import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.model.*;
 import ntnu.idatt2106.backend.model.enums.FridgeRole;
@@ -9,9 +8,6 @@ import ntnu.idatt2106.backend.model.enums.UserRole;
 import ntnu.idatt2106.backend.model.category.Category;
 import ntnu.idatt2106.backend.model.grocery.Grocery;
 import ntnu.idatt2106.backend.model.SubCategory;
-import ntnu.idatt2106.backend.model.*;
-import ntnu.idatt2106.backend.model.enums.FridgeRole;
-import ntnu.idatt2106.backend.model.enums.UserRole;
 import ntnu.idatt2106.backend.model.grocery.RefrigeratorGrocery;
 import ntnu.idatt2106.backend.model.recipe.Recipe;
 import ntnu.idatt2106.backend.model.recipe.RecipeCategory;
@@ -20,7 +16,6 @@ import ntnu.idatt2106.backend.repository.*;
 import ntnu.idatt2106.backend.repository.recipe.RecipeCategoryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeGroceryRepository;
 import ntnu.idatt2106.backend.repository.recipe.RecipeRepository;
-import ntnu.idatt2106.backend.service.GroceryHistoryService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -29,15 +24,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.Arrays;
 import java.util.Optional;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.*;
 
 /**
  * Class that serialises data into database from formatted csv file with categories, subcategories and groceries.
@@ -187,13 +176,6 @@ public class TestDataSerializer {
             }
         }
     }
-
-
-
-
-
-
-
 
     private void createRefrigerator() {
         String name = "Test Refrigerator";
@@ -442,9 +424,7 @@ public class TestDataSerializer {
                     .weight(100)
                     .build());
         }
-
     }
-
 }
 
 

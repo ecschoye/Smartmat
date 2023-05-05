@@ -27,10 +27,5 @@ public class ShoppingList {
     @JoinColumn(name = "refrigeratorId")
     @Schema(description = "The refrigerator connected to the shopping list")
     private Refrigerator refrigerator;
-
-    /**TODO Test if this causes groceries to be deleted when deleting ShoppingList
-    @OneToMany(mappedBy = "shoppingList", cascade = CascadeType.REMOVE)
-    @Schema(description = "The grocery items on the shopping list")
-    private Set<GroceryShoppingList> groceryItems;*/
 }
 

@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 import ntnu.idatt2106.backend.exceptions.UserAlreadyExistsException;
@@ -21,17 +20,15 @@ import ntnu.idatt2106.backend.model.dto.response.RegisterResponse;
 import ntnu.idatt2106.backend.service.AuthenticationService;
 import ntnu.idatt2106.backend.service.UserService;
 import org.apache.http.auth.InvalidCredentialsException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-
-import java.util.Arrays;
 import java.util.logging.Logger;
 
+/**
+ * Controller to authenticate user, register user and log ut user
+ */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -43,6 +40,12 @@ public class AuthenticationController {
 
     Logger logger = Logger.getLogger(AuthenticationController.class.getName());
 
+    /**
+     * Register a user
+     * @param request to register a user
+     * @return response for how the registration went. Contains the user id, user role and a message
+     * @throws UserAlreadyExistsException
+     */
     @Operation(summary = "Register a new user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User registered successfully", content = @Content(schema = @Schema(implementation = RegisterResponse.class))),
@@ -63,6 +66,14 @@ public class AuthenticationController {
         }
     }
 
+    /**
+     * Authenticates a user
+     * @param authenticationRequest the request to authenticate
+     * @param response http response
+     * @param request http request
+     * @return response as consists of token, user id and user role
+     * @throws InvalidCredentialsException If the credentials is invalid
+     */
     @Operation(summary = "Authenticate user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User authenticated successfully", content = @Content(schema = @Schema(implementation = AuthenticationResponse.class))),
@@ -91,6 +102,12 @@ public class AuthenticationController {
         }
     }
 
+    /**
+     * Logs out a user
+     * @param request http request
+     * @param response http response
+     * @return the string "logged out" if it was successful
+     */
     @Operation(summary = "Logout user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User logged out successfully"),
@@ -119,7 +136,6 @@ public class AuthenticationController {
         return ResponseEntity.ok("Logged out");
     }
 
-
     /**
      * Sets an access token as an HttpOnly cookie with SameSite=Lax.
      *
@@ -127,7 +143,7 @@ public class AuthenticationController {
      * @param response HttpServletResponse object used to set the cookie.
      * @param production Boolean indicating if the environment is production or not.
      */
-    public void setCookie(AuthenticationResponse authResponse, HttpServletResponse response, boolean production) {
+    private void setCookie(AuthenticationResponse authResponse, HttpServletResponse response, boolean production) {
         String cookieValue = String.format("SmartMatAccessToken=%s; Path=/; Max-Age=%d; HttpOnly; SameSite=Lax", authResponse.getToken(), 20 * 60);
 
         if (production) {
@@ -138,5 +154,4 @@ public class AuthenticationController {
 
         response.addHeader("Set-Cookie", cookieValue);
     }
-
 }

@@ -1,11 +1,10 @@
 package ntnu.idatt2106.backend.exceptions;
 
 /**
- * RefrigeratorNotFoundException is thrown when not refrigerator matches an id provided
+ * Custom exception class that represents a scenario when a refrigerator is not found.
  */
 public class RefrigeratorNotFoundException extends Exception {
-
-    public RefrigeratorNotFoundException(String message){
+    public RefrigeratorNotFoundException(String message) {
         super(message);
     }
 }

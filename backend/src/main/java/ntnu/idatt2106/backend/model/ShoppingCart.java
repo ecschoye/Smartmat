@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
+
+/**
+ * Model representing a shopping cart, this holds groceries.
+ */
 @Data
 @Builder
 @NoArgsConstructor

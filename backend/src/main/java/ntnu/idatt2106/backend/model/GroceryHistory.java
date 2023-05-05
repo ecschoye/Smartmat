@@ -11,6 +11,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.Date;
 
+
+/**
+ * Model of a historic RefrigeratorGrocery object. This is a RefrigeratorGrocery object that has been consumed and is to be added to stats.
+ */
 @Data
 @Builder
 @NoArgsConstructor

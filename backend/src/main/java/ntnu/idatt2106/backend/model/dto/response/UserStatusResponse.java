@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.enums.AuthenticationState;
 
+/**
+ * DTO for user status, contains information about hte authentication state, role and favorite refrigerator
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

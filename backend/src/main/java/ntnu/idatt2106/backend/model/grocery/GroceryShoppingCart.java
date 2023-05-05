@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 import ntnu.idatt2106.backend.model.ShoppingCart;
 import ntnu.idatt2106.backend.model.Unit;
 
+/**
+ * Connection model between a Grocery and a ShoppingCart.
+ */
 @Data
 @Builder
 @NoArgsConstructor

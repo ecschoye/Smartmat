@@ -16,6 +16,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Connection entity model between a Refrigerator and a Grocery. Is a unique object which holds  Grocery, a physical expiry date
+ * and the specified unit and the quantity. Differs from other Grocery models as it represents a physical food item, while the
+ * regular Grocery and some of the other grocery models, represents a type of grocery or a list element in a shopping list or cart.
+ */
 @Data
 @Builder
 @NoArgsConstructor

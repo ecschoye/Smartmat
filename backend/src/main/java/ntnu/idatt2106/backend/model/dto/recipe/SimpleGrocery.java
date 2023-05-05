@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * DTO for grocery.
+ * The DTO contains only the ID and name for the grocery
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Class that represents a category
+ */
 @Data
 @Builder
 @NoArgsConstructor

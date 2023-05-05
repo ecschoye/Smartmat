@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * A DTO for when a new Refrigerator object is requested from frontend.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -29,14 +29,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * Class that serialises data into database from formatted csv file with categories, subcategories and groceries.
- * "!" indicates a category line, "?" indicates a subcategory, remaining lines are groceries.
- * Groceries are structured with name, description.
- * Subcategories are structured with name - expiry date.
- * Format example:
- *  !Dairy
- *  ?Milk - 14
- *  Chocolate Milk, 14% fat
+ * Class that adds test data to the database for a specified user.
  */
 @Component
 @RequiredArgsConstructor
@@ -71,6 +64,11 @@ public class TestDataSerializer {
     private final UnitRepository unitRepository;
 
     private final GroceryHistoryRepository groceryHistoryRepository;
+
+    /**
+     * Calls all create methods.
+     * @throws NumberFormatException
+     */
     @PostConstruct
     public void init() throws NumberFormatException {
         serialize();
@@ -90,7 +88,9 @@ public class TestDataSerializer {
     }
 
 
-
+    /**
+     * Adds test groceries to a refrigerator.
+     */
     private void addGroceriesToRefrigerator() {
         Refrigerator refrigerator = refrigeratorRepository.findByName("Test Refrigerator")
                 .orElseThrow(() -> new RuntimeException("Refrigerator not found: Test Refrigerator"));
@@ -108,6 +108,13 @@ public class TestDataSerializer {
 
     }
 
+    /**
+     * Inserts recipe groceries based on a fixed quantity.
+     * @param refrigerator
+     * @param groceryIds
+     * @param quantity
+     * @param unitIds
+     */
     private void insertRecipeGroceries(Refrigerator refrigerator, List<Long> groceryIds, int quantity, List<Long> unitIds) {
         for (int i = 0; i < groceryIds.size(); i++) {
             Long groceryId = groceryIds.get(i);
@@ -116,6 +123,13 @@ public class TestDataSerializer {
         }
     }
 
+    /**
+     * Inserts recipe groceries based on an array of quantities.
+     * @param refrigerator
+     * @param groceryIds
+     * @param quantities
+     * @param unitIds
+     */
     private void insertRecipeGroceries(Refrigerator refrigerator, List<Long> groceryIds, int[] quantities, List<Long> unitIds) {
         for (int i = 0; i < groceryIds.size(); i++) {
             Long groceryId = groceryIds.get(i);
@@ -125,6 +139,13 @@ public class TestDataSerializer {
         }
     }
 
+    /**
+     * Inserts recipe groceries based on one grocery id.
+     * @param refrigerator
+     * @param groceryId
+     * @param quantity
+     * @param unitId
+     */
     private void insertRecipeGrocery(Refrigerator refrigerator, long groceryId, int quantity, long unitId) {
         Grocery grocery = groceryRepository.findById(groceryId)
                 .orElseThrow(() -> new RuntimeException("Grocery not found: " + groceryId));
@@ -149,6 +170,9 @@ public class TestDataSerializer {
         }
     }
 
+    /**
+     * Creates grocery history objects in database.
+     */
     private void createGroceryHistory() {
         Refrigerator refrigerator = refrigeratorRepository.findByName("Test Refrigerator")
                 .orElseThrow(() -> new RuntimeException("Refrigerator not found: Test Refrigerator"));
@@ -177,6 +201,9 @@ public class TestDataSerializer {
         }
     }
 
+    /**
+     * Creates a test refrigerator.
+     */
     private void createRefrigerator() {
         String name = "Test Refrigerator";
         String address = "Test Address";
@@ -198,6 +225,9 @@ public class TestDataSerializer {
         }
     }
 
+    /**
+     * Creates a test user, which is the owner of test data.
+     */
     private void createUser() {
         String name = "test";
         String email = "test@test";
@@ -213,7 +243,9 @@ public class TestDataSerializer {
         }
     }
 
-
+    /**
+     * Inserts recipe groceries into recipies.
+     */
     private void createRecipeGroceries() {
         // An array of recipe names
         String[] recipeNames = {"Kremet pasta med laks", "Enkel sjokoladekake", "Grove vafler",
@@ -296,16 +328,31 @@ public class TestDataSerializer {
         }
     }
 
+    /**
+     * returns a recipe based on its name .
+     * @param name
+     * @return
+     */
     public Recipe getRecipeByName(String name) {
         return (Recipe) recipeRepository.findByName(name)
                 .orElseThrow(() -> new RuntimeException("Recipe not found: " + name));
     }
 
+    /**
+     * Returns a grocery based on the id.
+     * @param id
+     * @return
+     */
     public Grocery getGroceryById(long id) {
         return groceryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Grocery not found: " + id));
     }
 
+    /**
+     * Returns a unit based on the id.
+     * @param id
+     * @return
+     */
     public Unit getUnitById(long id) {
         return unitRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Grocery not found: " + id));
@@ -325,6 +372,9 @@ public class TestDataSerializer {
     }
 
 
+    /**
+     * Creates the recipes for the database.
+     */
     private void createRecipes() {
         String[] recipeNames = {"Kremet pasta med laks", "Enkel sjokoladekake", "Grove vafler",
                 "Hjemmelaget knekkebrød", "Protein-scones med cottage cheese", "Pannekaker",
@@ -366,7 +416,11 @@ public class TestDataSerializer {
         }
     }
 
-
+    /**
+     * Returns a category by name.
+     * @param name
+     * @return
+     */
     public RecipeCategory getRecipeCategoryByName(String name) {
         Optional<RecipeCategory> categories = recipeCategoryRepository.findByName(name);
 
@@ -380,7 +434,14 @@ public class TestDataSerializer {
 
 
     /**
-     * Method that reads csv file and calls methods for creating entities.
+     * Method that serialises data into database from formatted csv file with categories, subcategories and groceries.
+     *  * "!" indicates a category line, "?" indicates a subcategory, remaining lines are groceries.
+     *  * Groceries are structured with name, description.
+     *  * Subcategories are structured with name - expiry date.
+     *  * Format example:
+     *  *  !Dairy
+     *  *  ?Milk - 14
+     *  *  Chocolate Milk, 14% fat
      */
     public void serialize(){
         category = new Category();
@@ -415,6 +476,10 @@ public class TestDataSerializer {
         }
     }
 
+    /**
+     * Creates a category from a csv line.
+     * @param line
+     */
     private void createCategory(String line){
         line = line.replaceAll("\\!", "");
         category.setName(line);
@@ -423,6 +488,11 @@ public class TestDataSerializer {
         category = categoryRepository.findCategoryByName(category.getName()).orElseThrow();
 
     }
+
+    /**
+     * Creates a subCategory from a line.
+     * @param line
+     */
     private void createSubCategory(String line){
         line = line.replaceAll("\\?", "");
         subCategory.setCategory(category);
@@ -436,6 +506,11 @@ public class TestDataSerializer {
                 .build());
         subCategory = subCategoryRepository.findSubCategoryByName(subCategory.getName()).orElseThrow();
     }
+
+    /**
+     * Creates a grocery from a csv line.
+     * @param line
+     */
     private void createGrocery(String line){
         String[] csvData = line.split(",");
         Grocery grocery = new Grocery();
@@ -449,6 +524,9 @@ public class TestDataSerializer {
 
     }
 
+    /**
+     * Adds the needed units for the database.
+     */
     private void createUnits(){
         if(unitRepository.findAll().size() == 0){
             unitRepository.save(Unit.builder().name("l")

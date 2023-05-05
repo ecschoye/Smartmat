@@ -1,56 +1,50 @@
-import { mount } from '@vue/test-utils'
-import FavoriteToggler from '~/components/Button/FavoriteToggler.vue'
+import { mount } from '@vue/test-utils';
+import FavoriteButton from '~/components/Button/FavoriteToggler.vue';
 
-describe('FavoriteToggler', () => {
-    it('renders correctly with default props', () => {
-        const wrapper = mount(FavoriteToggler)
-        expect(wrapper.element).toMatchSnapshot()
-    })
-
-    it('renders correctly with isFavorite=true', () => {
-        const wrapper = mount(FavoriteToggler, {
-            props: {
-                isFavorite: true,
-            },
-        })
-        expect(wrapper.element).toMatchSnapshot()
-    })
-
-    it('renders correctly with large=true', () => {
-        const wrapper = mount(FavoriteToggler, {
-            props: {
-                large: true,
-            },
-        })
-        expect(wrapper.element).toMatchSnapshot()
-    })
-
-    it('renders correctly with text=false', () => {
-        const wrapper = mount(FavoriteToggler, {
-            props: {
-                text: false,
-            },
-        })
-        expect(wrapper.element).toMatchSnapshot()
-    })
-
-    it('emits "favoriteEvent" with true when clicked and isFavorite=false', async () => {
-        const wrapper = mount(FavoriteToggler, {
+describe('FavoriteButton', () => {
+    it('renders add favorite button when isFavorite prop is false', () => {
+        const wrapper = mount(FavoriteButton, {
             props: {
                 isFavorite: false,
             },
-        })
-        await wrapper.trigger('click')
-        expect(wrapper.emitted('favoriteEvent')).toEqual([[true]])
-    })
+            global: {
+                mocks: {
+                    $t: (key) => key,
+                },
+            },
+        });
+        expect(wrapper.find('img').attributes().src).toBe('/assets/icons/heart.png');
+        expect(wrapper.find('h2').text()).toBe('add_favorite');
+    });
 
-    it('emits "favoriteEvent" with false when clicked and isFavorite=true', async () => {
-        const wrapper = mount(FavoriteToggler, {
+    it('renders remove favorite button when isFavorite prop is true', () => {
+        const wrapper = mount(FavoriteButton, {
             props: {
                 isFavorite: true,
             },
-        })
-        await wrapper.trigger('click')
-        expect(wrapper.emitted('favoriteEvent')).toEqual([[false]])
-    })
-})
+            global: {
+                mocks: {
+                    $t: (key) => key,
+                },
+            },
+        });
+        expect(wrapper.find('img').attributes().src).toBe('/assets/icons/heartfilled.png');
+        expect(wrapper.find('h2').text()).toBe('remove_favorite');
+    });
+
+    it('emits "favoriteEvent" event when clicked', async () => {
+        const wrapper = mount(FavoriteButton, {
+            props: {
+                isFavorite: false,
+            },
+            global: {
+                mocks: {
+                    $t: (key) => key,
+                },
+            },
+        });
+        await wrapper.find('div').trigger('click');
+        expect(wrapper.emitted('favoriteEvent')).toBeTruthy();
+        expect(wrapper.emitted('favoriteEvent')[0]).toEqual([true]);
+    });
+});

@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+/**
+ * A DTO for a request to delete a Refrigerator Grocery. Holds a RefrigeratorGroceryDTO, the quantity and the unitDTO.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

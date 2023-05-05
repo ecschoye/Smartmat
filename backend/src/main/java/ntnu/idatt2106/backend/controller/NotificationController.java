@@ -3,7 +3,6 @@ package ntnu.idatt2106.backend.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,12 +11,10 @@ import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.NotificationException;
 import ntnu.idatt2106.backend.model.User;
 import ntnu.idatt2106.backend.model.dto.GroceryNotificationDTO;
-import ntnu.idatt2106.backend.model.dto.response.ErrorResponse;
 import ntnu.idatt2106.backend.service.CookieService;
 import ntnu.idatt2106.backend.service.JwtService;
 import ntnu.idatt2106.backend.service.NotificationService;
 import ntnu.idatt2106.backend.service.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +22,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * Controller for notifications
+ * The controller has method to get all notifications and delete a notification
+ */
 @RestController
 @RequestMapping("api/notifications")
 @RequiredArgsConstructor
@@ -38,6 +39,12 @@ public class NotificationController {
 
     Logger logger = Logger.getLogger(NotificationController.class.getName());
 
+    /**
+     * Getter for all notifications
+     * @param request http request
+     * @return list with all notification
+     * @throws NotificationException If an error occurred relating to notifications
+     */
     @Operation(summary = "Retrieves all of the users notifications",
             description = "Retrieves a users notifications",
             responses = {
@@ -58,6 +65,13 @@ public class NotificationController {
         }
     }
 
+    /**
+     * Deletes a notification with a specific ID
+     * @param request http request
+     * @param id ID of the notification to delete
+     * @return the deleted notification
+     * @throws NotificationException If an error occurred relating to notifications
+     */
     @Operation(summary = "Delete notification by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Notification deleted successfully"),
@@ -76,7 +90,7 @@ public class NotificationController {
             return ResponseEntity.ok(deleted);
         }
         else{
-            throw new NotificationException("Unexpected error occured");
+            throw new NotificationException("Unexpected error occurred");
         }
     }
 }

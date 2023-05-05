@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Grocery info DTO.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

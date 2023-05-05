@@ -5,6 +5,9 @@ import lombok.Data;
 import java.util.List;
 
 
+/**
+ * DTO for fetch recipes
+ */
 @Data
 public class FetchRecipesDTO {
 

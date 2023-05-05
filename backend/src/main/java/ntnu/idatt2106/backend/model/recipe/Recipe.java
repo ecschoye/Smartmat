@@ -5,6 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 
+
+/**
+ * Model of a cooking recipe.
+ */
 @Data
 @Builder
 @NoArgsConstructor

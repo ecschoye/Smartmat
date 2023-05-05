@@ -152,17 +152,17 @@ export default {
               alert(this.t("last_superuser_alert"))
             }
             else {
-              alert(this.t("member_added_success"))
+              alert(this.t("role_change_success"))
               location.reload(); 
             }
           }
           else {
-            alert(this.t("member_added_failure"))
+            alert(this.t("role_change_failure"))
             location.reload(); 
           }
       }
       catch(error){
-        alert(this.t("member_added_failure"))
+        alert(this.t("role_change_failure"))
         console.log(error)
         location.reload(); 
       }

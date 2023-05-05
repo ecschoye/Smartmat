@@ -16,6 +16,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+
+/**
+ * Class representing a User.
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -32,6 +36,7 @@ public class User implements UserDetails {
     @Schema(description = "The id of the user, automatically generated")
     private String id;
 
+
     @Column(name = "name")
     @Schema(description = "The name of the user")
     private String name;
@@ -39,6 +44,7 @@ public class User implements UserDetails {
     @Column(name = "email", unique = true)
     @Schema(description = "The email of the user")
     private String email;
+
 
     @Column(name = "password")
     @Schema(description = "The password of the user")
@@ -53,35 +59,63 @@ public class User implements UserDetails {
     @Schema(description = "The id of a optional favorite refrigerator")
     private Long favoriteRefrigeratorId;
 
+    /**
+     * Returns the granted authorities a user has.
+     * @return
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(userRole.name()));
     }
 
+    /**
+     * Returns the password of a user.
+     * @return
+     */
     public String getPassword() {
         return this.password;
     }
 
+    /**
+     * Returns the username of a user.
+     * @return
+     */
     @Override
     public String getUsername() {
         return this.email;
     }
 
+    /**
+     * Returns true
+     * @return
+     */
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    /**
+     * Returns true
+     * @return
+     */
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    /**
+     * Returns true
+     * @return
+     */
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    /**
+     * Returns true.
+     * @return
+     */
     @Override
     public boolean isEnabled() {
         return true;

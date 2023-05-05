@@ -1,5 +1,11 @@
 package ntnu.idatt2106.backend.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +36,13 @@ public class ShoppingListController {
 
     Logger logger = LoggerFactory.getLogger(ShoppingListController.class);
 
+    @Operation(summary = "Create a shopping list for a refrigerator")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Shopping list created successfully", content = @Content(schema = @Schema(type = "long"))),
+            @ApiResponse(responseCode = "404", description = "Refrigerator not found"),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/create/{refrigeratorId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Long> createShoppingList(@PathVariable(name = "refrigeratorId") long refrigeratorId) throws RefrigeratorNotFoundException {
@@ -40,6 +53,12 @@ public class ShoppingListController {
         return new ResponseEntity<>(shoppingListId, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get groceries from a shopping list by shopping list id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of groceries fetched successfully", content = @Content(schema = @Schema(implementation = ShoppingListElementDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No groceries found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/groceries/{shoppingListId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ShoppingListElementDTO>> getGroceriesFromShoppingList(@PathVariable(name="shoppingListId") long shoppingListId) throws NoGroceriesFound {
@@ -50,6 +69,13 @@ public class ShoppingListController {
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get groceries from categorized shopping list by shopping list and category id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Groceries fetched successfully", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShoppingListElementDTO.class)))),
+            @ApiResponse(responseCode = "404", description = "No groceries found for the specified shopping list and category"),
+            @ApiResponse(responseCode = "401", description = "User is not authorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/category/groceries/{shoppingListId}/{categoryId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ShoppingListElementDTO>> getGroceriesFromCategorizedShoppingList(@PathVariable(name="shoppingListId") long shoppingListId,
@@ -61,6 +87,13 @@ public class ShoppingListController {
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get suggested groceries from refrigerator for a shopping list")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of suggested groceries from refrigerator for the shopping list", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShoppingCartElementDTO.class)))),
+            @ApiResponse(responseCode = "404", description = "No suggested groceries found for the shopping list"),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated or authorized to access the resource"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/suggested-refrigerator/groceries/{shoppingListId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ShoppingCartElementDTO>> getSuggestedGroceriesFromRefrigerator(@PathVariable(name="shoppingListId") long shoppingListId) throws NoGroceriesFound {
@@ -71,6 +104,14 @@ public class ShoppingListController {
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get categories from a shopping list")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Categories retrieved successfully", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Category.class)))),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated or authorized to access the resource"),
+            @ApiResponse(responseCode = "404", description = "The requested shopping list or category was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/categories/{shoppingListId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Category>> getCategoriesFromShoppingList(@PathVariable(name="shoppingListId") long shoppingListId) throws CategoryNotFound {
@@ -81,6 +122,14 @@ public class ShoppingListController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
+    @Operation(summary = "Save a grocery to a shopping list")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "The grocery was added successfully", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated or authorized to access the resource"),
+            @ApiResponse(responseCode = "404", description = "The requested shopping list or grocery was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/add-grocery")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<SuccessResponse> saveGroceryToShoppingList(@RequestBody SaveGroceryRequest saveGroceryRequest,
@@ -90,6 +139,14 @@ public class ShoppingListController {
         return new ResponseEntity<>(new SuccessResponse("The grocery was added successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
+    @Operation(summary = "Edit a grocery in a shopping list")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "The grocery was edited successfully", content = @Content(schema = @Schema(implementation = GroceryShoppingList.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated or authorized to access the resource"),
+            @ApiResponse(responseCode = "404", description = "The requested shopping list or grocery was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/edit-grocery/{groceryShoppingListId}/{quantity}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<GroceryShoppingList> editGrocery(@PathVariable("groceryShoppingListId") long groceryShoppingListId,
@@ -100,6 +157,14 @@ public class ShoppingListController {
         return new ResponseEntity<>(grocery, HttpStatus.OK);
     }
 
+    @Operation(summary = "Edit a grocery in the refrigerator shopping list")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "The grocery was edited successfully", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated or authorized to access the resource"),
+            @ApiResponse(responseCode = "404", description = "The requested grocery or shopping list was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/edit-refrigerator-grocery/{groceryRefrigeratorShoppingListId}/{quantity}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<SuccessResponse> editRefrigeratorGrocery(@PathVariable("groceryRefrigeratorShoppingListId") long groceryRefrigeratorShoppingListId,
@@ -110,6 +175,15 @@ public class ShoppingListController {
         return new ResponseEntity<>(new SuccessResponse("The grocery was edited successfully", HttpStatus.OK.value()), HttpStatus.OK);
     }
 
+
+    @Operation(summary = "Remove a grocery from a shopping list")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "The grocery was removed successfully", content = @Content(schema = @Schema(implementation = Boolean.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated or authorized to access the resource"),
+            @ApiResponse(responseCode = "404", description = "The requested grocery was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @DeleteMapping("/delete-grocery/{groceryListId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Boolean> removeGroceryFromShoppingList(@PathVariable(name="groceryListId") long groceryListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {
@@ -120,6 +194,14 @@ public class ShoppingListController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
+    @Operation(summary = "Delete a refrigerator grocery from a shopping list")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "The grocery was deleted successfully", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated or authorized to access the resource"),
+            @ApiResponse(responseCode = "404", description = "The requested grocery was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @DeleteMapping("/delete-refrigerator-grocery/{refrigeratorShoppingListId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Boolean> removeRefrigeratorGroceryFromShoppingList(@PathVariable(name="refrigeratorShoppingListId") long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException {
@@ -130,6 +212,13 @@ public class ShoppingListController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get requested groceries from a shopping list")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Requested groceries retrieved successfully", content = @Content(schema = @Schema(implementation = List.class))),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated or authorized to access the resource"),
+            @ApiResponse(responseCode = "404", description = "The requested shopping list was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("requested/groceries/{shoppingListId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ShoppingListElementDTO>> getRequestedGroceries(@PathVariable("shoppingListId") long shoppingListId) throws NoGroceriesFound {
@@ -140,6 +229,14 @@ public class ShoppingListController {
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get requested groceries from a categorized shopping list")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of requested groceries from the categorized shopping list is returned", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ShoppingListElementDTO.class)))),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated or authorized to access the resource"),
+            @ApiResponse(responseCode = "404", description = "The requested groceries were not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/requested/groceries/{shoppingListId}/{categoryId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<ShoppingListElementDTO>> getRequestedGroceriesFromCategorizedShoppingList(@PathVariable("shoppingListId") long shoppingListId,
@@ -151,6 +248,14 @@ public class ShoppingListController {
         return new ResponseEntity<>(groceries, HttpStatus.OK);
     }
 
+    @Operation(summary = "Transfer a grocery item from a shopping list to the shopping cart")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "The grocery was transferred successfully", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated or authorized to access the resource"),
+            @ApiResponse(responseCode = "404", description = "The requested grocery or shopping cart was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("transfer-shopping-cart/{groceryShoppingListId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Boolean> transferToShoppingCart(@PathVariable("groceryShoppingListId") long groceryShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SaveException, NoSuchElementException {
@@ -161,6 +266,14 @@ public class ShoppingListController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
+    @Operation(summary = "Transfer a refrigerator grocery to the shopping cart")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "The grocery was transferred successfully", content = @Content(schema = @Schema(implementation = SuccessResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "401", description = "User is not authenticated or authorized to access the resource"),
+            @ApiResponse(responseCode = "404", description = "The requested grocery was not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("refrigerator/transfer-shopping-cart/{refrigeratorShoppingListId}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Boolean> transferRefrigeratorGroceryToShoppingCart(@PathVariable("refrigeratorShoppingListId") long refrigeratorShoppingListId, HttpServletRequest httpRequest) throws UnauthorizedException, NoGroceriesFound, UserNotFoundException, ShoppingCartNotFound, SaveException, NoSuchElementException {

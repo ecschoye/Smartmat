@@ -44,7 +44,7 @@ import { defineComponent } from 'vue';
         },
         data() {
             return {
-                isCategoryExpanded: false,
+                isCategoryExpanded: true,
                 categoryListItems: [] as ShoppingListElementType[],
             }
         },

@@ -206,7 +206,7 @@ import { ResponseGrocery } from"~/types/ResponseGrocery"
         async loadSuggestionsFromRefrigerator() {
                 try {
                     let responseSuggestions = await ShoppingListService.getSuggestedGroceriesFromRefrigerator(this.shoppingListId);
-                    console.log(responseSuggestions);
+                    this.refrigeratorSuggestions = [];
                     if (responseSuggestions.data.length > 0) {
                         responseSuggestions.data.forEach((element : ResponseGrocery) => {
                             let object : ShoppingListElementType = { id: element.id, description: element.description, quantity: element.quantity, unitDTO : element.unitDTO, subCategoryName: element.subCategoryName, isAddedToCart: false, isSuggested: true, isFromRefrigerator: true };

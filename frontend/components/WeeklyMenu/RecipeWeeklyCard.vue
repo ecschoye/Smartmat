@@ -165,11 +165,13 @@
 
 
 .recepe-title {
-  font-size: 20px;
+  font-size: 1.25em;
   margin-bottom: 15px;
   display: flex;
-  justify-content: center;
+  justify-content: left;
   color: white;
+  white-space: nowrap;
+  font-size:large; 
 }
 
 .ingredients {

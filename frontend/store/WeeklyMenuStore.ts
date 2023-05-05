@@ -10,6 +10,15 @@ export interface WeeklyMenuState {
   currentChosenIndex: number | null
 }
 
+const sessionStorageMock = {
+  getItem: () => null,
+  setItem: () => null,
+  removeItem: () => null,
+  clear: () => null,
+};
+
+const isTestEnvironment = process.env.NODE_ENV === 'test';
+
 export const useWeeklyMenuStore = defineStore({
   id: 'weekly-menu-store',
   state: (): WeeklyMenuState => ({
@@ -20,9 +29,9 @@ export const useWeeklyMenuStore = defineStore({
     chosenWeek: 1,
     currentChosenIndex: null
   }),
-    persist: {
-        storage: persistedState.sessionStorage,
-    },
+  persist: {
+    storage: isTestEnvironment ? sessionStorageMock : sessionStorage,
+  },
   actions: {
     setCurrentWeek(index: number, recipe: Recipe | null) {
       this.currentWeek[index] = recipe;

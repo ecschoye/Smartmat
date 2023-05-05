@@ -59,8 +59,8 @@ package_backend:
     - mvn -f backend/pom.xml jacoco:report-aggregate
   artifacts:
     paths:
-      - backend/target/*.jar
-      - backend/target/site/jacoco/
+      - public/target
+      - public/site
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
       changes:

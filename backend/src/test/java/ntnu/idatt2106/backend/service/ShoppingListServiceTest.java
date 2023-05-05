@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -454,6 +455,11 @@ public class ShoppingListServiceTest {
     void saveGrocery_saves_a_grocery_item_as_a_new_item_when_it_does_t_exists_a_correspondent_grocery(boolean isRequested) throws UserNotFoundException, UnauthorizedException, SaveException, ShoppingListNotFound {
         SubCategory subCategory = new SubCategory();
         subCategory.setCategory(new Category());
+        Unit unit = Unit.builder()
+                .id(3)
+                .name("g")
+                .weight(1)
+                .build();
         Refrigerator refrigerator = Refrigerator.builder()
                 .id(1L)
                 .name("test")
@@ -472,6 +478,7 @@ public class ShoppingListServiceTest {
                 .build();
         GroceryShoppingList groceryShoppingListItem = GroceryShoppingList.builder()
                 .id(1L)
+                .unit(new Unit(3,"g",1))
                 .shoppingList(shoppingList)
                 .grocery(grocery1)
                 .isRequest(isRequested)
@@ -479,6 +486,7 @@ public class ShoppingListServiceTest {
                 .build();
         SaveGroceryRequest saveGroceryRequest = SaveGroceryRequest.builder()
                 .groceryId(grocery1.getId())
+                .unitDTO(new UnitDTO(new Unit(3,"g",1)))
                 .quantity(5)
                 .foreignKey(shoppingList.getId())
                 .build();
@@ -487,6 +495,7 @@ public class ShoppingListServiceTest {
         when(groceryShoppingListRepository.findByGroceryIdAndShoppingListId(grocery1.getId(), shoppingList.getId())).thenReturn(Optional.of(groceryShoppingListItem));
         when(groceryService.getFridgeRole(shoppingList.getRefrigerator(), httpRequest)).thenReturn(FridgeRole.USER);
         when(groceryShoppingListRepository.save(groceryShoppingListItem)).thenReturn(groceryShoppingListItem);
+        when(unitRepository.findById(any())).thenReturn(Optional.of(unit));
 
         assertDoesNotThrow(() -> {
             shoppingListService.saveGrocery(saveGroceryRequest, httpRequest);

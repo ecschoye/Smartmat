@@ -37,15 +37,16 @@ test_backend:
   stage: test_backend
   script:
     - mvn -f backend/pom.xml clean test
+    - mvn -f backend/pom.xml jacoco:prepare-agent
     - mvn -f backend/pom.xml jacoco:report
   artifacts:
     when: always
     paths:
-      - public
+      - backend/target/site/jacoco/
     reports:
       junit:
-        - target/surefire-reports/TEST-*.xml
-        - target/failsafe-reports/TEST-*.xml
+        - backend/target/surefire-reports/TEST-*.xml
+        - backend/target/failsafe-reports/TEST-*.xml
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
       changes:
@@ -55,16 +56,14 @@ package_backend:
   stage: package_backend
   script:
     - mvn -f backend/pom.xml -DskipTests package
-    - mvn -f backend/pom.xml jacoco:report
-    - mvn -f backend/pom.xml jacoco:report-aggregate
   artifacts:
     paths:
-      - public/target
-      - public/site
+      - backend/target/*.jar
   rules:
     - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "dev"'
       changes:
         - backend/**/*
+
     
 
 test_frontend:
@@ -103,7 +102,7 @@ build_frontend:
 publish_jacoco:
   stage: publish_backend
   dependencies:
-    - package_backend
+    - test_backend
   script:
     - mkdir -p public/jacoco
     - cp -r backend/target/site/jacoco/* public/jacoco/
@@ -113,6 +112,7 @@ publish_jacoco:
   only:
     - main
     - dev
+
 
 pages:
   stage: deploy

@@ -127,12 +127,19 @@ import { ResponseGrocery } from"~/types/ResponseGrocery"
             this.refrigeratorId = refrigeratorStore.getSelectedRefrigerator.id
         }
         this.loadLists();
+        watch(() => refrigeratorStore.getSelectedRefrigerator, () => {
+            if(refrigeratorStore.getSelectedRefrigerator !== null){
+                this.refrigeratorId = refrigeratorStore.getSelectedRefrigerator?.id;
+                this.loadLists();
+            }
+        });
     },
     setup() {
       const { t } = useI18n();
 
       return { t }
     },
+    
     
     methods: {
         promptRefrigerator(){

@@ -71,6 +71,12 @@ public class RecipeService {
 
 
 
+        Recipe testRecipe = recipeRepository.findByName("Kremet pasta med laks").orElseThrow(() -> new NoSuchElementRuntimeException("Recipe not found"));
+        RecipeGrocery testRecipeGrocery = recipeGroceryRepository.findById(testRecipe.getId()).orElseThrow(() -> new NoSuchElementRuntimeException("RecipeGrocery not found"));
+
+
+
+
         // Retrieve all RecipeGrocery records that match the groceries in the validGroceries based on name
         List<RecipeGrocery> matchingRecipeGroceries = recipeGroceryRepository.findAllByGroceryNameIn(
                 validGroceries.stream().map(RefrigeratorGrocery::getGrocery).map(Grocery::getName).collect(Collectors.toList()));
@@ -80,10 +86,13 @@ public class RecipeService {
             throw new NoSuchElementException("No matching recipes found for the available groceries.");
         }
 
+
         // Group the RecipeGrocery records by recipe and count the number of matched groceries for each recipe by name
         Map<Recipe, Long> recipeMatchCount = matchingRecipeGroceries.stream()
                 .filter(rg -> groceryNameCount.getOrDefault(rg.getGrocery().getName(), 0) >= rg.getQuantity())
                 .collect(Collectors.groupingBy(RecipeGrocery::getRecipe, Collectors.counting()));
+
+
 
         // Sort the recipes based on the number of matched groceries
         List<Recipe> sortedRecipes = recipeMatchCount.entrySet().stream()
@@ -91,6 +100,7 @@ public class RecipeService {
                 .sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()))
                 .map(Map.Entry::getKey)
                 .toList();
+
 
         if (allRecipes) {
             return convertToDTOs(sortedRecipes);
@@ -120,6 +130,48 @@ public class RecipeService {
 
         return convertToDTOs(newRecipes);
 
+    }
+
+    public List<RecipeDTO> getSortedRecipesByMatchingGroceries(long refrigeratorId, int numOfRecipesToFetch) {
+        List<Recipe> recipes = recipeRepository.findAll();
+        Map<Recipe, Integer> recipeMatches = new HashMap<>();
+
+        for (Recipe recipe : recipes) {
+            int matches = 0;
+            List<RefrigeratorGrocery> refrigeratorGroceries = refrigeratorGroceryRepository.findAllByRefrigeratorId(refrigeratorId);
+            Set<Grocery> groceriesInRefrigerator = new HashSet<>();
+
+            for (RefrigeratorGrocery refrigeratorGrocery : refrigeratorGroceries) {
+                groceriesInRefrigerator.add(refrigeratorGrocery.getGrocery());
+            }
+
+            List<RecipeGrocery> recipeGroceries = recipeGroceryRepository.findAllByRecipe(recipe);
+            for (RecipeGrocery recipeGrocery : recipeGroceries) {
+                if (groceriesInRefrigerator.contains(recipeGrocery.getGrocery())) {
+                    matches++;
+                }
+            }
+
+            recipeMatches.put(recipe, matches);
+        }
+
+        // Sort recipes by the number of matching groceries
+        List<Recipe> sortedRecipes = new ArrayList<>(recipes);
+        sortedRecipes.sort((recipe1, recipe2) -> recipeMatches.get(recipe2).compareTo(recipeMatches.get(recipe1)));
+
+        List<Recipe> sortedRecipeDTOs = new ArrayList<>();
+        int recipesAdded = 0;
+        while (recipesAdded < numOfRecipesToFetch) {
+            for (Recipe recipe : sortedRecipes) {
+                sortedRecipeDTOs.add(recipe);
+                recipesAdded++;
+                if (recipesAdded >= numOfRecipesToFetch) {
+                    break;
+                }
+            }
+        }
+
+        return convertToDTOs(sortedRecipeDTOs);
     }
 
     public List<RecipeDTO> convertToDTOs(List<Recipe> recipes) {

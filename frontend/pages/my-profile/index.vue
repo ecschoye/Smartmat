@@ -9,8 +9,8 @@
         <NuxtLink :to="localePath('/system-settings')">
           <InfoBox :title="$t('system_settings')" content="Systeminnstillinger" class=""/>
         </NuxtLink>
-        <NuxtLink :to="localePath('')">
-          <InfoBox title="Ekstra knapp" @click="" content="Ekstra knapp" class=""/>
+        <NuxtLink :to="localePath('/home')">
+          <InfoBox title="Til kjøleskap" @click="" content="Ekstra knapp" class=""/>
         </NuxtLink>
       </div>
     </div>

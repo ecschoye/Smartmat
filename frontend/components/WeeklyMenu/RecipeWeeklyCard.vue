@@ -172,6 +172,7 @@
   color: white;
   white-space: nowrap;
   font-size:large; 
+  overflow:scroll; 
 }
 
 .ingredients {

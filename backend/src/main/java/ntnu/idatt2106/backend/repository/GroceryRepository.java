@@ -9,14 +9,25 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+
+/**
+ * Repository for Grocery entity.
+ */
 @Repository
 public interface GroceryRepository extends JpaRepository<Grocery, Long>{
+    /**
+     * Returns a optional grocery based on id.
+     * @param aLong
+     * @return
+     */
     @Override
     Optional<Grocery> findById(Long aLong);
 
+    /**
+     * Returns a optional grocery based on the name.
+     * @param name
+     * @return
+     */
     Optional<Grocery> findByName(String name);
 
-    @Modifying
-    @Query(value = "ALTER TABLE my_entity ALTER COLUMN id RESTART WITH 1", nativeQuery = true)
-    void resetAutoIncrement();
 }

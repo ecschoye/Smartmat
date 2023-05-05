@@ -73,8 +73,6 @@ public class GroceryService {
         if(FridgeRole != ADD_PRIVILEGE) throw new UnauthorizedException("User not authorized to add groceries");
 
         logger.info("Saving grocery list to refrigerator");
-        System.out.println(saveRequest.getGroceryList());
-        System.out.println(httpRequest);
         //Handle each grocery in the list individually based on custom grocery or existing
         for (GroceryDTO groceryDTO: saveRequest.getGroceryList()) {
             Grocery grocery;
@@ -188,8 +186,6 @@ public class GroceryService {
         logger.info("Checking if user is member");
         String email = extractEmail(request);
         //Throws if user is not member
-        System.out.println(email);
-        System.out.println(refrigerator);
         return refrigeratorService.getFridgeRole(refrigerator, email);
     }
 
@@ -321,7 +317,6 @@ public class GroceryService {
             throw new UnauthorizedException("User is not a member of the refrigerator");
         }
         RefrigeratorGrocery newGrocery = unitService.convertGrocery(grocery.get(), dto.getUnitDTO().getId());
-        System.out.println(newGrocery.getQuantity() - dto.getQuantity());
         if(newGrocery.getQuantity() - dto.getQuantity() <= 0){
             notificationService.deleteNotificationsByRefrigeratorGrocery(grocery.get());
             removeRefrigeratorGrocery(grocery.get().getId(), request);

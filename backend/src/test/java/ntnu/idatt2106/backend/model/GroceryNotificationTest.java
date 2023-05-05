@@ -66,4 +66,46 @@ public class GroceryNotificationTest {
 
         assertEquals(123L, notificationWithId.getId());
     }
+
+    @Test
+    void testEqualsMethod() {
+        // Create two identical GroceryNotifications
+        GroceryNotification notification1 = GroceryNotification.builder()
+                .user(user)
+                .groceryEntity(grocery)
+                .daysLeft(5L)
+                .deleted(false)
+                .build();
+        GroceryNotification notification2 = GroceryNotification.builder()
+                .user(user)
+                .groceryEntity(grocery)
+                .daysLeft(5L)
+                .deleted(false)
+                .build();
+
+        // Test that they are equal
+        assertEquals(notification1, notification2);
+    }
+
+    @Test
+    void testHashCodeMethod() {
+        // Create two identical GroceryNotifications
+        GroceryNotification notification1 = GroceryNotification.builder()
+                .user(user)
+                .groceryEntity(grocery)
+                .daysLeft(5L)
+                .deleted(false)
+                .build();
+        GroceryNotification notification2 = GroceryNotification.builder()
+                .user(user)
+                .groceryEntity(grocery)
+                .daysLeft(5L)
+                .deleted(false)
+                .build();
+
+        // Test that their hash codes are equal
+        assertEquals(notification1.hashCode(), notification2.hashCode());
+    }
+
+
 }

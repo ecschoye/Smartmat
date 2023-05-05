@@ -42,7 +42,7 @@ import { ResponseGrocery } from "~/types/ResponseGrocery";
         },
         data() {
             return {
-                isCategoryExpanded: false,
+                isCategoryExpanded: true,
                 categoryListItems: [] as ShoppingListElementType[],
             }
         },

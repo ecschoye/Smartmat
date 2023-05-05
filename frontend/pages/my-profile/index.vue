@@ -2,16 +2,16 @@
   <div class="container md:h-fit">
     <div class="content-wrapper mt-24">
         <ProfileInfo  />
-      <div class="grid grid-cols-1 xl:grid-cols-3 gap-2 mt-12 xl:mt-24 text-center items-center justify-center text-center pt-10 space-y-1 flex flex-wrap">
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-2 mt-12 xl:mt-24 text-center items-center justify-center text-center pt-10 space-y-1 flex flex-wrap">
         <NuxtLink :to="localePath('/my-profile/edit')">
           <InfoBox id="myAccountBtn" :title="$t('edit_user_details')" content="View and edit my account details" class=""/>
         </NuxtLink>
         <NuxtLink :to="localePath('/system-settings')">
           <InfoBox :title="$t('system_settings')" content="Systeminnstillinger" class=""/>
         </NuxtLink>
-        <NuxtLink :to="localePath('')">
+<!--        <NuxtLink :to="localePath('')">
           <InfoBox title="Ekstra knapp" @click="" content="Ekstra knapp" class=""/>
-        </NuxtLink>
+        </NuxtLink>-->
       </div>
     </div>
     <!--    <div class="wave-container">

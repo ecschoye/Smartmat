@@ -28,6 +28,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+/**
+ * Controller for my profile
+ * The controller contains method to edit the profile and get the profile
+ */
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -118,17 +122,14 @@ public class MyProfileController {
         }
     }
 
-
-
     /**
-
-     Handles a request to edit the user's name and email.
-
-     @param userProfileDTO A DTO representing the user's updated name and email.
-
-     @param request The HTTP request.
-
-     @return A ResponseEntity containing either the updated UserProfileDTO if the request was successful, or an ErrorResponse if there was an error.
+     * Handles a request to edit the user's name and email.
+     *
+     * @param userProfileDTO A DTO representing the user's updated name and email.
+     *
+     * @param request The HTTP request.
+     *
+     * @return A ResponseEntity containing either the updated UserProfileDTO if the request was successful, or an ErrorResponse if there was an error.
      */
     @Operation(summary = "Changes the details of a user.",
             description = "This method changes the email and/or name of a user.",
@@ -200,7 +201,4 @@ public class MyProfileController {
 
         return ResponseEntity.ok(new SuccessResponse("Password changed successfully", 200));
     }
-
-
-
 }

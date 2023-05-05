@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import ntnu.idatt2106.backend.exceptions.NoSuchElementException;
 import ntnu.idatt2106.backend.model.dto.recipe.RecipeDTO;
 import ntnu.idatt2106.backend.model.dto.recipe.FetchRecipesDTO;
+import ntnu.idatt2106.backend.model.recipe.Recipe;
 import ntnu.idatt2106.backend.service.RecipeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * Controller for recipes
+ */
 @RestController
 @RequestMapping("/api/recipe")
 @RequiredArgsConstructor
@@ -32,6 +36,13 @@ public class RecipeController {
     private final RecipeService recipeService;
 
 
+    /**
+     * Fetch recipes based on available groceries and their expiration dates
+     * @param refrigeratorId ID to the refrigerator to evaluate groceries from
+     * @param numRecipes number of recipes
+     * @param fetchedRecipeIds ID to the recipe to fetch from
+     * @return list with recipes
+     */
     @Operation(summary = "Fetch recipes based on available groceries and their expiration dates")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Recipes fetched successfully", content = @Content(array = @ArraySchema(schema = @Schema(implementation = RecipeDTO.class)))),
@@ -42,7 +53,7 @@ public class RecipeController {
     public ResponseEntity<?> fetchRecipes(
             @Valid @RequestParam("refrigeratorId") long refrigeratorId,
             @Valid @RequestParam("numRecipes") int numRecipes,
-            @Valid @RequestParam(value = "recipesFetched", required = false) List<Long> fetchedRecipeIds) throws NoSuchElementException {
+            @Valid @RequestParam(value = "recipesFetched", required = false) List<Long> fetchedRecipeIds) {
         if (fetchedRecipeIds == null) {
             fetchedRecipeIds = new ArrayList<>();
         }
@@ -55,16 +66,22 @@ public class RecipeController {
         logger.info("Received request to fetch recipes for user");
         logger.info(fetchRecipesDTO.toString());
         List<RecipeDTO> recipes;
-        if (fetchRecipesDTO.getNumRecipes() == -1){
+        /*if (fetchRecipesDTO.getNumRecipes() == -1){
             recipes = recipeService.getRecipesByGroceriesAndExpirationDates(fetchRecipesDTO, true);
         }
         else{
             recipes = recipeService.getRecipesByGroceriesAndExpirationDates(fetchRecipesDTO, false);
-        }
+        }*/
+        recipes = recipeService.getSortedRecipesByMatchingGroceries(fetchRecipesDTO.getRefrigeratorId(), fetchRecipesDTO.getNumRecipes());
 
         return ResponseEntity.ok(recipes);
     }
 
+    /**
+     * Getter for all recipes
+     * @return list with all recipes
+     * @throws NoSuchElementException If no recipes
+     */
     @Operation(summary = "Get all recipes")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All recipes retrieved successfully", content = @Content(array = @ArraySchema(schema = @Schema(implementation = RecipeDTO.class)))),
@@ -81,7 +98,4 @@ public class RecipeController {
 
         return ResponseEntity.ok(allRecipes);
     }
-
-
-
 }

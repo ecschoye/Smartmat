@@ -8,9 +8,12 @@
     </NuxtLink>
     <div class="hidden lg:flex flex-1 space-x-5 items-center lg:justify-start">
       <NuxtLink to="/" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('home')}}</NuxtLink>
-      <NuxtLink to="/weekly-menu" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('weekly_menu')}}</NuxtLink>
-      <NuxtLink to="/recipe-list" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('recipes')}}</NuxtLink>
-      <NuxtLink to="/stats" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('statistics')}}</NuxtLink>
+      <NuxtLink v-if="isSelected()" to="/weekly-menu" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('weekly_menu')}}</NuxtLink>
+      <NuxtLink v-else to="/create-fridge" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('weekly_menu')}}</NuxtLink>
+      <NuxtLink v-if="isSelected()" to="/recipe-list" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('recipes')}}</NuxtLink>
+      <NuxtLink v-else to="/create-fridge" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('recipes')}}</NuxtLink>
+      <NuxtLink v-if="isSelected()" to="/stats" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('statistics')}}</NuxtLink>
+      <NuxtLink v-else to="/create-fridge" class="text-md font-semibold leading-6 text-gray-900 dark:text-white hover:transform hover:-translate-y-0.5 hover:scale-125 hover:text-white">{{t('statistics')}}</NuxtLink>
     </div>
     <div class="flex flex-1 space-x-2 items-center justify-end">
       <FridgeSelector v-if="loggedIn"/>
@@ -79,9 +82,12 @@
           <div class="-my-6 divide-y divide-gray-700/10 dark:divide-black">
             <div class="space-y-2 py-6">
               <NuxtLink to="/" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('home')}}</NuxtLink>
-              <NuxtLink to="/weekly-menu" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('weekly_menu')}}</NuxtLink>
-              <NuxtLink to="/recipe-list" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('recipes')}}</NuxtLink>
-              <NuxtLink to="/" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('statistics')}}</NuxtLink>
+              <NuxtLink v-if="isSelected()" to="/weekly-menu" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('weekly_menu')}}</NuxtLink>
+              <NuxtLink v-else to="/create-fridge" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('weekly_menu')}}</NuxtLink>
+              <NuxtLink v-if="isSelected()" to="/recipe-list" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('recipes')}}</NuxtLink>
+              <NuxtLink v-else to="/create-fridge" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('recipes')}}</NuxtLink>
+              <NuxtLink v-if="isSelected()" to="/stats" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('statistics')}}</NuxtLink>
+              <NuxtLink v-else to="/create-fridge" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('statistics')}}</NuxtLink>
             </div>
             <div class="py-6">
               <NuxtLink v-if="loggedIn" to="/my-profile" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-zinc-400" @click="closeMobileMenu">{{t('edit_profile')}}</NuxtLink>
@@ -107,7 +113,7 @@ export default defineComponent({
   setup() {
     const userStore = useUserStore();
     const notificationStore = useNotificationStore();
-    const refridgeratorStore = useRefrigeratorStore();
+    const refrigeratorStore = useRefrigeratorStore();
     const {locale, locales, t} = useI18n()
     const loggedIn = computed(() => userStore.isLoggedIn);
     return {
@@ -118,7 +124,7 @@ export default defineComponent({
       notificationStore,
       t,
       loggedIn,
-      refridgeratorStore
+      refrigeratorStore
     }
   },
   data() {
@@ -142,6 +148,14 @@ export default defineComponent({
           console.error(error);
         }
       },
+      isSelected(){
+    try{
+      return this.refrigeratorStore.getRefrigerators.length > 0;
+    }
+    catch(error){
+      return false;
+    }
+  },
     closeMobileMenu() {
       this.mobileMenuOpen = false;
     }

@@ -12,6 +12,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 
+/**
+ * RestAuthenticationEntryPoint is defined to handling authentication errors
+ * The class handles when an unauthorized user attempts to access a resource which require authentication
+ */
 @Component
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
 

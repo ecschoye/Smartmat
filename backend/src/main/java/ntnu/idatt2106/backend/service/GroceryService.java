@@ -52,7 +52,6 @@ public class GroceryService {
     private final UnitService unitService;
     private final GroceryHistoryService groceryHistoryService;
 
-    //TODO:following line is temporary
     private final UnitRepository unitRepository;
 
     /**
@@ -271,6 +270,12 @@ public class GroceryService {
         }
     }
 
+
+    /**
+     Returns a list of all GroceryDTO objects.
+     @return a List of GroceryDTO objects
+     @throws NoGroceriesFound if no groceries are found in the database
+     */
     public List<GroceryDTO> getAllGroceriesDTO() throws NoGroceriesFound {
         List<Grocery> groceries = groceryRepository.findAll();
         if (groceries.isEmpty()) {
@@ -280,6 +285,17 @@ public class GroceryService {
         return groceries.stream().map(GroceryDTO::new).sorted(new GroceryDTOComparator()).collect(Collectors.toList());
     }
 
+    /**
+     * This method is used to eat a RefrigeratorGrocery item from a refrigerator. It first retrieves the grocery item by its id,
+     * then uses the 'useRefrigeratorGrocery' method to update the quantity of the item. If the item does not exist, a
+     * 'NoSuchElementException' will be thrown. After the quantity is updated, a new grocery history is created using the
+     * 'groceryHistoryService' to track the item's usage.
+     * @param dto the DeleteRefrigeratorGroceryDTO object containing the details of the grocery item to eat
+     * @param request the HttpServletRequest object to get the current user's information
+     * @return the updated RefrigeratorGrocery object
+     * @throws Exception if the grocery item does not exist or if the user is not authorized to perform the operation
+     * @throws NoSuchElementException if the grocery item does not exist
+     */
     public RefrigeratorGrocery eatRefrigeratorGrocery(DeleteRefrigeratorGroceryDTO dto, HttpServletRequest request) throws Exception {
         Optional<RefrigeratorGrocery> grocery = refrigeratorGroceryRepository.findById(dto.getRefrigeratorGroceryDTO().getId());
         RefrigeratorGrocery result = useRefrigeratorGrocery(dto, request);
@@ -291,6 +307,13 @@ public class GroceryService {
         return result;
     }
 
+    /**
+     * Trashes the given {@link RefrigeratorGrocery} object based on the information provided in the given {@link DeleteRefrigeratorGroceryDTO} object.
+     * @param dto the {@link DeleteRefrigeratorGroceryDTO} object containing the information needed to trash the grocery
+     * @param request the {@link HttpServletRequest} object containing the request information
+     * @return the trashed {@link RefrigeratorGrocery} object
+     * @throws Exception if the grocery cannot be found, the user does not have permission to perform the action, or if there is an issue with the notification service
+     */
     public RefrigeratorGrocery trashRefrigeratorGrocery(DeleteRefrigeratorGroceryDTO dto, HttpServletRequest request) throws Exception {
         Optional<RefrigeratorGrocery> grocery = refrigeratorGroceryRepository.findById(dto.getRefrigeratorGroceryDTO().getId());
         RefrigeratorGrocery result = useRefrigeratorGrocery(dto, request);
@@ -302,6 +325,15 @@ public class GroceryService {
         return result;
     }
 
+    /**
+     * Uses a {@link RefrigeratorGrocery} object by updating its quantity and unit based on the given {@link DeleteRefrigeratorGroceryDTO}.
+     * @param dto the {@link DeleteRefrigeratorGroceryDTO} object containing the information needed to update the grocery
+     * @param request the {@link HttpServletRequest} object representing the incoming request
+     * @return the updated {@link RefrigeratorGrocery} object, or null if the quantity was not updated
+     * @throws NoSuchElementException if the grocery with the given ID cannot be found
+     * @throws UnauthorizedException if the user is not authorized to perform the action
+     * @throws Exception if there is an error converting the grocery unit or deleting notifications
+     */
     public RefrigeratorGrocery useRefrigeratorGrocery(DeleteRefrigeratorGroceryDTO dto, HttpServletRequest request) throws Exception {
         Optional<RefrigeratorGrocery> grocery = refrigeratorGroceryRepository.findById(dto.getRefrigeratorGroceryDTO().getId());
         if(grocery.isEmpty()){
@@ -326,6 +358,15 @@ public class GroceryService {
         return null;
     }
 
+    /**
+     * Updates a {@link RefrigeratorGrocery} object with the given information.
+     * @param refrigeratorGroceryDTO the {@link RefrigeratorGroceryDTO} object containing the updated information
+     * @param request the {@link HttpServletRequest} object representing the incoming request
+     * @throws UserNotFoundException if the user associated with the request cannot be found
+     * @throws UnauthorizedException if the user does not have permission to update the grocery
+     * @throws NotificationException if there is an error deleting notifications associated with the grocery
+     * @throws NoSuchElementException if the grocery with the given ID cannot be found
+     */
     public void updateRefrigeratorGrocery(RefrigeratorGroceryDTO refrigeratorGroceryDTO, HttpServletRequest request) throws UserNotFoundException, UnauthorizedException, NotificationException, NoSuchElementException {
         Optional<RefrigeratorGrocery> oldGrocery = refrigeratorGroceryRepository.findById(refrigeratorGroceryDTO.getId());
         if(oldGrocery.isEmpty()){
@@ -350,11 +391,10 @@ public class GroceryService {
         refrigeratorGroceryRepository.save(newGrocery);
     }
 
-
     /**
-     * for testing purposes
-     * @param grocery
-     * @return
+     * Creates a new {@link Grocery} object based on the information provided in the given {@link GroceryDTO} object.
+     * @param grocery the {@link GroceryDTO} object containing the information needed to create the new grocery
+     * @return the created {@link Grocery} object
      */
     public Grocery createGrocery(GroceryDTO grocery) {
         //convert from dto to entity

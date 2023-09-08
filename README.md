@@ -3,17 +3,17 @@ The SmartMat project was part of the Systemutvikling 2 course and spanned over f
 
 ## Some screenshots from the application: 
 
-![home](https://github.com/ecschoye/idatt2106_2023_05/blob/Main/screenshots/home.png)
+![home](https://github.com/ecschoye/idatt2106_2023_05/blob/main/screenshots/home.png)
 
-![refrigerator](https://github.com/ecschoye/idatt2106_2023_05/blob/Main/screenshots/kjoleskab.png)
+![refrigerator](https://github.com/ecschoye/idatt2106_2023_05/blob/main/screenshots/kjoleskab.png)
 
-![phone](https://github.com/ecschoye/idatt2106_2023_05/blob/Main/screenshots/phone.png)
+![phone](https://github.com/ecschoye/idatt2106_2023_05/blob/main/screenshots/phone.png)
 
-![settings](https://github.com/ecschoye/idatt2106_2023_05/blob/Main/screenshots/settings'.png)
+![settings](https://github.com/ecschoye/idatt2106_2023_05/blob/main/screenshots/settings'.png)
 
-![recipes](https://github.com/ecschoye/idatt2106_2023_05/blob/Main/screenshots/recipe_dark.png)
+![recipes](https://github.com/ecschoye/idatt2106_2023_05/blob/main/screenshots/recipe_dark.png)
 
-![weekmenu](https://github.com/ecschoye/idatt2106_2023_05/blob/Main/screenshots/week_dark.png)
+![weekmenu](https://github.com/ecschoye/idatt2106_2023_05/blob/main/screenshots/week_dark.png)
 
 # Frontend
 
